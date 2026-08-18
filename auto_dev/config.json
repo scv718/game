@@ -1,0 +1,11 @@
+{
+  "project_dir": "D:\\game",
+  "queue_file": "AI_TASK_QUEUE.md",
+  "opencode_exe": "C:\\Users\\skfnx\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe",
+  "implementer_model": "opencode/deepseek-v4-flash-free",
+  "reviewer_model": "opencode/nemotron-3-ultra-free",
+  "max_fix_rounds": 3,
+  "implementer_timeout_sec": 1800,
+  "reviewer_timeout_sec": 900,
+  "log_dir": "logs"
+}

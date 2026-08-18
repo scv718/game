@@ -1,0 +1,18 @@
+# Godot 4
+.godot/
+*.translation
+
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# auto_dev runtime artifacts
+auto_dev/state.json
+auto_dev/logs/
+auto_dev/scheduler_stdout.log
+
+# Godot editor scratch
+*.tmp
+export.cfg
+export_presets.cfg

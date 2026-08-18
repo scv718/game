@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/lumberyard.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/third_party/ninja_adventure/buildings/lumberyard.png" id="2_lumberyard"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_building"]
+size = Vector2(32, 32)
+
+[node name="Lumberyard" type="StaticBody2D"]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_building")
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(0, 5)
+centered = false
+texture = ExtResource("2_lumberyard")
+
+[node name="DepositPoint" type="Marker2D" parent="."]
+position = Vector2(80, 16)

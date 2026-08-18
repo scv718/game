@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
+
+[node name="HUD" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="WoodLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 200.0
+offset_bottom = 36.0
+text = "Wood: 0"
+
+[node name="InteractLabel" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -48.0
+offset_right = 120.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+horizontal_alignment = 1
+text = "E - 채집"
+visible = false
+
+[node name="BuildLabel" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -96.0
+offset_right = 200.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+horizontal_alignment = 1
+text = "Lumberyard - Wood 10
+Left Click: Build / ESC: Cancel"
+visible = false
+
+[node name="FeedbackLabel" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -132.0
+offset_right = 200.0
+offset_bottom = -104.0
+grow_horizontal = 2
+grow_vertical = 0
+horizontal_alignment = 1
+text = ""
+visible = false
