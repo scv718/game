@@ -17,6 +17,7 @@ const DAYTIME_REFRESH_INTERVAL := 0.25
 const BUILD_TYPE_HINTS := {
 	"lumberyard": "Lumberyard - Wood 10",
 	"quarry": "Quarry (needs Stone Deposit) - Wood 10",
+	"wall": "Wall (16px segment) - Wood 2",
 }
 
 
@@ -109,7 +110,7 @@ func _on_placement_mode_changed(active: bool) -> void:
 
 
 func _on_building_type_changed(building_type: String) -> void:
-	build_label.text = "%s\n1/2: Select Building / Left Click: Build / ESC: Cancel" \
+	build_label.text = "%s\n1/2/3: Select Building / Left Click: Build / ESC: Cancel" \
 			% BUILD_TYPE_HINTS.get(building_type, building_type)
 
 

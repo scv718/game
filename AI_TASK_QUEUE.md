@@ -67,7 +67,13 @@
   - 신규 자원.
 
 ### TASK-013-1 Wall 기본 Scene / Placement
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족, 코드 스타일 일관, 충돌 마스크/네비게이션 통합 정상, 테스트가 핵심 시나리오를 커버. 작업 범위 내 무결성 확인.
+- 구현기록:
+  - `scripts/wall.gd` + `scenes/wall.tscn` 생성. Wall 1 segment = 1 logical tile(16×16px) footprint, StaticBody2D static collision(layer 3), nav obstacle(parse_source_geometry_data로 자동 반영).
+  - `building_placement.gd`: KEY_3 Wall 선택 추가(기존 1/2 유지), Wall 16px ghost/query footprint, `_try_place_wall_at` 연속 배치(배치 후 build mode 유지), 비용 1회 차감, invalid 시 차감 없음, placement 후 `rebuild_navigation()`. Wall 겹침 마스크(Player layer1 + Building/Tree/Stone/Boundary layer3)로 거부.
+  - `hud.gd`: Wall build hint 추가.
+  - 검증: `tests/task0131_test.gd` 신규 작성 PASS(grid snap/연속 배치/비용 차감/invalid 무차감/Core Building 겹침 거부/nav barrier 차단). smoke, task0128, tasknav001 회귀 PASS.
 - 요구사항:
   - Wall 1 segment = 1 logical tile(16×16px) footprint.
   - Tiny Swords sprite scale/offset은 logical footprint와 독립.
