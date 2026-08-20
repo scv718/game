@@ -22,7 +22,8 @@
 ---
 
 ## TASK-MAINT-001 잔여 Debug 파일 정리
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 8개 임시 디버그 파일 완전 삭제, 프로젝트 전역 참조 0건, smoke + 핵심 회귀 PASS 확인. 독립 재실행은 환경 제약으로 불가하나 기존 결과 일관성에는 문제 없음.
 - 설명: TASK-012 리뷰에서 지적된 잔여 진단/디버그 파일을 점검하고 실제 게임/테스트에서 참조하지 않는 임시 파일만 제거한다.
 - 확인 후보:
   - `_diag*.gd`
@@ -37,6 +38,11 @@
   - 미사용 임시 파일 정리.
   - 참조 깨짐 없음.
   - smoke PASS.
+- 구현기록:
+  - 삭제: `tests/_probe.gd`, `tests/_probe.gd.uid`, `tests/_diag.gd`, `tests/_diag2.gd`, `tests/_diag3.gd`, `tests/_diag4.gd`, `tests/_diag5.gd`, `tests/_t75_debug.gd`.
+  - 삭제 전/후 프로젝트 전체 참조 검색: 게임/정식 테스트 코드에서 해당 파일 참조 없음 확인(참조는 AI_TASK_QUEUE.md 태스크 설명뿐).
+  - `.godot`(git-ignore 캐시)에만 `_probe.gd` 스캔 기록 존재, 소스 제거 후 자동 재생성 대상.
+  - 제거 후 headless 검증: `smoke_test.gd` PASS, 최신 핵심 회귀 `task0128_test.gd` PASS.
 
 ---
 
