@@ -1,0 +1,162 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: world node present
+PASS: MapLayout node exists
+PASS: MapLayout uses world_map.gd
+PASS: Floor TileMapLayer exists
+PASS: floor covers 128x128 tiles (16384)
+PASS: bounds size 2048x2048 ((2048.0, 2048.0))
+PASS: bounds centered at origin ((-1024.0, -1024.0))
+PASS: point beyond east bound rejected
+PASS: point beyond north bound rejected
+PASS: logical grid stays 16px / 128 tiles
+PASS: 5 core buildings present (5)
+PASS: Keep inside central Core Village clearing
+PASS: Tavern inside central Core Village clearing
+PASS: Inn inside central Core Village clearing
+PASS: Grocery inside central Core Village clearing
+PASS: EquipmentShop inside central Core Village clearing
+PASS: core type keep present
+PASS: core type tavern present
+PASS: core type inn present
+PASS: core type grocery present
+PASS: core type equipment present
+PASS: Keep at (0,-150) ((0.0, -150.0))
+PASS: Tavern at (-150,-60) ((-150.0, -60.0))
+PASS: Inn at (+150,-60) ((150.0, -60.0))
+PASS: Grocery at (-145,+120) ((-145.0, 120.0))
+PASS: Equipment at (+145,+120) ((145.0, 120.0))
+PASS: core buildings do not block Main Road
+PASS: central plaza (>=120px radius around center) is clear of core buildings
+PASS: 4 main roads defined (4)
+PASS: main road half-width 40 (6 tiles / 96px)
+PASS: north main road has waypoints (5)
+PASS: north main road reaches the outer wild boundary
+PASS: Axis_NORTH marker exists
+PASS: south main road has waypoints (5)
+PASS: south main road reaches the outer wild boundary
+PASS: Axis_SOUTH marker exists
+PASS: east main road has waypoints (5)
+PASS: east main road reaches the outer wild boundary
+PASS: Axis_EAST marker exists
+PASS: west main road has waypoints (5)
+PASS: west main road reaches the outer wild boundary
+PASS: Axis_WEST marker exists
+PASS: secondary paths present (4)
+PASS: secondary path starter_forest connects a destination
+PASS: secondary path stone_zone connects a destination
+PASS: secondary path south_agriculture connects a destination
+PASS: secondary path ne_dungeon connects a destination
+PASS: inner expansion ring (220~360px) has free building space (746 tiles)
+PASS: defense belt 360~520px
+PASS: 4 gate corridors defined (4)
+PASS: north corridor is wide enough for a wall/gate
+PASS: north corridor center sits on main road
+PASS: north corridor center cell is road tile
+PASS: south corridor is wide enough for a wall/gate
+PASS: south corridor center sits on main road
+PASS: south corridor center cell is road tile
+PASS: east corridor is wide enough for a wall/gate
+PASS: east corridor center sits on main road
+PASS: east corridor center cell is road tile
+PASS: west corridor is wide enough for a wall/gate
+PASS: west corridor center sits on main road
+PASS: west corridor center cell is road tile
+PASS: 4 combat fields defined (4)
+PASS: north combat field >= 200x160
+PASS: south combat field >= 200x160
+PASS: east combat field >= 200x160
+PASS: west combat field >= 200x160
+PASS: 4 rally spaces defined (4)
+PASS: north rally space depth 120~160px (140)
+PASS: south rally space depth 120~160px (140)
+PASS: east rally space depth 120~160px (140)
+PASS: west rally space depth 120~160px (140)
+PASS: 3 forest clusters defined (3)
+PASS: starter forest ~18~25 trees (20)
+PASS: starter forest center near (-430,-330)
+PASS: large forest center near (-600,+470)
+PASS: sparse forest center near (+520,-440)
+PASS: large forest bigger than starter (26 vs 20)
+PASS: sparse forest has fewer trees than large (11 vs 26)
+PASS: exactly 1 stone deposit (1)
+PASS: stone deposit at (+500,+260) ((500.0, 260.0))
+PASS: stone deposit outside defense belt (wall in/out choice)
+PASS: south agriculture zone is a meaningful area
+PASS: NE dungeon candidate near (+720,-700)
+PASS: SouthAgricultureZone marker exists
+PASS: NeDungeonCandidate marker exists
+PASS: 4 spawn candidates defined (4)
+PASS: 4 spawn candidate markers present
+PASS: north spawn candidate near work coord
+PASS: north approach route defined (2)
+PASS: north approach route merges onto main road
+PASS: south spawn candidate near work coord
+PASS: south approach route defined (2)
+PASS: south approach route merges onto main road
+PASS: east spawn candidate near work coord
+PASS: east approach route defined (2)
+PASS: east approach route merges onto main road
+PASS: west spawn candidate near work coord
+PASS: west approach route defined (2)
+PASS: west approach route merges onto main road
+PASS: 57 forest trees in world (got 57)
+PASS: 3 starter grove trees in world (got 3)
+PASS: 60 total trees (got 60)
+PASS: 17 decorations in world (got 17)
+PASS: no tree blocks a Main Road (0 found)
+PASS: no tree blocks a Secondary Path (0 found)
+PASS: no decoration blocks a Main Road (0 found)
+PASS: nav path exists between every pair of core buildings
+PASS: world exposes rebuild_navigation
+PASS: runtime navigation rebuild works with buildings/trees present
+PASS: lumberyard denied without enough wood
+PASS: lumberyard built on valid clearing position
+PASS: lumberyard slot capacity is 2
+PASS: quarry denied outside deposit area
+PASS: wood not deducted outside deposit
+PASS: quarry built on valid deposit
+PASS: deposit occupied after quarry built
+PASS: quarry slot capacity is 2
+PASS: lumberyard assigns lumberjack 1
+PASS: lumberyard assigns lumberjack 2
+PASS: lumberyard filled 2/2
+PASS: quarry assigns miner 1
+PASS: quarry assigns miner 2
+PASS: quarry filled 2/2
+PASS: 2 lumberjacks produced wood (+5)
+PASS: 2 miners produced stone at WorkPoint (+4)
+PASS: trees regrew to MATURE (mature=60)
+PASS: lumberjacks resume work after regrowth (+5)
+PASS: game starts in DAY
+PASS: DAY -> NIGHT transition
+PASS: NIGHT: player direct movement disabled (flag)
+PASS: NIGHT: player does not move (input disabled)
+PASS: NIGHT: camera zoomed out (0.54 < 0.7)
+PASS: production runs during NIGHT without stop policy
+PASS: lumberjack workplace stable across transition
+PASS: miner workplace stable across transition
+NIGHT_READ: viewport=1152x648 night_zoom=0.50 -> visible world ~2304x1296, half-height=648
+NIGHT_READ: central Village edge=220px, Gate Corridor ~360-540px, Combat Field outer ~700px
+PASS: night view spans Village + Corridor + Combat Field with a short vertical pan (700 > half-height 648, diff 52px)
+=== TASK-012-8 ?대룞嫄곕━ 湲곕줉 (Player speed=120px/s) ===
+TRAVEL PlayerStart->NW_StarterForest -> (-460.0, -353.75): nav=627px, player_speed=120px/s, ETA=5.2s
+PASS: travel PlayerStart->NW_StarterForest measured positive distance
+TRAVEL PlayerStart->StoneDeposit -> (500.0, 260.0): nav=520px, player_speed=120px/s, ETA=4.3s
+PASS: travel PlayerStart->StoneDeposit measured positive distance
+TRAVEL PlayerStart->NE_DungeonCandidate -> (720.0, -700.0): nav=1187px, player_speed=120px/s, ETA=9.9s
+PASS: travel PlayerStart->NE_DungeonCandidate measured positive distance
+TRAVEL PlayerStart->NORTH_Candidate -> (-140.0, -900.0): nav=970px, player_speed=120px/s, ETA=8.1s
+PASS: travel PlayerStart->NORTH_Candidate measured positive distance
+TRAVEL PlayerStart->SOUTH_Candidate -> (120.0, 900.0): nav=849px, player_speed=120px/s, ETA=7.1s
+PASS: travel PlayerStart->SOUTH_Candidate measured positive distance
+TRAVEL PlayerStart->EAST_Candidate -> (900.0, -120.0): nav=918px, player_speed=120px/s, ETA=7.6s
+PASS: travel PlayerStart->EAST_Candidate measured positive distance
+TRAVEL PlayerStart->WEST_Candidate -> (-900.0, 160.0): nav=906px, player_speed=120px/s, ETA=7.5s
+PASS: travel PlayerStart->WEST_Candidate measured positive distance
+PASS: nav path from Player Start reaches north Outer Wild candidate ((-140.0, -900.0))
+PASS: nav path from Player Start reaches south Outer Wild candidate ((120.0, 900.0))
+PASS: nav path from Player Start reaches east Outer Wild candidate ((900.0, -120.0))
+PASS: nav path from Player Start reaches west Outer Wild candidate ((-900.0, 160.0))
+TASK0128_RESULT=PASS

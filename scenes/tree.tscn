@@ -1,14 +1,22 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/tree.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/third_party/ninja_adventure/environment/tree.png" id="2_tree"]
-[ext_resource type="Texture2D" path="res://assets/third_party/ninja_adventure/environment/stump.png" id="3_stump"]
+[ext_resource type="Texture2D" path="res://assets/tiny_swords/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree1.png" id="2_tree"]
+[ext_resource type="Texture2D" path="res://assets/tiny_swords/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 1.png" id="3_stump"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
 radius = 15.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_trunk"]
 radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tree"]
+atlas = ExtResource("2_tree")
+region = Rect2(37, 51, 119, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_stump"]
+atlas = ExtResource("3_stump")
+region = Rect2(75, 200, 48, 40)
 
 [node name="Tree" type="Area2D"]
 collision_layer = 8
@@ -21,10 +29,10 @@ color = Color(0.25, 0.6, 0.3, 0)
 polygon = PackedVector2Array(0, 0, 28, 0, 28, 28, 0, 28)
 
 [node name="Visual" type="Sprite2D" parent="Canopy"]
-position = Vector2(3.5, -45.25)
-scale = Vector2(0.75, 0.75)
+position = Vector2(-15, -47.5)
+scale = Vector2(0.25, 0.25)
 centered = false
-texture = ExtResource("2_tree")
+texture = SubResource("AtlasTexture_tree")
 
 [node name="TrunkVisual" type="Polygon2D" parent="."]
 position = Vector2(-5, -5)
@@ -38,10 +46,10 @@ color = Color(0.4, 0.24, 0.1, 0)
 polygon = PackedVector2Array(0, 0, 8, 0, 8, 8, 0, 8)
 
 [node name="Visual" type="Sprite2D" parent="StumpVisual"]
-position = Vector2(-5.375, -0.5)
-scale = Vector2(0.75, 0.75)
+position = Vector2(-12, -20)
+scale = Vector2(0.5, 0.5)
 centered = false
-texture = ExtResource("3_stump")
+texture = SubResource("AtlasTexture_stump")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_interact")

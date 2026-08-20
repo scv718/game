@@ -1,9 +1,10 @@
 extends Node2D
 
-const BOUNDS_RECT := Rect2(-256, -256, 1664, 1152)
+const FALLBACK_BOUNDS_RECT := Rect2(-1024, -1024, 2048, 2048)
 const PARSE_AGENT_RADIUS := 8.0
 
 @onready var _nav_region: NavigationRegion2D = $NavigationRegion2D
+@onready var _layout: Node2D = $MapLayout
 
 var _nav_rebuild_pending := false
 var _nav_rebuild_timer: SceneTreeTimer = null
@@ -40,7 +41,10 @@ func rebuild_navigation() -> void:
 	var nav_poly := NavigationPolygon.new()
 	nav_poly.agent_radius = PARSE_AGENT_RADIUS
 	NavigationServer2D.parse_source_geometry_data(nav_poly, source_geometry, self)
-	source_geometry.add_traversable_outline(_closed_rect(BOUNDS_RECT))
+	var bounds: Rect2 = FALLBACK_BOUNDS_RECT
+	if _layout != null and _layout.has_method("get_nav_rect"):
+		bounds = _layout.get_nav_rect()
+	source_geometry.add_traversable_outline(_closed_rect(bounds))
 	NavigationServer2D.bake_from_source_geometry_data(nav_poly, source_geometry)
 	_nav_region.navigation_polygon = nav_poly
 

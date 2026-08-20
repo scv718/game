@@ -1,0 +1,38 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+LUMBERYARD_BUILT capacity=2 filled=0
+  noautostart frame=60 state=0 dist=0.0
+  noautostart frame=120 state=0 dist=0.0
+PASS: worker does not auto-start after Lumberyard built (still frames=149)
+PASS: worker stays IDLE after Lumberyard built (state=0)
+PASS: worker has no workplace before assign
+PASS: prompt shows Workers: 0/2 - Assign Worker (got 'Workers: 0/2 - Assign Worker')
+PASS: interact node prompt syncs (got 'Workers: 0/2 - Assign Worker')
+PASS: interaction assigns worker ({ "action": "assign", "success": true })
+PASS: filled becomes 1 after assign (got 1)
+PASS: lumberyard has worker
+PASS: worker workplace is the lumberyard
+PASS: worker is_assigned true
+PASS: prompt shows Workers: 1/2 - Assign Worker (got 'Workers: 1/2 - Assign Worker')
+PASS: interact node prompt updates to 1/2 (got 'Workers: 1/2 - Assign Worker')
+PASS: HUD interact label refreshes on workers_changed (got 'E - Workers: 1/2 - Assign Worker')
+PASS: second workplace rejects already-assigned worker
+PASS: interaction on second workplace does not assign ({ "action": "assign", "success": false })
+PASS: second workplace stays empty
+PASS: worker still assigned to first workplace
+  workloop wood_before=0 wood_now=5 state=1 carried=0
+PASS: unassign succeeds while empty-handed
+PASS: filled back to 0 after unassign (got 0)
+PASS: worker immediately IDLE after empty unassign (state=0)
+PASS: worker workplace released after empty unassign
+PASS: worker not gathering after unassign
+PASS: reassign after unassign succeeds
+PASS: unassign succeeds while carrying wood
+PASS: slot freed on carrying unassign
+PASS: worker in RETURN for final deposit (state=4)
+PASS: workplace retained until final deposit
+PASS: final deposit adds exactly carried 3 wood (+3)
+PASS: carried cleared after final deposit
+PASS: worker IDLE after final deposit (state=0)
+PASS: workplace released after final deposit
+TASK0062_RESULT=PASS

@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/quarry.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/tiny_swords/Tiny Swords (Free Pack)/Buildings/Blue Buildings/House2.png" id="2_house"]
+[ext_resource type="Script" path="res://scripts/quarry_interactable.gd" id="3_interact"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_building"]
+size = Vector2(32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
+radius = 48.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_house"]
+atlas = ExtResource("2_house")
+region = Rect2(8, 16, 112, 157)
+
+[node name="Quarry" type="StaticBody2D"]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_building")
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(-12, -46.5)
+scale = Vector2(0.5, 0.5)
+centered = false
+texture = SubResource("AtlasTexture_house")
+
+[node name="MiningPoint" type="Marker2D" parent="."]
+position = Vector2(0, 40)
+
+[node name="WorkPoint" type="Marker2D" parent="."]
+position = Vector2(-24, 72)
+
+[node name="WorkPoint2" type="Marker2D" parent="."]
+position = Vector2(24, 72)
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(32, 48)
+
+[node name="Interact" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("3_interact")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interact"]
+position = Vector2(16, 16)
+shape = SubResource("CircleShape2D_interact")

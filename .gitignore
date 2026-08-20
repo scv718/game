@@ -2,6 +2,9 @@
 .godot/
 *.translation
 
+# Tiny Swords (로컬 전용, 재배포 금지 라이선스 - 커밋 금지)
+assets/tiny_swords/
+
 # OS
 Thumbs.db
 .DS_Store

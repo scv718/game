@@ -1,0 +1,59 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: WorkerRoster autoload exists
+PASS: roster starts empty (count=0)
+PASS: no unassigned initially
+PASS: no assigned initially
+PASS: worker id set
+PASS: worker display name set
+PASS: worker job set to LUMBERJACK
+PASS: worker job name resolves
+PASS: miner job name resolves
+PASS: add lumberjack worker
+PASS: add miner worker
+PASS: duplicate id rejected
+PASS: null worker rejected
+PASS: roster holds 2 workers
+PASS: get_worker by id
+PASS: unknown id returns null
+PASS: both workers unassigned
+PASS: no assigned yet
+PASS: lumberjack not assigned
+PASS: no workplace reference while unassigned
+PASS: assign lumberjack to Lumberyard1
+PASS: lumberjack is assigned after assign
+PASS: workplace reference set
+PASS: workplace id resolves
+PASS: assigned count is 1
+PASS: one remains unassigned
+PASS: worker listed for Lumberyard1
+PASS: same worker cannot assign to a second workplace
+PASS: assignment unchanged after rejected second assign
+PASS: same worker cannot re-assign to same workplace
+PASS: still only 1 assigned
+PASS: worker not in roster cannot be assigned
+PASS: unassign lumberjack
+PASS: lumberjack unassigned after unassign
+PASS: workplace cleared on unassign
+PASS: unassign again returns false
+PASS: assigned count back to 0
+PASS: re-assign to Lumberyard1
+PASS: assign miner to Quarry1
+PASS: two assigned before cleanup
+PASS: freed workplace no longer returned by get_workplace
+PASS: freed workplace makes worker is_assigned false
+PASS: cleanup handles both freed workplaces
+PASS: no assigned after cleanup
+PASS: lumberjack workplace cleared
+PASS: miner workplace cleared
+PASS: workplace id empty after cleanup
+PASS: workers retained in roster after cleanup
+PASS: remove lumberjack from roster
+PASS: roster count drops to 1 after removal
+PASS: removed id no longer found
+PASS: removing again returns false
+PASS: main.tscn loads with WorkerRoster autoload present
+PASS: world floor intact (128x128)
+PASS: no lumberjack actor at start (0)
+PASS: no miner actor at start (0)
+TASK0112_RESULT=PASS

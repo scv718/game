@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/tavern_recruitment_ui.gd" id="1_script"]
+
+[node name="TavernRecruitmentUI" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="Panel"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 384.0
+offset_bottom = 40.0
+text = "주점 - 고용"
+
+[node name="CandidateList" type="VBoxContainer" parent="Panel"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 48.0
+offset_right = 384.0
+offset_bottom = 252.0
+
+[node name="CloseButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 260.0
+offset_right = 384.0
+offset_bottom = 292.0
+text = "닫기"

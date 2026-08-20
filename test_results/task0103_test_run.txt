@@ -1,0 +1,27 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: GameTime autoload exists
+PASS: Player exists
+PASS: Player Camera2D exists
+PASS: player starts in DAY (direct control enabled)
+PASS: camera zoom starts at day_zoom (1.00)
+PASS: camera zoom uniform
+PASS: DAY: player can move right (direct control)
+PASS: advanced into NIGHT
+PASS: NIGHT: direct movement input disabled (flag set)
+PASS: NIGHT: player does not move (input disabled)
+PASS: NIGHT: camera converges to night_zoom (0.50)
+PASS: NIGHT -> DAY transition
+PASS: day number increments to 2
+PASS: DAY: direct control restored
+PASS: DAY again: player can move (control restored)
+PASS: DAY again: camera returns to day_zoom (1.00)
+PASS: repeated cycle: NIGHT mode toggles on again
+PASS: repeated cycle: camera converges to night_zoom (no accumulation) (0.50)
+PASS: repeated cycle: DAY mode toggles back
+PASS: player exists
+PASS: HUD exists
+PASS: world floor intact (128x128)
+PASS: lumberjack system intact
+PASS: miner system intact
+TASK0103_RESULT=PASS

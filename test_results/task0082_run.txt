@@ -1,0 +1,373 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads with World node
+PASS: MapLayout node exists
+PASS: MapLayout uses world_map.gd
+PASS: Floor is a TileMapLayer
+PASS: floor covers 128x128 tiles (16384)
+PASS: grass tiles present (15712)
+PASS: path (road) tiles present (672)
+PASS: grass dominates the map, roads are sparse (grass=15712 path=672)
+PASS: tile set has grass + path sources (count=2)
+PASS: grass source is a single 16x16 tile texture
+PASS: path source is a single 16x16 tile texture
+PASS: settlement center tile is grass (not road)
+PASS: east access axis reads as road
+PASS: west access axis reads as road
+PASS: north access axis reads as road
+PASS: south access axis reads as road
+PASS: off-axis corner tile is grass (no road)
+PASS: tile inside clearing is grass (no road)
+PASS: at least 3 meaningful forest clusters defined (4)
+PASS: forest cluster 0 has >= 3 trees (12)
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 0 tree inside map bounds
+PASS: forest cluster 0 tree not inside settlement clearing
+PASS: forest cluster 0 tree not on access axis/road
+PASS: forest cluster 1 has >= 3 trees (12)
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 1 tree inside map bounds
+PASS: forest cluster 1 tree not inside settlement clearing
+PASS: forest cluster 1 tree not on access axis/road
+PASS: forest cluster 2 has >= 3 trees (12)
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 2 tree inside map bounds
+PASS: forest cluster 2 tree not inside settlement clearing
+PASS: forest cluster 2 tree not on access axis/road
+PASS: forest cluster 3 has >= 3 trees (12)
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: forest cluster 3 tree inside map bounds
+PASS: forest cluster 3 tree not inside settlement clearing
+PASS: forest cluster 3 tree not on access axis/road
+PASS: world contains many trees from clusters (51)
+PASS: world contains explicit ForestTree nodes (48)
+PASS: no trees block the settlement clearing (0 found)
+PASS: no trees block the access axes/roads (0 found)
+PASS: clearing 384x384 for Lumberyard/Quarry placement ((384.0, 384.0))
+PASS: wall buffer ring 576x576 for future wall space ((576.0, 576.0))
+PASS: space outside clearing reserved for future wall
+PASS: decoration objects present (12)
+PASS: decoration Deco0 uses decoration.gd
+PASS: decoration Deco0 is pure visual (no collision/area)
+PASS: decoration Deco0 has a visual texture
+PASS: decoration Deco1 uses decoration.gd
+PASS: decoration Deco1 is pure visual (no collision/area)
+PASS: decoration Deco1 has a visual texture
+PASS: decoration Deco2 uses decoration.gd
+PASS: decoration Deco2 is pure visual (no collision/area)
+PASS: decoration Deco2 has a visual texture
+PASS: decoration Deco3 uses decoration.gd
+PASS: decoration Deco3 is pure visual (no collision/area)
+PASS: decoration Deco3 has a visual texture
+PASS: decoration Deco4 uses decoration.gd
+PASS: decoration Deco4 is pure visual (no collision/area)
+PASS: decoration Deco4 has a visual texture
+PASS: decoration Deco5 uses decoration.gd
+PASS: decoration Deco5 is pure visual (no collision/area)
+PASS: decoration Deco5 has a visual texture
+PASS: decoration Deco6 uses decoration.gd
+PASS: decoration Deco6 is pure visual (no collision/area)
+PASS: decoration Deco6 has a visual texture
+PASS: decoration Deco7 uses decoration.gd
+PASS: decoration Deco7 is pure visual (no collision/area)
+PASS: decoration Deco7 has a visual texture
+PASS: decoration Deco8 uses decoration.gd
+PASS: decoration Deco8 is pure visual (no collision/area)
+PASS: decoration Deco8 has a visual texture
+PASS: decoration Deco9 uses decoration.gd
+PASS: decoration Deco9 is pure visual (no collision/area)
+PASS: decoration Deco9 has a visual texture
+PASS: decoration Deco10 uses decoration.gd
+PASS: decoration Deco10 is pure visual (no collision/area)
+PASS: decoration Deco10 has a visual texture
+PASS: decoration Deco11 uses decoration.gd
+PASS: decoration Deco11 is pure visual (no collision/area)
+PASS: decoration Deco11 has a visual texture
+PASS: trees carry collision for build/nav blocking (51)
+PASS: tree Tree1 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree Tree1 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree Tree2 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree Tree2 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree Tree3 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree Tree3 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree4 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree4 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree5 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree5 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree6 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree6 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree7 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree7 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree8 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree8 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree9 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree9 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree10 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree10 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree11 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree11 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree12 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree12 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree13 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree13 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree14 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree14 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree15 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree15 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree16 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree16 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree17 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree17 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree18 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree18 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree19 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree19 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree20 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree20 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree21 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree21 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree22 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree22 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree23 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree23 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree24 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree24 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree25 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree25 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree26 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree26 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree27 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree27 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree28 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree28 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree29 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree29 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree30 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree30 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree31 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree31 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree32 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree32 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree33 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree33 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree34 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree34 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree35 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree35 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree36 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree36 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree37 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree37 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree38 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree38 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree39 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree39 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree40 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree40 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree41 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree41 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree42 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree42 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree43 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree43 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree44 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree44 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree45 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree45 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree46 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree46 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree47 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree47 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree48 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree48 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree49 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree49 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree50 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree50 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: tree ForestTree51 canopy is a proper sprite-sheet crop (region (119.0, 190.0) in atlas (1536.0, 256.0))
+PASS: tree ForestTree51 stump is a proper sprite-sheet crop (region (48.0, 40.0) in atlas (192.0, 256.0))
+PASS: no tree sprite sheet wrongly exposed (0 atlas issues)
+PASS: no decoration sprite sheet wrongly exposed (0 atlas issues)
+PASS: trees present (51)
+PASS: lumberjack present
+PASS: miner present
+PASS: stone deposit present
+PASS: decorations present (12)
+PASS: bounds size 2048x2048 ((2048.0, 2048.0))
+PASS: bounds centered at origin ((-1024.0, -1024.0))
+PASS: settlement center inside clearing
+PASS: point outside clearing rejected
+PASS: GateAnchor_NORTH marker exists
+PASS: gate anchor north defined
+PASS: gate anchor north inside bounds
+PASS: Axis_NORTH marker exists
+PASS: GateAnchor_SOUTH marker exists
+PASS: gate anchor south defined
+PASS: gate anchor south inside bounds
+PASS: Axis_SOUTH marker exists
+PASS: GateAnchor_EAST marker exists
+PASS: gate anchor east defined
+PASS: gate anchor east inside bounds
+PASS: Axis_EAST marker exists
+PASS: GateAnchor_WEST marker exists
+PASS: gate anchor west defined
+PASS: gate anchor west inside bounds
+PASS: Axis_WEST marker exists
+PASS: at least 2 spawn candidate markers (4)
+PASS: spawn candidate SpawnCandidate_NE is non-functional marker
+PASS: spawn candidate SpawnCandidate_NW is non-functional marker
+PASS: spawn candidate SpawnCandidate_SE is non-functional marker
+PASS: spawn candidate SpawnCandidate_SW is non-functional marker
+PASS: 4 gate anchor markers (4)
+PASS: gate anchor GateAnchor_NORTH is non-functional marker
+PASS: gate anchor GateAnchor_SOUTH is non-functional marker
+PASS: gate anchor GateAnchor_EAST is non-functional marker
+PASS: gate anchor GateAnchor_WEST is non-functional marker
+PASS: BoundaryWall_North exists as StaticBody2D
+PASS: BoundaryWall_North on collision layer 4
+PASS: BoundaryWall_North has collision mask 0
+PASS: BoundaryWall_North has collision shape child
+PASS: BoundaryWall_South exists as StaticBody2D
+PASS: BoundaryWall_South on collision layer 4
+PASS: BoundaryWall_South has collision mask 0
+PASS: BoundaryWall_South has collision shape child
+PASS: BoundaryWall_East exists as StaticBody2D
+PASS: BoundaryWall_East on collision layer 4
+PASS: BoundaryWall_East has collision mask 0
+PASS: BoundaryWall_East has collision shape child
+PASS: BoundaryWall_West exists as StaticBody2D
+PASS: BoundaryWall_West on collision layer 4
+PASS: BoundaryWall_West has collision mask 0
+PASS: BoundaryWall_West has collision shape child
+PASS: player walks from center toward east outskirts (x=150.0)
+PASS: player stays inside map bounds
+PASS: navigation rebuild on new terrain works
+TASK0082_RESULT=PASS

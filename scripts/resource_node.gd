@@ -6,10 +6,35 @@ class_name ResourceNode
 @export var current_amount: int = 5
 @export var gather_amount: int = 1
 
+## TASK-011-6: 두 Worker가 같은 Tree를 동시에 선택하지 않도록 하는 가벼운 claim.
+## worker가 이 노드를 대상으로 정하면 claim하고, 떠나면 release한다.
+## 다른 worker가 이미 claim한 노드는 우선 피한다. 대규모 Reservation Manager 없음.
+var _claimed_by: Node = null
+
 
 func _ready() -> void:
 	add_to_group("interactable")
 	prompt = "채집"
+
+
+func is_claimed() -> bool:
+	return is_instance_valid(_claimed_by)
+
+
+func is_claimed_by_other(worker: Node) -> bool:
+	return is_instance_valid(_claimed_by) and _claimed_by != worker
+
+
+func claim(worker: Node) -> bool:
+	if is_instance_valid(_claimed_by) and _claimed_by != worker:
+		return false
+	_claimed_by = worker
+	return true
+
+
+func release(worker: Node) -> void:
+	if _claimed_by == worker or not is_instance_valid(_claimed_by):
+		_claimed_by = null
 
 
 func can_interact() -> bool:

@@ -1,15 +1,22 @@
 extends Node2D
 
 const LUMBERYARD_SCENE := preload("res://scenes/lumberyard.tscn")
-const BUILD_COST := {"wood": 10}
+const QUARRY_SCENE := preload("res://scenes/quarry.tscn")
+const BUILD_COSTS := {
+	"lumberyard": {"wood": 10},
+	"quarry": {"wood": 10},
+}
 const GRID_SIZE := 16
 const BUILDING_SIZE := 32
 const PLACE_MASK := 0b111
+const DEPOSIT_SNAP_RADIUS := 48.0
 
 signal mode_changed(active: bool)
 signal feedback(text: String)
+signal building_type_changed(building_type: String)
 
 var _active := false
+var _building_type := "lumberyard"
 var _ghost: Node2D = null
 var _ghost_rect: Polygon2D = null
 var _ghost_radius_fill: Polygon2D = null
@@ -26,6 +33,13 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_1:
+			_set_building_type("lumberyard")
+			return
+		if event.keycode == KEY_2:
+			_set_building_type("quarry")
+			return
 	if event.is_action_pressed("build"):
 		_set_active(not _active)
 	elif event.is_action_pressed("ui_cancel"):
@@ -33,13 +47,31 @@ func _unhandled_input(event: InputEvent) -> void:
 			_set_active(false)
 	elif event is InputEventMouseButton and event.pressed \
 			and event.button_index == MOUSE_BUTTON_LEFT and _active:
-		_try_place_at(_snap(get_global_mouse_position()))
+		if _building_type == "quarry":
+			_try_place_quarry_at(get_global_mouse_position())
+		else:
+			_try_place_at(_snap(get_global_mouse_position()))
 
 
 func _process(_delta: float) -> void:
 	if not _active:
 		return
-	_show_ghost_at(_snap(get_global_mouse_position()))
+	var mouse := get_global_mouse_position()
+	var target := _snap(mouse)
+	if _building_type == "quarry":
+		var deposit := _find_deposit_at(mouse)
+		if deposit != null:
+			target = deposit.global_position
+	_show_ghost_at(target)
+
+
+func _set_building_type(building_type: String) -> void:
+	if _building_type == building_type:
+		return
+	_building_type = building_type
+	if _active:
+		_show_ghost_at(_snap(get_global_mouse_position()))
+	building_type_changed.emit(_building_type)
 
 
 func _set_active(value: bool) -> void:
@@ -101,6 +133,9 @@ func _snap(pos: Vector2) -> Vector2:
 
 
 func _is_valid_position(pos: Vector2) -> bool:
+	if _building_type == "quarry":
+		var deposit := _find_deposit_at(pos)
+		return deposit != null and not deposit.is_occupied()
 	var space := get_world_2d().direct_space_state
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = _query_shape
@@ -110,11 +145,27 @@ func _is_valid_position(pos: Vector2) -> bool:
 	return hits.is_empty()
 
 
+func _find_deposit_at(pos: Vector2) -> Node:
+	var best: Node = null
+	var best_dist := INF
+	for node in get_tree().get_nodes_in_group("stone_deposits"):
+		var deposit := node as Node2D
+		if deposit == null or not is_instance_valid(deposit):
+			continue
+		var d := deposit.global_position.distance_squared_to(pos)
+		if d < best_dist:
+			best = deposit
+			best_dist = d
+	if best != null and best_dist <= DEPOSIT_SNAP_RADIUS * DEPOSIT_SNAP_RADIUS:
+		return best
+	return null
+
+
 func _try_place_at(pos: Vector2) -> void:
 	if not _is_valid_position(pos):
 		feedback.emit("Invalid position")
 		return
-	var cost: int = int(BUILD_COST.get("wood", 0))
+	var cost: int = int(BUILD_COSTS["lumberyard"].get("wood", 0))
 	if not VillageResources.has("wood", cost):
 		feedback.emit("Not enough Wood")
 		return
@@ -128,4 +179,35 @@ func _try_place_at(pos: Vector2) -> void:
 	else:
 		get_parent().add_child(lumberyard)
 	feedback.emit("Lumberyard built")
+	_set_active(false)
+
+
+func _try_place_quarry_at(pos: Vector2) -> void:
+	var deposit := _find_deposit_at(pos)
+	if deposit == null:
+		feedback.emit("No Stone Deposit nearby")
+		return
+	if deposit.is_occupied():
+		feedback.emit("Deposit already has a Quarry")
+		return
+	var cost: int = int(BUILD_COSTS["quarry"].get("wood", 0))
+	if not VillageResources.has("wood", cost):
+		feedback.emit("Not enough Wood")
+		return
+	VillageResources.spend("wood", cost)
+	var quarry: Node2D = QUARRY_SCENE.instantiate() as Node2D
+	quarry.position = deposit.global_position
+	var world = get_tree().get_first_node_in_group("world")
+	if world != null:
+		world.add_child(quarry)
+		world.rebuild_navigation()
+	else:
+		get_parent().add_child(quarry)
+	if not deposit.occupy(quarry):
+		VillageResources.add("wood", cost)
+		quarry.queue_free()
+		feedback.emit("Deposit already has a Quarry")
+		return
+	quarry.bind_deposit(deposit)
+	feedback.emit("Quarry built")
 	_set_active(false)

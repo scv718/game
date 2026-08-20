@@ -1,0 +1,23 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: world has StoneDeposit for placement tests
+PASS: placement defaults to lumberyard
+PASS: building type switches to quarry
+PASS: HUD build label shows Quarry hint (Quarry (needs Stone Deposit) - Wood 10
+1/2: Select Building / Left Click: Build / ESC: Cancel)
+PASS: no quarry built without enough wood
+PASS: wood unchanged when cost not affordable
+PASS: quarry denied outside deposit area
+PASS: wood not deducted outside deposit
+PASS: quarry built on valid deposit
+PASS: wood deducted exactly once (-10)
+PASS: deposit occupied after quarry built
+PASS: quarry linked to deposit
+PASS: quarry placed at deposit position
+PASS: quarry is a Building
+PASS: second quarry on same deposit denied
+PASS: no extra wood cost on denied second quarry
+PASS: first quarry still exists after denied second
+PASS: lumberyard placement still works after quarry mode
+PASS: lumberyard cost deducted once
+TASK0072_RESULT=PASS

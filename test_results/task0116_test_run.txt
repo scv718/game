@@ -1,0 +1,44 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: WorkerRoster autoload exists
+PASS: recruitment UI exists
+PASS: roster has 4 after hires (4)
+PASS: no lumberjack actor right after hire
+PASS: no miner actor right after hire
+PASS: lumberyard capacity 2 (got 2)
+PASS: quarry capacity 2 (got 2)
+PASS: lumberyard prompt 0/2 (got 'Workers: 0/2 - Assign Worker')
+PASS: quarry prompt 0/2 (got 'Workers: 0/2 - Assign Miner')
+PASS: assign lumberjack A
+PASS: assign lumberjack B
+PASS: two lumberjack actors spawned (2)
+PASS: lumberyard filled 2/2
+PASS: roster tracks 2 actors
+PASS: lumberyard prompt 2/2 (got 'Workers: 2/2 - Unassign Worker')
+PASS: both lumberjacks working, wood produced (+5)
+PASS: two lumberjacks remain while working
+PASS: two lumberjacks observed on distinct trees (claim)
+PASS: add 3rd lumberjack to roster
+PASS: 3rd lumberjack assignment rejected (full)
+PASS: 3rd lumberjack remains unassigned
+PASS: lumberyard still 2/2 after reject
+PASS: unassign on unassigned 3rd lumberjack rejected
+PASS: assign miner A
+PASS: assign miner B
+PASS: two miner actors spawned (2)
+PASS: quarry filled 2/2
+PASS: quarry prompt 2/2 (got 'Workers: 2/2 - Unassign Miner')
+PASS: two miners produced stone (+2)
+PASS: two miners remain while producing
+PASS: two miners use distinct work points
+PASS: add 3rd miner to roster
+PASS: 3rd miner assignment rejected (full)
+PASS: 3rd miner remains unassigned
+PASS: quarry still 2/2 after reject
+PASS: 5 core buildings intact
+PASS: recruitment UI intact
+PASS: inn roster UI intact
+PASS: world floor intact (128x128)
+PASS: resources never went negative (min wood=0 stone=0)
+TASK0116_RESULT=PASS

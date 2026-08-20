@@ -1,0 +1,43 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: miner exists in world
+PASS: exactly 1 miner in world (got 1)
+PASS: miner starts unassigned
+PASS: miner starts IDLE (state=0)
+PASS: miner not gathering at start
+PASS: quarry built on deposit
+PASS: deposit occupied by quarry
+PASS: quarry starts with 0 workers
+PASS: quarry has WorkPoint marker
+PASS: miner stays IDLE while unassigned (state=0)
+PASS: miner unassigned before assign
+PASS: no stone produced by unassigned miner (stone=0)
+PASS: quarry interaction assigns miner ({ "action": "assign", "success": true })
+PASS: quarry filled becomes 1 after assign
+PASS: quarry has worker
+PASS: miner workplace is exactly the quarry
+PASS: miner is_assigned true
+PASS: miner enters MOVE_TO_WORK after assign (state=1)
+PASS: no stone produced right after assign
+PASS: no stone produced while moving to WorkPoint (peak=0, before=0)
+PASS: miner gathering (MINE) after arriving at WorkPoint
+PASS: production interval ~60 physics frames (got 60)
+PASS: production interval ~60 physics frames (got 60)
+PASS: production interval ~60 physics frames (got 60)
+PASS: miner stays MINE while producing (state=2)
+PASS: stone increased exactly 3 times at WorkPoint (stone=3)
+PASS: unassign succeeds
+PASS: quarry filled back to 0 after unassign
+PASS: miner workplace released after unassign
+PASS: miner IDLE after unassign (state=0)
+PASS: miner not gathering after unassign
+PASS: no stale-timer stone after unassign (stone=3)
+PASS: miner stays IDLE after unassign
+PASS: reassign succeeds
+PASS: quarry filled 1 after reassign
+PASS: miner workplace is the quarry after reassign
+PASS: miner enters MOVE_TO_WORK after reassign (state=1)
+PASS: no stone produced while moving to WorkPoint on reassign (peak=3, before=3)
+PASS: miner produces again after reassign (stone=4)
+PASS: miner gathering again after reassign
+TASK0074_RESULT=PASS

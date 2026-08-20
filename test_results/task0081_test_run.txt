@@ -1,0 +1,83 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: MapLayout node exists
+PASS: MapLayout uses world_map.gd
+PASS: floor covers 128x128 tiles (16384)
+PASS: bounds size 2048x2048 ((2048.0, 2048.0))
+PASS: bounds centered at origin ((-1024.0, -1024.0))
+PASS: settlement center inside clearing
+PASS: clearing is 384x384 ((384.0, 384.0))
+PASS: is_in_clearing true at center
+PASS: is_in_clearing false outside clearing
+PASS: wall buffer 576x576 ((576.0, 576.0))
+PASS: wall buffer ring holds space outside clearing
+PASS: settlement center is not wall buffer
+PASS: GateAnchor_NORTH marker exists
+PASS: gate anchor north defined
+PASS: gate anchor north inside bounds
+PASS: Axis_NORTH marker exists
+PASS: GateAnchor_SOUTH marker exists
+PASS: gate anchor south defined
+PASS: gate anchor south inside bounds
+PASS: Axis_SOUTH marker exists
+PASS: GateAnchor_EAST marker exists
+PASS: gate anchor east defined
+PASS: gate anchor east inside bounds
+PASS: Axis_EAST marker exists
+PASS: GateAnchor_WEST marker exists
+PASS: gate anchor west defined
+PASS: gate anchor west inside bounds
+PASS: Axis_WEST marker exists
+PASS: south access axis corridor identifiable
+PASS: east access axis corridor identifiable
+PASS: corner area is off-axis
+PASS: settlement center not on axis
+PASS: at least 2 spawn candidate markers (4)
+PASS: spawn candidate is non-functional marker (SpawnCandidate_NE)
+PASS: spawn candidate is non-functional marker (SpawnCandidate_NW)
+PASS: spawn candidate is non-functional marker (SpawnCandidate_SE)
+PASS: spawn candidate is non-functional marker (SpawnCandidate_SW)
+PASS: 4 gate anchor markers (4)
+PASS: gate anchor is non-functional marker (GateAnchor_NORTH)
+PASS: gate anchor is non-functional marker (GateAnchor_SOUTH)
+PASS: gate anchor is non-functional marker (GateAnchor_EAST)
+PASS: gate anchor is non-functional marker (GateAnchor_WEST)
+PASS: BoundaryWall_North exists
+PASS: BoundaryWall_North is StaticBody2D
+PASS: BoundaryWall_North on collision layer 4
+PASS: BoundaryWall_North has collision shape
+PASS: BoundaryWall_South exists
+PASS: BoundaryWall_South is StaticBody2D
+PASS: BoundaryWall_South on collision layer 4
+PASS: BoundaryWall_South has collision shape
+PASS: BoundaryWall_East exists
+PASS: BoundaryWall_East is StaticBody2D
+PASS: BoundaryWall_East on collision layer 4
+PASS: BoundaryWall_East has collision shape
+PASS: BoundaryWall_West exists
+PASS: BoundaryWall_West is StaticBody2D
+PASS: BoundaryWall_West on collision layer 4
+PASS: BoundaryWall_West has collision shape
+PASS: player actually moves north (y=-983.997436523438)
+PASS: player blocked inside north boundary (y=-983.997436523438)
+PASS: player remains inside map bounds (north)
+PASS: player actually moves south (y=983.999877929688)
+PASS: player blocked inside south boundary (y=983.999877929688)
+PASS: player remains inside map bounds (south)
+PASS: player can actually walk from center toward outskirts (x=200.0 pf=163)
+PASS: player stays inside bounds while walking
+PASS: player can reach north gate anchor (outskirts)
+PASS: player can reach south gate anchor (outskirts)
+PASS: player can reach east gate anchor (outskirts)
+PASS: player can reach west gate anchor (outskirts)
+PASS: player can reach spawn candidate SpawnCandidate_NE
+PASS: player can reach spawn candidate SpawnCandidate_NW
+PASS: player can reach spawn candidate SpawnCandidate_SE
+PASS: player can reach spawn candidate SpawnCandidate_SW
+PASS: trees present (51)
+PASS: lumberjack present
+PASS: miner present
+PASS: stone deposit present
+PASS: navigation rebuild state works
+PASS: navigation rebuild on new map works
+TASK0081_RESULT=PASS

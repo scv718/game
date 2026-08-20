@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://ui/tavern_recruitment_ui.tscn" id="2_recruit"]
+[ext_resource type="PackedScene" path="res://ui/inn_roster_ui.tscn" id="3_inn"]
 
 [node name="HUD" type="Control"]
 anchors_preset = 15
@@ -17,6 +19,22 @@ offset_top = 8.0
 offset_right = 200.0
 offset_bottom = 36.0
 text = "Wood: 0"
+
+[node name="StoneLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 36.0
+offset_right = 200.0
+offset_bottom = 64.0
+text = "Stone: 0"
+
+[node name="DayTimeLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 64.0
+offset_right = 200.0
+offset_bottom = 92.0
+text = "DAY 1  0%"
 
 [node name="InteractLabel" type="Label" parent="."]
 unique_name_in_owner = true
@@ -50,8 +68,12 @@ grow_horizontal = 2
 grow_vertical = 0
 horizontal_alignment = 1
 text = "Lumberyard - Wood 10
-Left Click: Build / ESC: Cancel"
+1/2: Select Building / Left Click: Build / ESC: Cancel"
 visible = false
+
+[node name="TavernRecruitmentUI" parent="." instance=ExtResource("2_recruit")]
+
+[node name="InnRosterUI" parent="." instance=ExtResource("3_inn")]
 
 [node name="FeedbackLabel" type="Label" parent="."]
 unique_name_in_owner = true

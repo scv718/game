@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 VillageResources="*res://scripts/village_resources.gd"
+GameTime="*res://scripts/game_time.gd"
+WorkerRoster="*res://scripts/worker_roster.gd"
 
 [display]
 

@@ -1,0 +1,48 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: worker starts IDLE (state=0)
+PASS: worker has no workplace at start
+PASS: no auto-start after Lumberyard built (still frames=150)
+PASS: worker stays IDLE after build (state=0)
+PASS: no workplace before assign
+PASS: lumberyard starts Workers: 0/1
+PASS: interaction assigns worker ({ "action": "assign", "success": true })
+PASS: filled becomes 1 after assign (got 1)
+PASS: lumberyard has worker
+PASS: worker workplace is the assigned lumberyard
+PASS: duplicate assign rejected
+PASS: second workplace rejects already-assigned worker
+PASS: production loop produced wood (+3)
+PASS: all in-radius trees become STUMP (count=3)
+PASS: depleted tree enters STUMP state
+PASS: depleted tree enters STUMP state
+PASS: depleted tree enters STUMP state
+PASS: all trees regrew to MATURE (mature=51 total=51)
+PASS: at least 3 trees were stumped before regrow (count=3)
+PASS: previously stumped tree regrew to MATURE (Tree1)
+PASS: previously stumped tree regrew to MATURE (Tree2)
+PASS: previously stumped tree regrew to MATURE (Tree3)
+PASS: worker resumes work after tree regrowth (+3)
+PASS: unassign succeeds while empty-handed
+PASS: filled back to 0 after unassign (got 0)
+PASS: worker immediately IDLE after empty unassign (state=0)
+PASS: workplace released after empty unassign
+PASS: reassign after unassign succeeds
+PASS: unassign succeeds while carrying wood
+PASS: slot freed on carrying unassign
+PASS: worker in RETURN for final deposit (state=4)
+PASS: workplace retained until final deposit
+PASS: final deposit adds exactly carried 3 wood (+3)
+PASS: carried cleared after final deposit
+PASS: worker IDLE after final deposit (state=0)
+PASS: workplace released after final deposit
+PASS: assign to second workplace succeeds
+PASS: worker workplace is the second lumberyard
+PASS: worker engaged in work at second workplace
+PASS: lumberyard destroyed
+PASS: workplace released after destruction (no freed reference)
+PASS: worker IDLE after workplace destroyed (state=0)
+PASS: reassign after workplace destroyed succeeds
+PASS: workplace is the new lumberyard
+PASS: worker produces again after destroy+reassign (+2)
+TASK0064_RESULT=PASS

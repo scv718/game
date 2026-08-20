@@ -1,7 +1,7 @@
 extends Node
 
 
-var _amounts: Dictionary = {"wood": 0}
+var _amounts: Dictionary = {"wood": 0, "stone": 0}
 
 signal changed(resource_id: String, amount: int)
 

@@ -1,0 +1,33 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: WorkerRoster autoload exists
+PASS: tavern exists
+PASS: tavern core_type is tavern
+PASS: tavern interactable exists
+PASS: tavern interactable has interact
+PASS: recruitment UI exists in group
+PASS: recruitment UI hidden initially
+PASS: 4 candidates defined (4)
+PASS: lumberjack_A candidate
+PASS: lumberjack_B candidate
+PASS: miner_A candidate
+PASS: miner_B candidate
+PASS: roster starts empty (0)
+PASS: tavern interact opens recruitment UI
+PASS: roster grew to 1 after hire (1)
+PASS: Lumberjack A in roster
+PASS: Lumberjack A display name
+PASS: Lumberjack A job is LUMBERJACK
+PASS: hired worker unassigned
+PASS: duplicate hire rejected (roster stays 1)
+PASS: roster grew to 2 after miner hire (2)
+PASS: Miner A in roster
+PASS: Miner A job is MINER
+PASS: no worker actor spawned on hire (0 -> 0)
+PASS: UI closes
+PASS: 5 core buildings intact
+PASS: world floor intact (128x128)
+PASS: no lumberjack actor at start (0)
+PASS: no miner actor at start (0)
+TASK0113_RESULT=PASS

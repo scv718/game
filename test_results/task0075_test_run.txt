@@ -1,0 +1,67 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: world node present
+PASS: miner exists in world
+PASS: lumberjack exists in world
+PASS: exactly 1 miner
+PASS: at least 1 lumberjack
+PASS: trees present (51)
+PASS: exactly 1 StoneDeposit
+PASS: HUD has StoneLabel
+PASS: HUD stone label starts Stone: 0 (Stone: 0)
+PASS: stone defaults to 0
+PASS: HUD stone label refreshes on change (Stone: 3)
+PASS: deposit exists
+PASS: deposit starts unoccupied
+PASS: placement defaults to lumberyard
+PASS: building type switches to quarry
+PASS: no quarry built without enough wood
+PASS: wood unchanged when not affordable
+PASS: quarry denied outside deposit area
+PASS: wood not deducted outside deposit
+PASS: quarry built on valid deposit
+PASS: wood deducted exactly once (-10)
+PASS: deposit occupied after quarry built
+PASS: quarry linked to deposit
+PASS: quarry slot capacity is 2
+PASS: quarry starts 0/2
+PASS: duplicate quarry on same deposit denied
+PASS: no extra cost on denied duplicate
+PASS: quarry has WorkPoint marker
+PASS: quarry has MiningPoint marker
+PASS: quarry has layer 8 Interact
+PASS: miner stays IDLE while unassigned (state=0)
+PASS: miner unassigned before assign
+PASS: quarry still 0/1 after build only
+PASS: no stone produced by unassigned miner (stone=0)
+PASS: quarry assigns miner ({ "action": "assign", "success": true })
+PASS: quarry filled becomes 1
+PASS: miner workplace is the quarry
+PASS: miner enters MOVE_TO_WORK (state=1)
+PASS: no stone produced right after assign
+PASS: miner produced stone at WorkPoint (+3)
+PASS: miner in MINE state while producing (state=2)
+PASS: miner is_gathering in MINE
+PASS: unassign succeeds
+PASS: quarry filled back to 0
+PASS: miner workplace released
+PASS: miner IDLE after unassign (state=0)
+PASS: reassign succeeds
+PASS: quarry filled 1 after reassign
+PASS: miner workplace is the quarry after reassign
+PASS: miner enters MOVE_TO_WORK after reassign (state=1)
+PASS: lumberyard assigns lumberjack ({ "action": "assign", "success": true })
+PASS: lumberjack workplace is the lumberyard
+PASS: lumberyard does not pick miner as available
+PASS: lumberjack produced wood (+15)
+PASS: in-radius trees become STUMP (count=3)
+PASS: depleted tree enters STUMP state
+PASS: depleted tree enters STUMP state
+PASS: depleted tree enters STUMP state
+PASS: trees regrew to MATURE (mature=51)
+PASS: lumberjack resumes work after regrowth (+15)
+PASS: world exposes rebuild_navigation
+PASS: navigation rebuild keeps WorkPoint intact
+PASS: navigation rebuild count available (0)
+TASK0075_RESULT=PASS

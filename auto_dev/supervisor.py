@@ -20,6 +20,8 @@ if sys.stderr:
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 STATES = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "DONE", "NEEDS_DESIGN")
+SENTINEL_IDS = ("OVERNIGHT-STOP",)
+TASK_ID_RE = re.compile(r"^(TASK(?:-[A-Z0-9]+){1,3}|OVERNIGHT-STOP(?:-\d+)?)$")
 STATUS_RE = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
 FEEDBACK_RE = re.compile(r"^-\s*피드백\s*[:：]\s*(.*?)\s*$")
 HEADING_RE = re.compile(r"^(#{2,3})\s+(.+?)\s*$")
@@ -95,6 +97,9 @@ def parse_queue():
         m = HEADING_RE.match(line)
         if m:
             level = len(m.group(1))
+            tid = m.group(2).strip().split()[0] if m.group(2).strip() else ""
+            if not TASK_ID_RE.match(tid):
+                continue
             if level == 3:
                 parent = stack[-1][1] if stack else None
                 current = {
@@ -197,16 +202,23 @@ def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
     env["PYTHONIOENCODING"] = "utf-8"
     env["OPENCODE_DISABLE_AUTOUPDATE"] = "1"
     log(f"opencode 실행: model={model} args={extra_args or []}")
+    proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, encoding="utf-8", errors="replace", env=env,
+                            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
     try:
-        proc = subprocess.run(args, capture_output=True, text=True, encoding="utf-8",
-                              errors="replace", timeout=timeout_sec, env=env)
+        stdout, stderr = proc.communicate(timeout=timeout_sec)
     except subprocess.TimeoutExpired:
-        log(f"TIMEOUT: {timeout_sec}초 초과")
+        log(f"TIMEOUT: {timeout_sec}초 초과 - 프로세스 트리 강제 종료 (pid={proc.pid})")
+        os.system(f'taskkill /PID {proc.pid} /T /F >nul 2>&1')
+        try:
+            stdout, stderr = proc.communicate(timeout=30)
+        except subprocess.TimeoutExpired:
+            stdout, stderr = "", ""
         return None, "", f"실행 시간 초과 ({timeout_sec}초)"
     if proc.returncode != 0:
-        log(f"opencode 실패 (exit={proc.returncode}): {proc.stderr[-2000:]}")
-        return None, "", proc.stderr[-2000:] or "알 수 없는 오류"
-    return parse_run_output(proc.stdout)
+        log(f"opencode 실패 (exit={proc.returncode}): {stderr[-2000:]}")
+        return None, "", stderr[-2000:] or "알 수 없는 오류"
+    return parse_run_output(stdout)
 
 
 def parse_run_output(raw):
@@ -236,7 +248,16 @@ def parse_run_output(raw):
 def extract_verdict(text):
     matches = list(VERDICT_RE.finditer(text))
     if not matches:
-        return None, ""
+        kw = re.finditer(r"(?<![A-Za-z0-9_-])(LGTM|FIX|NEEDS_DESIGN)(?![A-Za-z0-9_-])", text or "", re.IGNORECASE)
+        kw = list(kw)
+        if not kw:
+            return None, ""
+        last = kw[-1]
+        verdict = last.group(1).upper()
+        reason = text[max(0, last.start() - 300):].strip()
+        if len(reason) > 400:
+            reason = reason[-400:]
+        return verdict, reason
     verdict = matches[-1].group(1).upper()
     reasons = list(REASON_RE.finditer(text))
     reason = reasons[-1].group(1).strip() if reasons else ""
@@ -292,8 +313,14 @@ def run_reviewer(task, summary):
 
 def pick_next_task(tasks):
     for t in tasks:
-        if t["leaf"] and t["status"] == "QUEUED":
+        if t["leaf"] and t["status"] in ("QUEUED", "IMPLEMENT", "REVIEW", "FIX"):
+            if t["id"] in SENTINEL_IDS:
+                continue
             return t
+    sentinel = next((t for t in tasks if t["leaf"] and t["status"] == "QUEUED"
+                     and t["id"] in SENTINEL_IDS), None)
+    if sentinel is not None:
+        return sentinel
     return None
 
 
@@ -335,6 +362,11 @@ def main():
     else:
         if not acquire_lock():
             return
+        blocked = [t for t in tasks if t["status"] == "NEEDS_DESIGN"]
+        if blocked:
+            log(f"NEEDS_DESIGN 태스크 존재 ({blocked[0]['id']}) - 자동화 완전 정지, 사람 개입 대기")
+            release_lock()
+            return
         task = pick_next_task(tasks)
         if task is None:
             log("실행할 QUEUED 태스크 없음 - 종료")
@@ -344,17 +376,30 @@ def main():
     log(f"=== 사이클 시작: {task['id']} ({task['title']}) ===")
 
     try:
-        update_queue(tasks, queue_path, task["id"], "IMPLEMENT")
-        log(f"[{task['id']}] IMPLEMENT 시작")
-
-        session_id, summary, err = run_implementer(task)
-        if err:
-            log(f"[{task['id']}] 구현 실패: {err}")
-            update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
-                         feedback=f"구현 실행 오류: {err[:300]}")
+        if task["id"] in SENTINEL_IDS:
+            log(f"[{task['id']}] 종료 경계 도달 - 오늘 자동화 종료")
+            update_queue(tasks, queue_path, task["id"], "DONE", feedback="오늘 계획 태스크 모두 처리됨. 자동화 종료.")
             return
-        log(f"[{task['id']}] 구현 완료 (session={session_id})")
-        log(f"[{task['id']}] 구현 요약: {summary[:300]}")
+        session_id = None
+        summary = ""
+        if task["status"] == "REVIEW":
+            log(f"[{task['id']}] REVIEW 상태에서 재개 (구현 완료분 그대로 리뷰)")
+        else:
+            update_queue(tasks, queue_path, task["id"], "IMPLEMENT")
+            log(f"[{task['id']}] IMPLEMENT 시작")
+            session_id, summary, err = run_implementer(task)
+            if err:
+                if err.startswith("실행 시간 초과"):
+                    log(f"[{task['id']}] 구현 시간 초과 - 상태 유지, 다음 사이클에서 재시도")
+                    update_queue(tasks, queue_path, task["id"], "IMPLEMENT",
+                                 feedback=f"이전 시도 시간 초과: {err}")
+                else:
+                    log(f"[{task['id']}] 구현 실패: {err}")
+                    update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                 feedback=f"구현 실행 오류: {err[:300]}")
+                return
+            log(f"[{task['id']}] 구현 완료 (session={session_id})")
+            log(f"[{task['id']}] 구현 요약: {summary[:300]}")
 
         verdict = None
         reason = ""
@@ -364,7 +409,10 @@ def main():
 
             verdict, reason = run_reviewer(task, summary)
             if not verdict:
-                log(f"[{task['id']}] 판정 파싱 실패 (리뷰어 출력에 '판정:' 없음) - 수동 개입 필요")
+                log(f"[{task['id']}] 판정 파싱 실패 (리뷰어 출력에 판정 없음) - 1회 재시도")
+                verdict, reason = run_reviewer(task, summary)
+            if not verdict:
+                log(f"[{task['id']}] 판정 파싱 실패 재시도 후에도 실패 - 수동 개입 필요")
                 update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                              feedback="리뷰어가 판정 형식을 지키지 않음 - 직접 확인 필요")
                 return
@@ -385,9 +433,14 @@ def main():
                 log(f"[{task['id']}] FIX -> 재구현 (같은 세션 {session_id})")
                 session_id, summary, err = run_implementer(task, session_id=session_id, review_feedback=reason)
                 if err:
-                    log(f"[{task['id']}] 재구현 실패: {err}")
-                    update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
-                                 feedback=f"재구현 실행 오류: {err[:300]}")
+                    if err.startswith("실행 시간 초과"):
+                        log(f"[{task['id']}] 재구현 시간 초과 - FIX 상태 유지, 다음 사이클에서 재시도")
+                        update_queue(tasks, queue_path, task["id"], "FIX",
+                                     feedback=f"재구현 시간 초과: {err}\n리뷰 피드백: {reason[:300]}")
+                    else:
+                        log(f"[{task['id']}] 재구현 실패: {err}")
+                        update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                     feedback=f"재구현 실행 오류: {err[:300]}")
                     return
                 log(f"[{task['id']}] 재구현 완료: {summary[:200]}")
             else:

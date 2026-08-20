@@ -1,0 +1,57 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: WorkerRoster autoload exists
+PASS: recruitment UI exists
+PASS: roster empty at start (0)
+PASS: no lumberjack actor at start (0)
+PASS: no miner actor at start (0)
+PASS: roster actor count 0 at start
+PASS: roster has 4 after hires (4)
+PASS: no actor right after hire (unassigned)
+PASS: no miner actor right after hire (unassigned)
+PASS: lumberyard has SpawnPoint
+PASS: quarry has SpawnPoint
+PASS: assign lumberjack A to lumberyard
+PASS: lumberjack actor spawned on assign (1)
+PASS: roster returns spawned lumberjack actor
+PASS: spawned actor is a despawn-capable worker
+PASS: spawned actor workplace is lumberyard
+PASS: spawned actor connected to WorkerData
+PASS: actor spawned at facility SpawnPoint
+PASS: lumberyard filled slots 1 after spawn
+PASS: lumberyard tracks spawned worker
+PASS: lumberjack produces wood (+5)
+PASS: worker data still assigned while working
+PASS: unassign lumberjack A
+PASS: worker data unassigned after unassign
+PASS: worker data workplace cleared
+PASS: worker data retained in roster after unassign
+PASS: lumberjack actor despawned after return
+PASS: roster no longer returns actor after despawn
+PASS: reassign lumberjack A after despawn
+PASS: lumberjack actor respawned on reassign
+PASS: assign miner A to quarry
+PASS: miner actor spawned on assign (1)
+PASS: spawned actor is a despawn-capable worker
+PASS: spawned miner workplace is quarry
+PASS: spawned miner connected to WorkerData
+PASS: spawned miner has nav agent (worker actor)
+PASS: quarry has SpawnPoint
+PASS: quarry filled slots 1 after spawn
+PASS: miner produces stone (1)
+PASS: unassign miner A
+PASS: miner data unassigned after unassign
+PASS: miner data retained in roster
+PASS: miner actor despawned after return
+PASS: roster no longer returns miner actor after despawn
+PASS: lumberjack A assigned before building deletion
+PASS: lumberjack actor exists before building deletion
+PASS: worker unassigned after building deletion cleanup
+PASS: 5 core buildings intact
+PASS: recruitment UI intact
+PASS: inn roster UI intact
+PASS: world floor intact (128x128)
+PASS: unassigned worker B retained
+PASS: worker B unassigned
+TASK0115_RESULT=PASS

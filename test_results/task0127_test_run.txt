@@ -1,0 +1,88 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: world node present
+PASS: MapLayout node exists
+PASS: MapLayout uses world_map.gd
+PASS: floor covers 128x128 tiles (16384)
+PASS: bounds size 2048x2048 ((2048.0, 2048.0))
+PASS: bounds centered at origin ((-1024.0, -1024.0))
+PASS: point beyond east bound rejected
+PASS: point beyond north bound rejected
+PASS: 5 core buildings present (5)
+PASS: Keep inside central Core Village clearing
+PASS: Tavern inside central Core Village clearing
+PASS: Inn inside central Core Village clearing
+PASS: Grocery inside central Core Village clearing
+PASS: EquipmentShop inside central Core Village clearing
+PASS: core type keep present
+PASS: core type tavern present
+PASS: core type inn present
+PASS: core type grocery present
+PASS: core type equipment present
+PASS: Player Start near (0,+60) ((0.0, 60.0))
+PASS: player walks from center toward east outskirts (x=98.0)
+PASS: player stays inside map bounds while moving
+PASS: lumberyard denied without enough wood
+PASS: lumberyard built on valid clearing position
+PASS: lumberyard slot capacity is 2
+PASS: quarry denied outside deposit area
+PASS: wood not deducted outside deposit
+PASS: quarry built on valid deposit
+PASS: deposit occupied after quarry built
+PASS: quarry slot capacity is 2
+PASS: duplicate quarry on same deposit denied
+PASS: lumberyard assigns lumberjack 1
+PASS: lumberyard assigns lumberjack 2
+PASS: lumberyard filled 2/2
+PASS: quarry assigns miner 1
+PASS: quarry assigns miner 2
+PASS: quarry filled 2/2
+PASS: duplicate miner assignment rejected
+PASS: duplicate lumberjack assignment rejected
+PASS: 2 lumberjacks produced wood (+5)
+PASS: 2 lumberjacks claim trees -> STUMP (count=2)
+PASS: 2 miners produced stone at WorkPoint (+4)
+PASS: trees regrew to MATURE (mature=60)
+PASS: lumberjacks resume work after regrowth (+5)
+PASS: world exposes rebuild_navigation
+PASS: runtime navigation rebuild works with buildings/trees present
+PASS: navigation rebuild count available (0)
+PASS: debounced navigation rebuild does not error
+PASS: repeated navigation rebuild is stable
+PASS: nav path exists across central map (obstacle-avoidance regression)
+PASS: nav path from Player Start reaches north Outer Wild candidate ((-140.0, -900.0))
+PASS: nav path from Player Start reaches south Outer Wild candidate ((120.0, 900.0))
+PASS: nav path from Player Start reaches east Outer Wild candidate ((900.0, -120.0))
+PASS: nav path from Player Start reaches west Outer Wild candidate ((-900.0, 160.0))
+PASS: game starts in DAY
+PASS: day number starts at 1
+PASS: DAY -> NIGHT transition
+PASS: NIGHT: player direct movement disabled (flag)
+PASS: NIGHT: player does not move (input disabled)
+PASS: player camera exists
+PASS: NIGHT: camera zoomed out from day (0.54 < 0.7)
+PASS: production runs during NIGHT without stop policy
+PASS: lumberjack workplace stable across transition
+PASS: miner workplace stable across transition
+NIGHT_READ: viewport=1152x648 night_zoom=0.50 -> visible world ~2304x1296
+NIGHT_READ: central Village edge=220px, Gate Corridor ~360-540px, Combat Field outer ~700px
+PASS: night view spans Village + Corridor + Combat Field with a short vertical pan (700 > half-height 648, difference 52px)
+PASS: South Agriculture marker present
+PASS: NE Dungeon Candidate marker present
+=== TASK-012-7 ?대룞嫄곕━ 湲곕줉 (Player speed=120px/s) ===
+TRAVEL PlayerStart->NW_StarterForest -> (-430.0, -330.0): nav=612px, player_speed=120px/s, ETA=5.1s
+PASS: travel PlayerStart->NW_StarterForest measured positive distance
+TRAVEL PlayerStart->StoneDeposit -> (500.0, 260.0): nav=520px, player_speed=120px/s, ETA=4.3s
+PASS: travel PlayerStart->StoneDeposit measured positive distance
+TRAVEL PlayerStart->NE_DungeonCandidate -> (720.0, -700.0): nav=1187px, player_speed=120px/s, ETA=9.9s
+PASS: travel PlayerStart->NE_DungeonCandidate measured positive distance
+TRAVEL PlayerStart->NORTH_Candidate -> (-140.0, -900.0): nav=970px, player_speed=120px/s, ETA=8.1s
+PASS: travel PlayerStart->NORTH_Candidate measured positive distance
+TRAVEL PlayerStart->SOUTH_Candidate -> (120.0, 900.0): nav=849px, player_speed=120px/s, ETA=7.1s
+PASS: travel PlayerStart->SOUTH_Candidate measured positive distance
+TRAVEL PlayerStart->EAST_Candidate -> (900.0, -120.0): nav=918px, player_speed=120px/s, ETA=7.6s
+PASS: travel PlayerStart->EAST_Candidate measured positive distance
+TRAVEL PlayerStart->WEST_Candidate -> (-900.0, 160.0): nav=906px, player_speed=120px/s, ETA=7.5s
+PASS: travel PlayerStart->WEST_Candidate measured positive distance
+TASK0127_RESULT=PASS

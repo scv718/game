@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/decoration.gd" id="1_decoration"]
+[ext_resource type="Texture2D" path="res://assets/tiny_swords/generated/deco_rock1.png" id="2_rock"]
+
+[node name="Decoration" type="Node2D"]
+script = ExtResource("1_decoration")
+
+[node name="Visual" type="Sprite2D" parent="."]
+texture = ExtResource("2_rock")
+offset = Vector2(-16, -13)

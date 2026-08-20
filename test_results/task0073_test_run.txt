@@ -1,0 +1,52 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: miner exists in world
+PASS: exactly 1 miner in world (got 1)
+PASS: miner starts unassigned
+PASS: miner starts IDLE (state=0)
+PASS: miner not gathering at start
+PASS: quarry built on deposit
+PASS: deposit occupied by quarry
+PASS: quarry slot capacity is 2
+PASS: quarry starts with 0 workers
+PASS: quarry prompt Workers: 0/2 - Assign Miner (got 'Workers: 0/2 - Assign Miner')
+PASS: quarry interact prompt syncs (got 'Workers: 0/2 - Assign Miner')
+PASS: quarry interact area on layer 8
+PASS: miner does not auto-start after Quarry built (still frames=150)
+PASS: miner stays IDLE after Quarry built (state=0)
+PASS: miner has no workplace before assign
+PASS: quarry still 0/1 after build only
+PASS: no stone produced by unassigned miner
+PASS: quarry interaction assigns miner ({ "action": "assign", "success": true })
+PASS: quarry filled becomes 1 after assign (got 1)
+PASS: quarry has worker
+PASS: miner workplace is exactly the quarry
+PASS: miner workplace is a Quarry
+PASS: miner is_assigned true
+PASS: miner enters MOVE_TO_WORK after assign (TASK-007-4, state=1)
+PASS: no stone produced right after assign (production requires arriving at WorkPoint)
+PASS: quarry prompt Workers: 1/2 - Assign Miner (got 'Workers: 1/2 - Assign Miner')
+PASS: quarry interact prompt updates to 1/2 (got 'Workers: 1/2 - Assign Miner')
+PASS: duplicate assign rejected
+PASS: second quarry rejects already-assigned miner
+PASS: second quarry stays empty
+PASS: quarry finds no other assignable miner while slot full
+PASS: quarry has MiningPoint marker
+PASS: quarry has WorkPoint marker
+PASS: MiningPoint is a Marker2D
+PASS: unassign succeeds
+PASS: quarry filled back to 0 after unassign (got 0)
+PASS: quarry prompt back to Assign Miner (got 'Workers: 0/2 - Assign Miner')
+PASS: miner workplace released after unassign
+PASS: miner IDLE after unassign (state=0)
+PASS: miner not gathering after unassign
+PASS: reassign after unassign succeeds
+PASS: quarry filled 1 after reassign (got 1)
+PASS: miner workplace is the quarry again after reassign
+PASS: quarry does not pick assigned miner as available
+PASS: lumberyard placement still works after quarry mode (count=1)
+PASS: lumberyard picks the lumberjack, not the miner
+PASS: lumberyard assign works (regression)
+PASS: lumberjack workplace is the lumberyard (regression)
+PASS: miner unaffected by lumberyard flow
+TASK0073_RESULT=PASS

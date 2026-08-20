@@ -1,0 +1,28 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: GameTime autoload exists
+PASS: HUD exists in main
+PASS: DayTimeLabel exists in HUD
+PASS: WoodLabel exists in HUD
+PASS: StoneLabel exists in HUD
+PASS: initial label shows DAY 1 (text=DAY 1  0%)
+PASS: still DAY after partial advance
+PASS: label syncs progress percent (text=DAY 1  50%)
+PASS: advanced into NIGHT
+PASS: day number stays 1 during NIGHT
+PASS: label reflects NIGHT on phase change (text=NIGHT 1  0%)
+PASS: NIGHT -> DAY transition
+PASS: day number increments to 2
+PASS: label reflects new day number (text=DAY 2  0%)
+PASS: advanced into NIGHT on day 2
+PASS: day number stays 2 during NIGHT on day 2
+PASS: label syncs night progress percent (text=NIGHT 2  50%)
+PASS: Wood HUD label still works (text=Wood: 3)
+PASS: Stone HUD label still works (text=Stone: 5)
+PASS: DayTimeLabel unaffected by resource updates
+PASS: player exists
+PASS: HUD exists
+PASS: world floor intact (128x128)
+PASS: lumberjack system intact
+PASS: miner system intact
+TASK0102_RESULT=PASS

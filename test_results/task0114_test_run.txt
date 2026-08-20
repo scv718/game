@@ -1,0 +1,54 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: inn exists
+PASS: inn core_type is inn
+PASS: inn interactable exists
+PASS: inn interactable has interact
+PASS: inn roster UI exists in group
+PASS: inn roster UI hidden initially
+PASS: lumberyard registered in group
+PASS: quarry registered in group
+PASS: lumberyard exists
+PASS: quarry exists
+PASS: lumberyard has capacity (2)
+PASS: quarry has capacity (2)
+PASS: inn interact opens roster UI
+PASS: roster empty before hires (count=0)
+PASS: recruitment UI exists
+PASS: roster has 4 after hires (count=4)
+PASS: lumberjack only targets lumberyard
+PASS: miner only targets quarry
+PASS: lumberjack A unassigned initially
+PASS: assign lumberjack A to lumberyard
+PASS: lumberjack A assigned
+PASS: lumberjack A workplace is lumberyard
+PASS: lumberjack A workplace id resolves
+PASS: lumberyard filled count 1
+PASS: assigned worker has no assign target (duplicate reject)
+PASS: roster rejects re-assign of assigned worker
+PASS: miner A pick target is quarry
+PASS: lumberyard filled (1) within capacity (2)
+PASS: lumberyard has room for lumberjack B (capacity 2)
+PASS: assign lumberjack B to lumberyard
+PASS: lumberjack B assigned
+PASS: lumberyard filled count 2
+PASS: full lumberyard has 0 available slots
+PASS: full lumberyard has no available slot
+PASS: miner pick target quarry
+PASS: assign miner A to quarry
+PASS: miner A workplace is quarry
+PASS: quarry filled (1) within capacity (2)
+PASS: unassign lumberjack A
+PASS: lumberjack A unassigned after unassign
+PASS: lumberjack A workplace cleared
+PASS: workplace list reflects unassign (filled 2 -> 1)
+PASS: unassigned status text is Unassigned (got 'Unassigned')
+PASS: assigned status text is Quarry (got 'Quarry Quarry1')
+PASS: roster UI closes
+PASS: 5 core buildings intact
+PASS: recruitment UI intact
+PASS: lumberjack actor spawned on assign (2)
+PASS: miner actor spawned on assign (1)
+PASS: world floor intact (128x128)
+TASK0114_RESULT=PASS

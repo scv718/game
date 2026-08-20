@@ -1,0 +1,21 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: VillageResources autoload present
+PASS: stone defaults to 0
+PASS: stone increases via add (+5)
+PASS: stone has() reflects amount
+PASS: stone spend succeeds
+PASS: stone decreases via spend (-2)
+PASS: stone spend beyond amount rejected
+PASS: HUD stone label updated (Stone: 3)
+PASS: HUD stone label refreshes on change (Stone: 13)
+PASS: world has 1 StoneDeposit (got 1)
+PASS: deposit starts unoccupied
+PASS: deposit has no quarry initially
+PASS: occupy succeeds on unoccupied deposit
+PASS: deposit occupied after occupy
+PASS: deposit returns linked quarry
+PASS: second occupy rejected while occupied
+PASS: deposit unoccupied after release
+PASS: quarry cleared after release
+TASK0071_RESULT=PASS

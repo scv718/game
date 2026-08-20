@@ -2,21 +2,49 @@ extends CharacterBody2D
 
 @export var move_speed: float = 120.0
 
+## TASK-010-3 밤 tactical view 카메라 배율. DAY에서는 day_zoom으로 복귀한다.
+## 프로토타입 값이며 추후 실제 플레이에서 조정 가능하다(export).
+@export var day_zoom: float = 1.0
+@export var night_zoom: float = 0.5
+@export var zoom_transition_speed: float = 3.0
+
 var current_interactable: Interactable = null
 var _nearby: Array[Interactable] = []
+var _night_mode := false
+var _camera: Camera2D = null
 
 signal current_interactable_changed(interactable)
 
 
 func _ready() -> void:
 	add_to_group("player")
+	_camera = $Camera2D
+	GameTime.phase_changed.connect(_on_phase_changed)
+	_apply_phase(GameTime.get_phase())
 
 
 func _physics_process(delta: float) -> void:
-	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	velocity = input_dir * move_speed
+	if _night_mode:
+		velocity = Vector2.ZERO
+	else:
+		var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+		velocity = input_dir * move_speed
 	move_and_slide()
 	_update_current_interactable()
+
+
+func _process(delta: float) -> void:
+	if _camera != null:
+		var target := night_zoom if _night_mode else day_zoom
+		_camera.zoom = _camera.zoom.lerp(Vector2(target, target), clampf(zoom_transition_speed * delta, 0.0, 1.0))
+
+
+func _on_phase_changed(phase: int, _day_number: int) -> void:
+	_apply_phase(phase)
+
+
+func _apply_phase(phase: int) -> void:
+	_night_mode = (phase == GameTime.Phase.NIGHT)
 
 
 func _unhandled_input(event: InputEvent) -> void:

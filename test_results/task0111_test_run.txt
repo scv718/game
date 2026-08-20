@@ -1,0 +1,62 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: MapLayout node exists
+PASS: 5 core buildings present (5)
+PASS: Keep is StaticBody2D
+PASS: Keep is a Building
+PASS: Keep has get_core_type
+PASS: Keep has a core type
+PASS: Keep has level 1
+PASS: Keep has building visual texture
+PASS: Keep has interactable
+PASS: Keep inside settlement/wall buffer ((0.0, -55.0))
+PASS: Keep not blocking an access axis ((0.0, -55.0))
+PASS: Tavern is StaticBody2D
+PASS: Tavern is a Building
+PASS: Tavern has get_core_type
+PASS: Tavern has a core type
+PASS: Tavern has level 1
+PASS: Tavern has building visual texture
+PASS: Tavern has interactable
+PASS: Tavern inside settlement/wall buffer ((-115.0, 65.0))
+PASS: Tavern not blocking an access axis ((-115.0, 65.0))
+PASS: Inn is StaticBody2D
+PASS: Inn is a Building
+PASS: Inn has get_core_type
+PASS: Inn has a core type
+PASS: Inn has level 1
+PASS: Inn has building visual texture
+PASS: Inn has interactable
+PASS: Inn inside settlement/wall buffer ((115.0, 65.0))
+PASS: Inn not blocking an access axis ((115.0, 65.0))
+PASS: Grocery is StaticBody2D
+PASS: Grocery is a Building
+PASS: Grocery has get_core_type
+PASS: Grocery has a core type
+PASS: Grocery has level 1
+PASS: Grocery has building visual texture
+PASS: Grocery has interactable
+PASS: Grocery inside settlement/wall buffer ((-135.0, 135.0))
+PASS: Grocery not blocking an access axis ((-135.0, 135.0))
+PASS: EquipmentShop is StaticBody2D
+PASS: EquipmentShop is a Building
+PASS: EquipmentShop has get_core_type
+PASS: EquipmentShop has a core type
+PASS: EquipmentShop has level 1
+PASS: EquipmentShop has building visual texture
+PASS: EquipmentShop has interactable
+PASS: EquipmentShop inside settlement/wall buffer ((135.0, 135.0))
+PASS: EquipmentShop not blocking an access axis ((135.0, 135.0))
+PASS: core type keep present
+PASS: core type tavern present
+PASS: core type inn present
+PASS: core type grocery present
+PASS: core type equipment present
+PASS: floor covers 128x128 tiles
+PASS: lumberjack present
+PASS: miner present
+PASS: stone deposit present
+PASS: decorations present
+PASS: trees present (51)
+TASK0111_RESULT=PASS
