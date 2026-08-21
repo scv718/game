@@ -1,0 +1,92 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: mercenary roster starts empty
+PASS: recruitment UI present
+PASS: mercenary_A hired alive
+PASS: defense zone assigned NORTH
+PASS: roster holds 1 mercenary
+PASS: north gate placed
+PASS: gate starts CLOSED
+PASS: 2 flanking walls placed
+PASS: phase is NIGHT
+PASS: player night mode active (movement disabled)
+PASS: mercenary actor spawned at NIGHT
+PASS: actor retrievable by id
+PASS: actor at north rally (pos=(0.0, -280.0))
+PASS: actor starts IDLE
+PASS: NIGHT: player entity stationary during camera pan
+PASS: NIGHT: camera pans to North Combat Field (y=-1024)
+PASS: NIGHT: camera offset accumulates (y=-1084)
+PASS: auto-encounter spawned enemies at NIGHT (3)
+PASS: auto-encounter cleaned for isolated combat test
+PASS: combat enemy spawned near north zone
+PASS: auto combat: mercenary acquired target
+PASS: auto combat: chasing/attacking (state=2)
+PASS: auto combat killed enemy (AI-driven)
+PASS: dead enemy excluded from enemies group
+PASS: defense zone command -> EAST
+PASS: mercenary relocated to east rally ((272.3471, -8.910783))
+PASS: focus candidate enemy spawned
+PASS: focus mode active via UI
+PASS: actor received focus target
+PASS: focus target takes priority (target==focus)
+PASS: regroup command overrides focus (state=5)
+PASS: regroup clears current target
+PASS: regroup arrived at east rally (no teleport)
+PASS: after regroup, focus re-acquired
+PASS: re-engage test enemy cleaned
+PASS: retreat command active (state=6)
+PASS: retreat point = central safe rally
+PASS: retreat arrived at safe rally (no teleport)
+PASS: retreat holds even with nearby enemy
+PASS: retreat does not acquire nearby enemy
+PASS: retreat-hold enemy cleaned
+PASS: gate present for command test
+PASS: gate CLOSED before command
+PASS: GATE_OPEN command opened gate
+PASS: open gate: collision shape removed
+PASS: GATE_CLOSE command closed gate
+PASS: closed gate: collision shape restored
+PASS: time starts 1x
+PASS: Pause -> time scale 0
+PASS: Pause: elapsed frozen
+PASS: 2x -> time scale 2
+PASS: 2x: advance(0.4) -> 0.8 elapsed
+PASS: 1x restored
+PASS: MercenaryData.alive=false after death
+PASS: dead mercenary removed from world
+PASS: roster actor null for dead merc
+PASS: all commands safe no-op after death (no crash)
+PASS: no mercenary respawned after death
+PASS: time scale restored to 1x
+PASS: enemies cleaned before DAY
+PASS: phase is DAY
+PASS: player day mode restored
+PASS: no mercenary actor during DAY
+PASS: roster actor_count 0 during DAY
+PASS: spawner _enemies empty during DAY
+PASS: DAY: camera offset reset (follow restored)
+PASS: next NIGHT arrived
+PASS: dead merc NOT re-spawned next NIGHT
+PASS: roster actor_count 0 (dead not spawned)
+PASS: auto-encounter spawned again (3)
+PASS: spawner no stale references (3)
+PASS: roster data retained
+PASS: dead merc stays dead in roster
+PASS: spawner empty after despawn
+PASS: no stale enemies after despawn
+PASS: player has no attack method
+PASS: player excluded from combat groups
+PASS: player night mode active during NIGHT regression
+PASS: worker roster unaffected
+PASS: no lumberjack actor spawned
+PASS: no miner actor spawned
+PASS: 5 core buildings intact
+PASS: 2 walls intact
+PASS: gate still present in regression
+PASS: gate CLOSED (command roundtrip, no breach conflict)
+PASS: world floor intact (128x128)
+PASS: spawner holds no stale references at end
+PASS: roster _actors empty at end
+TASK0158_RESULT=PASS

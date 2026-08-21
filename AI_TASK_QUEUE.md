@@ -721,7 +721,18 @@ Review complete. All items verified.
   - 회귀 headless 전부 PASS: smoke, task0128, task0144, task0147, task0151~0156.
 
 ### TASK-015-8 Tactical Combat Vertical Slice 통합 검증
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: .
+- 회귀 테스트 결과 파일 전부 PASS 확인: smoke, task0128, task0136, task0141~0147, task0151~0157, tasknav001.
+- 임시 파일(`_diag*`, `_probe*`, `_t75*`) 없음.
+- AI_TASK_QUEUE.md `상태: REVIEW` → `DONE` 갱신 완료.
+
+판정: **LGTM**
+사유: 17단계 시나리오 전부 자동검증 PASS, 회귀 전부 PASS, 임시 파일 없음, 코드 스타일 일관, 테스트 의존 API 존재 확인. 버그/누락/엣지 케이스 없음. HUMAN_CHECK 항목(camera pan 속도, Command UI 위치, Regroup/Retreat 차이, "전투는 자동, 판단은 플레이어" 느낌)만 남은 상태로 코드 정상.
+- 피드백: 모든 요구사항 충족. TASK-013(Wall/Gate) + TASK-014(고용/Enemy/자동전투/death) + TASK-015(전술 명령 UI, Tactical camera, Defense Zone, Regroup/Retreat, Focus Target, Gate Command, Tactical Time)의 전체 수직 슬라이스를 하나의 연속 시나리오로 묶어 검증했다. 17단계 시나리오 전부 headless 자동검증 PASS(2회 연속 안정), 회귀 테스트 전부 PASS. 전투는 Mercenary AI가 수행하고 Player는 무공격/무이동, 명령이 실제 AI 행동에 영향, nav stall/freed reference/Gate breach-command 충돌 없음, Worker/DayNight/HUD 회귀 없음을 확인했다. 임시 파일 없음.
+- 구현기록:
+  - `tests/task0158_test.gd` 신규 작성 headless PASS(2회 연속): ①Mercenary 고용+NORTH 방어배치 ②Wall 양옆(±48,-448)+North Gate(0,-448) CLOSED 구성 ③NIGHT 전환 → Actor North Rally(0,-280) spawn + Player 이동 비활성 유지 + Tactical camera가 North Combat Field까지 pan ④FirstEncounterSpawner 자동 조우(3) 후 격리 ⑤구역 내 Enemy 자동 탐색/추격/공격으로 사살(AI 수행) ⑥Defense Zone EAST 명령 → MercenaryData/Actor 구역 실시간 변경 + East Rally(280,0) nav 이동(teleport 없음) ⑦Focus Target mode + 우선 target ⑧Regroup 명령 → target 클리어 + rally 복귀(이동 중 획득 억제, teleport 없음) ⑨도착 후 focus 재획득 재교전 ⑩Retreat 명령 → 중앙 safe rally 후퇴 + HOLD(근처 적 무시) ⑪Gate OPEN/CLOSE 명령 → collision shape 제거/재생성 왕복 ⑫Pause(경과 고정)/2x(0.4→0.8 elapsed) ⑬사망 후 모든 명령 safe no-op + 시간 1x 복원 ⑭DAY 복귀 cleanup + camera offset reset(follow 복구) ⑮다음 NIGHT dead 미재생성 + auto-encounter 재spawn(3)/reference 누수 없음 ⑯회귀(Player 무공격/무타겟, NIGHT 이동 비활성, Worker 무spawn, 핵심 건물 5/floor 128x128, Wall 2/Gate CLOSED 유지, spawner/roster stale reference 없음). 결과 `test_results/task0158_test_run.txt`(TASK0158_RESULT=PASS).
+  - 검증 중 기록: 전술 시간(12) 측정은 짧은 NIGHT duration(1.0)에서 `advance(1.0)`이 phase 전환을 유발해 elapsed 측정이 흐트러지는 것을 피하기 위해 phase 초반에 `_elapsed`를 0으로 초기화하고 소량 advance(0.4)만으로 2x 배율을 검증했다. 구역 자동전투(5)는 defense_point(North Rally)에서 CHASE_RETURN_DISTANCE(180) 이내에 Enemy를 spawn해야 target이 되므로 rally 기준 -70px에 배치했다.
 - 시나리오:
   1. Mercenary 고용/방어배치.
   2. Wall/Gate 구성.
