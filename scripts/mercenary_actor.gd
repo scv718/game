@@ -221,6 +221,35 @@ func get_defense_zone() -> int:
 	return merc_data.defense_zone if merc_data != null else MercenaryData.DefenseZone.NONE
 
 
+## TASK-015-3: 전술 명령으로 방어 구역/앵커(rally)를 실시간 변경한다.
+## 새 defense_point로 nav 이동한다(teleport 금지). 현재 target이 새 구역과 무관하거나
+## 너무 멀면 disengage(_target 클리어)하고 새 구역으로 복귀한다.
+## 아직 새 구역에 도착하지 않았으면 RETURN_TO_DEFENSE_ZONE, 도착했으면 재탐색한다.
+## 이를 통해 stale target/permanent chase 없이 새 구역 기준 target 탐색으로 전환한다.
+func set_defense_zone(zone: int, new_rally: Vector2) -> void:
+	if merc_data != null:
+		merc_data.set_defense_zone(zone)
+	defense_point = new_rally
+	if not alive or state == MercState.DEAD:
+		return
+	if _target_invalid() or _target_far_from_zone():
+		_target = null
+		if not _reached_defense_point():
+			_state_to(MercState.RETURN_TO_DEFENSE_ZONE)
+		else:
+			_state_to(MercState.ACQUIRE_TARGET)
+	else:
+		_state_to(MercState.ACQUIRE_TARGET)
+
+
+## TASK-015-3: 현재 target이 새 defense_point(구역)로부터 CHASE_RETURN_DISTANCE보다
+## 멀면 "새 구역과 무관/너무 멀다"로 판정한다.
+func _target_far_from_zone() -> bool:
+	if _target == null or not is_instance_valid(_target):
+		return true
+	return _target.global_position.distance_to(defense_point) > CHASE_RETURN_DISTANCE
+
+
 ## TASK-014-4: 테스트/디버그용 현재 FSM 상태 조회.
 func get_state() -> int:
 	return state

@@ -46,6 +46,7 @@ var _defense_buttons := {}
 func _ready() -> void:
 	add_to_group("tactical_command_ui")
 	GameTime.phase_changed.connect(_on_phase_changed)
+	command_issued.connect(MercenaryRoster._on_tactical_command)
 	_build_defense_buttons()
 	_regroup_button.pressed.connect(_emit_command.bind(Command.REGROUP, 0))
 	_retreat_button.pressed.connect(_emit_command.bind(Command.RETREAT, 0))

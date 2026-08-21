@@ -79,6 +79,38 @@ func _on_actor_died(_mercenary: Node, mercenary_id: String) -> void:
 	_actors.erase(mercenary_id)
 
 
+## TASK-015-3: 전술 명령(command_issued) 처리. 현재는 DEFENSE_ZONE만 다루고,
+## 나머지 명령(REGROUP/RETREAT/FOCUS_TARGET/GATE/TIME)은 후속 태스크에서 처리한다.
+func _on_tactical_command(command: int, arg: Variant) -> void:
+	if command != TacticalCommandUI.Command.DEFENSE_ZONE:
+		return
+	var zone: int = int(arg)
+	var world := get_tree().get_first_node_in_group("world")
+	for m in get_alive():
+		if m.defense_zone != zone:
+			set_defense_zone(m.id, zone, world)
+
+
+## TASK-015-3: 지정 용병의 방어 구역을 실시간 변경한다. spawn 중(Actor 존재)이면
+## 해당 Actor의 defense anchor/rally도 새 구역 기준으로 갱신하고, 현재 target이
+## 새 구역과 무관/너무 멀면 disengage 후 새 구역으로 nav 복귀시킨다(teleport 금지).
+func set_defense_zone(mercenary_id: String, zone: int, world: Node = null) -> bool:
+	var m := get_mercenary(mercenary_id)
+	if m == null or not m.alive:
+		return false
+	if m.defense_zone == zone:
+		return true
+	m.set_defense_zone(zone)
+	if world == null:
+		world = get_tree().get_first_node_in_group("world")
+	var actor: Node = get_actor(mercenary_id)
+	if actor != null and is_instance_valid(actor) and actor is MercenaryActor:
+		var rally := get_rally_point_for_zone(zone, world)
+		actor.set_defense_zone(zone, rally)
+	mercenaries_changed.emit()
+	return true
+
+
 ## TASK-014-2: DAY 복귀 시 spawn된 모든 Actor를 despawn한다. 살아 있는 용병은
 ## roster data로 복귀하고(roster는 이미 데이터를 보유), 죽은 용병 Actor도 월드에서
 ## 제거한다. 반복 호출은 멱등하다.

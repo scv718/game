@@ -599,16 +599,32 @@ Review complete. All items verified.
   - DAY reset 정상. (충족)
 
 ### TASK-015-3 Defense Zone Command
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: get becomes invalid mid-transit
+
+### Style Consistency
+- Matches existing GDScript conventions (naming, doc comments, error handling pattern).
+
+---
+
+판정: **LGTM**
+사유: 모든 요구사항 충족. DEFENSE_ZONE 명령이 MercenaryData와 spawn Actor의 구역/앵커를 실시간 변경하고, stale target disengage → nav 이동 → 새 구역 기준 재탐색 흐름이 정확히 구현됨. 33개 자동검증 PASS, 임시 파일 없음, 코드 스타일 일관. `AI_TASK_QUEUE.md` line 602의 `상태: REVIEW`를 `상태: DONE`으로 갱신하면 됩니다.
+- 피드백: 모든 요구사항 충족. NIGHT 중 전술 명령 UI의 방어구역 버튼(N/E/S/W)이 내는 DEFENSE_ZONE 명령이 MercenaryData와 spawn된 Actor의 방어 구역/앵커(rally)를 실시간 변경하고, 기존 target이 새 구역과 무관/너무 멀면 disengage 후 새 구역으로 nav 이동(teleport 금지)하며, 도착 후 새 구역 기준으로 target을 재탐색한다. stale target/permanent chase 없음. headless 자동검증 33항목 PASS + 회귀 전부 PASS.
+- 구현기록:
+  - `scripts/mercenary_roster.gd`: `_on_tactical_command(command, arg)` 추가 — `TacticalCommandUI.command_issued`를 수신해 DEFENSE_ZONE만 처리하고(나머지는 후속 태스크 예약) 살아 있는 용병의 구역을 `set_defense_zone()`으로 변경. `set_defense_zone(mercenary_id, zone, world)` 추가 — MercenaryData.defense_zone 갱신 + spawn 중 Actor면 새 구역 rally로 `actor.set_defense_zone()` 호출해 실시간 반영.
+  - `scripts/mercenary_actor.gd`: `set_defense_zone(zone, new_rally)` 추가 — defense_point(앵커)를 새 rally로 갱신하고, 현재 target이 invalid이거나 새 구역과 너무 멀면(`_target_far_from_zone`, CHASE_RETURN_DISTANCE 초과) disengage(_target 클리어) 후 RETURN_TO_DEFENSE_ZONE(nav 이동) → 도착 후 ACQUIRE_TARGET 재탐색. `_target_far_from_zone()` 헬퍼 추가. teleport 없음.
+  - `scripts/tactical_command_ui.gd`: `_ready()`에서 `command_issued`를 `MercenaryRoster._on_tactical_command`에 연결.
+  - `tests/task0153_test.gd` 신규 작성 headless PASS(33항목): 고용+NORTH 배정+NIGHT spawn(North Rally), North 구역 Enemy target 획득/추격, Tactical UI EAST 버튼 → DEFENSE_ZONE 명령 → MercenaryData/Actor 구역 EAST + defense_point East Rally(280,0) 갱신, 이전 target disengage(target 클리어)+RETURN_TO_DEFENSE_ZONE, 이동 중 teleport 없음(연속 이동), East Rally 도달 후 새 구역 기준 target 재탐색(구역 내 dist<=180), stale target/permanent chase 없음, 회귀(Player 무공격/무타겟, NIGHT 이동 비활성, 핵심 건물 5/floor). 결과 `test_results/task0153_test_run.txt`(TASK0153_RESULT=PASS).
+  - 기존 task0152/0151 등은 정상 PASS 확인. (TacticalCommandUI가 autoload인 mercenary_roster에서 parse-time 참조되므로 `godot --import`로 global class cache 갱신 필요 — `.godot` 캐시 대상이라 소스 변경 아님)
 - 행동:
   - NIGHT 중 N/E/S/W 변경.
   - Mercenary defense anchor/rally 변경.
   - 현재 target이 새 zone과 무관/너무 멀면 disengage 후 새 zone 복귀.
   - teleport 금지, nav 이동.
 - 완료조건:
-  - North→East 등 실시간 변경.
-  - 새 zone 기준 target 탐색.
-  - stale target/permanent chase 없음.
+  - North→East 등 실시간 변경. (충족)
+  - 새 zone 기준 target 탐색. (충족)
+  - stale target/permanent chase 없음. (충족)
 
 ### TASK-015-4 Regroup / Retreat
 - 상태: QUEUED
