@@ -1,0 +1,92 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core autoloads + ledger present
+PASS: ledger starts empty
+PASS: recruitment UI present
+PASS: mercenary_A hired alive
+PASS: north gate placed
+PASS: no records before any death
+PASS: phase is NIGHT
+PASS: mercenary actor spawned at NIGHT (1)
+PASS: mercenary actor retrievable by id
+PASS: actor references roster MercenaryData
+PASS: actor current_hp from max_hp (80)
+PASS: actor at north rally (pos=(0.0, -280.0))
+PASS: no records after NIGHT spawn (no death yet)
+PASS: auto-encounter cleaned (0)
+PASS: 2 test enemies spawned for enemy death
+PASS: each enemy has independent source_uid
+PASS: same display_name 'Raider'
+PASS: enemies killed by mercenary auto combat
+PASS: dead enemies excluded from enemies group (combat/target)
+PASS: exactly 2 ENEMY records after 2 kills (2)
+PASS: enemy test_enemy_0 recorded exactly once
+PASS: enemy test_enemy_1 recorded exactly once
+PASS: died signal + die() does not duplicate records (exactly 1 each)
+PASS: all enemy records source_kind=ENEMY
+PASS: all enemy records keep display_name 'Raider'
+PASS: distinct source_uid for same-name enemies
+PASS: enemy record death_day = current day (1)
+PASS: enemy record death_phase=NIGHT
+PASS: enemy record eligible_day = death_day + 1 (2)
+PASS: enemy record starts PENDING
+PASS: enemy record retains max_hp
+PASS: enemy record level=1
+PASS: enemy record death_day = current day (1)
+PASS: enemy record death_phase=NIGHT
+PASS: enemy record eligible_day = death_day + 1 (2)
+PASS: enemy record starts PENDING
+PASS: enemy record retains max_hp
+PASS: enemy record level=1
+PASS: mercenary target cleared after enemy death
+PASS: direct-kill enemy spawned
+PASS: direct-kill enemy alive=false immediately after damage
+PASS: exactly 3 ENEMY records after direct kill (3)
+PASS: direct-kill enemy recorded exactly once
+PASS: strong enemy E3 spawned for merc death
+PASS: MercenaryData.alive set to false on death
+PASS: dead mercenary removed from mercenaries group (0)
+PASS: roster actor lookup null for dead A
+PASS: roster _actors no longer holds dead A
+PASS: dead A data still retrievable from roster
+PASS: exactly 1 MERCENARY record after death (1)
+PASS: mercenary_A recorded exactly once
+PASS: mercenary record source_kind=MERCENARY
+PASS: mercenary record display_name retained
+PASS: mercenary record class_or_type=SWORDSMAN
+PASS: mercenary record level/max_hp/damage retained
+PASS: mercenary record death_phase=NIGHT
+PASS: mercenary record eligible_day = death_day + 1
+PASS: mercenary record starts PENDING
+PASS: mercenary record snapshot is pure data (no Node references)
+PASS: strong enemy cleaned after merc death test
+PASS: ledger holds 4 records at this point (4)
+PASS: spawner spawned 3 enemies for despawn test (3)
+PASS: spawner tracking empty after despawn
+PASS: despawned enemies removed from world (0)
+PASS: despawn created no new records (still 4)
+PASS: phase DAY after cleanup
+PASS: DAY cleanup created no new records (still 4)
+PASS: roster actor_count 0 during DAY
+PASS: next NIGHT arrived
+PASS: dead merc NOT re-spawned next NIGHT (0)
+PASS: records retained into next NIGHT (4)
+PASS: 1 MERCENARY + 3 ENEMY records retained
+PASS: final DAY arrived
+PASS: records retained after full cycle (still 4)
+PASS: has_record_for_source(mercenary_A) true
+PASS: has_record_for_source(test_enemy_0) true
+PASS: unknown source not recorded
+PASS: player intact
+PASS: player has no attack method
+PASS: player excluded from combat groups
+PASS: worker roster unaffected
+PASS: no lumberjack actor spawned
+PASS: no miner actor spawned
+PASS: 5 core buildings intact
+PASS: world floor intact
+PASS: north gate still present
+PASS: no ghost actor spawned
+PASS: spawner holds no stale enemy references at end
+PASS: roster _actors empty at end
+TASK0163_RESULT=PASS

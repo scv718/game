@@ -434,7 +434,8 @@
 
 ### TASK-016-3 Mercenary / Enemy Combat Death Integration
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 요구사항 충족, 코드 일관, 테스트 89건 PASS, 회귀 PASS. die() 단일 경로에서 record 생성, signal handler는 cleanup만 수행해 중복 없음. snapshot은 순수 데이터, autoload NodePath 접근 패턴 정상.
 
 - 설명: TASK-014에서 구현된 실제 Mercenary/Enemy lethal death 흐름을 DeathLedger에 연결한다.
 

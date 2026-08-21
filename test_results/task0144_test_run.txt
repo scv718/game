@@ -8,9 +8,9 @@ PASS: defense NORTH
 PASS: no mercenary actor during DAY (0)
 PASS: north gate placed
 PASS: player has no attack method
-PASS: MercState has 6 states (FSM)
-PASS: EnemyState has 3 states (ATTACK added)
-PASS: FSM states ACQUIRE_TARGET/RETURN exist
+PASS: MercState has 8 states (FSM)
+PASS: EnemyState has 4 states (ATTACK, GATE_ATTACK)
+PASS: FSM states ACQUIRE_TARGET/RETURN/REGROUP/RETREAT exist
 PASS: phase is NIGHT after advance
 PASS: mercenary actor spawned at NIGHT (1)
 PASS: actor retrievable by id
@@ -67,7 +67,6 @@ PASS: enemy probe near player spawned
 PASS: enemy near player stays MOVE (player not targeted)
 PASS: gate still present
 PASS: gate toggle still works
-PASS: nav path from rally to keep exists (3 pts)
+PASS: nav path from rally to keep exists (2 pts)
 PASS: EnemyState.ATTACK constant intact
 TASK0144_RESULT=PASS
-

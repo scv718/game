@@ -217,8 +217,12 @@ func take_damage(amount: int) -> void:
 		die()
 
 
-## 사망 처리. MercenaryData.alive=false 반영, 그룹 제외, died signal 후 월드에서 제거.
-## (다음 DAY/NIGHT 자동 부활 금지는 roster의 get_alive() 기반 spawn이 처리)
+## 사망 처리. MercenaryData.alive=false 반영, 그룹 제외, Death Ledger 기록, died signal
+## 후 월드에서 제거. (다음 DAY/NIGHT 자동 부활 금지는 roster의 get_alive() 기반 spawn이 처리)
+## TASK-016-3: 실제 lethal 사망 시 MERCENARY DeathRecord를 정확히 1회 기록한다.
+## record 생성은 die() 내부 단일 경로에서만 수행하므로(died signal 핸들러는 생성하지
+## 않음) 동일 실제 죽음 = record 1개가 보장된다. DAY cleanup/despawn은 die()를 거치지
+## 않으므로 record가 생성되지 않는다.
 func die() -> void:
 	if not alive or state == MercState.DEAD:
 		return
@@ -227,8 +231,51 @@ func die() -> void:
 	if merc_data != null:
 		merc_data.alive = false
 	remove_from_group("mercenaries")
+	_record_death()
 	died.emit(self)
 	queue_free()
+
+
+## TASK-016-3: 사망 시점의 MercenaryData 정체성/전투 stat snapshot으로 DeathRecord를
+## 생성한다. Actor/Node reference가 아닌 순수 snapshot만 DeathLedger에 저장하며,
+## source_uid는 display_name과 독립(용병 고유 id)이므로 이름이 같은 다른 용병도 서로
+## 다른 죽음으로 기록된다. temporary combat state(current target/FSM/buff)는 저장하지
+## 않는다. GameTime/DeathLedger autoload는 NodePath로 런타임 조회해 compile-time
+## autoload global 참조를 피한다(--script 테스트 초기 compile 시 미등록 문제 회피).
+func _record_death() -> void:
+	if merc_data == null:
+		return
+	var record := DeathRecord.new("")
+	record.source_uid = merc_data.id
+	record.source_kind = DeathRecord.SourceKind.MERCENARY
+	record.display_name = merc_data.display_name
+	record.class_or_type = merc_data.get_class_name()
+	record.level = merc_data.level
+	record.max_hp = merc_data.max_hp
+	record.attack_damage = merc_data.attack_damage
+	record.attack_interval = merc_data.attack_interval
+	record.move_speed = merc_data.move_speed
+	record.death_day = _current_death_day()
+	record.death_phase = _current_death_phase()
+	record.death_position = global_position
+	var ledger: Node = get_node_or_null("/root/DeathLedger")
+	if ledger != null:
+		ledger.record_death(record.to_snapshot())
+
+
+## TASK-016-3: 사망 시점 day. GameTime autoload를 NodePath로 런타임 조회한다.
+func _current_death_day() -> int:
+	var gt: Node = get_node_or_null("/root/GameTime")
+	return gt.get_day_number() if gt != null else 1
+
+
+## TASK-016-3: 사망 시점 phase. GameTime.Phase와 DeathRecord.DeathPhase는 DAY=0/NIGHT=1로
+## 값이 동일하므로 GameTime enum 참조 없이 DeathRecord enum 값으로 비교한다.
+func _current_death_phase() -> int:
+	var gt: Node = get_node_or_null("/root/GameTime")
+	if gt != null and gt.get_phase() == DeathRecord.DeathPhase.NIGHT:
+		return DeathRecord.DeathPhase.NIGHT
+	return DeathRecord.DeathPhase.DAY
 
 
 func _in_attack_range() -> bool:

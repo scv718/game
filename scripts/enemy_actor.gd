@@ -88,15 +88,60 @@ func take_damage(amount: int) -> void:
 		die()
 
 
-## TASK-014-3: 사망 처리. alive=false, 그룹 제외, died signal 후 월드에서 제거한다.
-## Death Ledger 기록/전투 청소는 TASK-014-6에서 다룬다.
+## TASK-014-3: 사망 처리. alive=false, 그룹 제외, Death Ledger 기록, died signal 후
+## 월드에서 제거한다. (DAY cleanup/despawn은 queue_free를 직접 사용해 die()를 거치지
+## 않으므로 record가 생성되지 않는다)
+## TASK-016-3: 실제 combat damage로 HP 0 이하가 된 lethal 사망에만 ENEMY DeathRecord를
+## 정확히 1회 기록한다. record 생성은 die() 내부 단일 경로에서만 수행하므로(died signal
+## 핸들러는 생성하지 않음) 동일 실제 죽음 = record 1개가 보장된다.
 func die() -> void:
 	if not alive:
 		return
 	alive = false
 	remove_from_group("enemies")
+	_record_death()
 	died.emit(self)
 	queue_free()
+
+
+## TASK-016-3: 사망 시점의 Enemy 정체성/전투 stat snapshot으로 DeathRecord를 생성한다.
+## Actor/Node reference가 아닌 순수 snapshot만 DeathLedger에 저장한다. 동일 Enemy type
+## (같은 display_name)이라도 각 Actor의 독립 source_uid(enemy_id)를 사용하므로 서로 다른
+## 죽음으로 기록된다. temporary combat state(target/FSM/gate target)는 저장하지 않는다.
+## GameTime/DeathLedger autoload는 NodePath로 런타임 조회해 compile-time autoload global
+## 참조를 피한다(--script 테스트 초기 compile 시 미등록 문제 회피).
+func _record_death() -> void:
+	var record := DeathRecord.new("")
+	record.source_uid = enemy_id
+	record.source_kind = DeathRecord.SourceKind.ENEMY
+	record.display_name = display_name
+	record.class_or_type = display_name
+	record.level = 1
+	record.max_hp = max_hp
+	record.attack_damage = attack_damage
+	record.attack_interval = attack_interval
+	record.move_speed = move_speed
+	record.death_day = _current_death_day()
+	record.death_phase = _current_death_phase()
+	record.death_position = global_position
+	var ledger: Node = get_node_or_null("/root/DeathLedger")
+	if ledger != null:
+		ledger.record_death(record.to_snapshot())
+
+
+## TASK-016-3: 사망 시점 day. GameTime autoload를 NodePath로 런타임 조회한다.
+func _current_death_day() -> int:
+	var gt: Node = get_node_or_null("/root/GameTime")
+	return gt.get_day_number() if gt != null else 1
+
+
+## TASK-016-3: 사망 시점 phase. GameTime.Phase와 DeathRecord.DeathPhase는 DAY=0/NIGHT=1로
+## 값이 동일하므로 GameTime enum 참조 없이 DeathRecord enum 값으로 비교한다.
+func _current_death_phase() -> int:
+	var gt: Node = get_node_or_null("/root/GameTime")
+	if gt != null and gt.get_phase() == DeathRecord.DeathPhase.NIGHT:
+		return DeathRecord.DeathPhase.NIGHT
+	return DeathRecord.DeathPhase.DAY
 
 
 func _physics_process(delta: float) -> void:
