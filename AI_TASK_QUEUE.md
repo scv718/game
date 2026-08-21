@@ -521,7 +521,27 @@ Code style consistent with existing codebase. No edge case gaps found.
   - Death Ledger/Ghost.
 
 ### TASK-015-1 Night Tactical Camera Pan
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: _speed` export로 조정 가능 ✓
+- 기존 `_process` zoom lerp 로직에 터치 없음 ✓
+
+### 테스트
+
+35항목 전부 PASS, 회귀 8종 전부 PASS. 임시 파일 없음.
+
+### 잠재 개선점 (판정에 영향 없음)
+
+`DAY_RETURN` sub=2에서 `_camera.position`을 zero로 직접 설정하지 않고 camera global position을 player에 맞추는 로직인데, `_process`의 lerp가 300프레임 내에 day_zoom으로 수렴하므로 문제 없음.
+
+---
+
+판정: **LGTM**
+사유: 모든 요구사항 충족, 코드 스타일 기존과 일관, 35개 자동검증 PASS + 8개 회귀 PASS, 임시 파일 없음. 버그/누락/엣지 케이스 없음.
+- 피드백: 요구사항 전부 충족. NIGHT에서 Player 이동 비활성을 유지한 채 카메라만 키보드(WASD)로 독립 pan하고 월드 경계(±1024) 밖으로 나가지 않으며, N/E/S/W Gate/Combat Field까지 4방향 도달 가능함을 자동검증했다. DAY 복귀 시 camera offset zero reset + Player follow/zoom 복구 정상. 코드 스타일 기존과 일관, 버그/누락 없음.
+- 구현기록:
+  - `scripts/player.gd`: `night_pan_speed`(export, 기본 480) + `WORLD_BOUNDS`(Rect2(-1024,-1024,2048,2048), world.gd의 FALLBACK_BOUNDS_RECT와 동일) 추가. `_physics_process` NIGHT 분기에서 `_pan_night_camera()` 호출 — 기존 move_* 입력을 카메라 pan으로 재사용(Player velocity는 0 유지), Camera2D 로컬 offset(Player 기준)으로 누적하고 결과 camera global position을 `clampf`로 WORLD_BOUNDS 내로 clamp. `_apply_phase`에서 DAY 복귀 시 `_camera.position = Vector2.ZERO`로 follow 복구. DAY에서는 기존 Player follow/zoom 그대로. edge pan은 선택사항이라 미구현.
+  - `tests/task0151_test.gd` 신규 작성 headless PASS(2회 연속): DAY 시작 follow/offset zero/day_zoom, DAY 이동 시 camera follow 유지, NIGHT 전환 Player 이동 비활성, NIGHT pan 시 Player entity 고정+카메라만 이동(offset 누적), 4방향 N/E/S/W Gate/Combat Field 도달(±960 이상, 실제로는 ±1024 clamp), 경계 clamp(±1024 이내), DAY 복귀 offset reset+follow+day_zoom 복귀(300프레임 수렴), 회귀(Player 무공격/combat 그룹 배제, 핵심 건물 5, floor 128x128, placement intact). 결과 `test_results/task0151_test_run.txt`(TASK0151_RESULT=PASS).
+  - 회귀 headless 전부 PASS: smoke, task0103(zoom), task0105(Day/Night 통합), task0127, task0128, task0144, task0145, task0147.
 - DAY:
   - 기존 Player follow.
 - NIGHT:
@@ -533,8 +553,8 @@ Code style consistent with existing codebase. No edge case gaps found.
 - 전환:
   - DAY 복귀 시 Player follow/zoom 정상.
 - 완료조건:
-  - NIGHT에서 N/E/S/W Gate/Combat Field 확인 가능.
-  - Player entity는 이동하지 않음.
+  - NIGHT에서 N/E/S/W Gate/Combat Field 확인 가능. (충족)
+  - Player entity는 이동하지 않음. (충족)
 
 ### TASK-015-2 Tactical Command HUD
 - 상태: QUEUED

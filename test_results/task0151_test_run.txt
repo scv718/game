@@ -1,0 +1,38 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: starts in DAY
+PASS: player starts in DAY (direct control)
+PASS: camera offset zero at DAY
+PASS: camera follows player at DAY
+PASS: camera at day_zoom (1.00)
+PASS: DAY: player moves right (x=120.0)
+PASS: DAY: camera keeps following player
+PASS: DAY: camera offset stays zero while following
+PASS: DAY -> NIGHT transition
+PASS: NIGHT: player direct movement disabled
+PASS: NIGHT: player entity does not move during pan (pos=(0.0, 0.0))
+PASS: NIGHT: camera pans right independently (x=240.0)
+PASS: NIGHT: camera offset accumulates (240)
+PASS: still NIGHT for reach test
+PASS: NIGHT: camera reaches North Gate/Combat Field (y=-1024.0)
+PASS: NIGHT: player still stationary while reaching north
+PASS: NIGHT: camera reaches South Gate/Combat Field (y=1024.0)
+PASS: NIGHT: camera reaches West Gate/Combat Field (x=-1024.0)
+PASS: NIGHT: camera reaches East Gate/Combat Field (x=1024.0)
+PASS: NIGHT: camera clamps at east world boundary (x=1024.0)
+PASS: NIGHT: camera y within world boundary (y=1024.0)
+PASS: NIGHT: camera clamps at north world boundary (y=-1024.0)
+PASS: NIGHT: camera x within world boundary (x=1024.0)
+PASS: NIGHT -> DAY transition
+PASS: DAY: direct control restored
+PASS: DAY: camera offset reset to zero (follow restored)
+PASS: DAY: camera follows player again (pos=(0.0, 60.0))
+PASS: DAY: camera starts returning toward day_zoom (0.58)
+PASS: DAY: camera converged back to day_zoom (1.00)
+PASS: player has no attack method
+PASS: player excluded from combat groups
+PASS: 5 core buildings intact
+PASS: world floor intact (128x128)
+PASS: no gates pre-placed (placement intact)
+TASK0151_RESULT=PASS

@@ -8,6 +8,12 @@ extends CharacterBody2D
 @export var night_zoom: float = 0.5
 @export var zoom_transition_speed: float = 3.0
 
+## TASK-015-1 NIGHT tactical camera 독립 pan 속도(px/s). DAY에서는 사용하지 않는다.
+@export var night_pan_speed: float = 480.0
+
+## TASK-015-1 월드 경계. world.gd의 FALLBACK_BOUNDS_RECT와 동일한 2048x2048 맵.
+const WORLD_BOUNDS := Rect2(-1024, -1024, 2048, 2048)
+
 var current_interactable: Interactable = null
 var _nearby: Array[Interactable] = []
 var _night_mode := false
@@ -26,6 +32,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if _night_mode:
 		velocity = Vector2.ZERO
+		_pan_night_camera(delta)
 	else:
 		var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		velocity = input_dir * move_speed
@@ -45,6 +52,26 @@ func _on_phase_changed(phase: int, _day_number: int) -> void:
 
 func _apply_phase(phase: int) -> void:
 	_night_mode = (phase == GameTime.Phase.NIGHT)
+	if not _night_mode and _camera != null:
+		_camera.position = Vector2.ZERO
+
+
+## TASK-015-1 NIGHT에서 카메라만 키보드로 독립 pan한다. Player entity는 이동하지 않고
+## 카메라는 월드 경계(WORLD_BOUNDS) 밖으로 벗어나지 않는다.
+## pan은 Player를 기준으로 하는 Camera2D 로컬 offset으로 적용하되,
+## 결과 camera global position을 경계로 clamp한다.
+func _pan_night_camera(delta: float) -> void:
+	if _camera == null:
+		return
+	var pan_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if pan_dir == Vector2.ZERO:
+		return
+	var desired := global_position + _camera.position + pan_dir * night_pan_speed * delta
+	var clamped := Vector2(
+		clampf(desired.x, WORLD_BOUNDS.position.x, WORLD_BOUNDS.end.x),
+		clampf(desired.y, WORLD_BOUNDS.position.y, WORLD_BOUNDS.end.y),
+	)
+	_camera.position = clamped - global_position
 
 
 func _unhandled_input(event: InputEvent) -> void:
