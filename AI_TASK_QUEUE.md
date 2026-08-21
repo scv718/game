@@ -411,7 +411,20 @@
 - 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001, task0141~0144, task0145.
 
 ### TASK-014-6 Combat Death / Cleanup
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: runs stable.
+
+**No temporary files**: `_diag*.gd` / `_probe*.gd` glob = 0 results.
+
+Code style consistent with existing codebase. No edge case gaps found.
+
+판정: **LGTM**
+사유: 모든 요구사항 충족. Enemy/Mercenary 사망 처리가 correctly 구현되어 있고, spawner/roster의 freed reference 제거가 즉시 이루어지며, dead Mercenary 재생성 없음, 반복 cycle reference 누수 없음이 88항목 headless 2회 연속 PASS로 검증됨. 회귀 테스트 전부 통과, 임시 파일 없음. Death Ledger 미구현은 의도대로.
+- 피드백: 모든 요구사항 충족. Enemy 사망 시 combat(그룹)/target/월드(충돌) 제외·제거, Mercenary 사망 시 MercenaryData.alive=false/Actor 제거/roster 즉시 반영 + dead 확인 가능, alive Mercenary만 다음 NIGHT spawn(dead 재생성 없음), 반복 NIGHT cycle duplicate/이전 Enemy reference 누수 없음, freed reference 오류 없음을 headless 2회 연속으로 자동검증했다. Death Ledger 기록은 하지 않았다. 회귀 전부 PASS.
+- 구현기록:
+  - `scripts/first_encounter_spawner.gd`: `spawn_encounter()`에서 Enemy에 `died` signal 연결, `_on_enemy_died(enemy)` 추가 — 전투로 사망한 Enemy를 `_enemies` 추적에서 즉시 제거해 freed reference가 반복 NIGHT cycle에 누적되지 않게 함(despawn 멱등 유지).
+  - `tests/task0146_test.gd` 신규 작성 headless PASS(2회 연속, 88항목): 용병 2명(A=NORTH, B=EAST) 구성 → NIGHT spawn 후 A가 북방 HOLD 적 2마리를 자동 사살 → 사망 Enemy의 group(combat/target) 제외 + freed(충돌 제거) + A target 클리어 확인, 직접 take_damage 사망 경로(group 즉시 제외 + freed), 강한 Enemy가 A를 공격해 사망 → MercenaryData.alive=false/Actor freed/group 제외/roster get_actor null·`_actors` 제거·get_mercenary로 dead 확인, 공격하던 Enemy의 `_target` 클리어 + MOVE 복귀(freed reference 없음), 다음 NIGHT dead A 미재생성·alive B만 spawn(actor_count 1), 반복 NIGHT 2cycle duplicate 없음 + spawner `_enemies` 누수 없음 + DAY cleanup 멱등, 회귀(Player 무공격/무타겟 그룹, Worker 무spawn, 핵심 건물 5/floor/gate toggle). 결과 `test_results/task0146_test_run.txt`(TASK0146_RESULT=PASS).
+  - 회귀 headless 전부 PASS: smoke, task0128, tasknav001, task0136, task0144, task0145. (task0131은 기존 문서화 nav flaky)
 - Enemy death:
   - combat/collision/target에서 제외 후 제거.
 - Mercenary death:

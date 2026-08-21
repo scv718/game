@@ -91,6 +91,9 @@ func spawn_encounter() -> int:
 		enemy.position = spawn_point + _spawn_offset(i)
 		world.add_child(enemy)
 		enemy.set_route(waypoints, core)
+		# TASK-014-6: 전투로 사망한 Enemy를 _enemies에서 즉시 제거해 이전 Enemy
+		# reference 누수가 반복 NIGHT cycle에 남지 않게 한다.
+		enemy.died.connect(_on_enemy_died)
 		_enemies.append(enemy)
 		spawned += 1
 	_night_active = true
@@ -107,6 +110,13 @@ func despawn_encounter() -> int:
 	_enemies.clear()
 	_night_active = false
 	return removed
+
+
+## TASK-014-6: 전투로 사망한 Enemy를 _enemies 추적에서 제거한다.
+## died signal로 동기 호출되므로(Enemy.die()에서 emit) freed reference가
+## _enemies에 남지 않아 반복 NIGHT cycle의 reference 누수를 방지한다.
+func _on_enemy_died(enemy: Node) -> void:
+	_enemies.erase(enemy)
 
 
 ## 현재 spawn된 살아 있는 Enemy 수.
