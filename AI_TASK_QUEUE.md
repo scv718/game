@@ -748,7 +748,18 @@
 
 ## OVERNIGHT-STOP-6 TASK-016 종료 경계
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: TASK-016-1~6 전부 DONE. DeathRecord/DeathLedger 코드 정상 (ghost guard, duplicate guard, RESOLVED protection, copy-on-return, mutable metadata 보호). 금지 시스템 코드 전역 검색 0건 확인. 임시 파일 없음. 테스트 구조 및 assertion이 요구사항을 전수 커버. 프로덕션 코드 변경 없음 (AI_TASK_QUEUE.md만 변경). 코드 스타일 기존 패턴과 일관.
+- 피드백: 종료 경계 확인 완료. TASK-016-1~6 전부 DONE. DeathRecord/DeathLedger 정상, Mercenary/Enemy lethal death 연동 정상, cleanup/despawn 오기록 없음, source_uid duplicate guard 정상, Ghost(재귀) 사망 신규 record 차단 가드(is_ghost) 준비 정상, Day/Night 이후 record 유지 확인. 금지 시스템 미시작 코드 전역 검색 확인. 임시 파일 0건. 종료 회귀(smoke/task0158/task0166) headless 전부 PASS.
+- 구현기록:
+  - OVERNIGHT-STOP-6는 기능 구현이 아니라 종료 경계 확인 태스크로, 신규 시스템을 추가하지 않고 현재 상태를 검증해 종료한다.
+  - TASK-016-1~6 상태 확인: 모두 DONE (DeathRecord Data Model / DeathLedger Autoload / Combat Death Integration / Duplicate·Recursive Guard / Minimal View / 통합 검증).
+  - DeathLedger 정상 확인: `record_death`가 source_uid 기준 중복 시 신규 record 없이 기존 복사본 반환, is_ghost snapshot은 신규 record 생성 차단, PENDING/ACTIVE/RESOLVED 전환 및 RESOLVED 보호 정책 구현됨. query는 전부 복사본 반환.
+  - 통합 검증: task0166(142건)이 lethal death만 기록, cleanup/despawn 오기록 없음, eligible_day = death_day+1, Day/Night 후 record 유지, Ghost 미spawn을 전수 검증.
+  - 금지 시스템 미시작 검증(코드 전역): GhostActor/GhostFactory/GhostReturnSpawner/Ghost Shader/Ghost Combat/WaveManager/Wave progression/Boss/Siege 신규 없음(`class_name Ghost/Wave/Boss/Siege` 0건). Portal Return 시스템 없음. Food/Potion/Morale/Equipment progression 구현 없음. Dungeon은 예약 좌표·마커(NE_DUNGEON_CANDIDATE)와 장식 ruin만 존재하고 실제 기능 없음. Asset 교체 없음. building_placement의 `_ghost`는 기존 건설 배치 미리보기로 Ghost Return 시스템과 무관.
+  - 임시 디버그 파일 확인: `_diag*` / `_probe*` / `_debug*` glob 0건 — 잔여 없음.
+  - 종료 회귀 headless 검증(Godot 4.7.1 headless 실제 실행): `smoke_test.gd` PASS, TASK-015 Tactical Combat Vertical Slice `task0158_test.gd` PASS, TASK-016 Death Ledger 통합 `task0166_test.gd` PASS. 경계 상태 안정.
+  - 다음 예정 태스크(TASK-017 First Ghost Return)는 사람 플레이테스트 후 진행하며 이번 태스크에서 구현하지 않는다.
 
 - 설명: TASK-016 Death Ledger 완료 후 Ghost Return 또는 다른 신규 시스템을 임의로 시작하지 않고 종료한다.
 
