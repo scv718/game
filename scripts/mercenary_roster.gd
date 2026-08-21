@@ -79,16 +79,48 @@ func _on_actor_died(_mercenary: Node, mercenary_id: String) -> void:
 	_actors.erase(mercenary_id)
 
 
-## TASK-015-3: 전술 명령(command_issued) 처리. 현재는 DEFENSE_ZONE만 다루고,
-## 나머지 명령(REGROUP/RETREAT/FOCUS_TARGET/GATE/TIME)은 후속 태스크에서 처리한다.
+## TASK-015-3: 전술 명령(command_issued) 처리.
+## DEFENSE_ZONE: 살아 있는 용병의 방어 구역을 실시간 변경한다.
+## TASK-015-4: REGROUP은 살아 있는 용병 Actor를 현재 방어 구역 rally로 복귀시키고,
+## RETREAT은 중앙 Village/safe rally로 후퇴시킨다. spawn 중(Actor 존재)인 용병만
+## 행동이 필요하므로 Actor가 없으면 무시한다. FOCUS_TARGET/GATE/TIME은 후속 태스크에서
+## 처리한다.
 func _on_tactical_command(command: int, arg: Variant) -> void:
-	if command != TacticalCommandUI.Command.DEFENSE_ZONE:
-		return
-	var zone: int = int(arg)
-	var world := get_tree().get_first_node_in_group("world")
-	for m in get_alive():
-		if m.defense_zone != zone:
-			set_defense_zone(m.id, zone, world)
+	match command:
+		TacticalCommandUI.Command.DEFENSE_ZONE:
+			var zone: int = int(arg)
+			var world := get_tree().get_first_node_in_group("world")
+			for m in get_alive():
+				if m.defense_zone != zone:
+					set_defense_zone(m.id, zone, world)
+		TacticalCommandUI.Command.REGROUP:
+			for m in get_alive():
+				var actor: Node = get_actor(m.id)
+				if actor is MercenaryActor:
+					(actor as MercenaryActor).regroup()
+		TacticalCommandUI.Command.RETREAT:
+			var world := get_tree().get_first_node_in_group("world")
+			var safe := get_safe_rally(world)
+			for m in get_alive():
+				var actor: Node = get_actor(m.id)
+				if actor is MercenaryActor:
+					(actor as MercenaryActor).retreat(safe)
+
+
+## TASK-015-4: RETREAT 명령의 안전 지점(중앙 Village/safe rally).
+## 정착지 clearing 중심을 우선하고, 없으면 Keep(거점) 위치로 대체한다.
+func get_safe_rally(world: Node = null) -> Vector2:
+	if world == null or not is_instance_valid(world):
+		world = get_tree().get_first_node_in_group("world")
+	if world == null:
+		return Vector2.ZERO
+	var layout := world.get_node_or_null("MapLayout")
+	if layout != null and layout.has_method("get_clearing_rect"):
+		return layout.get_clearing_rect().get_center()
+	var keep := world.get_node_or_null("Keep") as Node2D
+	if keep != null:
+		return keep.global_position
+	return Vector2.ZERO
 
 
 ## TASK-015-3: 지정 용병의 방어 구역을 실시간 변경한다. spawn 중(Actor 존재)이면

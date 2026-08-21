@@ -10,6 +10,12 @@ class_name MercenaryActor
 ## 사망(DEAD) 처리해 MercenaryData.alive=false, 그룹 제외, 월드에서 제거한다.
 ## Player는 절대 target/damage 대상이 되지 않는다(mercenaries 그룹만 탐색).
 ## 복잡한 Utility/BehaviorTree는 쓰지 않는 예측 가능한 상태 머신으로 구현한다.
+##
+## TASK-015-4 전술 명령: REGROUP은 현재 방어 구역 rally(anchor)로 복귀하고 이동 중
+## 새 target 획득을 억제하며 도착 후 일반 방어 AI(재탐색)로 복귀한다. RETREAT은
+## 중앙 Village/safe rally로 후퇴하고 이동 중·도착 후에도 공격/target 획득을 중지한 채
+## 도착 후 HOLD한다. teleport는 없으며 무적도 아니다(후퇴 중에도 적 공격으로 사망 가능).
+## 이후 새 DEFENSE_ZONE 명령으로 일반 방어 AI에 정상 복귀한다.
 
 enum MercState {
 	IDLE,
@@ -17,6 +23,8 @@ enum MercState {
 	MOVE_TO_TARGET,
 	ATTACK,
 	RETURN_TO_DEFENSE_ZONE,
+	REGROUP,
+	RETREAT,
 	DEAD,
 }
 
@@ -35,6 +43,7 @@ var _target: Node = null
 var _attack_cd := 0.0
 var _stuck_timer := 0.0
 var _last_move_pos := Vector2.ZERO
+var _retreat_point := Vector2.ZERO
 
 ## TASK-014-6 사망 처리에서 재사용.
 signal died(mercenary: Node)
@@ -67,6 +76,10 @@ func _physics_process(delta: float) -> void:
 			_tick_attack(delta)
 		MercState.RETURN_TO_DEFENSE_ZONE:
 			_tick_return(delta)
+		MercState.REGROUP:
+			_tick_regroup(delta)
+		MercState.RETREAT:
+			_tick_retreat(delta)
 		MercState.DEAD:
 			velocity = Vector2.ZERO
 
@@ -130,6 +143,26 @@ func _tick_return(delta: float) -> void:
 	_move_towards(defense_point, delta)
 
 
+## TASK-015-4: REGROUP 상태. 현재 방어 구역 rally(anchor)로 복귀한다.
+## 이동 중에는 새 target을 획득하지 않고(잠시 억제), 도착하면 일반 방어 AI(재탐색)로
+## 복귀해 자동 전투를 재개한다.
+func _tick_regroup(delta: float) -> void:
+	if _reached_defense_point():
+		_acquire_target()
+		return
+	_move_towards(defense_point, delta)
+
+
+## TASK-015-4: RETREAT 상태. 중앙 Village/safe rally로 후퇴한다.
+## 이동 중/도착 후에도 공격하지 않고 target도 획득하지 않는다(공격 중지).
+## 도착 후에는 HOLD한다. 무적이 아니므로 도중 적의 공격으로 사망할 수 있다.
+func _tick_retreat(delta: float) -> void:
+	if _reached_retreat_point():
+		velocity = Vector2.ZERO
+		return
+	_move_towards(_retreat_point, delta)
+
+
 func _move_towards(dest: Vector2, delta: float) -> void:
 	_nav_agent.target_position = dest
 	var reached := global_position.distance_to(dest) <= REACH_DISTANCE \
@@ -179,6 +212,11 @@ func _reached_defense_point() -> bool:
 	return global_position.distance_to(defense_point) <= REACH_DISTANCE
 
 
+## TASK-015-4: RETREAT 목표(중앙 safe rally)에 도착했는지 판정.
+func _reached_retreat_point() -> bool:
+	return global_position.distance_to(_retreat_point) <= REACH_DISTANCE
+
+
 func _target_invalid() -> bool:
 	if _target == null or not is_instance_valid(_target):
 		return true
@@ -221,16 +259,45 @@ func get_defense_zone() -> int:
 	return merc_data.defense_zone if merc_data != null else MercenaryData.DefenseZone.NONE
 
 
+## TASK-015-4: REGROUP 명령. 현재 지정 방어 구역 rally(anchor)로 복귀한다.
+## 전투 중(target 추격/공격)이면 현재 target을 놓고 복귀를 우선한다. 이동 중 target
+## 획득은 REGROUP 상태가 억제하므로, 도착 후 일반 방어 AI(재탐색)로 정상 복귀한다.
+func regroup() -> void:
+	if not alive or state == MercState.DEAD:
+		return
+	_target = null
+	_state_to(MercState.REGROUP)
+
+
+## TASK-015-4: RETREAT 명령. 중앙 Village/safe rally로 후퇴한다.
+## 공격을 중지하고 target을 놓으며 도착 후 HOLD한다. 무적이 아니므로 후퇴 중에도
+## 적의 공격으로 사망할 수 있다.
+func retreat(safe_point: Vector2) -> void:
+	if not alive or state == MercState.DEAD:
+		return
+	_retreat_point = safe_point
+	_target = null
+	_state_to(MercState.RETREAT)
+
+
 ## TASK-015-3: 전술 명령으로 방어 구역/앵커(rally)를 실시간 변경한다.
 ## 새 defense_point로 nav 이동한다(teleport 금지). 현재 target이 새 구역과 무관하거나
 ## 너무 멀면 disengage(_target 클리어)하고 새 구역으로 복귀한다.
 ## 아직 새 구역에 도착하지 않았으면 RETURN_TO_DEFENSE_ZONE, 도착했으면 재탐색한다.
 ## 이를 통해 stale target/permanent chase 없이 새 구역 기준 target 탐색으로 전환한다.
+## TASK-015-4: REGROUP/RETREAT 중이면 새 방어 명령으로 일반 방어 AI로 복귀한다.
 func set_defense_zone(zone: int, new_rally: Vector2) -> void:
 	if merc_data != null:
 		merc_data.set_defense_zone(zone)
 	defense_point = new_rally
 	if not alive or state == MercState.DEAD:
+		return
+	if state == MercState.REGROUP or state == MercState.RETREAT:
+		_target = null
+		if _reached_defense_point():
+			_state_to(MercState.ACQUIRE_TARGET)
+		else:
+			_state_to(MercState.RETURN_TO_DEFENSE_ZONE)
 		return
 	if _target_invalid() or _target_far_from_zone():
 		_target = null
@@ -258,3 +325,8 @@ func get_state() -> int:
 ## TASK-014-4: 테스트/디버그용 현재 target 조회.
 func get_target() -> Node:
 	return _target
+
+
+## TASK-015-4: RETREAT 목표(중앙 safe rally) 좌표 조회.
+func get_retreat_point() -> Vector2:
+	return _retreat_point

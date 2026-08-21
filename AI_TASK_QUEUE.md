@@ -627,7 +627,15 @@ Review complete. All items verified.
   - stale target/permanent chase 없음. (충족)
 
 ### TASK-015-4 Regroup / Retreat
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족. REGROUP/RETREAT 행동 차이 명확, teleport 없음, 무적 아님, 새 DEFENSE_ZONE 명령으로 정상 복귀, 50항목 headless PASS + 회귀 전부 PASS, 코드 스타일 일관, 버그/누락/엣지 케이스 없음. `AI_TASK_QUEUE.md` line 630의 `상태: REVIEW`를 `상태: DONE`으로 갱신하면 됩니다.
+- 피드백: 모든 요구사항 충족. REGROUP은 현재 방어 구역 rally로 nav 복귀(teleport 금지)하며 이동 중 target 획득을 억제하고 도착 후 일반 방어 AI로 복귀해 재교전하고, RETREAT은 중앙 Village/safe rally(clearing 중심)로 후퇴해 이동 중/도착 후에도 공격·target 획득을 중지하고 도착 후 HOLD하며, 무적이 아니어서 후퇴 중에도 사망 가능함을 검증했다. RETREAT HOLD 중 새 DEFENSE_ZONE 명령으로 일반 방어 AI에 정상 복귀(동쪽 rally 복귀 + 재교전)도 확인했다. headless 자동검증 2회 연속 PASS + 회귀 전부 PASS. 버그/누락/엣지 케이스 없음.
+- 구현기록:
+  - `scripts/mercenary_actor.gd`: `MercState`에 `REGROUP`/`RETREAT` 추가(6→8 상태). `regroup()`은 현재 target을 놓고 현재 방어 구역 rally로 복귀(`REGROUP`), `retreat(safe_point)`은 중앙 safe rally로 후퇴(`RETREAT`)한다. `_tick_regroup`은 도착 전 target 획득을 억제하고(이동 중 잠시 억제) 도착 후 `_acquire_target()`으로 일반 방어 AI 복귀, `_tick_retreat`은 이동 중/도착 후에도 공격·획득을 하지 않고 도착 후 velocity zero(HOLD) 유지. teleport 없음(nav 이동), 무적 아님(`take_damage`/`die` 기존 경로 유지). `set_defense_zone`이 REGROUP/RETREAT 중이면 새 방어 명령으로 `RETURN_TO_DEFENSE_ZONE`(미도착)/`ACQUIRE_TARGET`(도착) 전환해 일반 방어 AI 복귀. `get_retreat_point()`/`_reached_retreat_point()` 추가.
+  - `scripts/mercenary_roster.gd`: `_on_tactical_command`에 REGROUP/RETREAT 처리 추가 — 살아 있는 용병의 spawn Actor에게 `regroup()`/`retreat(safe)` 호출(Actor 없으면 무시). `get_safe_rally(world)` 추가 — 정착지 clearing 중심(Keep 위치 fallback).
+  - `tests/task0154_test.gd` 신규 작성 headless PASS(2회 연속): 고용+NORTH 배정+NIGHT spawn(North Rally), 구역 내 Enemy 교전, Tactical UI REGROUP 버튼 → REGROUP 진입+target 클리어, rally로 nav 복귀(teleport 금지)+이동 중 target 획득 억제, 도착 후 일반 방어 AI 복귀(재탐색/재교전), Tactical UI RETREAT 버튼 → RETREAT 진입+중앙 safe rally 목표(북방 rally와 다른 지점), safe rally로 nav 후퇴(teleport 금지)+이동 중 획득 억제, 도착 후 HOLD+근처 적 무시(공격 중지), RETREAT HOLD 중 DEFENSE_ZONE EAST 버튼 → 일반 방어 AI 복귀(East Rally nav 이동+재교전), 무적 아님(사망 처리 동작), 회귀(Player 무공격/무타겟, NIGHT 이동 비활성, 핵심 건물 5, floor 128x128). 결과 `test_results/task0154_test_run.txt`(TASK0154_RESULT=PASS).
+  - `tests/task0144_test.gd`: `MercState` 크기 assertion 6→8(REGROUP/RETREAT 추가 반영) + 상태 키 확인 갱신.
+  - 회귀 headless 전부 PASS: smoke, task0128, task0136, task0141~0147, tasknav001, task0151~0153.
 - Regroup:
   - 현재 defense zone RallyPoint 복귀.
   - 이동 중 새 target 획득 잠시 억제.
@@ -640,8 +648,8 @@ Review complete. All items verified.
   - teleport.
   - 무적.
 - 완료조건:
-  - Regroup/Retreat 행동 차이 명확.
-  - 새 defense command로 정상 복귀.
+  - Regroup/Retreat 행동 차이 명확. (충족)
+  - 새 defense command로 정상 복귀. (충족)
 
 ### TASK-015-5 Focus Target
 - 상태: QUEUED

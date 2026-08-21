@@ -173,10 +173,12 @@ func _process(_delta: float) -> bool:
 				_placement._try_place_gate_at(_placement._snap_gate(GATE_POS))
 				_check(_find_gate_at(GATE_POS) != null, "north gate placed")
 				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
-				_check(MercenaryActor.MercState.size() == 6, "MercState has 6 states (FSM)")
+				_check(MercenaryActor.MercState.size() == 8, "MercState has 8 states (FSM)")
 				_check(EnemyActor.EnemyState.size() == 4, "EnemyState has 4 states (ATTACK, GATE_ATTACK)")
 				_check(MercenaryActor.MercState.keys().has("RETURN_TO_DEFENSE_ZONE") \
-					and MercenaryActor.MercState.keys().has("ACQUIRE_TARGET"), "FSM states ACQUIRE_TARGET/RETURN exist")
+					and MercenaryActor.MercState.keys().has("ACQUIRE_TARGET") \
+					and MercenaryActor.MercState.keys().has("REGROUP") \
+					and MercenaryActor.MercState.keys().has("RETREAT"), "FSM states ACQUIRE_TARGET/RETURN/REGROUP/RETREAT exist")
 				_advance_to_next_phase()
 				_wait_frames(3)
 			elif _sub == 1 and not _waited():
