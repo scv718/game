@@ -357,7 +357,8 @@
 
 ### TASK-016-2 DeathLedger Autoload + Record State
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 10개 API, 3개 시그널, 상태 전환 정책(RESOLVED 보호, 멱등, 안전 no-op), 복사본 반환, eligible_day 자동 계산이 모두 요구사항대로 구현됨. 테스트 83건 PASS, 회귀 PASS. 임시 파일 없음.
 
 - 설명: DeathRecord의 생성/조회/상태 변경을 담당하는 최소 DeathLedger 전역 서비스를 구현한다.
 
