@@ -174,7 +174,7 @@ func _process(_delta: float) -> bool:
 				_check(_find_gate_at(GATE_POS) != null, "north gate placed")
 				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
 				_check(MercenaryActor.MercState.size() == 6, "MercState has 6 states (FSM)")
-				_check(EnemyActor.EnemyState.size() == 3, "EnemyState has 3 states (ATTACK added)")
+				_check(EnemyActor.EnemyState.size() == 4, "EnemyState has 4 states (ATTACK, GATE_ATTACK)")
 				_check(MercenaryActor.MercState.keys().has("RETURN_TO_DEFENSE_ZONE") \
 					and MercenaryActor.MercState.keys().has("ACQUIRE_TARGET"), "FSM states ACQUIRE_TARGET/RETURN exist")
 				_advance_to_next_phase()

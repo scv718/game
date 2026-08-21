@@ -380,8 +380,16 @@
   - Player는 damage/target 대상에서 제외.
 
 ### TASK-014-5 CLOSED Gate 대응 + Gate Breach
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: Gate prototype 내구도, CLOSED→BREACHED 전환(ollision/nav/signal), 자동 복구 금지, OPEN 통과, Mercenary 교전, 회귀 테스트 전부 충족. 버그/누락 없음.
+- 피드백: 리뷰 지적(테스트 미작성)을 반영해 `tests/task0145_test.gd`를 신규 작성했고, headless 자동검증 2회 연속 PASS(51항목) 및 회귀 전부 PASS를 확인했다. 검증 대상 전부(Gate BREACHED 전환, CLOSED→BREACHED collision/nav 갱신, enemy breach 후 MOVE 재개, OPEN gate no-attack, breached signal emit, set_open no-op on BREACHED, Mercenary↔Enemy 교전 in GATE_ATTACK)를 자동검증으로 커버했다. 코드 스타일 기존과 일관, 버그/누락 없음.
+- 피드백: 모든 요구사항 충족. Gate에 prototype 내구도(max_hp/current_hp)를 추가하고 CLOSED 성문을 Enemy가 공격해 HP 0이 되면 BREACHED(파괴/침입) 상태로 전환해 passage를 영구 개방한다. OPEN 성문은 공격하지 않고 통과하며, BREACHED 성문은 자동 복구하지 않는다. CLOSED→BREACHED 시 collision shape 제거 + nav 통과 가능하도록 갱신하고, enemy는 성문이 BREACHED/OPEN되면 MOVE 재개해 마을 방향으로 진행한다. 성문 공격(GATE_ATTACK) 중에도 살아 있는 대상이므로 Mercenary와 교전 가능하다. headless 자동검증 PASS + 회귀 전부 PASS.
 - 설명: Normal Enemy가 CLOSED Gate에서 영구 정지하지 않도록 최소 Gate 공격/파괴 흐름을 추가한다.
+- 구현기록:
+  - `scripts/gate.gd`: `GateState`에 `BREACHED` 추가(CLOSED/OPEN/BREACHED). prototype 내구도 `DEFAULT_MAX_HP=200`/`max_hp`/`current_hp`. `take_damage()`는 CLOSED 성문에만 피해를 적용하고(OPEN/BREACHED는 no-op), HP 0이 되면 `_breach()`로 BREACHED 전환 → `_apply_state()`(collision shape 제거 + debounce nav rebuild) + `breached`/`gate_state_changed` signal emit. `is_breached()` 공개 API. BREACHED 성문은 `set_open(false)`로 다시 닫을 수 없다(자동 복구 금지). `_is_passage_open()`로 OPEN/BREACHED 모두 통로 개방 판정. BREACHED visual 색상(COLOR_BREACHED) 추가.
+  - `scripts/enemy_actor.gd`: `EnemyState`에 `GATE_ATTACK` 추가. `_tick_move`에서 근처 Mercenary 교전을 우선하고, 없으면 가까운 CLOSED 성문(GATE_ATTACK_RANGE=40)을 발견해 `GATE_ATTACK` 상태로 정지해 interval 공격(`take_damage`). 성문이 BREACHED/OPEN되면(`_gate_invalid`) MOVE 재개해 마을 방향 진행. OPEN 성문은 `_find_closed_gate`가 제외하므로 공격하지 않고 통과. Wall 직접 공격 없음. `get_gate_target()` 조회 API.
+  - `tests/task0144_test.gd`: `EnemyState` 개수 assertion을 3→4(GATE_ATTACK 추가 반영)로 갱신.
+  - `tests/task0145_test.gd` 신규 작성 headless PASS(51항목): 성문 내구도 존재, OPEN gate no-attack + take_damage no-op, CLOSED gate GATE_ATTACK + HP 감소, BREACHED 전환(collision shape 제거 + nav passage open + breached signal 1회 + set_open no-op + enemy MOVE 재개해 village 진행), 두 번째 CLOSED gate 앞 Mercenary↔Enemy 교전(enemy GATE_ATTACK 상태 유지 중 mercenary가 target 획득/공격), 회귀(Player 무공격/Worker 무spawn/핵심 건물 5/floor 128x128). 결과 `test_results/task0145_test_run.txt`(TASK0145_RESULT=PASS).
 - Gate:
   - prototype max_hp/durability 추가.
   - CLOSED Gate를 Enemy가 공격 가능.
@@ -396,10 +404,11 @@
 - Navigation:
   - CLOSED→DESTROYED 후 통과 가능하게 갱신.
 - 완료조건:
-  - CLOSED Gate 앞 permanent stall 없음.
-  - Gate attack/breach.
-  - breach 후 Village 방향 진행.
-  - Mercenary가 Gate 앞 Enemy와 교전 가능.
+  - CLOSED Gate 앞 permanent stall 없음. (충족)
+  - Gate attack/breach. (충족)
+  - breach 후 Village 방향 진행. (충족)
+  - Mercenary가 Gate 앞 Enemy와 교전 가능. (충족)
+- 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001, task0141~0144, task0145.
 
 ### TASK-014-6 Combat Death / Cleanup
 - 상태: QUEUED

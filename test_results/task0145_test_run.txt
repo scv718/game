@@ -1,0 +1,56 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: recruitment UI present
+PASS: mercenary_A hired into roster
+PASS: north gate placed in corridor
+PASS: new gate starts CLOSED
+PASS: gate has prototype durability (max_hp/current_hp)
+PASS: new gate not breached
+PASS: player has no attack method
+PASS: EnemyState has 4 states (GATE_ATTACK added)
+PASS: GateState has 3 states (BREACHED added)
+PASS: GATE_ATTACK constant intact
+PASS: gate set OPEN
+PASS: enemy spawned near OPEN gate
+PASS: enemy does NOT attack OPEN gate (stays MOVE)
+PASS: enemy gate_target null for OPEN gate
+PASS: OPEN gate take_damage no-op (no damage, no breach)
+PASS: OPEN gate unaffected by damage
+PASS: gate back to CLOSED
+PASS: enemy spawned near CLOSED gate
+PASS: enemy entered GATE_ATTACK on CLOSED gate (state=3)
+PASS: enemy gate_target is the CLOSED gate
+PASS: gate HP decreased by enemy attack (hp=50)
+PASS: gate still CLOSED (not yet breached)
+PASS: gate BREACHED after HP 0
+PASS: breached gate is no longer CLOSED
+PASS: breached gate passage open
+PASS: BREACHED gate collision shape removed
+PASS: breached signal emitted exactly once
+PASS: BREACHED gate no auto-recovery (set_open no-op)
+PASS: BREACHED gate stays open
+PASS: enemy resumes MOVE after gate breached
+PASS: BREACHED: nav path crosses gate footprint (passage open)
+PASS: enemy proceeds toward village after breach (y -470.0 -> -343.6)
+PASS: second north gate placed CLOSED
+PASS: phase is NIGHT for merc engagement
+PASS: mercenary actor spawned at NIGHT (north rally)
+PASS: one mercenary actor present (1)
+PASS: enemy spawned near CLOSED gate2
+PASS: enemy in GATE_ATTACK on gate2 (front of gate)
+PASS: mercenary acquired the gate-front enemy as target
+PASS: mercenary engaged enemy (state=2)
+PASS: mercenary damaged enemy while enemy in GATE_ATTACK (enemy hp 99970)
+PASS: phase back to DAY
+PASS: no mercenary actor during DAY regression
+PASS: player has no attack method
+PASS: worker roster unaffected (0)
+PASS: no lumberjack actor spawned
+PASS: no miner actor spawned
+PASS: 5 core buildings intact
+PASS: world floor intact
+PASS: gate1 remains breached at end
+PASS: gate2 remains CLOSED at end
+PASS: GateState.BREACHED constant intact
+TASK0145_RESULT=PASS
