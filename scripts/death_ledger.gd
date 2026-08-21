@@ -5,8 +5,8 @@ extends Node
 ## (PENDING/ACTIVE/RESOLVED)를 변경한다. Autoload로 등록되어 SceneTree가 유지되는 한
 ## record를 보관하므로 Day/Night 전환 후에도 record가 유지된다.
 ## DeathLedger는 Ghost를 spawn하지 않으며 Portal/Wave를 제어하지 않는다.
-## SaveGame 시스템은 구현하지 않는다. 중복 기록 차단 / Ghost 재귀 기록 방지 전용
-## guard는 TASK-016-4에서 구현한다.
+## SaveGame 시스템은 구현하지 않는다. TASK-016-4에서 source_uid 기준 중복 기록
+## 차단과 Ghost(재귀) 사망의 신규 record 생성을 차단하는 가드를 구현한다.
 
 signal record_added(record_id: String)
 signal record_status_changed(record_id: String, status: int)
@@ -20,9 +20,19 @@ var _next_id := 1
 ## TASK-016-2: 사망 snapshot으로 record를 생성해 Ledger에 추가하고 record_added를
 ## 발행한다. snapshot은 순수 데이터 Dictionary이며, record_id가 없으면 자동 생성하고
 ## eligible_day가 0이하이면 death_day + 1로 계산한다(NIGHT Day N 사망 → 최소 Day N+1).
-## 생성된 record의 복사본을 반환한다. 중복 source 차단은 TASK-016-4에서 처리한다.
+## 생성된 record의 복사본을 반환한다.
+## TASK-016-4 duplicate guard: 같은 source_uid의 record가 이미 존재하면 신규 record를
+## 만들지 않고 기존 record 복사본을 반환한다(동일 실제 죽음 = 정확히 1 record).
+## display_name이 아니라 source_uid 기준이므로 이름이 같은 다른 개체는 각각 기록된다.
+## TASK-016-4 recursive guard: is_ghost가 true인(Ghost) 사망 snapshot은 신규 record를
+## 절대 만들지 않는다. 기존 record가 있으면 그 복사본을, 없으면 null을 반환한다.
+## Ghost death의 기존 record RESOLVED 처리는 TASK-017에서 구현한다.
 func record_death(snapshot: Dictionary) -> DeathRecord:
 	var record := DeathRecord.from_snapshot(snapshot)
+	if record.is_ghost:
+		return _find_record_copy_by_source(record.source_uid)
+	if has_record_for_source(record.source_uid):
+		return _find_record_copy_by_source(record.source_uid)
 	if record.record_id == "":
 		record.record_id = _generate_record_id()
 	if record.eligible_day <= 0:
@@ -116,6 +126,15 @@ func has_record_for_source(source_uid: String) -> bool:
 		if record.source_uid == source_uid:
 			return true
 	return false
+
+
+## TASK-016-4: source_uid와 일치하는 record의 복사본을 반환한다(없으면 null).
+## duplicate/ghost guard에서 기존 record를 재반환할 때 사용한다.
+func _find_record_copy_by_source(source_uid: String) -> DeathRecord:
+	for record in _records.values():
+		if record.source_uid == source_uid:
+			return _copy_record(record)
+	return null
 
 
 ## 내부 record 조회(복사본 없이 실제 인스턴스). 상태 변경 API 내부에서만 사용.

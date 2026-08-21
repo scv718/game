@@ -25,7 +25,7 @@ TASK_ID_RE = re.compile(r"^(TASK(?:-[A-Z0-9]+){1,3}|OVERNIGHT-STOP(?:-\d+)?)$")
 STATUS_RE = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
 FEEDBACK_RE = re.compile(r"^-\s*피드백\s*[:：]\s*(.*?)\s*$")
 HEADING_RE = re.compile(r"^(#{2,3})\s+(.+?)\s*$")
-VERDICT_RE = re.compile(r"판정\s*[:：]\s*(LGTM|FIX|NEEDS_DESIGN)", re.IGNORECASE)
+VERDICT_RE = re.compile(r"판정\s*[:：]\s*(?:\*\*|\*)?\s*(LGTM|FIX|NEEDS_DESIGN)", re.IGNORECASE)
 REASON_RE = re.compile(r"사유\s*[:：]\s*(.+)", re.IGNORECASE)
 SUMMARY_RE = re.compile(r"구현\s*요약\s*[:：]\s*(.+)", re.IGNORECASE)
 

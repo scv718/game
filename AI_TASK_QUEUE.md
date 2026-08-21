@@ -491,7 +491,38 @@
 
 ### TASK-016-4 Duplicate / Recursive Death Guard
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 이전 FIX 3개 항목 모두 해결됨. 1) `death_ledger.gd`에 `record_death()` 내 source_uid 기준 중복 가드 구현됨 (line 34). 2) Ghost source 판별을 위한 `is_ghost` 필드가 DeathRecord에 추가됨 (line 46), snapshot round-trip 지원. 3) `task0164_test.gd` 존재하며 54건 PASS. 코드 스타일 일관, 임시 파일 없음.
+- 피드백: [파서 수정 후 재검토] 리뷰어가 "판정: **LGTM**"으로 볼드 표기했으나 파서가 못 읽어 이전 FIX 인용이 매칭된 오인. 구현은 완료: death_ledger.gd에 source_uid 중복 가드 + is_ghost 재귀 기록 차단, task0164_test.gd 54건 PASS.
+
+판정: **LGTM**
+사유: 이전 FIX 3개 항목 
+- 피드백: mposition_test.gd | **PASS** |
+
+## 코드 스타일
+
+- 기존 DeathRecord/DeathLedger 패턴과 일관
+- 모든 query가 복사본 반환 (외부 mutation 방지)
+- 주석에 TASK-016-4 참조 명시
+- Actor-level 가드 (`die()`의 `if not alive: return`)와 Ledger-level 가드가 분리되어 있음
+
+## 임시 파일
+
+`_diag*`, `_probe*`, `_debug*` 없음 확인.
+
+---
+
+판정: **LGTM**
+사유: 이전 FIX 3개 항목 모두 해결됨. source_uid 중복 가드, is_ghost 필드, 테스트 54건 존재 및 전부 PASS. 7개 회귀 테스트 전부 PASS. 코드 스타일 일관. 임시 파일 없음.
+- 피드백: d:97`의 `die()`에 `if not alive: return` 가드가 있어, **Actor 자체의 중복 die() 호출은 차단**됩니다. 그러나 이는 Actor 수준의 방어이며, DeathLedger 자체의 가드가 아닙니다. TASK-016-4는 DeathLedger 레벨의 가드를 요구합니다.
+
+---
+
+판정: **FIX**
+사유: 
+1. `death_ledger.gd`의 `record_death()`에 source_uid 기준 중복 가드 미구현 (주석에서 TASK-016-4에서 구현한다고 명시했으나 코드 없음)
+2. Ghost source 판별을 위한 최소 구조(SourceKind 확장 또는 별도 필드) 미구현
+3. `task0164_test.gd` 테스트 파일 미존재 — 중복/재귀 가드 검증 불가
 
 - 설명: 동일 실제 죽음의 중복 기록과 향후 Ghost 사망의 재귀 DeathRecord 생성을 방지한다.
 

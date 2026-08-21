@@ -9,6 +9,9 @@ class_name DeathRecord
 ## despawn/free되어도 record는 유지된다.
 ## 상태 전환(PENDING/ACTIVE/RESOLVED)과 record 생성/조회는 TASK-016-2 DeathLedger가
 ## 담당하고, 실제 Ghost Return은 TASK-017에서 구현한다.
+## TASK-016-4: is_ghost는 사망 시점 source의 NORMAL/GHOST를 판별하는 최소 구조다.
+## Ghost의 죽음은 신규 DeathRecord를 만들지 않으므로 DeathLedger가 이 필드를 보고
+## 기록을 차단한다. 범용 Entity Framework를 도입하지 않는 최소 확장 지점이다.
 
 enum SourceKind { MERCENARY, ENEMY }
 
@@ -37,6 +40,10 @@ const STATUS_NAMES := {
 var record_id: String = ""
 var source_uid: String = ""
 var source_kind: SourceKind = SourceKind.MERCENARY
+## TASK-016-4: 사망 source의 NORMAL/GHOST 판별자. Ghost death는 신규 record를
+## 만들지 않으므로 DeathLedger가 이 값을 보고 기록을 차단한다. 일반
+## Mercenary/Enemy 사망은 false이며, TASK-017 Ghost Actor가 true로 기록을 시도한다.
+var is_ghost := false
 var display_name: String = ""
 var class_or_type: String = ""
 var level: int = 1
@@ -101,6 +108,7 @@ func to_snapshot() -> Dictionary:
 		"record_id": record_id,
 		"source_uid": source_uid,
 		"source_kind": source_kind,
+		"is_ghost": is_ghost,
 		"display_name": display_name,
 		"class_or_type": class_or_type,
 		"level": level,
@@ -124,6 +132,7 @@ static func from_snapshot(snapshot: Dictionary) -> DeathRecord:
 	var record := DeathRecord.new(str(snapshot.get("record_id", "")))
 	record.source_uid = str(snapshot.get("source_uid", ""))
 	record.source_kind = int(snapshot.get("source_kind", SourceKind.MERCENARY))
+	record.is_ghost = bool(snapshot.get("is_ghost", false))
 	record.display_name = str(snapshot.get("display_name", ""))
 	record.class_or_type = str(snapshot.get("class_or_type", ""))
 	record.level = int(snapshot.get("level", 1))
