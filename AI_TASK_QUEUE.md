@@ -566,7 +566,8 @@
 
 ### TASK-016-5 Minimal Death Ledger View
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: TASK-016-5 요구사항 전부 충족됨.
 
 - 설명: 실제 플레이 중 Death Ledger 기록을 확인하기 위한 최소 검증 UI를 추가한다. 최종 Memorial/Archive UI가 아니다.
 

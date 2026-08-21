@@ -1,0 +1,68 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/death_ledger_view.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_ledger"]
+bg_color = Color(0.055, 0.075, 0.09, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.55, 0.5, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 5
+
+[node name="DeathLedgerView" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+visible = false
+script = ExtResource("1_script")
+
+[node name="LedgerPanel" type="Panel" parent="."]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 140.0
+offset_right = 340.0
+offset_bottom = 486.0
+theme_override_styles/panel = SubResource("StyleBox_ledger")
+
+[node name="Title" type="Label" parent="LedgerPanel"]
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 312.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(0.85, 0.8, 0.62, 1)
+theme_override_font_sizes/font_size = 17
+text = "Death Ledger"
+
+[node name="Hint" type="Label" parent="LedgerPanel"]
+offset_left = 12.0
+offset_top = 34.0
+offset_right = 312.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0.6, 0.65, 0.6, 1)
+theme_override_font_sizes/font_size = 11
+text = "전멸 기록 (정보 확인용)"
+
+[node name="RecordList" type="VBoxContainer" parent="LedgerPanel"]
+unique_name_in_owner = true
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 312.0
+offset_bottom = 308.0
+
+[node name="CloseButton" type="Button" parent="LedgerPanel"]
+unique_name_in_owner = true
+offset_left = 12.0
+offset_top = 316.0
+offset_right = 312.0
+offset_bottom = 342.0
+text = "닫기"
