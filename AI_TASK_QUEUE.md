@@ -319,7 +319,9 @@
   - 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001. (task0141은 용병 행 구조(VBox block) 변경에 맞춰 label 탐색 헬퍼를 재귀형으로 갱신해 PASS 확인)
 
 ### TASK-014-3 Enemy Actor + First Night Encounter Spawner
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족. Enemy Actor(Red Warrior, HP/damage/speed/death) + FirstEncounterSpawner(NIGHT spawn/DAY despawn/configurable direction·count/idempotent)이 정상 구현됨. ROAD waypoint 접근, Gate OPEN/CLOSED 통과/우회, 테스트 92항목 headless PASS. 코드 스타일 일관, 버그/누락/엣지 케이스 없음.
+- 피드백: 모든 요구사항 충족. Enemy Actor(Red Warrior idle/run 8/6프레임)가 HP/move_speed/damage/attack_interval/death를 prototype 값으로 보유하고, FirstEncounterSpawner가 NIGHT 시작 시 SpawnCandidate에서 configurable 수량 spawn(DAY guard/idempotent/반복 NIGHT duplicate 없음). road waypoint(Main Road 외곽→내부)로 마을 접근 선호 + OPEN Gate면 Gate footprint 통과로 Village Core 도달, CLOSED면 우회. Player를 combat target으로 선택하지 않음(공격 기능 미구현, TASK-014-4 예약). headless 자동검증 2회 연속 PASS + smoke/task0128/tasknav001/task0132/task0134/task0136/task0141/task0142 회귀 전부 PASS. 임시 디버그 파일 없음.
 - Enemy:
   - 일반 근접 1종.
   - HP/move speed/damage/attack interval/death.
@@ -338,6 +340,11 @@
   - NIGHT spawn.
   - DAY 오작동 spawn 없음.
   - 반복 NIGHT duplicate 없음.
+- 구현기록:
+  - `scripts/enemy_actor.gd` + `scenes/enemy.tscn` 신규: 일반 근접 Enemy Actor. Red Units Warrior(Tiny Swords) idle/run 8/6프레임 비주얼, CharacterBody2D(collision_layer 2 / mask 4) + NavigationAgent2D. enemy_id/display_name/direction/max_hp/current_hp/move_speed/attack_damage/attack_interval/alive 보유. `setup()`/`set_route()`(road waypoint + Village Core final target, 현재 위치 이내 waypoint skip), `take_damage()`/`die()`(alive=false + 그룹 제외 + died signal + queue_free, 사망 기록/청소는 TASK-014-6). MOVE/HOLD 상태로 waypoint 순차 접근, nav 불가 시 stuck 안전 정지(영구 MOVE stall 없음). `enemies` 그룹. 공격/target 기능 없음(전투 AI TASK-014-4).
+  - `scripts/first_encounter_spawner.gd` 신규 + project.godot autoload 등록. NIGHT 시작 시 `spawn_encounter()`, DAY 복귀 시 `despawn_encounter()`. DAY에는 직접 호출해도 0(spawn guard), 같은 NIGHT 재호출 멱등(`_night_active`), 반복 NIGHT duplicate 없음. direction/count configurable(set_direction/set_count + encounter_changed signal), 기본 north/3. spawn 위치는 기존 SpawnCandidate(deterministic 소량 offset), 이동 경로는 Main Road 외곽→내부 waypoint(방향 축 기준 마을 쪽만) + Village Core(Keep 또는 clearing 중심)로 `set_route` 전달. get_enemy_count/get_enemies/is_night_active 공개 API.
+  - `tests/task0143_test.gd` 신규 작성 headless PASS(2회 연속): DAY spawn guard/0 반환, NIGHT spawn 3명(+스탯/방향/캔디데이트 위치/route MOVE), 재호출 멱등/dup 없음, road 접근 이동(y 증가), North Gate 배치(CLOSED 시작)→OPEN 시 nav path가 Gate footprint 통과(passage) + Enemy가 Village Core(Keep) 도달, CLOSED 시 passage collision shape 존재 + nav path 우회(미통과) + 영구 MOVE stall 없음, DAY despawn(0/비활성), 반복 NIGHT 2cycle duplicate 없음, set_count(5) configurable, Player 무공격/무참조, Mercenary/Worker Roster 독립, 핵심 건물 5/floor 유지, Enemy 비주얼/통계 확인.
+  - 검증 중 기록: 열린 지형에서 성문(48x16)만으로는 장거리 nav '완전 차단'이 구조적으로 어렵고, CLOSED 검증은 TASK-013-4/013-5와 동일한 짧은 path(0,-560)→(0,-360) + NAV_SETTLE_PF(90) 물리 프레임 대기로 안정화했다.
 
 ### TASK-014-4 Mercenary Auto Combat FSM
 - 상태: QUEUED

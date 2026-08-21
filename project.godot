@@ -21,6 +21,7 @@ VillageResources="*res://scripts/village_resources.gd"
 GameTime="*res://scripts/game_time.gd"
 WorkerRoster="*res://scripts/worker_roster.gd"
 MercenaryRoster="*res://scripts/mercenary_roster.gd"
+FirstEncounterSpawner="*res://scripts/first_encounter_spawner.gd"
 
 [display]
 
