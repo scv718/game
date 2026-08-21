@@ -443,7 +443,32 @@ Code style consistent with existing codebase. No edge case gaps found.
   - dead Mercenary 재생성 없음.
 
 ### TASK-014-7 First Auto Combat 통합 검증
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: [수동 처리] 리뷰어가 "구현/테스트/코드 정상, 버그 없음"이라 하면서 리뷰 중 정상 상태인 `상태: REVIEW`를 DONE으로 안 바뀌었다며 FIX를 반복 → 3회 초과로 NEEDS_DESIGN. 오인 판정이므로 수동으로 DONE 확정. 14단계 시나리오 자동검증 전부 PASS, 회귀 전부 PASS.
+
+판정: **FIX**
+사유: 구현/테스트/코드 자체는 정상. 단, `AI_TASK_QUEUE.md` line 446의 `상태: REVIEW`가 `상태: DONE`으로 갱신되지 않았다. 사용자 요약이 
+- 피드백: NIGHT spawn, died signal tracking, clean despawn.
+- `gate.gd`: BREACHED state, damage/passage/collision/nav management, no auto-recovery.
+
+---
+
+판정: **LGTM**
+사유: 14단계 시나리오 전부 자동검증 PASS, 회귀 전부 PASS, 코드 스타일 일관, 임시 파일 없음. `_pf += 0`(234행)은 dead code이나 `_physics_process`가 _pf를 독립 증가시켜 동작에 영향 없음. 기존 피드백(FIX 위상 플로우 버그)도 정확히 반영됨.
+- 피드백: FIX 지적(위상 플로우 버그: `_enter(Phase.X)` 직후 `_wait_frames(n)` 호출 시 `_sub`이 1로 증가해 새 Phase의 `sub==0`(Gate 배치)이 건너뛰어 Gate가 nil이 됨)을 반영해 수정 완료. 14단계 시나리오 전부 headless 자동검증 PASS, 회귀 전부 PASS, 임시 파일 없음. 리뷰의 dead code 지적(`_pf += 0`)도 제거해 재검증 PASS 확인.
+- 구현기록:
+  - `tests/task0147_test.gd` 재작성. 기존 014-1~014-6 기능을 하나의 연속 시나리오로 묶어 통합 검증:
+    - 주점 UI로 Mercenary 고용(중복 거부·roster 반영), 여관에서 NORTH defense assignment.
+    - North Gate 배치(CLOSED 시작) 후 NIGHT 전환.
+    - Mercenary Actor가 North Rally(0,-280)에 spawn, current_hp/max_hp/IDLE/defense reference 확인.
+    - FirstEncounterSpawner 자동 조우(NIGHT spawn/road MOVE approach) 확인 후 격리.
+    - 테스트 Enemy 2마리(MOVE approach)를 Mercenary가 자동 target/chase/attack으로 사살 + 양측 HP 변화(적 HP 감소 + Mercenary HP 80→감소) 확인.
+    - 강한 Enemy로 Mercenary 사망(MercenaryData.alive=false/그룹 제외/roster freed-reference 즉시 제거/dead 조회) 확인.
+    - CLOSED Gate를 Enemy가 공격해 BREACHED 전환(collision 제거 + passage open) 확인.
+    - DAY cleanup(actor/spawner 빈 상태) + 다음 NIGHT dead 미재생성/auto-encounter 3/duplicate·reference 누수 없음 확인.
+    - 회귀: Player 무공격/무타겟 그룹, NIGHT Player 이동 비활성(_night_mode), DAY 복귀 정상, Worker 무spawn, 핵심 건물 5/floor 128x128, Gate breach 유지, spawner/roster stale reference 없음.
+  - 위상 플로우는 각 Phase의 `sub==0`에서 실제 작업을 수행하고 `_enter()`만으로 다음 Phase를 전이하도록 통일해, `_wait_frames()`와의 조합으로 인한 sub 건너뜀을 원천 제거.
+  - 결과 `test_results/task0147_test_run.txt`(TASK0147_RESULT=PASS, 2회 연속).
 - 시나리오:
   1. 주점에서 Mercenary 고용.
   2. 여관에서 NORTH defense assignment.
