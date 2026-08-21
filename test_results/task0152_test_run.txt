@@ -1,0 +1,44 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: TacticalCommandUI present in HUD
+PASS: core nodes present
+PASS: starts in DAY
+PASS: tactical command UI hidden at DAY
+PASS: defense zone N button exists
+PASS: defense zone E button exists
+PASS: defense zone S button exists
+PASS: defense zone W button exists
+PASS: regroup/retreat buttons exist
+PASS: focus target button exists
+PASS: time control buttons exist
+PASS: N button emits DEFENSE_ZONE north
+PASS: E button emits DEFENSE_ZONE east
+PASS: S button emits DEFENSE_ZONE south
+PASS: W button emits DEFENSE_ZONE west
+PASS: regroup button emits REGROUP
+PASS: retreat button emits RETREAT
+PASS: focus target button emits FOCUS_TARGET
+PASS: pause button emits TIME_PAUSE
+PASS: 1x button emits TIME_1X
+PASS: 2x button emits TIME_2X
+PASS: gate scene loads
+PASS: gate placed in world
+PASS: gate list empty at DAY (refresh only on NIGHT)
+PASS: DAY -> NIGHT transition
+PASS: tactical command UI visible at NIGHT
+PASS: gate row built at NIGHT (1 gate)
+PASS: gate row is an HBoxContainer
+PASS: gate row shows NORTH direction
+PASS: gate row has OPEN button
+PASS: gate row has CLOSE button
+PASS: gate OPEN button emits GATE_OPEN with gate
+PASS: gate CLOSE button emits GATE_CLOSE with gate
+PASS: NIGHT -> DAY transition
+PASS: tactical command UI hidden after DAY reset
+PASS: player has no attack method
+PASS: player excluded from combat groups
+PASS: 5 core buildings intact
+PASS: world floor intact (128x128)
+PASS: placed gate intact
+PASS: existing Wood/Stone/DayTime HUD intact
+TASK0152_RESULT=PASS

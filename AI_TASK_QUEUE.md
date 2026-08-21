@@ -557,7 +557,31 @@ Code style consistent with existing codebase. No edge case gaps found.
   - Player entity는 이동하지 않음. (충족)
 
 ### TASK-015-2 Tactical Command HUD
-- 상태: QUEUED
+- 상태: DONE
+- 피드백:  패턴)과 일관
+
+**테스트:**
+- 40항목 headless PASS 확인 (`task0152_test_run.txt`)
+- 회귀 테스트8종 전부 PASS 확인
+
+**버그/누락/엣지 케이스:** 없음
+
+판정: **LGTM**
+사유: 모든 요구사항 충족, 코드 스타일 기존과 일관, 40개 자동검증 PASS + 회귀8종 PASS, 임시 파일 없음, 버그/누락 없음.
+Review complete. All items verified.
+
+판정: **LGTM**
+사유: 모든 요구사항 충족, 코드 스타일 기존과 일관, 40개 자동검증 PASS + 회귀8종 PASS, 임시 파일 없음, 버그/누락 없음.
+
+`AI_TASK_QUEUE.md` line 560의 `상태: REVIEW`를 `상태: DONE`으로 갱신하면 됩니다.
+- 피드백: 모든 요구사항 충족. NIGHT에만 표시되는 전술 명령 UI 셸을 구현하고, 방어구역/집결/후퇴/집중공격/성문 개폐/시간 조작 버튼이 command_issued 신호로 명령을 방출한다. DAY 숨김/DAY reset 정상, 기존 Wood/Stone/DayTime HUD 유지, 오른쪽 가장자리 배치로 전투 중앙 미가림. 40항목 headless 2회 연속 PASS + 회귀 전부 PASS. 임시 파일 없음.
+- 구현기록:
+  - `scripts/tactical_command_ui.gd` + `ui/tactical_command_ui.tscn` 신규. `TacticalCommandUI`(Control, class_name). NIGHT 지휘 모드에서만 `visible`로 표시되고(DAY 숨김) 화면 오른쪽 가장자리(anchor 6) Panel에 배치해 전투 중앙을 과도하게 가리지 않음.
+  - Command enum(DEFENSE_ZONE/REGROUP/RETREAT/FOCUS_TARGET/GATE_OPEN/GATE_CLOSE/TIME_PAUSE/TIME_1X/TIME_2X) + `command_issued(command, arg)` signal. 각 버튼이 눌릴 때 신호를 방출해 후속 태스크(TASK-015-3~6)가 실제 AI/시간 동작을 연결하도록 인터페이스 제공.
+  - 방어구역 N/E/S/W 버튼(DefenseZoneRow), 집결/후퇴(RegroupButton/RetreatButton), 집중 공격 대상(FocusTargetButton), 전술 시간 Pause/1x/2x(TimePauseButton/Time1xButton/Time2xButton). 성문(GateList)은 NIGHT 진입 시 설치된 gate 그룹을 방향별로 나열하고 OPEN/CLOSE 버튼 생성, 성문 없으면 안내 문구. `_apply_phase`에서 GameTime.phase_changed 연결.
+  - `ui/hud.tscn`: TacticalCommandUI 인스턴스 추가(기존 Tavern/Inn UI와 동일 패턴). 기존 Wood/Stone/DayTime/Interact/Build/Feedback HUD는 유지.
+  - `tests/task0152_test.gd` 신규 작성 headless PASS(40항목, 2회 연속): DAY 숨김, 버튼 존재(N/E/S/W/집결/후퇴/집중/시간), 각 버튼 command_issued 방출(DEFENSE_ZONE zone 일치/REGROUP/RETREAT/FOCUS_TARGET/TIME_*), 성문 없음 시 GateList 안내 문구, 성문 배치 후 NIGHT 진입 시 UI 표시 + 성문 행(NORTH/OPEN/CLOSE), OPEN/CLOSE가 GATE_OPEN/GATE_CLOSE + 해당 Gate 참조 방출, DAY 복귀 시 UI 숨김(DAY reset), 회귀(Player 무공격/무타겟 그룹, 핵심 건물 5/floor 128x128, 성문 유지, 기존 Wood/Stone/DayTime HUD 유지).
+  - 회귀 headless 전부 PASS: smoke, task0105, task0128, task0136, task0144, task0145, task0147, tasknav001, task0151.
 - NIGHT 표시:
   - Defense Zone N/E/S/W.
   - Regroup.
@@ -571,8 +595,8 @@ Code style consistent with existing codebase. No edge case gaps found.
   - 전투 중앙을 과도하게 가리지 않음.
   - 완성형 UI polish 금지.
 - 완료조건:
-  - NIGHT command UI 사용 가능.
-  - DAY reset 정상.
+  - NIGHT command UI 사용 가능. (충족)
+  - DAY reset 정상. (충족)
 
 ### TASK-015-3 Defense Zone Command
 - 상태: QUEUED

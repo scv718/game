@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://ui/tavern_recruitment_ui.tscn" id="2_recruit"]
 [ext_resource type="PackedScene" path="res://ui/inn_roster_ui.tscn" id="3_inn"]
+[ext_resource type="PackedScene" path="res://ui/tactical_command_ui.tscn" id="4_tactical"]
 
 [node name="HUD" type="Control"]
 anchors_preset = 15
@@ -74,6 +75,8 @@ visible = false
 [node name="TavernRecruitmentUI" parent="." instance=ExtResource("2_recruit")]
 
 [node name="InnRosterUI" parent="." instance=ExtResource("3_inn")]
+
+[node name="TacticalCommandUI" parent="." instance=ExtResource("4_tactical")]
 
 [node name="FeedbackLabel" type="Label" parent="."]
 unique_name_in_owner = true
