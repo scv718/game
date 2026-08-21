@@ -1,0 +1,19 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: wall scene loads
+PASS: wall is StaticBody2D (static collision)
+PASS: wall has Visual polygon (16px footprint)
+PASS: wall build selection added (KEY_3)
+PASS: wall ghost footprint is 16px
+PASS: wall build mode active
+PASS: first wall placed (grid snap to 16px)
+PASS: wall cost deducted once (2 wood)
+PASS: wall mode stays active for continuous placement
+PASS: second wall placed continuously (2)
+PASS: second wall cost deducted once
+PASS: wall barrier built (8 segments)
+PASS: wall barrier blocks nav (path 197 > direct 60 +60)
+PASS: wall rejected overlapping Core Building (Keep)
+PASS: no wood deducted on invalid wall position
+TASK0131_RESULT=PASS

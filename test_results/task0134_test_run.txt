@@ -1,0 +1,53 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: north gate placed
+PASS: gate has Interactable for player toggle
+PASS: gate interact prompt set
+PASS: new gate starts CLOSED
+PASS: CLOSED gate passage collision active (CollisionShape2D present)
+PASS: public API is_open present
+PASS: public API set_open present
+PASS: public API set_closed present
+PASS: public API toggle present
+PASS: public signal gate_state_changed present
+PASS: CLOSED gate: nav path detours (does not cross gate footprint)
+PASS: CLOSED gate blocks player (y=-432 stays south of gate)
+PASS: set_open emits exactly one gate_state_changed
+PASS: gate OPEN after set_open(true)
+PASS: OPEN gate passage collision inactive (CollisionShape2D removed)
+PASS: OPEN gate: nav path crosses gate footprint (passage open)
+PASS: OPEN gate allows player through (y=-520 north of gate)
+PASS: gate Interact exposes interact() for player
+PASS: toggle 1 emits exactly one gate_state_changed
+PASS: toggle 1 collision state matches is_open
+PASS: toggle 1 CLOSED nav blocked
+PASS: toggle 2 emits exactly one gate_state_changed
+PASS: toggle 2 collision state matches is_open
+PASS: toggle 2 OPEN nav passable
+PASS: toggle 3 emits exactly one gate_state_changed
+PASS: toggle 3 collision state matches is_open
+PASS: toggle 3 CLOSED nav blocked
+PASS: toggle 4 emits exactly one gate_state_changed
+PASS: toggle 4 collision state matches is_open
+PASS: toggle 4 OPEN nav passable
+PASS: toggle 5 emits exactly one gate_state_changed
+PASS: toggle 5 collision state matches is_open
+PASS: toggle 5 CLOSED nav blocked
+PASS: toggle 6 emits exactly one gate_state_changed
+PASS: toggle 6 collision state matches is_open
+PASS: toggle 6 OPEN nav passable
+PASS: worker assigned to lumberyard
+PASS: worker reaches outside tree through OPEN gate (state=3)
+PASS: worker-phase toggle 1 emits exactly one gate_state_changed
+PASS: worker-phase toggle 1 collision matches state
+PASS: worker-phase toggle 2 emits exactly one gate_state_changed
+PASS: worker-phase toggle 2 collision matches state
+PASS: worker-phase toggle 3 emits exactly one gate_state_changed
+PASS: worker-phase toggle 3 collision matches state
+PASS: worker-phase toggle 4 emits exactly one gate_state_changed
+PASS: worker-phase toggle 4 collision matches state
+PASS: worker reaches tree again after repeated gate toggles (state=3)
+PASS: worker node valid (no freed reference)
+PASS: gate OPEN at end of worker phase
+TASK0134_RESULT=PASS

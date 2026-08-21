@@ -1,0 +1,55 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: U-shape walls built (55 walls)
+PASS: north gate installed in corridor
+PASS: new gate starts CLOSED
+PASS: OPEN: inside->outside nav reachable
+PASS: OPEN: path crosses gate footprint (passage)
+PASS: CLOSED: path detours (does not cross gate footprint)
+PASS: wall added: path detours (nav updated, no stale)
+PASS: wall removed: path straight again (no stale collision)
+PASS: rebuild 1: collision state matches is_open
+PASS: rebuild 1 CLOSED: passage blocked
+PASS: rebuild 2: collision state matches is_open
+PASS: rebuild 2 OPEN: passage reachable
+PASS: rebuild 3: collision state matches is_open
+PASS: rebuild 3 CLOSED: passage blocked
+PASS: rebuild 4: collision state matches is_open
+PASS: rebuild 4 OPEN: passage reachable
+PASS: rebuild 5: collision state matches is_open
+PASS: rebuild 5 CLOSED: passage blocked
+PASS: rebuild 6: collision state matches is_open
+PASS: rebuild 6 OPEN: passage reachable
+PASS: lumberjack 1 assigned
+PASS: lumberjack 2 assigned
+PASS: both lumberjacks reached outside trees through OPEN gate (states 3/3)
+PASS: lumberjacks moved north of gate (did not tunnel through walls)
+PASS: worker nodes valid (no freed reference)
+PASS: no permanent MOVE stall with CLOSED gate: worker deposited wood (99885 -> 99890) states 1/4
+PASS: pocket lumberjack assigned
+PASS: pocket: unreachable sealed tree -> no permanent MOVE stall (state=0 pos=(503.9764, -166.7348))
+PASS: pocket: after wall removed, tree reachable (no stale collision)
+PASS: pocket: lumberjack reached opened tree (state=3, no stale collision)
+PASS: stone deposit present
+PASS: quarry built on deposit
+PASS: miner assigned to quarry
+PASS: miner/ quarry production normal (stone 0 -> 1)
+PASS: game starts in DAY
+PASS: day/night cycle 1 phase correct (expect NIGHT, got NIGHT)
+PASS: gate state persists across day/night (cycle 1)
+PASS: worker workplace stable across day/night (cycle 1)
+PASS: quarry stable across day/night (cycle 1)
+PASS: day/night cycle 2 phase correct (expect DAY, got DAY)
+PASS: gate state persists across day/night (cycle 2)
+PASS: worker workplace stable across day/night (cycle 2)
+PASS: quarry stable across day/night (cycle 2)
+PASS: day/night cycle 3 phase correct (expect NIGHT, got NIGHT)
+PASS: gate state persists across day/night (cycle 3)
+PASS: worker workplace stable across day/night (cycle 3)
+PASS: quarry stable across day/night (cycle 3)
+PASS: day/night cycle 4 phase correct (expect DAY, got DAY)
+PASS: gate state persists across day/night (cycle 4)
+PASS: worker workplace stable across day/night (cycle 4)
+PASS: quarry stable across day/night (cycle 4)
+TASK0135_RESULT=PASS
