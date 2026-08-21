@@ -1,0 +1,73 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: recruitment UI present
+PASS: mercenary_A hired into roster
+PASS: mercenary_A alive
+PASS: defense NORTH
+PASS: no mercenary actor during DAY (0)
+PASS: north gate placed
+PASS: player has no attack method
+PASS: MercState has 6 states (FSM)
+PASS: EnemyState has 3 states (ATTACK added)
+PASS: FSM states ACQUIRE_TARGET/RETURN exist
+PASS: phase is NIGHT after advance
+PASS: mercenary actor spawned at NIGHT (1)
+PASS: actor retrievable by id
+PASS: actor references roster MercenaryData
+PASS: actor current_hp from max_hp
+PASS: actor alive
+PASS: actor at north rally (pos=(0.0, -280.0))
+PASS: actor starts IDLE
+PASS: spawner auto-encounter 3 enemies at NIGHT (3)
+PASS: auto-encounter cleaned for isolated FSM test (0)
+PASS: no enemies present
+PASS: actor stays IDLE with no target
+PASS: actor holds at defense point
+PASS: test enemy E1 spawned near zone (1)
+PASS: mercenary ACQUIRE_TARGET -> MOVE_TO_TARGET (state=2)
+PASS: mercenary target is E1
+PASS: mercenary started chasing E1 (dist=100.0)
+PASS: E1 killed by mercenary attack (enemy count=0)
+PASS: mercenary alive after killing E1
+PASS: mercenary returns to IDLE after target death
+PASS: test enemy E2 spawned
+PASS: mercenary re-acquired E2 and attacked (hp=30)
+PASS: mercenary in ATTACK
+PASS: test enemy E3 (high hp, route) spawned
+PASS: mercenary full hp before enemy engagement
+PASS: enemy attacked mercenary (mercenary hp 92 < 100)
+PASS: mercenary still alive
+PASS: enemies cleared for chase-return test (0)
+PASS: test enemy E4 spawned
+PASS: E4 moved far east ((260.0, -280.0)) -> mercenary should return
+PASS: mercenary returned to defense point (RETURN_TO_DEFENSE_ZONE -> IDLE near rally)
+PASS: returned position near rally
+PASS: no re-acquisition of far enemy after return (no permanent chase)
+PASS: actor present for death test
+PASS: mercenary actor freed after death
+PASS: mercenary removed from group (0)
+PASS: MercenaryData.alive set to false on death
+PASS: roster actor lookup null after death
+PASS: phase back to DAY after death
+PASS: next NIGHT after death
+PASS: dead mercenary NOT re-spawned next NIGHT (0)
+PASS: roster actor_count 0 (no respawn)
+PASS: phase DAY for regression
+PASS: no mercenary actor during DAY regression
+PASS: mercenary roster data retained (1)
+PASS: player has no attack method
+PASS: player excluded from enemy/mercenary target groups
+PASS: worker roster unaffected (0)
+PASS: no lumberjack actor spawned
+PASS: no miner actor spawned
+PASS: 5 core buildings intact
+PASS: world floor intact
+PASS: enemy probe near player spawned
+PASS: enemy near player stays MOVE (player not targeted)
+PASS: gate still present
+PASS: gate toggle still works
+PASS: nav path from rally to keep exists (3 pts)
+PASS: EnemyState.ATTACK constant intact
+TASK0144_RESULT=PASS
+

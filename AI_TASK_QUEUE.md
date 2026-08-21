@@ -347,7 +347,15 @@
   - 검증 중 기록: 열린 지형에서 성문(48x16)만으로는 장거리 nav '완전 차단'이 구조적으로 어렵고, CLOSED 검증은 TASK-013-4/013-5와 동일한 짧은 path(0,-560)→(0,-360) + NAV_SETTLE_PF(90) 물리 프레임 대기로 안정화했다.
 
 ### TASK-014-4 Mercenary Auto Combat FSM
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: FSM 6상태 구현 정상, deterministic priority 탐색/추격/공격/복귀 흐름 정확, Enemy ATTACK 상태로 interval 공격 및 Player 타겟 배제 정상, 사망 시 roster freed-reference 즉시 제거 + 다음 NIGHT 재생성 없음 확인. 테스트 72항목 PASS + 회귀 전부 PASS. 기존 코드 스타일과 일관, 버그/누락 없음.
+- 피드백: 모든 요구사항 충족. MercenaryActor에 IDLE/ACQUIRE_TARGET/MOVE_TO_TARGET/ATTACK/RETURN_TO_DEFENSE_ZONE/DEAD 6상태 FSM을 구현하고, 지정 defense zone 근처 Enemy를 deterministic priority로 자동 탐색/추격/interval 공격하며, 과도한 추격 시 defense_point 복귀, target death/invalid 시 재탐색을 검증했다. EnemyActor에 ATTACK 상태를 추가해 공격 range 안 살아 있는 Mercenary를 interval 공격하고(Mercenary HP 감소/Death), Player는 절대 target/damage 대상이 아님을 확인했다. 사망 시 MercenaryData.alive=false 반영 + roster `_actors`에서 즉시 제거(freed reference 오류 없음) + 다음 NIGHT 재생성 없음을 자동검증했다. headless 3회 연속 PASS + 회귀 전부 PASS. 코드 스타일 기존과 일관, 버그/누락/엣지 케이스 없음.
+- 구현기록:
+  - `scripts/mercenary_actor.gd`: MercState 6상태 FSM. `_acquire_target()`은 defense_point에서 CHASE_RETURN_DISTANCE(180) 이내 살아 있는 Enemy 중 defense_point에서 가장 가까운 것을 target으로 획득(deterministic priority), 구역 밖 Enemy는 획득하지 않아 영구 chase 방지. MOVE_TO_TARGET에서 공격 range(26) 진입 시 ATTACK, defense_point에서 180 초과 이탈 시 RETURN_TO_DEFENSE_ZONE 복귀 후 재탐색. ATTACK은 attack_interval 기반 `take_damage` 호출(Enemy HP 감소). `take_damage()`/`die()` 추가(Enemy 공격으로 HP 0 → MercenaryData.alive=false, 그룹 제외, died signal, queue_free). Player는 target 탐색에서 완전 배제(mercenaries/enemies 그룹만 조회). 공개 조회 API get_state()/get_target().
+  - `scripts/enemy_actor.gd`: EnemyState에 ATTACK 추가. MOVE 중 공격 range(26) 안 살아 있는 Mercenary를 target으로 정지 후 interval 공격(`take_damage`), target 사망/이탈 시 기존 route 접근(MOVE) 재개. Player는 절대 target이 되지 않음(mercenaries 그룹만 탐색).
+  - `scripts/mercenary_roster.gd`: spawn 시 `defense_point`(해당 방향 Rally Space/RallyPoint)를 actor에 설정. Actor `died` signal 연결 → `_actors`에서 즉시 제거해 사망 후 freed reference가 roster에 남지 않게 함. get_actor/despawn/get_actor_count를 freed reference에 안전하도록 수정(Variant 접근).
+  - `tests/task0144_test.gd` 신규 작성 headless PASS(59항목, 3회 연속): FSM 상태 존재, NIGHT spawn → IDLE 유지(무적), ACQUIRE→MOVE_TO_TARGET(구역 내 Enemy 획득/추격), ATTACK으로 E1 HP 감소/사망/IDLE 복귀, target 사망 후 E2 재탐색/공격, Enemy(E3)가 Mercenary 공격으로 HP 감소(92<100), 과도한 추격 시 RETURN_TO_DEFENSE_ZONE 복귀 + 재추격 없음, Mercenary 사망(freed/그룹 제외/MercenaryData.alive=false/roster 조회 null) + 다음 NIGHT 미재생성, Player 무공격/무타겟(enemy가 Player 옆에서도 MOVE 유지), Worker/건물/floor/nav/gate 회귀. 결과 `test_results/task0144_test_run.txt`(TASK0144_RESULT=PASS).
+  - 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001, task0141~0143.
 - 최소 상태:
   - IDLE/HOLD.
   - ACQUIRE_TARGET.

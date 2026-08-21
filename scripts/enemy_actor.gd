@@ -7,13 +7,16 @@ class_name EnemyActor
 ## 마을 쪽으로 접근하는 방식(road 접근 선호)이며, OPEN Gate면 Gate corridor를
 ## 통과해 Village Core 방향으로 진행할 수 있다.
 ## HP/move_speed/damage/attack_interval/death 속성을 prototype 값으로 보유한다.
-## 실제 전투 AI/FSM(target 탐색/공격)은 TASK-014-4에서, 사망 기록/청소는
-## TASK-014-6에서 다룬다. Player를 combat target으로 선택하지 않는다.
+## TASK-014-4 전투: 공격 range 안에 살아 있는 Mercenary가 있으면 정지해
+## interval 단위로 공격한다(Enemy가 직접 Mercenary HP를 감소시킴). target이
+## 죽거나 멀어지면 기존 접근(route)을 재개한다. Player는 절대 target이 되지
+## 않는다(mercenaries 그룹만 탐색). 사망 기록/청소는 TASK-014-6에서 다룬다.
 
-enum EnemyState { MOVE, HOLD }
+enum EnemyState { MOVE, HOLD, ATTACK }
 
 const REACH_DISTANCE := 12.0
 const STUCK_TIMEOUT := 2.0
+const ATTACK_RANGE := 26.0
 
 var enemy_id: String = ""
 var display_name: String = ""
@@ -32,6 +35,8 @@ var _final_target := Vector2.ZERO
 var _has_final := false
 var _stuck_timer := 0.0
 var _last_move_pos := Vector2.ZERO
+var _target: Node = null
+var _attack_cd := 0.0
 
 @onready var _nav_agent: NavigationAgent2D = $NavigationAgent2D
 
@@ -93,9 +98,17 @@ func _physics_process(delta: float) -> void:
 			_tick_move(delta)
 		EnemyState.HOLD:
 			velocity = Vector2.ZERO
+		EnemyState.ATTACK:
+			_tick_attack(delta)
 
 
 func _tick_move(delta: float) -> void:
+	# TASK-014-4: 공격 range 안에 살아 있는 Mercenary가 있으면 교전을 우선한다.
+	var merc := _find_nearby_mercenary()
+	if merc != null:
+		_target = merc
+		state = EnemyState.ATTACK
+		return
 	var dest := _current_dest()
 	_nav_agent.target_position = dest
 	var reached := global_position.distance_to(dest) <= REACH_DISTANCE
@@ -136,3 +149,47 @@ func get_enemy_id() -> String:
 
 func get_direction() -> String:
 	return direction
+
+
+## TASK-014-4: 공격 range 안의 살아 있는 Mercenary를 target으로 선택한다.
+## Player는 절대 target이 되지 않는다(mercenaries 그룹만 탐색).
+func _find_nearby_mercenary() -> Node:
+	var best: Node = null
+	var best_dist := ATTACK_RANGE
+	for m in get_tree().get_nodes_in_group("mercenaries"):
+		if not is_instance_valid(m):
+			continue
+		if m.get("alive") == false:
+			continue
+		var d := global_position.distance_to(m.global_position)
+		if d <= best_dist:
+			best_dist = d
+			best = m
+	return best
+
+
+## TASK-014-4: 정지 상태에서 interval 단위로 target(Mercenary)을 공격한다.
+## target이 죽거나 attack range 밖으로 멀어지면 기존 접근(route)으로 복귀한다.
+func _tick_attack(delta: float) -> void:
+	_attack_cd = maxf(0.0, _attack_cd - delta)
+	if _target_invalid():
+		_target = null
+		state = EnemyState.MOVE
+		return
+	if global_position.distance_to(_target.global_position) > ATTACK_RANGE * 1.5:
+		_target = null
+		state = EnemyState.MOVE
+		return
+	velocity = Vector2.ZERO
+	if _attack_cd <= 0.0:
+		if _target.has_method("take_damage"):
+			_target.take_damage(attack_damage)
+		_attack_cd = attack_interval
+
+
+func _target_invalid() -> bool:
+	if _target == null or not is_instance_valid(_target):
+		return true
+	if _target.get("alive") == false:
+		return true
+	return false

@@ -62,10 +62,21 @@ func _spawn_actor(m: MercenaryData, world: Node) -> bool:
 	if actor == null:
 		return false
 	actor.merc_data = m
-	actor.position = get_rally_point_for_zone(m.defense_zone, world)
+	var rally := get_rally_point_for_zone(m.defense_zone, world)
+	actor.position = rally
+	actor.defense_point = rally
 	world.add_child(actor)
+	# TASK-014-4: Actor가 사망하면(월드 제거 전) _actors에서 바로 제거해
+	# freed reference가 roster에 남아 재조회/despawn 시 오류 나지 않게 한다.
+	actor.died.connect(_on_actor_died.bind(m.id))
 	_actors[m.id] = actor
 	return true
+
+
+## TASK-014-4: 사망한 용병 Actor를 _actors에서 제거. get_alive()는 이미 alive=false를
+## 제외하므로 다음 NIGHT에 재생성되지 않는다.
+func _on_actor_died(_mercenary: Node, mercenary_id: String) -> void:
+	_actors.erase(mercenary_id)
 
 
 ## TASK-014-2: DAY 복귀 시 spawn된 모든 Actor를 despawn한다. 살아 있는 용병은
@@ -74,8 +85,8 @@ func _spawn_actor(m: MercenaryData, world: Node) -> bool:
 func despawn_night_actors() -> int:
 	var removed := 0
 	for id in _actors.keys():
-		var actor: Node = _actors[id]
-		if is_instance_valid(actor):
+		var actor: Variant = _actors[id]
+		if actor != null and is_instance_valid(actor):
 			actor.queue_free()
 		_actors.erase(id)
 		removed += 1
@@ -163,8 +174,11 @@ func get_alive_count() -> int:
 
 
 ## TASK-014-2: 현재 월드에 spawn된 용병 Actor를 조회한다. 없으면 null.
+## freed reference(사망 후)가 남아 있어도 오류 없이 null을 반환한다.
 func get_actor(mercenary_id: String) -> Node:
-	var actor: Node = _actors.get(mercenary_id)
+	if not _actors.has(mercenary_id):
+		return null
+	var actor: Variant = _actors.get(mercenary_id)
 	if actor != null and is_instance_valid(actor):
 		return actor
 	return null
@@ -173,7 +187,7 @@ func get_actor(mercenary_id: String) -> Node:
 ## TASK-014-2: 현재 월드에 spawn된 용병 Actor 수.
 func get_actor_count() -> int:
 	var n := 0
-	for actor in _actors.values():
+	for actor: Variant in _actors.values():
 		if is_instance_valid(actor):
 			n += 1
 	return n
