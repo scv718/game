@@ -774,7 +774,20 @@ Review complete. All items verified.
 ---
 
 ## OVERNIGHT-STOP-5 TASK-013~015 종료 경계
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 상이나, `AI_TASK_QUEUE.md` line 777의 상태가 아직 REVIEW로 남아있어 DONE으로 갱신 필요.
+
+수정하겠습니다:
+수정 완료. 검토 결과 요약:
+
+- **금지 시스템 미시작:** 코드 전역 검색으로 전부 확인 (모듈/class_name/기능 없음)
+- **임시 파일:** 0건
+- **회귀 테스트:** smoke/task0128/task0158 전부 PASS (방금 headless 실행)
+- **구현기록:** 적절 — 검증 결과, 테스트 결과, 다음 예정 태스크 기재
+
+판정: **LGTM** (수정 후)
+사유: OVERNIGHT-STOP-5 종료 경계 검증 결과 정상. 금지 시스템 미시작, 임시 파일 0건, 회귀 3종 PASS 확인. `상태: REVIEW` → `DONE` 갱신 완료.
+- 피드백: 종료 경계 확인 완료. TASK-MAINT-001 + TASK-013(Wall/Gate) + TASK-014(고용/Enemy/자동전투/death) + TASK-015(전술 Command UI/카메라/명령 우선순위) 전체가 정상 상태로 종료되었고, 금지된 신규 시스템(Death Ledger/Ghost/Dungeon/Food·Potion·Morale/Equipment/추가 Mercenary class/추가 Enemy archetype/Boss·Siege/Wall upgrade/대규모 UI polish)은 어떤 것도 시작되지 않았음을 코드 전역 검색으로 확인했다. 회귀 headless(smoke/task0128/task0158) 전부 PASS로 경계 상태 안정 확인. 임시 디버그 파일 없음. 다음 사람 플레이테스트 후 TASK-016(Death Ledger) / TASK-017(First Ghost Return) 순서로 예정.
 - 설명: TASK-MAINT-001, TASK-013, TASK-014, TASK-015 완료 후 신규 시스템을 임의 시작하지 않고 종료한다.
 - 금지:
   - Death Ledger.
@@ -791,3 +804,9 @@ Review complete. All items verified.
   - TASK-016 Death Ledger.
   - TASK-017 First Ghost Return.
   - Ghost vertical slice를 Food/Potion/Morale보다 우선.
+- 구현기록:
+  - OVERNIGHT-STOP-5는 기능 구현이 아니라 종료 경계 확인 태스크로, 신규 시스템을 추가하지 않고 현재 상태를 검증해 종료한다.
+  - 금지 시스템 미시작 검증(코드 전역): `death_ledger`/`ledger` 전용 모듈 없음, Ghost return/spawn 시스템 없음(일치하는 class_name/func 없음), Dungeon은 예약 좌표/마커(`NeDungeonCandidate`)만 존재하고 실제 기능(`spawn_dungeon` 등) 없음, Food/Potion/Morale/Equipment progression 구현 없음(EquipmentShop은 TASK-012에 LOCK된 기존 core building), Mercenary class는 SWORDSMAN 1종뿐, Enemy archetype은 일반 근접 1종뿐이며 Boss/Siege 없음, Wall upgrade 없음. 대규모 UI polish 없음.
+  - 임시 디버그 파일 확인: `_diag*` / `_probe*` / `_t75*` glob 0건 — 잔여 없음.
+  - 회귀 headless 검증(Godot 4.7.1 headless 실제 실행): `smoke_test.gd` PASS, 최신 핵심 회귀 `task0128_test.gd` PASS, TASK-013~015 통합 `task0158_test.gd` PASS. 경계 상태 안정.
+  - 다음 예정 태스크(TASK-016 Death Ledger / TASK-017 First Ghost Return)는 사람 플레이테스트 후 진행하며 이번 태스크에서 구현하지 않는다.
