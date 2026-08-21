@@ -671,7 +671,17 @@ Review complete. All items verified.
   - 임시 파일 `_probe_focus_test.gd` 제거(게임/테스트 코드 미참조).
 
 ### TASK-015-6 Gate Command + Tactical Time
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: Gate Command(상태 라벨/BREACHED disabled/null 안전)와 Tactical Time(Pause/1x/2x/DAY 복원/clamp)이 정상 구현됨. 테스트가 78항목으로 핵심 시나리오를 전부 커버하고, 회귀 테스트 전부 통과, 임시 파일 없음. 코드 스타일 기존과 일관.
+- 피드백: 리뷰 지적(advance() scale 적용 / DAY 1x 복원 / roster GATE·TIME 핸들러 / _refresh_gates 상태 라벨·BREACHED disabled·상태 변경 갱신 / task0156_test 신규)을 전부 반영 완료. 모든 요구사항 충족. 성문 OPEN/CLOSE 명령 + 상태(CLOSED/OPEN/BREACHED) 표시 + BREACHED disabled 처리, 전술 시간 Pause/1x/2x(GameTime 시간 배율, Pause 중 UI 입력 동작, DAY 진입 1x 복원, 종료 후 time state 누수 없음), 2x에서 combat/animation/GameTime/Worker timer 중복 실행 없음을 headless 자동검증 PASS로 확인. 회귀 전부 PASS. 임시 파일 없음.
+- 구현기록:
+  - `scripts/game_time.gd`: TASK-015-6 전술 시간. `TIME_SCALE_PAUSE/1X/2X` 상수 + `_time_scale`(기본 1x) 추가. `advance()`가 `seconds * _time_scale`로 경과를 누적하고(리뷰 지적 반영), DAY phase에 진입하면 `_time_scale = TIME_SCALE_1X`로 복원. `set_time_scale()`(0~2 clamp)/`get_time_scale()` 공개 API. SceneTree.paused를 쓰지 않으므로 Pause(0) 중에도 UI 입력이 그대로 동작한다.
+  - `scripts/mercenary_roster.gd`: `_on_tactical_command()`에 GATE_OPEN/GATE_CLOSE(→ `gate.set_open(true/false)`) 및 TIME_PAUSE/1X/2X(→ `GameTime.set_time_scale()`) 핸들러 추가. `_set_gate_open()` 헬퍼는 null/freed 성문을 안전 무시하고 BREACHED는 set_open no-op으로 처리(자동 복구 없음).
+  - `scripts/tactical_command_ui.gd`: `_refresh_gates()`에 Gate 상태 라벨(CLOSED/OPEN/BREACHED) 추가, BREACHED 성문은 OPEN/CLOSE 버튼 disabled 처리, `gate_state_changed` 신호로 상태 변경 시 목록 자동 재생성(중복 연결 방지). 신호 2인자(gate, open)에 대응하도록 `_refresh_gates(_gate, _open)` 시그니처로 변경.
+  - `tests/task0156_test.gd` 신규 작성 headless PASS: 시간 배율 API/clamp, Pause(0)에서 GameTime 경과 고정 + Pause 중 UI 버튼(성문 OPEN/1x) 입력 동작, 1x vs 2x GameTime 경과 비율 ~2(중복/4배 아님), 2x에서 전투 hit 수 1x와 동일(중복 공격 아님), 2x에서 miner 생산량 1x와 동일(중복 생산 아님), 성문 OPEN/CLOSE 명령 + 상태 라벨 갱신, BREACHED 버튼 disabled + 명령 no-op, DAY 진입 1x 복원 + time state 누수 없음, 회귀(Player 무공격/무타겟, 핵심 건물 5/floor, HUD 유지). 결과 `test_results/task0156_test_run.txt`(TASK0156_RESULT=PASS).
+  - `tests/task0152_test.gd`: 성문 행 구조에 상태 라벨이 추가됨에 따라 NIGHT_VISIBLE/GATE_COMMANDS 자식 인덱스를 1→2/2→3으로 갱신하고, TIME_COMMANDS가 TIME_2X 버튼(이제 실제로 2x 배율 적용) 후 후속 phase 전환에 영향 없도록 1x로 복원.
+  - 검증 중 기록: FirstEncounterSpawner의 NIGHT 기본 조우 Enemy가 전투 측정에 간섭하므로 전투 측정 전 전체 Enemy를 정리하고 테스트 Enemy HP를 충분히 높여(10000) 측정 창에서 사망/타겟 전환 없이 1x=9.0/2x=9.0 hit로 안정화했다. GameTime 경과 측정은 auto_advance + 동일 프레임 수(60)에서 1x=0.421s/2x=0.842s(비율 2.0).
+- 회귀 headless 전부 PASS: smoke, task0105, task0128, task0136, task0141, task0143~0147, tasknav001, task0151~0155. (tasknav001은 8-run nav stress로 시간이 오래 걸리는 테스트이며 별도 긴 타임아웃으로 PASS 확인)
 - Gate:
   - 설치된 N/E/S/W Gate 상태 표시.
   - OPEN/CLOSE.
@@ -682,11 +692,11 @@ Review complete. All items verified.
   - DAY 진입 시 1× 복원.
   - 테스트 종료 후 time state 누수 없음.
 - 검증:
-  - 2×에서 combat/animation/GameTime/Worker timer가 비정상 중복 실행되지 않음.
+  - 2×에서 combat/animation/GameTime/Worker timer가 비정상 중복 실행되지 않음. (충족)
 - 완료조건:
-  - Gate command.
-  - Pause/1×/2×.
-  - DAY reset.
+  - Gate command. (충족)
+  - Pause/1×/2×. (충족)
+  - DAY reset. (충족)
 
 ### TASK-015-7 Command AI Priority
 - 상태: QUEUED

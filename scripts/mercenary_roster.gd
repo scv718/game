@@ -120,7 +120,8 @@ func _on_actor_died(_mercenary: Node, mercenary_id: String) -> void:
 ## 행동이 필요하므로 Actor가 없으면 무시한다.
 ## TASK-015-5: FOCUS_TARGET은 Focus Target mode를 토글한다. mode 중 플레이어가
 ## 좌클릭으로 Enemy를 선택하면 모든 살아 있는 용병 Actor가 우선 target으로 삼는다.
-## GATE/TIME은 후속 태스크에서 처리한다.
+## TASK-015-6: GATE_OPEN/GATE_CLOSE는 지정 성문(Gate Node)을 열고/닫고,
+## TIME_PAUSE/1X/2X는 GameTime 전술 시간 배율을 설정한다(DAY 복원은 GameTime 담당).
 func _on_tactical_command(command: int, arg: Variant) -> void:
 	match command:
 		TacticalCommandUI.Command.DEFENSE_ZONE:
@@ -143,6 +144,26 @@ func _on_tactical_command(command: int, arg: Variant) -> void:
 					(actor as MercenaryActor).retreat(safe)
 		TacticalCommandUI.Command.FOCUS_TARGET:
 			toggle_focus_mode()
+		TacticalCommandUI.Command.GATE_OPEN:
+			_set_gate_open(arg, true)
+		TacticalCommandUI.Command.GATE_CLOSE:
+			_set_gate_open(arg, false)
+		TacticalCommandUI.Command.TIME_PAUSE:
+			GameTime.set_time_scale(GameTime.TIME_SCALE_PAUSE)
+		TacticalCommandUI.Command.TIME_1X:
+			GameTime.set_time_scale(GameTime.TIME_SCALE_1X)
+		TacticalCommandUI.Command.TIME_2X:
+			GameTime.set_time_scale(GameTime.TIME_SCALE_2X)
+
+
+## TASK-015-6: 성문(Gate Node)의 OPEN/CLOSED를 명령한다. 성문이 없거나 이미
+## freed면 안전하게 무시한다. BREACHED 성문은 gate.set_open이 no-op으로 처리해
+## 자동 복구 없이 통로를 유지한다.
+func _set_gate_open(gate: Variant, open: bool) -> void:
+	if gate == null or not is_instance_valid(gate):
+		return
+	if gate.has_method("set_open"):
+		gate.set_open(open)
 
 
 ## TASK-015-5: Focus Target mode를 켜고 끈다. mode가 켜지면 플레이어는 좌클릭으로

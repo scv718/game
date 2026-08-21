@@ -78,9 +78,14 @@ func _build_defense_buttons() -> void:
 		(%DefenseZoneRow as HBoxContainer).add_child(btn)
 
 
-## 설치된 성문을 N/E/S/W 방향별로 나열하고 OPEN/CLOSE 버튼을 만든다.
-## 성문이 없으면 안내 문구만 표시한다. (반복 호출은 목록을 재생성)
-func _refresh_gates() -> void:
+## 설치된 성문을 N/E/S/W 방향별로 나열하고 상태(CLOSED/OPEN/BREACHED) + OPEN/CLOSE
+## 버튼을 만든다. BREACHED(파괴) 성문은 OPEN/CLOSE 버튼을 disabled 처리해 조작을
+## 막는다(성문의 set_open이 no-op이므로 이중 안전). 성문 상태가 바뀌면 목록을
+## 다시 그려 상태 라벨을 갱신한다. 성문이 없으면 안내 문구만 표시한다.
+## (반복 호출은 목록을 재생성하며, gate 신호 연결은 중복 방지)
+## gate_state_changed(gate, open) 신호와 gate 없는 직접 호출 양쪽에 대응하기 위해
+## 인자를 받는다(재생성 로직에서는 사용하지 않음).
+func _refresh_gates(_gate: Node = null, _open: bool = false) -> void:
 	for child in _gate_list.get_children():
 		child.queue_free()
 	var gates := get_tree().get_nodes_in_group("gates")
@@ -92,20 +97,35 @@ func _refresh_gates() -> void:
 	for gate in gates:
 		if not is_instance_valid(gate):
 			continue
+		if gate.has_signal("gate_state_changed") \
+				and not gate.gate_state_changed.is_connected(_refresh_gates):
+			gate.gate_state_changed.connect(_refresh_gates)
 		var dir: String = "?"
 		if gate.has_method("get_direction"):
 			dir = gate.get_direction()
+		var breached := false
+		if gate.has_method("is_breached"):
+			breached = gate.is_breached() == true
+		var state_name := "CLOSED"
+		if gate.has_method("is_open") and gate.is_open():
+			state_name = "BREACHED" if breached else "OPEN"
 		var row := HBoxContainer.new()
 		var label := Label.new()
 		label.text = "%s" % dir.to_upper()
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var state := Label.new()
+		state.text = state_name
+		state.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var open_btn := Button.new()
 		open_btn.text = "OPEN"
+		open_btn.disabled = breached
 		open_btn.pressed.connect(_emit_command.bind(Command.GATE_OPEN, gate))
 		var close_btn := Button.new()
 		close_btn.text = "CLOSE"
+		close_btn.disabled = breached
 		close_btn.pressed.connect(_emit_command.bind(Command.GATE_CLOSE, gate))
 		row.add_child(label)
+		row.add_child(state)
 		row.add_child(open_btn)
 		row.add_child(close_btn)
 		_gate_list.add_child(row)

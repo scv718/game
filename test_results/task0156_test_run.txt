@@ -1,0 +1,79 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: mercenary roster starts empty
+PASS: time scale defaults to 1x
+PASS: set_time_scale 2x
+PASS: set_time_scale clamps to 2x
+PASS: set_time_scale clamps to pause
+PASS: recruitment UI present
+PASS: mercenary_A hired alive
+PASS: defense zone NORTH
+PASS: gate scene loads
+PASS: north gate placed
+PASS: east gate placed
+PASS: new gates start CLOSED
+PASS: DAY -> NIGHT transition
+PASS: player night mode active
+PASS: tactical command UI visible at NIGHT
+PASS: two gate rows built (N/E)
+PASS: gate row0 shows NORTH
+PASS: north gate state label CLOSED
+PASS: north gate has OPEN button
+PASS: north gate has CLOSE button
+PASS: north OPEN button enabled
+PASS: gate row1 shows EAST
+PASS: east gate state label CLOSED
+PASS: GATE_OPEN command opens north gate
+PASS: north gate state label updated to OPEN
+PASS: GATE_CLOSE command closes north gate
+PASS: direct GATE_OPEN command works
+PASS: direct GATE_CLOSE command works
+PASS: gate command with null arg is safe (no crash)
+PASS: north gate breached
+PASS: north gate state label BREACHED
+PASS: north OPEN button disabled when BREACHED
+PASS: north CLOSE button disabled when BREACHED
+PASS: intact east gate OPEN button still enabled
+PASS: GATE_CLOSE no-op on BREACHED (no auto-recovery)
+PASS: GATE_OPEN keeps BREACHED open
+PASS: mercenary actor spawned at NIGHT
+PASS: actor retrievable for combat measure
+PASS: actor at north rally
+PASS: actor starts IDLE
+PASS: combat enemy spawned in attack range
+PASS: actor engaged combat at 1x
+PASS: actor visual animation active
+PASS: combat hits at 1x > 0 (9.0)
+PASS: combat not double-run at 2x (1x=9.0 2x=9.0)
+PASS: actor visual animation still active at 2x
+PASS: combat test enemy cleaned
+PASS: miner + quarry spawned
+PASS: miner produced stone at 1x (5)
+PASS: worker timer not double-run at 2x (1x=5 2x=5)
+PASS: miner cleaned up
+PASS: pause button sets time scale 0
+PASS: GameTime elapsed frozen while paused
+PASS: tactical UI visible during pause (NIGHT)
+PASS: east gate CLOSED before pause open
+PASS: gate OPEN command works while paused (UI input active)
+PASS: east gate state label updated to OPEN
+PASS: 1x button resumes from pause
+PASS: 1x button sets scale 1
+PASS: GameTime elapsed grew at 1x (0.421)
+PASS: 2x button sets scale 2
+PASS: 2x advances ~2x, not doubled/quadrupled (1x=0.421 2x=0.842)
+PASS: 2x active before DAY entry
+PASS: advanced to DAY while at 2x
+PASS: time scale restored to 1x on DAY entry
+PASS: tactical UI hidden at DAY
+PASS: time scale stays 1x after DAY (no leak)
+PASS: player has no attack method
+PASS: player excluded from combat groups
+PASS: 5 core buildings intact
+PASS: world floor intact
+PASS: two gates still present
+PASS: no time scale leak (1x after DAY)
+PASS: existing Wood/Stone/DayTime HUD intact
+PASS: mercenary data intact
+TASK0156_RESULT=PASS

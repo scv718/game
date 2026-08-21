@@ -154,6 +154,11 @@ func _process(_delta: float) -> bool:
 				_check(_last_command == _tac.Command.TIME_1X, "1x button emits TIME_1X")
 				_tac.get_time_2x_button().pressed.emit()
 				_check(_last_command == _tac.Command.TIME_2X, "2x button emits TIME_2X")
+				_check(_game_time.get_time_scale() == GameTime.TIME_SCALE_2X, "2x button actually applies 2x speed")
+				# TASK-015-6: TIME_2X 버튼은 실제 시간 배율을 2x로 바꾸므로, 이후 phase 전환에
+				# 영향을 주지 않도록 1x로 복원한다(시간 버튼 동작 자체는 TASK-015-6에서 검증).
+				_game_time.set_time_scale(GameTime.TIME_SCALE_1X)
+				_check(_game_time.get_time_scale() == GameTime.TIME_SCALE_1X, "time scale restored to 1x")
 				_sub = 1
 			elif _sub == 1:
 				_enter(Phase.PLACE_GATE)
@@ -191,17 +196,18 @@ func _process(_delta: float) -> bool:
 				var first_row: Node = gate_list.get_child(0)
 				_check(first_row is HBoxContainer, "gate row is an HBoxContainer")
 				_check((first_row.get_child(0) as Label).text == "NORTH", "gate row shows NORTH direction")
-				_check((first_row.get_child(1) as Button).text == "OPEN", "gate row has OPEN button")
-				_check((first_row.get_child(2) as Button).text == "CLOSE", "gate row has CLOSE button")
+				_check((first_row.get_child(1) as Label).text == "CLOSED", "gate row shows state label CLOSED")
+				_check((first_row.get_child(2) as Button).text == "OPEN", "gate row has OPEN button")
+				_check((first_row.get_child(3) as Button).text == "CLOSE", "gate row has CLOSE button")
 				_sub = 1
 			elif _sub == 1:
 				_enter(Phase.GATE_COMMANDS)
 		Phase.GATE_COMMANDS:
 			if _sub == 0:
 				var first_row: Node = _tac.get_node("%GateList").get_child(0)
-				(first_row.get_child(1) as Button).pressed.emit()
-				_check(_last_command == _tac.Command.GATE_OPEN and _last_arg == _placed_gate, "gate OPEN button emits GATE_OPEN with gate")
 				(first_row.get_child(2) as Button).pressed.emit()
+				_check(_last_command == _tac.Command.GATE_OPEN and _last_arg == _placed_gate, "gate OPEN button emits GATE_OPEN with gate")
+				(first_row.get_child(3) as Button).pressed.emit()
 				_check(_last_command == _tac.Command.GATE_CLOSE and _last_arg == _placed_gate, "gate CLOSE button emits GATE_CLOSE with gate")
 				_sub = 1
 			elif _sub == 1:
