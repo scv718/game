@@ -22,6 +22,7 @@ signal feedback(text: String)
 signal building_type_changed(building_type: String)
 
 var _active := false
+var _remove_mode := false
 var _building_type := "lumberyard"
 var _ghost: Node2D = null
 var _ghost_rect: Polygon2D = null
@@ -51,6 +52,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_3:
 			_set_building_type("wall")
 			return
+		if event.keycode == KEY_R:
+			if _active:
+				_set_remove_mode(not _remove_mode)
+			return
 	if event.is_action_pressed("build"):
 		_set_active(not _active)
 	elif event.is_action_pressed("ui_cancel"):
@@ -58,7 +63,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			_set_active(false)
 	elif event is InputEventMouseButton and event.pressed \
 			and event.button_index == MOUSE_BUTTON_LEFT and _active:
-		if _building_type == "quarry":
+		if _remove_mode:
+			_try_remove_wall_at(_snap(get_global_mouse_position()))
+		elif _building_type == "quarry":
 			_try_place_quarry_at(get_global_mouse_position())
 		elif _building_type == "wall":
 			_try_place_wall_at(_snap(get_global_mouse_position()))
@@ -84,15 +91,29 @@ func _set_building_type(building_type: String) -> void:
 	_building_type = building_type
 	_ghost_size = WALL_FOOTPRINT if building_type == "wall" else BUILDING_SIZE
 	_query_shape.size = Vector2(_ghost_size, _ghost_size)
+	_remove_mode = false
 	if _active:
 		_show_ghost_at(_snap(get_global_mouse_position()))
 	building_type_changed.emit(_building_type)
+
+
+func _set_remove_mode(value: bool) -> void:
+	if _remove_mode == value:
+		return
+	_remove_mode = value
+	if _active:
+		_show_ghost_at(_snap(get_global_mouse_position()))
+	if value:
+		feedback.emit("Remove mode: click Wall to demolish")
+	else:
+		feedback.emit("Remove mode off")
 
 
 func _set_active(value: bool) -> void:
 	if _active == value:
 		return
 	_active = value
+	_remove_mode = false
 	if _active:
 		_show_ghost_at(_snap(get_global_mouse_position()))
 	elif _ghost:
@@ -142,6 +163,9 @@ func _circle_polygon(radius: float, segments: int = 48) -> PackedVector2Array:
 func _update_ghost_color() -> void:
 	if _ghost_rect == null:
 		return
+	if _remove_mode:
+		_ghost_rect.color = Color(0.9, 0.3, 0.3, 0.6)
+		return
 	if _is_valid_position(_ghost.position):
 		_ghost_rect.color = Color(0.3, 0.9, 0.4, 0.6)
 	else:
@@ -173,8 +197,15 @@ func _is_valid_wall_position(pos: Vector2) -> bool:
 	query.shape = _query_shape
 	query.transform = Transform2D(0.0, pos + Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT) * 0.5)
 	query.collision_mask = WALL_PLACE_MASK
-	var hits := space.intersect_shape(query, 1)
-	return hits.is_empty()
+	var hits := space.intersect_shape(query, 16)
+	# 인접(붙어 있는) Wall은 grid cell이 서로 다르므로 배치를 허용한다.
+	# 겹침 거부 대상은 Wall이 아닌 object(Player/Core Building/Tree/Stone/Boundary)만.
+	for hit in hits:
+		var collider = hit.get("collider")
+		if collider is Node and collider.is_in_group("walls"):
+			continue
+		return false
+	return true
 
 
 func _find_deposit_at(pos: Vector2) -> Node:
@@ -264,4 +295,51 @@ func _try_place_wall_at(pos: Vector2) -> void:
 		world.rebuild_navigation()
 	else:
 		get_parent().add_child(wall)
+	_refresh_neighbor_visuals(pos)
 	feedback.emit("Wall built")
+
+
+## TASK-013-2: 간단 철거. Build mode에서 R로 Remove mode 진입 후 Wall 클릭 시
+## Wood 전액 환불하고 제거. 제거 가능 대상은 Wall뿐(나머지 건물/자원은 삭제 금지).
+func _try_remove_wall_at(pos: Vector2) -> void:
+	var target: Node2D = null
+	for node in get_tree().get_nodes_in_group("walls"):
+		if not is_instance_valid(node):
+			continue
+		var wall := node as Node2D
+		if wall == null:
+			continue
+		if (wall.position - pos).length_squared() < 1.0:
+			target = wall
+			break
+	if target == null:
+		feedback.emit("No wall to remove")
+		return
+	var cost: int = int(BUILD_COSTS["wall"].get("wood", 0))
+	VillageResources.add("wood", cost)
+	# queue_free 전에 walls 그룹에서 먼저 제거해, 이후 neighbor 비주얼 갱신 시
+	# 제거된 wall이 인접으로 잡히지 않게 한다(stale visual 방지).
+	target.remove_from_group("walls")
+	_refresh_neighbor_visuals(pos)
+	target.queue_free()
+	var world = get_tree().get_first_node_in_group("world")
+	# queue_free는 프레임 종료 시 실제 제거되므로, 제거된 wall의 collision/nav가
+	# stale로 남지 않도록 debounce nav rebuild로 제거 후 갱신한다.
+	if world != null:
+		world.rebuild_navigation_debounced()
+	feedback.emit("Wall removed (+%d Wood)" % cost)
+
+
+## 인접(상하좌우 1 tile) Wall들의 연결 비주얼을 갱신.
+func _refresh_neighbor_visuals(pos: Vector2) -> void:
+	for node in get_tree().get_nodes_in_group("walls"):
+		if not is_instance_valid(node):
+			continue
+		var wall := node as Node2D
+		if wall == null:
+			continue
+		var diff: Vector2 = wall.position - pos
+		if abs(diff.x) <= WALL_FOOTPRINT and abs(diff.y) <= WALL_FOOTPRINT \
+				and diff.length_squared() > 0.1:
+			if wall.has_method("refresh_visual"):
+				wall.refresh_visual()

@@ -92,7 +92,9 @@
   - smoke PASS.
 
 ### TASK-013-2 Wall 연결 비주얼 + 간단 철거
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 태스크 요구사항 전부 충족, stale visual 방지 순서 정상, debounce nav rebuild 타이밍 적절, 테스트가 핵심 시나리오를 커버. 기존 코드 스타일과 일관, 누락/버그 없음.
+- 피드백: 리뷰 지적(제거 wall이 `walls` 그룹에 잔존한 채 neighbor 비주얼 갱신 → stale visual)을 반영해 `_try_remove_wall_at`에서 `queue_free()` 전에 `remove_from_group("walls")` 후 `_refresh_neighbor_visuals`를 호출하도록 수정. 아울러 제거 시 `queue_free()`가 프레임 종료에 실제 제거됨을 고려해 즉시 `rebuild_navigation()` 대신 `rebuild_navigation_debounced()`를 사용해 제거된 wall의 stale collision/nav가 남지 않게 함.
 - 비주얼:
   - 인접 N/E/S/W Wall을 기준으로 straight/corner/end 표현 가능한 asset이 있으면 사용.
   - 없으면 단일 sprite 반복 허용하되 간격이 끊겨 보이지 않게 함.
@@ -107,6 +109,11 @@
   - 직선/코너 성벽 생성 가능.
   - 제거 후 stale collision/nav 없음.
   - 인접 비주얼 갱신 정상.
+- 구현기록:
+  - `scripts/wall.gd`: `refresh_visual()` + `_build_visual_polygon()` 추가. 인접 N/E/S/W Wall이 있으면 시각 폴리곤을 간격 중간(8px)까지 확장해 straight/corner/end 연결을 표현(단일은 16×16, 직선은 24×16, 코너는 24×24). collision footprint(16×16)는 불변.
+  - `scripts/building_placement.gd`: KEY_R Remove mode 추가(Build mode에서 토글, 좌클릭 시 Wall 철거), `_try_remove_wall_at`(Wall 전액 환불, `remove_from_group` 후 neighbor 비주얼 갱신 + `queue_free` + debounced nav rebuild), `_refresh_neighbor_visuals`. 또 `_is_valid_wall_position`에서 인접(붙은) Wall은 배치 허용(격자 cell 상 겹치지 않으므로)하고 Wall이 아닌 object만 거부하도록 수정 → L자 코너가 실제로 배치 가능.
+  - `scripts/hud.gd`: build hint에 "R: Remove" 추가.
+  - `tests/task0132_test.gd` 신규 작성 headless PASS(단일/직선/코너 시각 경계, footprint 불변, remove mode, 철거 환불, 비-Wall 삭제 금지, 인접 비주얼 갱신, nav 장벽 차단→철거 후 통로 개방). smoke, task0128, tasknav001 회귀 PASS. (task0131은 기존부터 nav 동기화 타이밍상 path 60/197을 오가는 flaky로, 변경 전 stash 상태에서도 동일 확인 — 본 태스크 범위 밖)
 
 ### TASK-013-3 Gate Corridor 판정 + Gate Placement
 - 상태: QUEUED

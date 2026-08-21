@@ -1,0 +1,19 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: single wall placed
+PASS: single wall visual is 16x16 (end) got [P: (0.0, 0.0), S: (16.0, 16.0)]
+PASS: wall cost deducted once
+PASS: straight horizontal visual (width 24) got [P: (0.0, 0.0), S: (24.0, 16.0)]
+PASS: corner visual (width 24, height 24) got [P: (0.0, -8.0), S: (24.0, 24.0)]
+PASS: collision footprint stays 16x16
+PASS: remove mode toggled on
+PASS: N neighbor wall removed
+PASS: removal refunds full Wood
+PASS: neighbor visual updated back to straight after removal got [P: (0.0, 0.0), S: (24.0, 16.0)]
+PASS: non-wall object not removed (lumberyard kept)
+PASS: no refund for non-wall removal
+PASS: lumberyard still exists
+PASS: wall barrier built (8+ segments)
+PASS: wall barrier blocks nav before removal (path 197)
+PASS: nav passage opens after wall removal (path 60 <= direct 60 +40)
+TASK0132_RESULT=PASS

@@ -1,49 +1,49 @@
 ﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
 
 PASS: run 1: assign worker
-RUN 1: building dropped at (236.9428, 359.6337) worker=(156.9428, 359.6337) state=2
+RUN 1: building dropped at (237.0, 360.0) worker=(157.0, 360.0) state=2
   run 1 reached tree at pf 293
   run 1 deposited wood at pf 568
 PASS: run 1: worker reached tree after obstacle (t=293)
 PASS: run 1: longest MOVE episode 293 pf
 PASS: run 1: RETURN normal (t=295)
 PASS: run 1: DEPOSIT normal (t=568)
-RUN 2: building dropped at (230.893, 356.6977) worker=(150.893, 356.6977) state=2
+RUN 2: building dropped at (230.9023, 356.8433) worker=(150.9023, 356.8433) state=2
   run 2 reached tree at pf 297
   run 2 deposited wood at pf 572
 PASS: run 2: worker reached tree after obstacle (t=297)
 PASS: run 2: longest MOVE episode 297 pf
 PASS: run 2: RETURN normal (t=299)
 PASS: run 2: DEPOSIT normal (t=572)
-RUN 3: building dropped at (224.8111, 355.8809) worker=(144.8111, 355.8809) state=2
+RUN 3: building dropped at (224.8157, 355.9317) worker=(144.8157, 355.9317) state=2
   run 3 reached tree at pf 301
   run 3 deposited wood at pf 576
 PASS: run 3: worker reached tree after obstacle (t=301)
 PASS: run 3: longest MOVE episode 301 pf
 PASS: run 3: RETURN normal (t=303)
 PASS: run 3: DEPOSIT normal (t=576)
-RUN 4: building dropped at (218.7919, 355.9762) worker=(138.7919, 355.9762) state=2
+RUN 4: building dropped at (218.7934, 355.9915) worker=(138.7934, 355.9915) state=2
   run 4 reached tree at pf 305
   run 4 deposited wood at pf 580
 PASS: run 4: worker reached tree after obstacle (t=305)
 PASS: run 4: longest MOVE episode 305 pf
 PASS: run 4: RETURN normal (t=307)
 PASS: run 4: DEPOSIT normal (t=580)
-RUN 5: building dropped at (212.8073, 356.4396) worker=(132.8073, 356.4396) state=2
+RUN 5: building dropped at (212.8078, 356.4443) worker=(132.8078, 356.4443) state=2
   run 5 reached tree at pf 309
   run 5 deposited wood at pf 584
 PASS: run 5: worker reached tree after obstacle (t=309)
 PASS: run 5: longest MOVE episode 309 pf
 PASS: run 5: RETURN normal (t=311)
 PASS: run 5: DEPOSIT normal (t=584)
-RUN 6: building dropped at (206.8371, 357.0392) worker=(126.8371, 357.0392) state=2
+RUN 6: building dropped at (206.8375, 357.043) worker=(126.8375, 357.043) state=2
   run 6 reached tree at pf 313
   run 6 deposited wood at pf 588
 PASS: run 6: worker reached tree after obstacle (t=313)
 PASS: run 6: longest MOVE episode 313 pf
 PASS: run 6: RETURN normal (t=315)
 PASS: run 6: DEPOSIT normal (t=588)
-RUN 7: building dropped at (200.872, 357.6856) worker=(120.872, 357.6856) state=2
+RUN 7: building dropped at (200.8723, 357.6871) worker=(120.8723, 357.6871) state=2
   run 7 reached tree at pf 317
   run 7 deposited wood at pf 592
 PASS: run 7: worker reached tree after obstacle (t=317)
