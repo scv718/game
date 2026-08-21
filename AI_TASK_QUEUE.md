@@ -214,17 +214,21 @@
   - stale collision 없음.
 
 ### TASK-013-6 Free Wall + Gate 통합 검증
-- 상태: QUEUED
-- 자동검증:
-  - Wall 배치/비용/invalid.
-  - Wall 철거/환불.
-  - Gate 4방향 corridor validation.
-  - Gate orientation.
-  - Gate OPEN/CLOSED.
-  - collision/nav 전환.
-  - Wall/Gate 연결.
-  - Worker navigation.
-  - BuildingPlacement/DayNight/smoke 회귀.
+- 상태: DONE
+- 피드백: 자동검증 항목 전부 커버, GATE_NAV sub-stage counter 정확 구현, 회귀 테스트 PASS 보고, 기존 코드 스타일과 일관. HUMAN_CHECK 항목(Wall scale, 16px 조작감, 코너 비주얼, Gate 크기 조화)만 남은 상태로 코드 정상.
+- 피드백: Wall과 Gate가 하나의 연속 시나리오로 함께 동작하는지 통합 검증하는 `tests/task0136_test.gd`를 신규 작성했다. 자동검증 항목 전부 headless PASS, smoke/task0128/tasknav001/task0132~0135 회귀 전부 PASS(2회 연속 안정). HUMAN_CHECK만 남은 상태로 DONE. (기존 task0131의 nav flaky는 이전부터 문서화된 범위 밖 이슈로 별도 확인)
+- 구현기록:
+  - `tests/task0136_test.gd` 신규 작성. 기존 013-1~013-5의 개별 기능을 하나의 통합 시나리오로 묶음:
+    - Wall 단일 배치/비용 1회 차감/연속 배치/인접 비주얼 연결(straight)/Core Building 겹침 거부 + 무차감.
+    - U자형 성벽 구축(55 segments) + segment당 비용 차감.
+    - Gate 4방향(N/E/S/W) corridor 배치 + 방향/orientation(수평/수직)/footprint(48x16, 16x48) + corridor 밖 거부 + 무차감.
+    - Wall/Gate 연결: gate edge 인접 wall 배치 허용(양쪽), gate footprint 실제 겹침 거부 + 무차감.
+    - North Gate CLOSED→nav detour(blocked) / OPEN→passage(cross) / CLOSED 재검증(toggle roundtrip), collision shape 존재/제거 전환.
+    - Worker nav: 열린 North Gate 통로로 lumberjack이 외부 Tree 도달(벽 미통과, y < -448).
+    - 철거: Wall 전액 환불(+2), Gate 전액 환불(+5), 비-Wall/Gate(Core Building) 삭제 금지 + 무환불.
+    - BuildingPlacement/DayNight 회귀: DAY 시작, 4회 phase 전환 정상, North Gate OPEN 상태 유지, Worker/Wall/Gate 지속성.
+  - GATE_NAV 단계는 elif 체인이 아니라 명시적 sub-stage 카운터(`_nav_stage`)로 순차 진행해 nav 갱신 타이밍에 반복 판정이 쌓이지 않게 구현.
+  - nav 검증은 이전 태스크와 동일한 U자형/열린 레이아웃을 사용(밀폐 엔클로저는 이 엔진 nav-bake가 내부를 버리는 한계를 우회).
 - HUMAN_CHECK:
   - Wall scale.
   - 16px segment 배치 조작감.
@@ -234,8 +238,8 @@
 - 중요:
   - 조작이 번거롭다는 이유만으로 Drag-line builder를 임의 구현하지 않는다.
 - 완료조건:
-  - 자동검증 PASS.
-  - HUMAN_CHECK만 남으면 DONE.
+  - 자동검증 PASS. (충족)
+  - HUMAN_CHECK만 남으면 DONE. (충족)
 
 ---
 
