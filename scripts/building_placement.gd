@@ -3,14 +3,20 @@ extends Node2D
 const LUMBERYARD_SCENE := preload("res://scenes/lumberyard.tscn")
 const QUARRY_SCENE := preload("res://scenes/quarry.tscn")
 const WALL_SCENE := preload("res://scenes/wall.tscn")
+const GATE_SCENE := preload("res://scenes/gate.tscn")
 const BUILD_COSTS := {
 	"lumberyard": {"wood": 10},
 	"quarry": {"wood": 10},
 	"wall": {"wood": 2},
+	"gate": {"wood": 5},
 }
 const GRID_SIZE := 16
 const BUILDING_SIZE := 32
 const WALL_FOOTPRINT := 16
+## TASK-013-3: 성문 footprint. N/S Gate = 도로를 가로지르는 수평(48x16, 3 logical tiles),
+## E/W Gate = 수직(16x48). Road 반폭 40px/corridor 96px에 맞춘 prototype 값.
+const GATE_HORIZONTAL_SIZE := Vector2(48, 16)
+const GATE_VERTICAL_SIZE := Vector2(16, 48)
 const PLACE_MASK := 0b111
 ## Wall은 Player(layer 1)와 Building/Tree/StoneDeposit/Boundary(layer 3) 겹침을 거부한다.
 ## (StaticBody blocking bodies는 collision_layer=4 → bit value 4 = layer 3)
@@ -26,12 +32,11 @@ var _remove_mode := false
 var _building_type := "lumberyard"
 var _ghost: Node2D = null
 var _ghost_rect: Polygon2D = null
-var _ghost_rect_size := 0
+var _ghost_rect_extents := Vector2(BUILDING_SIZE, BUILDING_SIZE) * 0.5
 var _ghost_radius_fill: Polygon2D = null
 var _ghost_radius_line: Line2D = null
 var _work_radius: float = 192.0
 var _query_shape := RectangleShape2D.new()
-var _ghost_size := BUILDING_SIZE
 
 
 func _ready() -> void:
@@ -52,6 +57,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_3:
 			_set_building_type("wall")
 			return
+		if event.keycode == KEY_4:
+			_set_building_type("gate")
+			return
 		if event.keycode == KEY_R:
 			if _active:
 				_set_remove_mode(not _remove_mode)
@@ -69,6 +77,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_try_place_quarry_at(get_global_mouse_position())
 		elif _building_type == "wall":
 			_try_place_wall_at(_snap(get_global_mouse_position()))
+		elif _building_type == "gate":
+			_try_place_gate_at(_snap_gate(get_global_mouse_position()))
 		else:
 			_try_place_at(_snap(get_global_mouse_position()))
 
@@ -82,6 +92,8 @@ func _process(_delta: float) -> void:
 		var deposit := _find_deposit_at(mouse)
 		if deposit != null:
 			target = deposit.global_position
+	elif _building_type == "gate":
+		target = _snap_gate(mouse)
 	_show_ghost_at(target)
 
 
@@ -89,11 +101,13 @@ func _set_building_type(building_type: String) -> void:
 	if _building_type == building_type:
 		return
 	_building_type = building_type
-	_ghost_size = WALL_FOOTPRINT if building_type == "wall" else BUILDING_SIZE
-	_query_shape.size = Vector2(_ghost_size, _ghost_size)
 	_remove_mode = false
 	if _active:
-		_show_ghost_at(_snap(get_global_mouse_position()))
+		var mouse := get_global_mouse_position()
+		var target := _snap(mouse)
+		if building_type == "gate":
+			target = _snap_gate(mouse)
+		_show_ghost_at(target)
 	building_type_changed.emit(_building_type)
 
 
@@ -124,6 +138,7 @@ func _set_active(value: bool) -> void:
 
 
 func _show_ghost_at(pos: Vector2) -> void:
+	var extents := _extents_for_type(_building_type, pos)
 	if _ghost == null:
 		_ghost = Node2D.new()
 		_ghost_radius_fill = Polygon2D.new()
@@ -138,18 +153,37 @@ func _show_ghost_at(pos: Vector2) -> void:
 		_ghost_radius_line.default_color = Color(0.3, 0.9, 0.4, 0.85)
 		_ghost.add_child(_ghost_radius_line)
 		_ghost_rect = Polygon2D.new()
-		_ghost_rect.polygon = PackedVector2Array([
-			Vector2(0, 0), Vector2(_ghost_size, 0),
-			Vector2(_ghost_size, _ghost_size), Vector2(0, _ghost_size)])
+		_ghost_rect.polygon = _rect_polygon_from_extents(extents)
 		_ghost.add_child(_ghost_rect)
+		_ghost_rect_extents = extents
+		_query_shape.size = extents * 2.0
 		add_child(_ghost)
+	elif _ghost_rect_extents != extents:
+		_ghost_rect_extents = extents
+		_query_shape.size = extents * 2.0
+		_ghost_rect.polygon = _rect_polygon_from_extents(extents)
 	_ghost.position = pos
-	if _ghost_rect_size != _ghost_size:
-		_ghost_rect.polygon = PackedVector2Array([
-			Vector2(0, 0), Vector2(_ghost_size, 0),
-			Vector2(_ghost_size, _ghost_size), Vector2(0, _ghost_size)])
-		_ghost_rect_size = _ghost_size
 	_update_ghost_color()
+
+
+## 현재 build type/위치에 맞는 ghost 사각 반폭(extents)을 반환.
+func _extents_for_type(building_type: String, pos: Vector2) -> Vector2:
+	match building_type:
+		"wall":
+			return Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT) * 0.5
+		"gate":
+			return _extents_for_gate(pos)
+		_:
+			return Vector2(BUILDING_SIZE, BUILDING_SIZE) * 0.5
+
+
+func _rect_polygon_from_extents(extents: Vector2) -> PackedVector2Array:
+	return PackedVector2Array([
+		Vector2.ZERO,
+		Vector2(extents.x * 2.0, 0.0),
+		extents * 2.0,
+		Vector2(0.0, extents.y * 2.0),
+	])
 
 
 func _circle_polygon(radius: float, segments: int = 48) -> PackedVector2Array:
@@ -182,30 +216,113 @@ func _is_valid_position(pos: Vector2) -> bool:
 		return deposit != null and not deposit.is_occupied()
 	if _building_type == "wall":
 		return _is_valid_wall_position(pos)
+	if _building_type == "gate":
+		return _is_valid_gate_position(pos)
 	var space := get_world_2d().direct_space_state
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = _query_shape
-	query.transform = Transform2D(0.0, pos + Vector2(_ghost_size, _ghost_size) * 0.5)
+	query.transform = Transform2D(0.0, pos + Vector2(_ghost_rect_extents.x, _ghost_rect_extents.y))
 	query.collision_mask = PLACE_MASK
 	var hits := space.intersect_shape(query, 1)
 	return hits.is_empty()
 
 
 func _is_valid_wall_position(pos: Vector2) -> bool:
+	_query_shape.size = Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT)
 	var space := get_world_2d().direct_space_state
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = _query_shape
-	query.transform = Transform2D(0.0, pos + Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT) * 0.5)
+	# wall의 실제 collision footprint는 pos 중심 16x16이므로 query도 중심 기준으로 검사.
+	query.transform = Transform2D(0.0, pos)
 	query.collision_mask = WALL_PLACE_MASK
 	var hits := space.intersect_shape(query, 16)
-	# 인접(붙어 있는) Wall은 grid cell이 서로 다르므로 배치를 허용한다.
-	# 겹침 거부 대상은 Wall이 아닌 object(Player/Core Building/Tree/Stone/Boundary)만.
+	var aabb := Rect2(pos - Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT) * 0.5, Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT))
 	for hit in hits:
 		var collider = hit.get("collider")
-		if collider is Node and collider.is_in_group("walls"):
-			continue
+		if collider is Node2D and _rejects_placement_geometry(aabb, collider):
+			return false
+	return true
+
+
+## TASK-013-3: 성문 placement validation.
+##  - Gate Corridor(N/E/S/W) 내부에만 허용 (그 외 corridor 밖 invalid).
+##  - footprint가 corridor 안에 완전히 들어와야 함.
+##  - Wall/Gate는 인접(edge touch) 허용, 실제 겹침(positive area)만 거부.
+func _is_valid_gate_position(pos: Vector2) -> bool:
+	var layout := _get_world_map()
+	if layout == null:
+		return false
+	var dir: String = layout.get_gate_corridor_direction(pos)
+	if dir == "":
+		return false
+	var corridor: Rect2 = layout.get_gate_corridor(dir)
+	var half := _extents_for_gate(pos)
+	var aabb := Rect2(pos - half, half * 2.0)
+	if not corridor.encloses(aabb):
+		return false
+	_query_shape.size = half * 2.0
+	var space := get_world_2d().direct_space_state
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = _query_shape
+	query.transform = Transform2D(0.0, pos)
+	query.collision_mask = WALL_PLACE_MASK
+	var hits := space.intersect_shape(query, 16)
+	for hit in hits:
+		var collider = hit.get("collider")
+		if collider is Node2D and _rejects_placement_geometry(aabb, collider):
+			return false
+	return true
+
+
+## Wall/Gate 배치 겹침 판정.
+## Wall/Gate 계열은 인접(edge touch, 겹침 면적 0)만 허용하고 실제 겹침만 거부한다.
+## 그 외 body(Player/Core Building/Tree trunk/StoneDeposit/Boundary)는 항상 거부.
+func _rejects_placement_geometry(query_rect: Rect2, collider: Node2D) -> bool:
+	if collider.is_in_group("walls") or collider.is_in_group("gates"):
+		var other_size := Vector2(WALL_FOOTPRINT, WALL_FOOTPRINT)
+		if collider.is_in_group("gates") and collider.has_method("get_footprint_size"):
+			other_size = collider.get_footprint_size()
+		var other_rect := Rect2(collider.position - other_size * 0.5, other_size)
+		var inter := query_rect.intersection(other_rect)
+		if inter.size.x > 0.5 and inter.size.y > 0.5:
+			return true
 		return false
 	return true
+
+
+## 마우스/셀 위치를 기준으로 성문 방향/형태를 판정.
+func _extents_for_gate(pos: Vector2) -> Vector2:
+	var dir := _gate_direction_at(pos)
+	if dir == "north" or dir == "south":
+		return GATE_HORIZONTAL_SIZE * 0.5
+	return GATE_VERTICAL_SIZE * 0.5
+
+
+## Gate Corridor 내부면 Main Road 중심선 축으로 snap.
+## N/S Gate는 x=0(중심선)으로 고정, E/W Gate는 y=0으로 고정한다.
+func _snap_gate(mouse: Vector2) -> Vector2:
+	var dir := _gate_direction_at(mouse)
+	if dir == "":
+		return _snap(mouse)
+	if dir == "north" or dir == "south":
+		return Vector2(0, _snap(mouse).y)
+	return Vector2(_snap(mouse).x, 0)
+
+
+func _gate_direction_at(pos: Vector2) -> String:
+	var layout := _get_world_map()
+	if layout == null:
+		return ""
+	if layout.has_method("get_gate_corridor_direction"):
+		return String(layout.get_gate_corridor_direction(pos))
+	return ""
+
+
+func _get_world_map() -> Node:
+	var world = get_tree().get_first_node_in_group("world")
+	if world == null:
+		return null
+	return world.get_node_or_null("MapLayout")
 
 
 func _find_deposit_at(pos: Vector2) -> Node:
@@ -299,10 +416,36 @@ func _try_place_wall_at(pos: Vector2) -> void:
 	feedback.emit("Wall built")
 
 
-## TASK-013-2: 간단 철거. Build mode에서 R로 Remove mode 진입 후 Wall 클릭 시
-## Wood 전액 환불하고 제거. 제거 가능 대상은 Wall뿐(나머지 건물/자원은 삭제 금지).
+## TASK-013-3: 성문 배치. N/E/S/W Gate Corridor 안에서만 허용하며,
+## 배치 후 nav rebuild로 collision/navigation에 반영한다.
+func _try_place_gate_at(pos: Vector2) -> void:
+	if not _is_valid_gate_position(pos):
+		feedback.emit("Invalid gate position")
+		return
+	var cost: int = int(BUILD_COSTS["gate"].get("wood", 0))
+	if not VillageResources.has("wood", cost):
+		feedback.emit("Not enough Wood")
+		return
+	VillageResources.spend("wood", cost)
+	var gate: Node2D = GATE_SCENE.instantiate() as Node2D
+	gate.position = pos
+	var dir := _gate_direction_at(pos)
+	if gate.has_method("setup"):
+		gate.setup(dir)
+	var world = get_tree().get_first_node_in_group("world")
+	if world != null:
+		world.add_child(gate)
+		world.rebuild_navigation()
+	else:
+		get_parent().add_child(gate)
+	feedback.emit("Gate built")
+
+
+## TASK-013-2: 간단 철거. Build mode에서 R로 Remove mode 진입 후 Wall/Gate 클릭 시
+## Wood 전액 환불하고 제거. 제거 가능 대상은 Wall/Gate뿐(나머지 건물/자원은 삭제 금지).
 func _try_remove_wall_at(pos: Vector2) -> void:
 	var target: Node2D = null
+	var target_is_gate := false
 	for node in get_tree().get_nodes_in_group("walls"):
 		if not is_instance_valid(node):
 			continue
@@ -313,21 +456,36 @@ func _try_remove_wall_at(pos: Vector2) -> void:
 			target = wall
 			break
 	if target == null:
+		for node in get_tree().get_nodes_in_group("gates"):
+			if not is_instance_valid(node):
+				continue
+			var gate := node as Node2D
+			if gate == null:
+				continue
+			if (gate.position - pos).length_squared() < 1.0:
+				target = gate
+				target_is_gate = true
+				break
+	if target == null:
 		feedback.emit("No wall to remove")
 		return
-	var cost: int = int(BUILD_COSTS["wall"].get("wood", 0))
+	var cost: int = int(BUILD_COSTS["gate"].get("wood", 0)) if target_is_gate \
+			else int(BUILD_COSTS["wall"].get("wood", 0))
 	VillageResources.add("wood", cost)
-	# queue_free 전에 walls 그룹에서 먼저 제거해, 이후 neighbor 비주얼 갱신 시
-	# 제거된 wall이 인접으로 잡히지 않게 한다(stale visual 방지).
-	target.remove_from_group("walls")
+	# queue_free 전에 그룹에서 먼저 제거해, 이후 neighbor 비주얼 갱신 시
+	# 제거된 Wall/Gate가 인접으로 잡히지 않게 한다(stale visual 방지).
+	target.remove_from_group("gates" if target_is_gate else "walls")
 	_refresh_neighbor_visuals(pos)
 	target.queue_free()
 	var world = get_tree().get_first_node_in_group("world")
-	# queue_free는 프레임 종료 시 실제 제거되므로, 제거된 wall의 collision/nav가
+	# queue_free는 프레임 종료 시 실제 제거되므로, 제거된 Wall/Gate의 collision/nav가
 	# stale로 남지 않도록 debounce nav rebuild로 제거 후 갱신한다.
 	if world != null:
 		world.rebuild_navigation_debounced()
-	feedback.emit("Wall removed (+%d Wood)" % cost)
+	if target_is_gate:
+		feedback.emit("Gate removed (+%d Wood)" % cost)
+	else:
+		feedback.emit("Wall removed (+%d Wood)" % cost)
 
 
 ## 인접(상하좌우 1 tile) Wall들의 연결 비주얼을 갱신.

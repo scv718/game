@@ -116,7 +116,8 @@
   - `tests/task0132_test.gd` 신규 작성 headless PASS(단일/직선/코너 시각 경계, footprint 불변, remove mode, 철거 환불, 비-Wall 삭제 금지, 인접 비주얼 갱신, nav 장벽 차단→철거 후 통로 개방). smoke, task0128, tasknav001 회귀 PASS. (task0131은 기존부터 nav 동기화 타이밍상 path 60/197을 오가는 flaky로, 변경 전 stash 상태에서도 동일 확인 — 본 태스크 범위 밖)
 
 ### TASK-013-3 Gate Corridor 판정 + Gate Placement
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: Gate 48px footprint(3 tiles), N/S horizontal/E/W vertical orientation, corridor 내부 validation, centerline snap, edge-touch 허용/overlap 거부, cost/refund/nav rebuild 전부 정상. 32개 headless 검증 PASS, 4개 회귀 테스트 PASS. 버그/누락/엣지 케이스 없음.
 - Gate:
   - Wall보다 넓은 footprint.
   - prototype 기준 3 logical tiles 우선.

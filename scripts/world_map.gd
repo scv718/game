@@ -430,6 +430,15 @@ func is_in_gate_corridor(pos: Vector2) -> bool:
 	return false
 
 
+## TASK-013-3: 해당 지점이 어느 Gate Corridor에 속하는지 방향을 반환.
+## 어떤 corridor에도 없으면 빈 문자열.
+func get_gate_corridor_direction(pos: Vector2) -> String:
+	for dir in GATE_CORRIDORS:
+		if GATE_CORRIDORS[dir].has_point(pos):
+			return dir
+	return ""
+
+
 func is_in_combat_field(pos: Vector2) -> bool:
 	for dir in COMBAT_FIELDS:
 		if COMBAT_FIELDS[dir].has_point(pos):

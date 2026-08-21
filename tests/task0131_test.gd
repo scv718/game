@@ -86,7 +86,7 @@ func _process(_delta: float) -> bool:
 				_resources._amounts["wood"] = 1000
 				_placement._set_building_type("wall")
 				_check(_placement._building_type == "wall", "wall build selection added (KEY_3)")
-				_check(_placement._ghost_size == 16, "wall ghost footprint is 16px")
+				_check(_placement._extents_for_type("wall", Vector2.ZERO) == Vector2(8, 8), "wall ghost footprint is 16px")
 				_placement._set_active(true)
 				_check(_placement._active, "wall build mode active")
 				var wood0: int = _resources.get_amount("wood")
