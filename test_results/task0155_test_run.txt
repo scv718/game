@@ -1,0 +1,67 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: mercenary roster starts empty
+PASS: focus mode starts inactive
+PASS: no focus target initially
+PASS: get_focus_target returns null initially
+PASS: recruitment UI present
+PASS: mercenary_A hired alive
+PASS: defense zone NORTH
+PASS: phase is NIGHT
+PASS: player night mode active
+PASS: mercenary actor spawned at NIGHT
+PASS: actor retrievable
+PASS: actor at north rally ((0.0, -280.0))
+PASS: actor starts IDLE
+PASS: actor focus target initially null
+PASS: focus mode activated via UI button
+PASS: no target yet after toggle on
+PASS: zone enemy spawned near north defense
+PASS: mercenary acquired zone target before focus
+PASS: focus candidate enemy spawned
+PASS: focus mode remains active after set
+PASS: has_focus_target true after set
+PASS: get_focus_target returns selected enemy
+PASS: actor received focus target
+PASS: actor is focusing on focus target
+PASS: actor target IS the focus enemy (priority over zone enemy)
+PASS: focus priority test enemies cleaned
+PASS: new focus enemy spawned for kill test
+PASS: focus target set before kill
+PASS: focus auto-released after target killed (died signal)
+PASS: get_focus_target null after kill
+PASS: actor focus target cleared after enemy death
+PASS: focus enemy spawned for freed test
+PASS: focus target set before freed
+PASS: focus auto-released after target freed (tree_exiting signal)
+PASS: focus enemy spawned for toggle-off test
+PASS: focus target set
+PASS: focus mode deactivated via toggle
+PASS: focus target cleared on toggle off
+PASS: actor focus target cleared on toggle off
+PASS: toggle-off test enemies cleaned
+PASS: focus mode still off
+PASS: no focus target while off
+PASS: focus candidate enemy spawned for double-toggle
+PASS: set_focus_target re-enables focus mode
+PASS: toggle off again deactivates focus
+PASS: zone enemy for retreat-focus test
+PASS: actor entered RETREAT (state=6)
+PASS: focus enemy spawned during retreat
+PASS: actor stays RETREAT despite focus set (state=6)
+PASS: actor stores focus target even during retreat
+PASS: retreat clears current target
+PASS: retreat-focus test enemies cleaned
+PASS: focus enemy for resume test
+PASS: actor left RETREAT after defense zone command (state=4)
+PASS: actor retains focus target after command
+PASS: focus target persists after resume
+PASS: actor resumed and acquired focus target (state=2)
+PASS: resume test enemies cleaned
+PASS: player has no attack method
+PASS: player excluded from combat groups
+PASS: player night mode active during NIGHT
+PASS: 5 core buildings intact
+PASS: world floor intact
+TASK0155_RESULT=PASS

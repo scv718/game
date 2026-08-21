@@ -32,6 +32,9 @@ const ATTACK_RANGE := 26.0
 const CHASE_RETURN_DISTANCE := 180.0
 const REACH_DISTANCE := 12.0
 const STUCK_TIMEOUT := 2.0
+## TASK-015-5: Focus Target 추격 중 목표에 도달하지 못하면(stuck) 영구 chase를
+## 방지하기 위해 이 시간 동안 이동이 없으면 focus를 해제한다.
+const FOCUS_STUCK_TIMEOUT := 2.0
 
 var merc_data: MercenaryData = null
 var current_hp: int = 0
@@ -44,6 +47,11 @@ var _attack_cd := 0.0
 var _stuck_timer := 0.0
 var _last_move_pos := Vector2.ZERO
 var _retreat_point := Vector2.ZERO
+## TASK-015-5: 전술 Focus Target. 플레이어가 선택한 우선 target(살아 있는 Enemy).
+## defense zone 자동 전투보다 우선하지만 RETREAT/REGROUP/DEAD보다는 낮은 우선순위다.
+var _focus_target: Node = null
+var _focus_stuck_timer := 0.0
+var _last_focus_pos := Vector2.ZERO
 
 ## TASK-014-6 사망 처리에서 재사용.
 signal died(mercenary: Node)
@@ -84,11 +92,28 @@ func _physics_process(delta: float) -> void:
 			velocity = Vector2.ZERO
 
 
-## 지정 defense zone 주변(CHASE_RETURN_DISTANCE 이내) 살아 있는 Enemy 중
-## defense_point에서 가장 가까운 것을 target으로 획득한다. 구역 밖 Enemy는
-## 획득하지 않아 과도한 추격/영구 chase를 방지한다.
+## TASK-015-5: target을 획득한다. 우선순위는 FOCUS TARGET(4) > defense zone
+## 자동 전투(5)다. 유효한 focus target이 있으면 그것을 우선 target으로 삼고,
+## 없거나 invalid(사망/freed)면 기존 defense zone 자동 전투로 되돌아간다.
 func _acquire_target() -> void:
 	_state_to(MercState.ACQUIRE_TARGET)
+	if _focus_target_invalid():
+		_focus_target = null
+		_focus_stuck_timer = 0.0
+	_target = _resolve_priority_target()
+	if _target != null:
+		_state_to(MercState.MOVE_TO_TARGET)
+	else:
+		_state_to(MercState.IDLE)
+
+
+## TASK-015-5: 우선 순위에 따른 target 후보 결정.
+## focus target이 살아 있고 유효하면 우선하고, 아니면 defense zone 자동 전투
+## (CHASE_RETURN_DISTANCE 이내에서 defense_point에 가장 가까운 Enemy)를 선택한다.
+func _resolve_priority_target() -> Node:
+	if _focus_target != null and is_instance_valid(_focus_target) \
+			and _focus_target.get("alive") != false:
+		return _focus_target
 	var best: Node = null
 	var best_score := INF
 	for e in get_tree().get_nodes_in_group("enemies"):
@@ -102,11 +127,7 @@ func _acquire_target() -> void:
 		if dist_from_zone < best_score:
 			best_score = dist_from_zone
 			best = e
-	_target = best
-	if best != null:
-		_state_to(MercState.MOVE_TO_TARGET)
-	else:
-		_state_to(MercState.IDLE)
+	return best
 
 
 func _tick_chase(delta: float) -> void:
@@ -116,7 +137,15 @@ func _tick_chase(delta: float) -> void:
 	if _in_attack_range():
 		_state_to(MercState.ATTACK)
 		return
-	if global_position.distance_to(defense_point) > CHASE_RETURN_DISTANCE:
+	# TASK-015-5: focus target을 추격 중이면 defense zone 거리 제한을 우선 대상에서
+	# 제외하되, 도달 불가능(stuck)이면 영구 chase 없이 focus를 해제하고 기본 AI로 복귀한다.
+	if _target == _focus_target:
+		if _focus_chase_stuck(delta):
+			_focus_target = null
+			_focus_stuck_timer = 0.0
+			_acquire_target()
+			return
+	elif global_position.distance_to(defense_point) > CHASE_RETURN_DISTANCE:
 		_state_to(MercState.RETURN_TO_DEFENSE_ZONE)
 		return
 	_move_towards(_target.global_position, delta)
@@ -225,6 +254,26 @@ func _target_invalid() -> bool:
 	return false
 
 
+## TASK-015-5: focus target이 invalid(사망/freed)인지 판정.
+func _focus_target_invalid() -> bool:
+	if _focus_target == null or not is_instance_valid(_focus_target):
+		return true
+	if _focus_target.get("alive") == false:
+		return true
+	return false
+
+
+## TASK-015-5: focus target 추격 중 도달 불가능(이동 없음)을 감지한다.
+## 일정 시간 이동이 없으면 unreachable로 판정해 영구 chase를 방지한다.
+func _focus_chase_stuck(delta: float) -> bool:
+	if global_position.distance_to(_last_focus_pos) < 2.0:
+		_focus_stuck_timer += delta
+		return _focus_stuck_timer >= FOCUS_STUCK_TIMEOUT
+	_last_focus_pos = global_position
+	_focus_stuck_timer = 0.0
+	return false
+
+
 func _check_stuck(delta: float) -> bool:
 	if global_position.distance_to(_last_move_pos) < 2.0:
 		_stuck_timer += delta
@@ -325,6 +374,43 @@ func get_state() -> int:
 ## TASK-014-4: 테스트/디버그용 현재 target 조회.
 func get_target() -> Node:
 	return _target
+
+
+## TASK-015-5: 전술 Focus Target 지정. 유효한 살아 있는 Enemy를 우선 target으로
+## 삼는다. RETREAT/REGROUP/DEAD 상태에서는 즉시 전환하지 않고(그 상태가 우선),
+## 해당 상태가 끝난 뒤 재탐색 시 focus를 우선 target으로 선택한다.
+func set_focus_target(enemy: Node) -> void:
+	if not alive or state == MercState.DEAD:
+		return
+	if enemy == null or not is_instance_valid(enemy) or enemy.get("alive") == false:
+		clear_focus_target()
+		return
+	_focus_target = enemy
+	_focus_stuck_timer = 0.0
+	_last_focus_pos = global_position
+	if state == MercState.RETREAT or state == MercState.REGROUP:
+		return
+	_acquire_target()
+
+
+## TASK-015-5: focus target 해제. 현재 target이 focus였다면 놓고 기본 AI로 복귀한다.
+func clear_focus_target() -> void:
+	_focus_target = null
+	_focus_stuck_timer = 0.0
+	if state == MercState.MOVE_TO_TARGET or state == MercState.ATTACK \
+			or state == MercState.ACQUIRE_TARGET:
+		_acquire_target()
+
+
+## TASK-015-5: 테스트/디버그용 현재 focus target 조회.
+func get_focus_target() -> Node:
+	return _focus_target
+
+
+## TASK-015-5: 현재 focus target을 우선 target으로 추격/공격 중인지 판정.
+func is_focusing() -> bool:
+	return _focus_target != null and is_instance_valid(_focus_target) \
+		and _target == _focus_target
 
 
 ## TASK-015-4: RETREAT 목표(중앙 safe rally) 좌표 조회.

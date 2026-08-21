@@ -652,7 +652,9 @@ Review complete. All items verified.
   - 새 defense command로 정상 복귀. (충족)
 
 ### TASK-015-5 Focus Target
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족. Focus Target mode toggle, priority over zone auto-combat, auto-release on death/freed, no permanent chase on unreachable target, RETREAT 중 focus 저장/COMMAND 이후 재획득 정상. 59항목 headless 2회 연속 PASS + 회귀 5종 전부 PASS. 임시 파일 정리 완료.
+- 피드백: 구현 자체는 정상이었으나 `tests/task0155_test.gd`가 누락되어 있어 REVIEW 상태였다. 테스트 파일을 신규 작성해 headless 자동검증 59항목 2회 연속 PASS + 회귀(smoke/task0128/task0144/task0153/task0154) 전부 PASS 확인 후 DONE으로 전환.
 - UX:
   - Focus Target mode → Enemy 선택.
 - 행동:
@@ -662,8 +664,11 @@ Review complete. All items verified.
 - 중요:
   - Player 직접 공격이 아니라 AI priority 변경.
 - 완료조건:
-  - focus priority 확인.
-  - target 제거 후 기본 AI 복귀.
+  - focus priority 확인. (충족)
+  - target 제거 후 기본 AI 복귀. (충족)
+- 구현기록:
+  - `tests/task0155_test.gd` 신규 작성 headless PASS(2회 연속, 59항목): focus mode toggle via UI button, focus mode on/off API, set_focus_target/clear_focus_target API, focus priority over zone auto-combat, focus target death → auto release (died signal), focus target freed → auto release (tree_exiting signal), toggle off clears focus, focus mode re-enables via set_focus_target, RETREAT 중 focus target 저장(즉시 전환 없음), DEFENSE_ZONE 명령으로 RETREAT 탈출 후 focus target 재획득, 회귀(Player 무공격/무타겟, NIGHT 이동 비활성, 핵심 건물 5/floor). 결과 `test_results/task0155_test_run.txt`(TASK0155_RESULT=PASS).
+  - 임시 파일 `_probe_focus_test.gd` 제거(게임/테스트 코드 미참조).
 
 ### TASK-015-6 Gate Command + Tactical Time
 - 상태: QUEUED

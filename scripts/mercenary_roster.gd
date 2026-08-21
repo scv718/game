@@ -11,6 +11,10 @@ extends Node
 
 const MERCENARY_SCENE := "res://scenes/mercenary.tscn"
 
+## TASK-015-5: Focus Target 선택 시 마우스 클릭 지점에서 이 반경 이내의 Enemy를
+## 선택한다.
+const FOCUS_PICK_RADIUS := 32.0
+
 const DEFENSE_ZONE_DIRS := {
 	MercenaryData.DefenseZone.NORTH: "north",
 	MercenaryData.DefenseZone.EAST: "east",
@@ -20,12 +24,42 @@ const DEFENSE_ZONE_DIRS := {
 
 var _mercenaries: Array[MercenaryData] = []
 var _actors: Dictionary = {}
+## TASK-015-5: 전술 Focus Target. 플레이어가 NIGHT에서 선택한 우선 target(Enemy).
+## focus_mode가 true면 다음 좌클릭으로 Enemy를 선택할 수 있고, 선택된 Enemy를
+## 살아 있는 용병 Actor들이 우선 target으로 삼는다. target 사망/freed 시 자동 해제.
+var focus_mode := false
+var focus_target: Node = null
 
 signal mercenaries_changed
+## TASK-015-5: focus mode/target이 바뀌면 방출.
+signal focus_target_changed
 
 
 func _ready() -> void:
 	GameTime.phase_changed.connect(_on_phase_changed)
+
+
+## TASK-015-5: Focus Target mode 중 플레이어가 좌클릭으로 Enemy를 선택한다.
+## NIGHT 전투 중에만 동작하고, focus mode가 아니면 무시한다. 빈 공간을 클릭하면
+## 선택 mode만 유지하고, 우클릭/Esc로 mode를 해제할 수 있다.
+func _unhandled_input(event: InputEvent) -> void:
+	if not focus_mode:
+		return
+	if GameTime.get_phase() != GameTime.Phase.NIGHT:
+		return
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			var enemy := _enemy_at(_mouse_world_position(event), FOCUS_PICK_RADIUS)
+			if enemy != null:
+				set_focus_target(enemy)
+				get_viewport().set_input_as_handled()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			toggle_focus_mode()
+			get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo \
+			and event.keycode == KEY_ESCAPE:
+		toggle_focus_mode()
+		get_viewport().set_input_as_handled()
 
 
 ## NIGHT 시작 / DAY 복귀 시 spawn/despawn을 처리한다.
@@ -83,8 +117,10 @@ func _on_actor_died(_mercenary: Node, mercenary_id: String) -> void:
 ## DEFENSE_ZONE: 살아 있는 용병의 방어 구역을 실시간 변경한다.
 ## TASK-015-4: REGROUP은 살아 있는 용병 Actor를 현재 방어 구역 rally로 복귀시키고,
 ## RETREAT은 중앙 Village/safe rally로 후퇴시킨다. spawn 중(Actor 존재)인 용병만
-## 행동이 필요하므로 Actor가 없으면 무시한다. FOCUS_TARGET/GATE/TIME은 후속 태스크에서
-## 처리한다.
+## 행동이 필요하므로 Actor가 없으면 무시한다.
+## TASK-015-5: FOCUS_TARGET은 Focus Target mode를 토글한다. mode 중 플레이어가
+## 좌클릭으로 Enemy를 선택하면 모든 살아 있는 용병 Actor가 우선 target으로 삼는다.
+## GATE/TIME은 후속 태스크에서 처리한다.
 func _on_tactical_command(command: int, arg: Variant) -> void:
 	match command:
 		TacticalCommandUI.Command.DEFENSE_ZONE:
@@ -105,6 +141,87 @@ func _on_tactical_command(command: int, arg: Variant) -> void:
 				var actor: Node = get_actor(m.id)
 				if actor is MercenaryActor:
 					(actor as MercenaryActor).retreat(safe)
+		TacticalCommandUI.Command.FOCUS_TARGET:
+			toggle_focus_mode()
+
+
+## TASK-015-5: Focus Target mode를 켜고 끈다. mode가 켜지면 플레이어는 좌클릭으로
+## Enemy를 선택할 수 있고, 끄면 현재 focus target을 해제한다.
+func toggle_focus_mode() -> bool:
+	focus_mode = not focus_mode
+	if not focus_mode:
+		clear_focus_target()
+	focus_target_changed.emit()
+	return focus_mode
+
+
+## TASK-015-5: 지정 Enemy를 focus target으로 설정한다. 모든 살아 있는 용병 Actor에
+## 전파해 우선 target으로 삼게 한다. target 사망(died)/제거(tree_exiting) 시 자동으로
+## focus를 해제하도록 신호를 연결한다.
+func set_focus_target(enemy: Node) -> void:
+	if enemy == null or not is_instance_valid(enemy) or enemy.get("alive") == false:
+		clear_focus_target()
+		return
+	_disconnect_focus_signals()
+	focus_target = enemy
+	focus_mode = true
+	if enemy.has_signal("died") and not enemy.died.is_connected(_on_focus_target_died):
+		enemy.died.connect(_on_focus_target_died)
+	if not enemy.tree_exiting.is_connected(_on_focus_target_tree_exiting):
+		enemy.tree_exiting.connect(_on_focus_target_tree_exiting)
+	for m in get_alive():
+		var actor: Node = get_actor(m.id)
+		if actor is MercenaryActor:
+			(actor as MercenaryActor).set_focus_target(enemy)
+	focus_target_changed.emit()
+
+
+## TASK-015-5: focus target 해제. 모든 살아 있는 용병 Actor의 focus를 해제한다.
+func clear_focus_target() -> void:
+	_disconnect_focus_signals()
+	focus_target = null
+	focus_mode = false
+	for m in get_alive():
+		var actor: Node = get_actor(m.id)
+		if actor is MercenaryActor:
+			(actor as MercenaryActor).clear_focus_target()
+	focus_target_changed.emit()
+
+
+## TASK-015-5: focus target이 사망하면 자동으로 focus를 해제한다.
+func _on_focus_target_died(_enemy: Node) -> void:
+	clear_focus_target()
+
+
+## TASK-015-5: focus target이 freed/despawn 등으로 트리에서 제거되면 자동 해제한다.
+func _on_focus_target_tree_exiting() -> void:
+	clear_focus_target()
+
+
+## TASK-015-5: 현재 focus target에 연결된 신호를 모두 해제한다.
+func _disconnect_focus_signals() -> void:
+	if focus_target != null and is_instance_valid(focus_target):
+		if focus_target.has_signal("died") \
+				and focus_target.died.is_connected(_on_focus_target_died):
+			focus_target.died.disconnect(_on_focus_target_died)
+		if focus_target.tree_exiting.is_connected(_on_focus_target_tree_exiting):
+			focus_target.tree_exiting.disconnect(_on_focus_target_tree_exiting)
+
+
+## TASK-015-5: focus mode가 활성 상태인지.
+func is_focus_mode_active() -> bool:
+	return focus_mode
+
+
+## TASK-015-5: focus target이 설정되고 살아 있는지.
+func has_focus_target() -> bool:
+	return focus_target != null and is_instance_valid(focus_target) \
+		and focus_target.get("alive") != false
+
+
+## TASK-015-5: 현재 focus target 조회.
+func get_focus_target() -> Node:
+	return focus_target
 
 
 ## TASK-015-4: RETREAT 명령의 안전 지점(중앙 Village/safe rally).
@@ -255,3 +372,33 @@ func get_actor_count() -> int:
 		if is_instance_valid(actor):
 			n += 1
 	return n
+
+
+## TASK-015-5: 마우스 클릭 이벤트의 월드 좌표. 이벤트가 있으면 이벤트 좌표(viewport)를
+## 카메라 변환으로 월드 좌표로 변환하고, 없으면 현재 viewport 마우스 위치를 사용한다.
+func _mouse_world_position(event: InputEvent = null) -> Vector2:
+	var viewport_pos := Vector2.ZERO
+	if event is InputEventMouse:
+		viewport_pos = (event as InputEventMouse).position
+	else:
+		viewport_pos = get_viewport().get_mouse_position()
+	var cam: Camera2D = get_viewport().get_camera_2d()
+	if cam != null:
+		return cam.get_canvas_transform().affine_inverse() * viewport_pos
+	return viewport_pos
+
+
+## TASK-015-5: 지정 반경 안에서 가장 가까운 살아 있는 Enemy를 찾는다. 없으면 null.
+func _enemy_at(world_pos: Vector2, radius: float) -> Node:
+	var best: Node = null
+	var best_dist := radius
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(e):
+			continue
+		if e.get("alive") == false:
+			continue
+		var d: float = (e.global_position as Vector2).distance_to(world_pos)
+		if d <= best_dist:
+			best_dist = d
+			best = e
+	return best
