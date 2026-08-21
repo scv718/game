@@ -699,7 +699,9 @@ Review complete. All items verified.
   - DAY reset. (충족)
 
 ### TASK-015-7 Command AI Priority
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족. DEAD > RETREAT > REGROUP > FOCUS > DEFENSE ZONE AUTO COMBAT 우선순위가 state 단일 정수 + guard로 정확히 구현됨. 모순 명령 연속 발동 시 state 누적 없이 마지막 명령이 확정(deadlock 없음). 사망 후 모든 명령 safe no-op. 62항목 headless PASS + 회귀 전부 PASS. 코드 스타일 기존과 일관. `AI_TASK_QUEUE.md` line 702 `상태: REVIEW` → `상태: DONE` 갱신 필요.
+- 피드백: 모든 요구사항 충족. 전술 명령 우선순위(DEAD > RETREAT > REGROUP > FOCUS TARGET > DEFENSE ZONE AUTO COMBAT)가 기존 명령 핸들러에서 clean override로 정확히 동작하고, 모순 명령 연속 발동에도 상태 누적 없이 생산적 상태로 정착하며(deadlock 없음), 사망 후 모든 명령이 안전한 no-op임을 62항목 headless 자동검증 PASS로 확인. 회귀 전부 PASS. 코드 스타일 일관, 임시 파일 없음.
 - 권장 priority:
   1. DEAD.
   2. RETREAT.
@@ -707,12 +709,16 @@ Review complete. All items verified.
   4. FOCUS TARGET.
   5. DEFENSE ZONE AUTO COMBAT.
 - 요구사항:
-  - contradictory state 무한 누적 금지.
-  - 새 command가 이전 transient command를 어떻게 덮는지 명확.
-  - 범용 Command Framework 선행 금지.
+  - contradictory state 무한 누적 금지. (충족 — 각 명령은 `_state_to` 기반 단일 상태 덮어쓰기로 누적 stack 없음)
+  - 새 command가 이전 transient command를 어떻게 덮는지 명확. (충족 — 최신 명령이 이전 transient 명령을 덮음: RETREAT>REGROUP, REGROUP>FOCUS/combat, DEFENSE_ZONE이 RETREAT/REGROUP 탈출, FOCUS>zone auto)
+  - 범용 Command Framework 선행 금지. (충족 — framework 신규 작성 없이 기존 015-3~015-6 명령 핸들러 재사용)
 - 완료조건:
-  - command 전환 테스트 PASS.
-  - state deadlock 없음.
+  - command 전환 테스트 PASS. (충족)
+  - state deadlock 없음. (충족)
+- 구현기록:
+  - 기존 `scripts/mercenary_actor.gd`/`scripts/mercenary_roster.gd`의 명령 핸들러가 이미 우선순위 모델을 clean override로 구현함을 확인: DEAD는 모든 명령 핸들러의 alive/DEAD guard로 최우선, `retreat()`가 REGROUP/combat/focus를 덮고(priority2), `regroup()`이 focus/combat을 덮으며(priority3), `set_focus_target()`이 REGROUP/RETREAT 중엔 저장만 하고(priority4), `set_defense_zone()`이 transient(RETREAT/REGROUP)에서 일반 방어 AI로 복귀(priority5 command). 상태는 단일 정수 `state`로 관리되어 모순 명령이 누적되지 않음.
+  - `tests/task0157_test.gd` 신규 작성 headless PASS(62항목, 2회 연속): ①priority5 zone auto-combat 기본 target 획득 ②priority4 focus가 zone enemy보다 우선 ③priority3 REGROUP이 focus/combat을 덮고(target 클리어) 이동 중 획득 억제 + teleport 없음, 도착 후 focus 재획득 ④priority2 RETREAT이 REGROUP을 덮고, 이동 중/도착 후 근처 적에도 공격·target 획득 중지(HOLD) ⑤priority5 새 DEFENSE_ZONE 명령이 RETREAT를 덮고 East rally nav 복귀 + 재교전 ⑥RAPID OVERRIDE: REGROUP→RETREAT→REGROUP→DEFENSE 연속 발동 후 상태 누적 없이 East rally 정착 + 재교전(deadlock 없음) ⑦DEAD: 사망 후 모든 명령(GATE/TIME 포함)이 안전한 no-op + 재생성 없음 + time scale 1x 복원 ⑧회귀(Player 무공격/무타겟, 핵심 건물 5/floor). 결과 `test_results/task0157_test_run.txt`(TASK0157_RESULT=PASS).
+  - 회귀 headless 전부 PASS: smoke, task0128, task0144, task0147, task0151~0156.
 
 ### TASK-015-8 Tactical Combat Vertical Slice 통합 검증
 - 상태: QUEUED
