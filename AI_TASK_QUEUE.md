@@ -1,812 +1,800 @@
 # AI Task Queue
 
-> TASK-012 Map Layout Lock 이후 신규 실행 큐.
-> 완료된 TASK-008~012 상세 이력은 이 파일에 복사하지 않는다.
+> TASK-013~015 Tactical Combat Vertical Slice 완료 이후 신규 실행 큐.
+>
+> 완료된 TASK-013~015 상세 이력은 이전 큐에 보존하며 이 파일에 복사하지 않는다.
+>
+> 현재 목표:
+> Death Ledger → First Ghost Return → 실제 Wave 시스템 순서로 핵심 게임 루프를 확장한다.
 >
 > 상태: `QUEUED` / `IMPLEMENT` / `REVIEW` / `FIX` / `DONE` / `NEEDS_DESIGN`
->
-> 공통 규칙:
+
+---
+
+# 공통 실행 규칙
+
 > 1. `##` = 챕터/컨테이너, `###` = 실제 실행 태스크.
-> 2. 파일 순서대로 실행.
-> 3. 각 태스크 시작 시 `GAME_DESIGN.md`, `DEVELOPMENT_STATUS.md`의 **현재 태스크 관련 섹션만 우선 확인**하고 실제 코드를 확인한다.
-> 4. 범위 밖 시스템 임의 구현 금지.
-> 5. Godot headless 테스트를 실제 실행하고 미실행 테스트를 PASS로 보고하지 않는다.
-> 6. 미감/체감은 `HUMAN_CHECK`에 남기고 코드 정상 시 DONE 가능.
-> 7. 설계 공백/충돌은 `NEEDS_DESIGN`.
-> 8. 파괴적 Git 명령 및 자동 commit 금지.
-> 9. 플레이어 캐릭터에 공격/무기/전투 스킬 추가 금지.
-> 10. 전투 원칙: **전투는 자동, 판단은 플레이어가 한다.**
-> 11. TASK-012에서 LOCK한 오버월드는 대규모 재배치 금지.
-> 12. TASK-015 종료 후 자동 중단. Death Ledger/Ghost는 다음 큐에서 진행.
+>
+> 2. 실제 구현은 `### TASK-*` 단위로 파일 순서대로 실행한다.
+>
+> 3. 각 태스크 시작 시 `GAME_DESIGN.md`, `DEVELOPMENT_STATUS.md`의 **현재 태스크 관련 섹션만 우선 확인**하고 이후 실제 코드를 확인한다.
+>
+> 4. 문서 내용보다 현재 코드가 더 최신일 수 있으므로 구현 전 실제 코드/API/Scene 구조를 반드시 확인한다.
+>
+> 5. 범위 밖 시스템을 편의상 임의 구현하지 않는다.
+>
+> 6. 현재 태스크 완료에 반드시 필요한 최소 변경만 허용한다.
+>
+> 7. 기존 정상 동작 시스템의 대규모 리팩터링 금지.
+>
+> 8. Godot headless 테스트를 실제 실행한다.
+>
+> 9. 실행하지 않은 테스트를 PASS로 보고하지 않는다.
+>
+> 10. 테스트 PASS만으로 미감/체감이 검증되었다고 판단하지 않는다.
+>
+> 11. 미감/체감/플레이 감각은 `HUMAN_CHECK`에 남기고 코드/자동검증이 정상이라면 DONE 가능하다.
+>
+> 12. 요구사항 사이에 설계 공백 또는 기존 설계와 직접적인 충돌이 있으면 임의 결정하지 말고 `NEEDS_DESIGN`으로 중단한다.
+>
+> 13. 파괴적 Git 명령 금지.
+>
+> 14. 자동 commit / push 금지.
+>
+> 15. 기존 사용자 변경사항을 임의 revert하지 않는다.
+>
+> 16. 임시 진단 파일을 만들 수는 있으나 태스크 종료 전 반드시 제거한다.
+>
+> 17. `_diag*`, `_probe*`, `_debug*` 등 임시 파일이 남아 있지 않은지 종료 시 확인한다.
 
 ---
 
-## TASK-MAINT-001 잔여 Debug 파일 정리
-- 상태: DONE
-- 피드백: 8개 임시 디버그 파일 완전 삭제, 프로젝트 전역 참조 0건, smoke + 핵심 회귀 PASS 확인. 독립 재실행은 환경 제약으로 불가하나 기존 결과 일관성에는 문제 없음.
-- 설명: TASK-012 리뷰에서 지적된 잔여 진단/디버그 파일을 점검하고 실제 게임/테스트에서 참조하지 않는 임시 파일만 제거한다.
-- 확인 후보:
-  - `_diag*.gd`
-  - `_probe.gd`
-  - `_t75_debug.gd`
-- 요구사항:
-  - 삭제 전 프로젝트 전체 참조 검색.
-  - 정식 regression test/게임 코드에서 참조 중이면 삭제 금지.
-  - 이름만 보고 무조건 삭제하지 않음.
-  - 제거 후 `main.tscn` smoke + 최신 핵심 회귀 최소 1종 실행.
-- 완료조건:
-  - 미사용 임시 파일 정리.
-  - 참조 깨짐 없음.
-  - smoke PASS.
-- 구현기록:
-  - 삭제: `tests/_probe.gd`, `tests/_probe.gd.uid`, `tests/_diag.gd`, `tests/_diag2.gd`, `tests/_diag3.gd`, `tests/_diag4.gd`, `tests/_diag5.gd`, `tests/_t75_debug.gd`.
-  - 삭제 전/후 프로젝트 전체 참조 검색: 게임/정식 테스트 코드에서 해당 파일 참조 없음 확인(참조는 AI_TASK_QUEUE.md 태스크 설명뿐).
-  - `.godot`(git-ignore 캐시)에만 `_probe.gd` 스캔 기록 존재, 소스 제거 후 자동 재생성 대상.
-  - 제거 후 headless 검증: `smoke_test.gd` PASS, 최신 핵심 회귀 `task0128_test.gd` PASS.
+# 게임 핵심 규칙
+
+> 1. 플레이어 캐릭터는 어떤 상황에서도 직접 전투하지 않는다.
+>
+> 2. Player에 공격, 무기, 공격 스킬, Damage Dealer 역할을 추가하지 않는다.
+>
+> 3. 핵심 전투 원칙:
+>
+> **전투는 자동, 판단은 플레이어가 한다.**
+>
+> 4. Mercenary가 실제 전투를 수행한다.
+>
+> 5. Player는 배치, 방어구역, 집결, 후퇴, Focus Target, Gate, 시간 제어 등 전략 판단만 수행한다.
+>
+> 6. 새로운 일은 플레이어가 직접 발견하고 시작한다.
+>
+> 7. 반복되는 일은 주민과 시설이 대신한다.
 
 ---
 
-## TASK-013 Free Wall + Gate Corridor
+# Death / Ghost 핵심 규칙
+
+> 1. 실제 게임플레이에서 죽은 생명체는 Death Ledger에 기록된다.
+>
+> 2. 향후 기록 대상:
+>
+> - Mercenary.
+> - Worker / Villager.
+> - Enemy.
+> - Monster.
+> - Animal.
+> - Hostile NPC.
+> - Elite.
+> - Boss.
+>
+> 3. 현재 TASK-016에서는 실제 구현되어 있는 `MERCENARY`, `ENEMY`만 연결한다.
+>
+> 4. 사망 기록은 Actor 자체가 아니라 사망 시점의 독립 snapshot이다.
+>
+> 5. Actor가 despawn/free되어도 DeathRecord는 유지되어야 한다.
+>
+> 6. 실제 lethal death만 기록한다.
+>
+> 7. DAY cleanup, scene unload, spawner reset, 일반 despawn은 죽음이 아니다.
+>
+> 8. 동일 실제 죽음은 정확히 한 번만 기록한다.
+>
+> 9. 이름이 같은 존재라도 서로 다른 개체라면 서로 다른 기록이다.
+>
+> 10. 죽은 존재는 이후 Ghost Return 대상이 된다.
+>
+> 11. Ghost Return을 방지하거나 DeathRecord를 삭제하는 시스템은 존재하지 않는다.
+>
+> 12. Ghost는 원래 존재의 정체성을 유지한다.
+>
+> 13. Ghost가 다시 죽으면 해당 기존 DeathRecord가 RESOLVED 된다.
+>
+> 14. Ghost의 죽음은 새로운 DeathRecord를 생성하지 않는다.
+>
+> 15. Ghost가 Ghost를 또 생성하는 재귀 구조는 절대 허용하지 않는다.
+>
+> 16. NIGHT Day N에서 사망한 존재는 같은 NIGHT에 즉시 Ghost로 등장하지 않는다.
+>
+> 17. 최소 `eligible_day = N + 1`.
+>
+> 18. 실제 Ghost Spawn/Visual/Combat은 TASK-017에서 구현한다.
+
+---
+
+# 현재 World / Combat Lock
+
+> 1. 오버월드는 128×128 logical map 구조를 유지한다.
+>
+> 2. logical construction grid는 16px 유지.
+>
+> 3. 현재 World Visual Composition을 기준으로 한다.
+>
+> 4. 이번 큐에서 신규 Asset migration을 수행하지 않는다.
+>
+> 5. 현재 Tiny Swords 에셋은 임시 상태 그대로 유지한다.
+>
+> 6. WEST = Main Threat / Main Portal / Main Battlefield.
+>
+> 7. 기본 Enemy 진입축은 WEST → EAST.
+>
+> 8. NORTH = Secondary Threat / Rift.
+>
+> 9. EAST = Royal Road / 외부 문명 방향이며 기본 Enemy Spawn이 아니다.
+>
+> 10. SOUTH = Production / Agriculture 방향이며 기본 Enemy Spawn이 아니다.
+>
+> 11. 기존 Wall / Gate / Navigation 구조를 유지한다.
+>
+> 12. Gate 상태 `CLOSED / OPEN / BREACHED`를 유지한다.
+>
+> 13. NIGHT Tactical Command 구조를 유지한다.
+>
+> 14. TASK-012 이후 검증된 월드 전체 크기/경계를 임의 변경하지 않는다.
+>
+> 15. 이번 큐에서 대규모 World 재배치 및 추가 Visual Composition Pass를 수행하지 않는다.
+
+---
+
+# 구현 범위 제어
+
+> 다음 기능은 TASK 명세에 명시되어 있지 않는 한 선행 구현 금지:
+>
+> - 정식 WaveManager.
+> - Wave progression.
+> - Boss.
+> - Siege Enemy.
+> - 신규 Enemy archetype.
+> - 신규 Mercenary class.
+> - Food.
+> - Cooking.
+> - Potion.
+> - Morale.
+> - Equipment progression.
+> - Farm 실제 생산 기능.
+> - Dungeon 실제 기능.
+> - Player combat.
+> - Save/Load 전체 시스템.
+> - Asset migration.
+> - 대규모 UI polish.
+>
+> "나중에 필요할 것 같아서"라는 이유로 framework를 선행 구현하지 않는다.
+
+---
+
+# 테스트 규칙
+
+> 1. 각 태스크별 신규 headless test를 작성하거나 기존 적절한 테스트를 확장한다.
+>
+> 2. 신규 테스트는 해당 태스크 요구사항을 직접 검증해야 한다.
+>
+> 3. 기존 테스트를 단순히 PASS시키기 위해 assertion 의미를 약화시키지 않는다.
+>
+> 4. 요구사항 변경으로 기존 테스트 수정이 필요할 경우 이유를 구현기록에 남긴다.
+>
+> 5. flaky test가 발견되면 기존부터 존재하던 문제인지 현재 변경에 의해 발생한 문제인지 구분한다.
+>
+> 6. 테스트 우회용 production API 추가 금지.
+>
+> 7. 테스트 종료 후 Autoload / time scale / spawned actor / temporary state가 다음 테스트에 누수되지 않도록 한다.
+>
+> 8. freed instance reference 오류가 없어야 한다.
+>
+> 9. 반복 DAY/NIGHT cycle에서 duplicate actor/reference 누수가 없어야 한다.
+>
+> 10. 최신 통합 테스트와 smoke test를 회귀 검증에 포함한다.
+
+---
+
+# 리뷰 규칙
+
+> 1. 구현자와 리뷰어의 역할을 구분한다.
+>
+> 2. 리뷰어 내부 판정은 `LGTM` / `FIX` / `HUMAN_CHECK` 등을 사용할 수 있다.
+>
+> 3. 리뷰어 판정 문자열과 Queue의 `상태:` 값은 서로 다른 개념이다.
+>
+> 4. `상태: REVIEW`는 리뷰 진행 중 정상 상태이며, REVIEW라는 이유 자체를 FIX 사유로 판단하지 않는다.
+>
+> 5. 리뷰어는 구현/요구사항/테스트의 실제 문제만 FIX 사유로 제시한다.
+>
+> 6. 상태 전환은 자동화 Supervisor의 책임이며 리뷰어가 상태값 자체를 요구사항으로 평가하지 않는다.
+>
+> 7. 코드와 테스트가 정상이고 남은 항목이 미감/플레이 감각뿐이면 `HUMAN_CHECK`를 남기고 LGTM 가능하다.
+>
+> 8. 동일한 잘못된 리뷰 사유를 반복해 무한 FIX loop를 만들지 않는다.
+
+---
+
+## TASK-016 Death Ledger
+
 - 상태: QUEUED
-- 설명: LOCK된 Defense Belt와 4방향 Gate Corridor를 이용해 첫 자유 성벽/성문 건설 시스템을 만든다.
+
+- 설명: 실제 전투에서 사망한 Mercenary/Enemy의 정체성과 전투 정보를 Actor 생명주기와 분리된 Death Ledger에 기록한다. 이후 Ghost Return 시스템이 이 기록을 원본 데이터로 사용한다.
+
 - 핵심:
-  - 성벽은 16px logical grid 자유 배치.
-  - 성문은 N/E/S/W Gate Corridor 안에서만 배치.
-  - collision/navigation 실제 반영.
-  - 기존 Wood를 prototype 비용으로 재사용.
+
+  - 실제 lethal combat death만 기록.
+
+  - Actor reference가 아닌 순수 snapshot 데이터 저장.
+
+  - 동일 실제 죽음 중복 기록 금지.
+
+  - NIGHT Day N 사망 → 최소 Day N+1부터 Ghost Return 대상.
+
+  - Ghost 사망이 새로운 DeathRecord를 만들지 않도록 재귀 기록 방지 구조 준비.
+
 - 유지:
-  - 기존 BuildingPlacement.
-  - 16px logical grid.
-  - TASK-012 맵 레이아웃.
-  - Lumberyard/Quarry 배치.
+
+  - 기존 MercenaryData / MercenaryRoster.
+
+  - 기존 EnemyActor / FirstEncounterSpawner.
+
+  - TASK-014 Combat death/cleanup 흐름.
+
+  - TASK-015 Tactical Combat.
+
+  - WEST → EAST Main Combat 방향.
+
+  - 현재 World Visual Composition.
+
 - 금지:
-  - Enemy/Mercenary/Wave/Portal 실제 기능.
-  - 공격 타워.
-  - Siege AI.
-  - Wall upgrade.
-  - 신규 자원.
 
-### TASK-013-1 Wall 기본 Scene / Placement
-- 상태: DONE
-- 피드백: 모든 요구사항 충족, 코드 스타일 일관, 충돌 마스크/네비게이션 통합 정상, 테스트가 핵심 시나리오를 커버. 작업 범위 내 무결성 확인.
-- 구현기록:
-  - `scripts/wall.gd` + `scenes/wall.tscn` 생성. Wall 1 segment = 1 logical tile(16×16px) footprint, StaticBody2D static collision(layer 3), nav obstacle(parse_source_geometry_data로 자동 반영).
-  - `building_placement.gd`: KEY_3 Wall 선택 추가(기존 1/2 유지), Wall 16px ghost/query footprint, `_try_place_wall_at` 연속 배치(배치 후 build mode 유지), 비용 1회 차감, invalid 시 차감 없음, placement 후 `rebuild_navigation()`. Wall 겹침 마스크(Player layer1 + Building/Tree/Stone/Boundary layer3)로 거부.
-  - `hud.gd`: Wall build hint 추가.
-  - 검증: `tests/task0131_test.gd` 신규 작성 PASS(grid snap/연속 배치/비용 차감/invalid 무차감/Core Building 겹침 거부/nav barrier 차단). smoke, task0128, tasknav001 회귀 PASS.
-- 요구사항:
-  - Wall 1 segment = 1 logical tile(16×16px) footprint.
-  - Tiny Swords sprite scale/offset은 logical footprint와 독립.
-  - static collision.
-  - nav obstacle/source bake 반영.
-  - 기존 ghost preview 및 valid/invalid 표시 재사용.
-  - Player/Core Building/기존 Building/StoneDeposit/경계와 겹침 거부.
-  - 기존 Lumberyard/Quarry 선택키 보존 후 신규 build selection 추가.
-  - Wood 비용 configurable prototype 값.
-- 완료조건:
-  - Grid snap.
-  - 여러 segment 연속 배치.
-  - 비용 1회 차감.
-  - invalid 시 비용 차감 없음.
-  - placement 후 nav rebuild.
-  - smoke PASS.
+  - Ghost Actor 실제 구현.
 
-### TASK-013-2 Wall 연결 비주얼 + 간단 철거
-- 상태: DONE
-- 피드백: 태스크 요구사항 전부 충족, stale visual 방지 순서 정상, debounce nav rebuild 타이밍 적절, 테스트가 핵심 시나리오를 커버. 기존 코드 스타일과 일관, 누락/버그 없음.
-- 피드백: 리뷰 지적(제거 wall이 `walls` 그룹에 잔존한 채 neighbor 비주얼 갱신 → stale visual)을 반영해 `_try_remove_wall_at`에서 `queue_free()` 전에 `remove_from_group("walls")` 후 `_refresh_neighbor_visuals`를 호출하도록 수정. 아울러 제거 시 `queue_free()`가 프레임 종료에 실제 제거됨을 고려해 즉시 `rebuild_navigation()` 대신 `rebuild_navigation_debounced()`를 사용해 제거된 wall의 stale collision/nav가 남지 않게 함.
-- 비주얼:
-  - 인접 N/E/S/W Wall을 기준으로 straight/corner/end 표현 가능한 asset이 있으면 사용.
-  - 없으면 단일 sprite 반복 허용하되 간격이 끊겨 보이지 않게 함.
-  - 비주얼 때문에 collision footprint 변경 금지.
-- 철거:
-  - Build mode에서 명확한 remove 입력.
-  - Wall/Gate만 제거 가능.
-  - Core Building/자원/생산시설 삭제 금지.
-  - prototype에서는 테스트 편의를 위해 Wood 전액 환불 허용.
-  - 철거 후 nav rebuild.
-- 완료조건:
-  - 직선/코너 성벽 생성 가능.
-  - 제거 후 stale collision/nav 없음.
-  - 인접 비주얼 갱신 정상.
-- 구현기록:
-  - `scripts/wall.gd`: `refresh_visual()` + `_build_visual_polygon()` 추가. 인접 N/E/S/W Wall이 있으면 시각 폴리곤을 간격 중간(8px)까지 확장해 straight/corner/end 연결을 표현(단일은 16×16, 직선은 24×16, 코너는 24×24). collision footprint(16×16)는 불변.
-  - `scripts/building_placement.gd`: KEY_R Remove mode 추가(Build mode에서 토글, 좌클릭 시 Wall 철거), `_try_remove_wall_at`(Wall 전액 환불, `remove_from_group` 후 neighbor 비주얼 갱신 + `queue_free` + debounced nav rebuild), `_refresh_neighbor_visuals`. 또 `_is_valid_wall_position`에서 인접(붙은) Wall은 배치 허용(격자 cell 상 겹치지 않으므로)하고 Wall이 아닌 object만 거부하도록 수정 → L자 코너가 실제로 배치 가능.
-  - `scripts/hud.gd`: build hint에 "R: Remove" 추가.
-  - `tests/task0132_test.gd` 신규 작성 headless PASS(단일/직선/코너 시각 경계, footprint 불변, remove mode, 철거 환불, 비-Wall 삭제 금지, 인접 비주얼 갱신, nav 장벽 차단→철거 후 통로 개방). smoke, task0128, tasknav001 회귀 PASS. (task0131은 기존부터 nav 동기화 타이밍상 path 60/197을 오가는 flaky로, 변경 전 stash 상태에서도 동일 확인 — 본 태스크 범위 밖)
+  - Ghost Spawn.
 
-### TASK-013-3 Gate Corridor 판정 + Gate Placement
-- 상태: DONE
-- 피드백: Gate 48px footprint(3 tiles), N/S horizontal/E/W vertical orientation, corridor 내부 validation, centerline snap, edge-touch 허용/overlap 거부, cost/refund/nav rebuild 전부 정상. 32개 headless 검증 PASS, 4개 회귀 테스트 PASS. 버그/누락/엣지 케이스 없음.
-- Gate:
-  - Wall보다 넓은 footprint.
-  - prototype 기준 3 logical tiles 우선.
-  - asset/도로 폭상 필요하면 2~4 tiles 범위 조정 후 결과 기록.
-- Placement:
-  - N/E/S/W Gate Corridor 내부에서만 허용.
-  - N/S Gate = 도로를 가로지르는 수평 orientation.
-  - E/W Gate = 도로를 가로지르는 수직 orientation.
-  - Main Road 중심선 근처 snap.
-  - corridor 밖/다른 object와 겹침 거부.
-  - Wall이 양옆에 자연스럽게 이어질 수 있어야 함.
-- 구현:
-  - TASK-012 marker/metadata 재사용.
-  - 거대한 ZoneManager 금지.
-- 완료조건:
-  - 4방향 validation.
-  - corridor 밖 invalid.
-  - orientation 정상.
-  - 비용/철거/환불 정상.
+  - Ghost Shader/Visual.
 
-### TASK-013-4 Gate OPEN/CLOSED + Collision/Navigation
-- 상태: DONE
-- 피드백: 모든 요구사항 충족, 공개 API/_signal이 TASK-015에 재사용 가능, collision/nav 전환이 멱등하고 반복 toggle에 오류 누적 없음, 32개 자동검증 PASS + 5개 회귀 테스트 모두 PASS. 코드 스타일이 기존과 일관, 버그/누락/엣지 케이스 없음.
-- 피드백: 모든 요구사항 충족. 신규 Gate는 CLOSED 시작, Player Interact 상호작용 토글 + TASK-015 재사용 공개 API(is_open/set_open/set_closed/toggle + gate_state_changed signal), 반복 toggle signal 중복/오류 누적 없음, Worker nav 반복 toggle 안정(영구 MOVE stall 없음). headless 자동검증 + smoke/task0132/task0133/task0128/tasknav001 회귀 PASS.
-- 구현기록:
-  - `scripts/gate.gd`: OPEN/CLOSED 상태 추가. **이 엔진(4.7)의 nav bake(`parse_source_geometry_data`)는 CollisionShape2D.disabled / collision_layer를 무시하고 physics body shape를 항상 장애물로 파싱**하므로, OPEN이면 CollisionShape2D 노드를 제거(`free`), CLOSED면 footprint 크기로 재생성하는 방식으로 collision/nav를 함께 전환(멱등). open/closed visual 색상 구분(CLOSED 불투명 갈색 / OPEN 반투명). 상태 전환 시 기존 `world.rebuild_navigation_debounced()` 재사용. 공개 API + `gate_state_changed` signal.
-  - `scripts/gate_interactable.gd` 신규: Gate 부모를 참조해 `interact()` 시 `toggle()`, prompt에 현재 상태 반영.
-  - `scenes/gate.tscn`: Interact Area2D(CircleShape r=48) + gate_interactable 스크립트 추가.
-  - `tests/task0134_test.gd` 신규 작성 headless PASS: 기본 CLOSED/API/signal/Interact 존재, CLOSED=CollisionShape2D 존재+nav 경로가 Gate footprint 미통과+Player 물리 차단, OPEN=shape 제거+nav 경로 통과+Player 통과, 반복 6회 toggle collision/nav 일관+signal 정확 1회(1번째는 Interact.interact() 경로로 토글), Worker가 OPEN 통로로 Tree 도달 후 반복 toggle에도 재도달(영구 stall 없음).
-  - 검증 중 발견한 설계 사실(결과 기록): 열린 지형에서 성문(48x16)만으로는 nav '완전 차단'이 구조적으로 어렵다(작은 16px 높이 장애물이라 nav가 좌우로 우회하며 거의 직선과 유사한 경로를 탐색). 따라서 자동검증은 CLOSED=Gate footprint 미통과(우회)/OPEN=통과로 검증한다. 작은 Wall 엔클로저로 '유일한 통로'를 만들면 nav bake가 48px 폭 내부를 폴리곤에서 버려 엔클로저 검증은 부적합 — 성문+성벽의 실질 차단 시나리오는 TASK-013-5에서 다룬다.
-- 상태:
-  - OPEN
-  - CLOSED
-- 기본:
-  - 신규 Gate 초기 상태 CLOSED.
-  - 현재는 Player 상호작용으로 prototype toggle.
-  - TASK-015 Command UI가 재사용할 공개 API 제공.
-- CLOSED:
-  - passage collision 활성.
-  - nav 통과 불가.
-- OPEN:
-  - passage collision 비활성.
-  - nav 통과 가능.
-- 요구사항:
-  - 반복 toggle에 collision/nav 누적 오류 없음.
-  - 기존 debounce nav rebuild 활용 가능.
-  - open/closed visual 구분.
-- 금지:
-  - Gate HP/Damage/파괴.
-  - Enemy 공격.
-- 완료조건:
-  - Player OPEN 통과 가능.
-  - CLOSED 통과 불가.
-  - Worker nav 반복 toggle 안정.
-  - 외부 command 호출 가능한 API.
+  - 정식 WaveManager.
 
-### TASK-013-5 Wall/Gate Navigation Stress Regression
-- 상태: DONE
-- 피드백: (0)やFIND(1)でstallしていないことを確認しているなら問題ないが、plumberjack의 state 정의를 모르면 정확히 알 수 없다. 다만 이전 태스크에서 이미 PASS했으므로 문제 없을 것으로 판단.
+  - Portal 시스템 확장.
 
-### 6. 잔여 파일
-
-`_diag135.gd` 등 임시 파일 glob 검색 결과 0건 — **삭제 완료 확인**.
-
----
-
-판정: **LGTM**
-사유: 설계 결정(밀폐→U자형 열린 레이아웃)이 정확히 반영되었고, 10개 시나리오 전부 구현됨. 포켓 위치 간섭 버그도 수정됨. 코드 스타일이 기존과 일관하고, 임시 파일도 정리됨. Godot headless 실행 불가 환경이지만, 구조적으로 nav-bake 한계를 우회한 레이아웃 + 기존 gate.gd API 검증 이력을 고려하면 회귀 리스크 없음.
-- 피드백: [설계 결정 반영] 밀폐 사각 엔클로저(160×160)는 이 엔진 nav-bake가 내부를 폴리곤에서 제거해 OPEN이어도 내부가 navigable하지 않게 되는 한계가 있어, 테스트 레이아웃을 **두 개의 열린 영역(내부/외부)을 North Gate corridor로 연결하는 U자형/열린 레이아웃**으로 재설계했다. 성벽을 완전히 밀폐하지 않아 nav-bake가 두 영역을 모두 유지하므로 모든 시나리오가 실제로 검증 가능하다.
-- 구현기록:
-  - `tests/task0135_test.gd` 전면 재설계. U자형 성벽(남쪽 벽 y=-300 x -96..96 + 서/동 날개 x=±96 y -300..-640) + North Gate(0,-448) 배치.
-  - 시나리오 10종 전부 headless 검증 PASS: ①U형 성벽 구축 ②North Gate 설치(CLOSED 시작) ③OPEN 내부↔외부 nav reachable + Gate footprint 통과 ④CLOSED footprint 미통과(우회) ⑤Barrier Wall 추가 시 detour / 철거 시 직통(stale collision 없음) ⑥Gate toggle 6회 nav rebuild 반복(충돌 상태/경로 일관) ⑦Lumberjack 2명이 벽을 뚫지 않고 열린 Gate 통로로 외부 Tree 도달 ⑧CLOSED Gate에서 Worker 영구 MOVE stall 없음(우회 경유 Wood 반납) + 별도 밀폐 포켓(520,-160)에서 unreachable Tree 안전 처리 + 벽 제거 후 reachable 전환 ⑨Miner/Quarry 정상 생산 ⑩DAY/NIGHT 4회 반복 후 Gate/Worker/Quarry state 유지.
-  - TASK-BUG-NAV-001 회귀(포켓 unreachable Tree no-stall) 포함, permanent stall/stale collision/freed reference 없음.
-- 검증: task0135_test.gd headless PASS 2회 연속, smoke/task0128/tasknav001/task0131/task0132/task0133/task0134 회귀 전부 PASS. 임시 진단 파일(_diag135.gd 등) 제거.
-- 시나리오:
-  - 작은 사각 성벽 구축.
-  - North Gate 설치.
-  - OPEN에서 내부↔외부 path.
-  - CLOSED에서 passage 차단.
-  - Wall 추가/철거.
-  - runtime nav rebuild 반복.
-  - Lumberjack가 Wall을 뚫지 않고 열린 경로/Gate 이용.
-  - unreachable Tree는 영구 MOVE stall 없이 안전 처리.
-  - Miner/Quarry 정상.
-  - DAY/NIGHT 반복 후 state 유지.
-- 회귀:
-  - TASK-BUG-NAV-001.
-  - Worker 2명.
-  - Tree claim/regrowth.
-  - BuildingPlacement.
-  - smoke.
-- 완료조건:
-  - permanent stall 없음.
-  - stale collision 없음.
-
-### TASK-013-6 Free Wall + Gate 통합 검증
-- 상태: DONE
-- 피드백: 자동검증 항목 전부 커버, GATE_NAV sub-stage counter 정확 구현, 회귀 테스트 PASS 보고, 기존 코드 스타일과 일관. HUMAN_CHECK 항목(Wall scale, 16px 조작감, 코너 비주얼, Gate 크기 조화)만 남은 상태로 코드 정상.
-- 피드백: Wall과 Gate가 하나의 연속 시나리오로 함께 동작하는지 통합 검증하는 `tests/task0136_test.gd`를 신규 작성했다. 자동검증 항목 전부 headless PASS, smoke/task0128/tasknav001/task0132~0135 회귀 전부 PASS(2회 연속 안정). HUMAN_CHECK만 남은 상태로 DONE. (기존 task0131의 nav flaky는 이전부터 문서화된 범위 밖 이슈로 별도 확인)
-- 구현기록:
-  - `tests/task0136_test.gd` 신규 작성. 기존 013-1~013-5의 개별 기능을 하나의 통합 시나리오로 묶음:
-    - Wall 단일 배치/비용 1회 차감/연속 배치/인접 비주얼 연결(straight)/Core Building 겹침 거부 + 무차감.
-    - U자형 성벽 구축(55 segments) + segment당 비용 차감.
-    - Gate 4방향(N/E/S/W) corridor 배치 + 방향/orientation(수평/수직)/footprint(48x16, 16x48) + corridor 밖 거부 + 무차감.
-    - Wall/Gate 연결: gate edge 인접 wall 배치 허용(양쪽), gate footprint 실제 겹침 거부 + 무차감.
-    - North Gate CLOSED→nav detour(blocked) / OPEN→passage(cross) / CLOSED 재검증(toggle roundtrip), collision shape 존재/제거 전환.
-    - Worker nav: 열린 North Gate 통로로 lumberjack이 외부 Tree 도달(벽 미통과, y < -448).
-    - 철거: Wall 전액 환불(+2), Gate 전액 환불(+5), 비-Wall/Gate(Core Building) 삭제 금지 + 무환불.
-    - BuildingPlacement/DayNight 회귀: DAY 시작, 4회 phase 전환 정상, North Gate OPEN 상태 유지, Worker/Wall/Gate 지속성.
-  - GATE_NAV 단계는 elif 체인이 아니라 명시적 sub-stage 카운터(`_nav_stage`)로 순차 진행해 nav 갱신 타이밍에 반복 판정이 쌓이지 않게 구현.
-  - nav 검증은 이전 태스크와 동일한 U자형/열린 레이아웃을 사용(밀폐 엔클로저는 이 엔진 nav-bake가 내부를 버리는 한계를 우회).
-- HUMAN_CHECK:
-  - Wall scale.
-  - 16px segment 배치 조작감.
-  - 코너 비주얼.
-  - Gate 크기와 Main Road 조화.
-  - 작은/큰 성벽 모두 만들고 싶은지.
-- 중요:
-  - 조작이 번거롭다는 이유만으로 Drag-line builder를 임의 구현하지 않는다.
-- 완료조건:
-  - 자동검증 PASS. (충족)
-  - HUMAN_CHECK만 남으면 DONE. (충족)
-
----
-
-## TASK-014 First Mercenary + Enemy Auto Combat
-- 상태: QUEUED
-- 설명: 첫 실제 전투 Vertical Slice. 고용한 용병이 밤에 방어 위치에서 자동으로 적과 싸운다.
-- 핵심:
-  - Mercenary AI가 전투 수행.
-  - Player 공격 기능 절대 추가 금지.
-  - Mercenary 1종 + Enemy 1종.
-  - HP/Damage/Attack interval/Death.
-  - NIGHT combat.
-- 금지:
-  - Death Ledger/Ghost.
   - Food/Potion/Morale.
-  - Equipment progression.
-  - Skill tree/Boss.
-  - 여러 enemy archetype.
-  - 생성형 AI.
-  - 플레이어 combat.
 
-### TASK-014-1 MercenaryData / Roster + 주점 고용
+  - Dungeon.
+
+  - Save/Load 전체 시스템.
+
+  - 신규 Mercenary/Enemy archetype.
+
+  - Asset 교체.
+
+### TASK-016-1 DeathRecord Data Model
+
 - 상태: DONE
-- 피드백: 모든 요구사항 충족, 코드 스타일 일관, 테스트가 핵심 시나리오 전부 커버, 회귀 PASS. 작업 범위 내 무결성 확인.
-- 피드백: 모든 요구사항 충족. MercenaryData/MercenaryRoster를 Worker와 분리해 구현하고, 주점 고정 Mercenary 후보 1명 고용(중복 거부), 여관 보유/대기 상태 표시, 고용 즉시 전투 Actor 미생성을 headless로 자동 검증했다. 회귀 전부 PASS. (task0131은 기존 문서화된 nav flaky로 본 태스크 범위 밖 확인)
+- 피드백: 17개 데이터 필드 정확 구현, Actor reference/Node reference 저장 없음, metadata mutable 참조 방지(복사), to_snapshot/from_snapshot round-trip 정상, set_status 유효값 검증, DeathPhase 자체 enum으로 GameTime 의존성 없음. 테스트 57건 PASS, 회귀 5개 테스트 PASS. 코드 스타일이 기존 MercenaryData/WorkerData와 일관. 임시 파일 없음.
+
+- 설명: 사망한 존재의 정체성과 Ghost Return에 필요한 정보를 Actor와 독립된 snapshot으로 저장하는 DeathRecord 데이터 모델을 구현한다.
+
 - 최소 데이터:
-  - unique id.
-  - display name.
-  - class/type.
-  - level prototype 값.
-  - combat stats 최소값.
-  - alive/dead.
-  - defense assignment.
-- 구조:
-  - WorkerRoster에 억지로 합치지 않음.
-  - `MercenaryData` / `MercenaryRoster` 최소 별도 구조 허용.
-  - 대형 CharacterDatabase 금지.
-- 주점:
-  - 기존 Recruitment UI에 고정 Mercenary 후보 1명.
-  - prototype 고용 비용 0 가능.
-  - 중복 고용 거부.
-- 여관:
-  - 보유/대기 상태 최소 표시.
+
+  - `record_id`.
+
+  - `source_uid`.
+
+  - `source_kind`: `MERCENARY` / `ENEMY`.
+
+  - `display_name`.
+
+  - `class_or_type`.
+
+  - `level`.
+
+  - `max_hp`.
+
+  - `attack_damage`.
+
+  - `attack_interval`.
+
+  - `move_speed`.
+
+  - `death_day`.
+
+  - `death_phase`.
+
+  - `death_position`.
+
+  - `status`: `PENDING` / `ACTIVE` / `RESOLVED`.
+
+  - `eligible_day`.
+
+  - `resolved_day`.
+
+  - `metadata`.
+
+- 규칙:
+
+  - Actor/Node reference 저장 금지.
+
+  - NodePath/Callable/SceneTree reference 저장 금지.
+
+  - 사망 시점 값을 copy/snapshot.
+
+  - Actor가 free되어도 record 유지.
+
+  - mutable object를 그대로 참조하지 않는다.
+
+  - 향후 Worker/Animal/Boss 등을 추가할 수 있도록 source_kind 확장 가능 구조.
+
+  - temporary combat state는 저장하지 않는다.
+
+- 저장하지 않는 값:
+
+  - current target.
+
+  - FSM state.
+
+  - temporary buff.
+
+  - Food/Potion 효과.
+
+  - Morale temporary modifier.
+
 - 완료조건:
-  - Mercenary 1명 고용.
-  - Roster 조회 가능.
-  - 고용 즉시 낮 월드에 전투 Actor 자동 spawn할 필요 없음.
-- 구현기록:
-  - `scripts/mercenary_data.gd` 신규: `MercenaryData`(RefCounted). unique id/display_name/merc_class/level/alive/defense_zone + combat stats 최소값(max_hp=100, attack_damage=10, attack_interval=1.0, move_speed=120). DefenseZone(NONE/NORTH/EAST/SOUTH/WEST), class name/defense name getter. 월드 Actor와 분리된 순수 데이터.
-  - `scripts/mercenary_roster.gd` 신규: `MercenaryRoster` autoload(project.godot 등록). WorkerRoster와 별도 유지, 중복 id 고용 거부, get_mercenary/get_mercenaries/get_alive/get_count 등 조회 제공. NIGHT Actor spawn/despawn은 TASK-014-2에서 처리하므로 이 태스크에서는 월드 Actor를 만들지 않음.
-  - `scripts/tavern_recruitment_ui.gd`: 기존 Worker 후보 4명은 그대로 유지하고, `MERCENARY_CANDIDATES`(mercenary_A, SWORDSMAN) 1명을 "용병" 섹션으로 별도 표시. `_on_mercenary_hire_pressed`로 MercenaryRoster에 정확히 1회 추가, 중복 고용 시 버튼 disabled("고용됨"). MercenaryRoster.mercenaries_changed 연결.
-  - `ui/tavern_recruitment_ui.tscn`: Panel 확장(360px) + CandidateList/CloseButton 위치 조정으로 용병 섹션 수용.
-  - `scripts/inn_roster_ui.gd` + `ui/inn_roster_ui.tscn`: `MercenaryList` VBox 신규 추가, 보유 용병을 "Mercenary A (SWORDSMAN) Lv.1 - 대기 (Defense: NONE)" 형태로 최소 표시. 없으면 "보유 용병 없음". 생산시설 배치 대상 아님(표시만).
-  - `tests/task0141_test.gd` 신규 작성 headless PASS: MercenaryRoster autoload 존재/WorkerRoster와 분리, 주점 interact로 UI 오픈, 후보 1명(SWORDSMAN), 고용 후 Roster 정확히 1명, 중복 거부, 고용 직후 월드 전투 Actor 미생성(group 0), 조회 API, Worker 고용과 독립, 여관 보유/대기 표시, 5개 핵심 건물/Worker 시스템 회귀. 결과 `test_results/task0141_test_run.txt`(TASK0141_RESULT=PASS).
-  - 회귀 headless 전부 PASS: smoke(18), task0062(31), task0064(45), task0071~0075, task0112~0117, task0128(149), tasknav001(33), task0132~0136. (task0131은 변경 전 stash 상태에서도 동일하게 FAIL하는 기존 문서화 nav flaky — 본 태스크 범위 밖)
 
-### TASK-014-2 Defense Assignment + Mercenary NIGHT Spawn
-- 상태: DONE
-- 피드백: 요구사항 전부 충족, 코드 스타일 일관, 테스트 72개 PASS + 회귀 전부 PASS._gate 존재 시 Rally Space 중심 배치, 없으면 marker fallback, duplicate 방지, DAY 멱등 despawn, UI defense zone 변경 모두 정상 동작. 버그/누락/엣지 케이스 없음.
-- 요구사항:
-  - defense zone: NORTH/EAST/SOUTH/WEST.
-  - 여관에서 Mercenary defense assignment 변경.
-  - NIGHT 시작 시 해당 Gate 안쪽 Rally Space에 Actor spawn.
-  - 해당 Gate가 없으면 기존 marker 기준 fallback RallyPoint.
-  - DAY 복귀 시 살아 있는 Actor는 roster data로 복귀 후 despawn 가능.
-  - 반복 cycle actor duplicate 금지.
-- 제외:
-  - DAYTIME 생활 AI.
-  - RTS click-to-move.
-  - formation UI.
-- 구현기록:
-  - `scripts/mercenary_actor.gd` + `scenes/mercenary.tscn` 신규. Blue Warrior(Tiny Swords) idle/run 8/6프레임 비주얼, CharacterBody2D(collision_layer 2 / mask 4) + NavigationAgent2D 기반 최소 전투 Actor. `merc_data`(Roster의 MercenaryData 참조) + `current_hp`(max_hp prototype 복사) 보관. 전투 AI/FSM은 TASK-014-4 예약이라 월드 존재/식별/위치만 담당.
-  - `scripts/mercenary_roster.gd`: `_ready()`에서 `GameTime.phase_changed` 연결 → NIGHT 시작 시 `spawn_night_actors()`, DAY 복귀 시 `despawn_night_actors()`. spawn은 살아 있고 defense zone이 NONE이 아닌 용병만 대상. `_actors`(id→actor) 사전으로 중복 방지(이미 spawn된 id는 skip), `get_rally_point_for_zone()`는 해당 방향 Gate 존재 시 해당 방향 Rally Space 중심(게이트 안쪽)을, Gate 없으면 기존 RallySpace marker(`RallySpace_N/E/S/W`) 기준 fallback RallyPoint를 반환. DAY despawn은 spawn된 Actor를 `queue_free`로 제거해 roster data 상태로 복귀(멱등). `get_actor(id)`/`get_actor_count()` 공개 API 추가.
-  - `scripts/inn_roster_ui.gd`: 용병 행에 defense zone 버튼(NONE/NORTH/EAST/SOUTH/WEST) 추가. 현재 지정 zone은 disabled 표시, 다른 zone 클릭 시 `MercenaryData.set_defense_zone()` 반영 + `mercenaries_changed` emit.
-  - `ui/inn_roster_ui.tscn`: 여관 패널 확장(±240px) + MercenaryList/CloseButton 위치 조정으로 방어 버튼 수용.
-  - `tests/task0142_test.gd` 신규 headless PASS(72항목): 여관 UI 방어 배정(NORTH/EAST), NIGHT spawn(no-gate EAST fallback RallyPoint, gate 존재 시 NORTH 게이트 안쪽 Rally Space), DAY despawn, 3회 반복 cycle duplicate 없음, spawn 멱등, alive=false/NONE zone 미spawn, Player 무공격/Worker 독립/5핵심건물/floor/nav 회귀.
-  - 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001. (task0141은 용병 행 구조(VBox block) 변경에 맞춰 label 탐색 헬퍼를 재귀형으로 갱신해 PASS 확인)
+  - Actor 없이 DeathRecord 단독 생성/조회 가능.
 
-### TASK-014-3 Enemy Actor + First Night Encounter Spawner
-- 상태: DONE
-- 피드백: 모든 요구사항 충족. Enemy Actor(Red Warrior, HP/damage/speed/death) + FirstEncounterSpawner(NIGHT spawn/DAY despawn/configurable direction·count/idempotent)이 정상 구현됨. ROAD waypoint 접근, Gate OPEN/CLOSED 통과/우회, 테스트 92항목 headless PASS. 코드 스타일 일관, 버그/누락/엣지 케이스 없음.
-- 피드백: 모든 요구사항 충족. Enemy Actor(Red Warrior idle/run 8/6프레임)가 HP/move_speed/damage/attack_interval/death를 prototype 값으로 보유하고, FirstEncounterSpawner가 NIGHT 시작 시 SpawnCandidate에서 configurable 수량 spawn(DAY guard/idempotent/반복 NIGHT duplicate 없음). road waypoint(Main Road 외곽→내부)로 마을 접근 선호 + OPEN Gate면 Gate footprint 통과로 Village Core 도달, CLOSED면 우회. Player를 combat target으로 선택하지 않음(공격 기능 미구현, TASK-014-4 예약). headless 자동검증 2회 연속 PASS + smoke/task0128/tasknav001/task0132/task0134/task0136/task0141/task0142 회귀 전부 PASS. 임시 디버그 파일 없음.
-- Enemy:
-  - 일반 근접 1종.
-  - HP/move speed/damage/attack interval/death.
-  - Player를 combat target으로 선택하지 않음.
-- Spawner:
-  - 범용 WaveManager 금지.
-  - `FirstEncounterSpawner` 수준 최소 구조.
-  - NIGHT 시작 시 한 방향에서 configurable 수량 spawn.
-  - 기본 테스트 방향은 NORTH 등 결정적 값 사용 가능.
-  - 기존 Portal/Spawn Candidate 사용.
-  - 실제 Portal 시스템은 구현하지 않음.
-- 이동:
-  - Main Road/Gate 접근을 선호.
-  - OPEN Gate면 Village Core 방향 진행 가능.
-- 완료조건:
-  - NIGHT spawn.
-  - DAY 오작동 spawn 없음.
-  - 반복 NIGHT duplicate 없음.
-- 구현기록:
-  - `scripts/enemy_actor.gd` + `scenes/enemy.tscn` 신규: 일반 근접 Enemy Actor. Red Units Warrior(Tiny Swords) idle/run 8/6프레임 비주얼, CharacterBody2D(collision_layer 2 / mask 4) + NavigationAgent2D. enemy_id/display_name/direction/max_hp/current_hp/move_speed/attack_damage/attack_interval/alive 보유. `setup()`/`set_route()`(road waypoint + Village Core final target, 현재 위치 이내 waypoint skip), `take_damage()`/`die()`(alive=false + 그룹 제외 + died signal + queue_free, 사망 기록/청소는 TASK-014-6). MOVE/HOLD 상태로 waypoint 순차 접근, nav 불가 시 stuck 안전 정지(영구 MOVE stall 없음). `enemies` 그룹. 공격/target 기능 없음(전투 AI TASK-014-4).
-  - `scripts/first_encounter_spawner.gd` 신규 + project.godot autoload 등록. NIGHT 시작 시 `spawn_encounter()`, DAY 복귀 시 `despawn_encounter()`. DAY에는 직접 호출해도 0(spawn guard), 같은 NIGHT 재호출 멱등(`_night_active`), 반복 NIGHT duplicate 없음. direction/count configurable(set_direction/set_count + encounter_changed signal), 기본 north/3. spawn 위치는 기존 SpawnCandidate(deterministic 소량 offset), 이동 경로는 Main Road 외곽→내부 waypoint(방향 축 기준 마을 쪽만) + Village Core(Keep 또는 clearing 중심)로 `set_route` 전달. get_enemy_count/get_enemies/is_night_active 공개 API.
-  - `tests/task0143_test.gd` 신규 작성 headless PASS(2회 연속): DAY spawn guard/0 반환, NIGHT spawn 3명(+스탯/방향/캔디데이트 위치/route MOVE), 재호출 멱등/dup 없음, road 접근 이동(y 증가), North Gate 배치(CLOSED 시작)→OPEN 시 nav path가 Gate footprint 통과(passage) + Enemy가 Village Core(Keep) 도달, CLOSED 시 passage collision shape 존재 + nav path 우회(미통과) + 영구 MOVE stall 없음, DAY despawn(0/비활성), 반복 NIGHT 2cycle duplicate 없음, set_count(5) configurable, Player 무공격/무참조, Mercenary/Worker Roster 독립, 핵심 건물 5/floor 유지, Enemy 비주얼/통계 확인.
-  - 검증 중 기록: 열린 지형에서 성문(48x16)만으로는 장거리 nav '완전 차단'이 구조적으로 어렵고, CLOSED 검증은 TASK-013-4/013-5와 동일한 짧은 path(0,-560)→(0,-360) + NAV_SETTLE_PF(90) 물리 프레임 대기로 안정화했다.
+  - serialize 가능한 순수 데이터 구조.
 
-### TASK-014-4 Mercenary Auto Combat FSM
-- 상태: DONE
-- 피드백: FSM 6상태 구현 정상, deterministic priority 탐색/추격/공격/복귀 흐름 정확, Enemy ATTACK 상태로 interval 공격 및 Player 타겟 배제 정상, 사망 시 roster freed-reference 즉시 제거 + 다음 NIGHT 재생성 없음 확인. 테스트 72항목 PASS + 회귀 전부 PASS. 기존 코드 스타일과 일관, 버그/누락 없음.
-- 피드백: 모든 요구사항 충족. MercenaryActor에 IDLE/ACQUIRE_TARGET/MOVE_TO_TARGET/ATTACK/RETURN_TO_DEFENSE_ZONE/DEAD 6상태 FSM을 구현하고, 지정 defense zone 근처 Enemy를 deterministic priority로 자동 탐색/추격/interval 공격하며, 과도한 추격 시 defense_point 복귀, target death/invalid 시 재탐색을 검증했다. EnemyActor에 ATTACK 상태를 추가해 공격 range 안 살아 있는 Mercenary를 interval 공격하고(Mercenary HP 감소/Death), Player는 절대 target/damage 대상이 아님을 확인했다. 사망 시 MercenaryData.alive=false 반영 + roster `_actors`에서 즉시 제거(freed reference 오류 없음) + 다음 NIGHT 재생성 없음을 자동검증했다. headless 3회 연속 PASS + 회귀 전부 PASS. 코드 스타일 기존과 일관, 버그/누락/엣지 케이스 없음.
-- 구현기록:
-  - `scripts/mercenary_actor.gd`: MercState 6상태 FSM. `_acquire_target()`은 defense_point에서 CHASE_RETURN_DISTANCE(180) 이내 살아 있는 Enemy 중 defense_point에서 가장 가까운 것을 target으로 획득(deterministic priority), 구역 밖 Enemy는 획득하지 않아 영구 chase 방지. MOVE_TO_TARGET에서 공격 range(26) 진입 시 ATTACK, defense_point에서 180 초과 이탈 시 RETURN_TO_DEFENSE_ZONE 복귀 후 재탐색. ATTACK은 attack_interval 기반 `take_damage` 호출(Enemy HP 감소). `take_damage()`/`die()` 추가(Enemy 공격으로 HP 0 → MercenaryData.alive=false, 그룹 제외, died signal, queue_free). Player는 target 탐색에서 완전 배제(mercenaries/enemies 그룹만 조회). 공개 조회 API get_state()/get_target().
-  - `scripts/enemy_actor.gd`: EnemyState에 ATTACK 추가. MOVE 중 공격 range(26) 안 살아 있는 Mercenary를 target으로 정지 후 interval 공격(`take_damage`), target 사망/이탈 시 기존 route 접근(MOVE) 재개. Player는 절대 target이 되지 않음(mercenaries 그룹만 탐색).
-  - `scripts/mercenary_roster.gd`: spawn 시 `defense_point`(해당 방향 Rally Space/RallyPoint)를 actor에 설정. Actor `died` signal 연결 → `_actors`에서 즉시 제거해 사망 후 freed reference가 roster에 남지 않게 함. get_actor/despawn/get_actor_count를 freed reference에 안전하도록 수정(Variant 접근).
-  - `tests/task0144_test.gd` 신규 작성 headless PASS(59항목, 3회 연속): FSM 상태 존재, NIGHT spawn → IDLE 유지(무적), ACQUIRE→MOVE_TO_TARGET(구역 내 Enemy 획득/추격), ATTACK으로 E1 HP 감소/사망/IDLE 복귀, target 사망 후 E2 재탐색/공격, Enemy(E3)가 Mercenary 공격으로 HP 감소(92<100), 과도한 추격 시 RETURN_TO_DEFENSE_ZONE 복귀 + 재추격 없음, Mercenary 사망(freed/그룹 제외/MercenaryData.alive=false/roster 조회 null) + 다음 NIGHT 미재생성, Player 무공격/무타겟(enemy가 Player 옆에서도 MOVE 유지), Worker/건물/floor/nav/gate 회귀. 결과 `test_results/task0144_test_run.txt`(TASK0144_RESULT=PASS).
-  - 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001, task0141~0143.
-- 최소 상태:
-  - IDLE/HOLD.
-  - ACQUIRE_TARGET.
-  - MOVE_TO_TARGET.
-  - ATTACK.
-  - RETURN_TO_DEFENSE_ZONE.
-  - DEAD.
-- 행동:
-  - 지정 defense zone 주변 Enemy 우선.
-  - range 밖 chase.
-  - range 안 interval attack.
-  - target death/invalid 시 새 target.
-  - 과도하게 멀리 추격하면 defense zone 복귀.
-- 원칙:
-  - 예측 가능한 deterministic priority.
-  - 복잡한 Utility/BehaviorTree 선행 금지.
-  - 간단한 Damageable/Combatant 공통 인터페이스 정도만 허용.
-- 완료조건:
-  - Mercenary 자동 탐색/이동/공격.
-  - Enemy HP 감소/Death.
-  - Mercenary도 Enemy 공격으로 HP 감소/Death.
-  - Player는 damage/target 대상에서 제외.
+  - 원본 Actor 제거 후에도 모든 snapshot 값 유지.
 
-### TASK-014-5 CLOSED Gate 대응 + Gate Breach
-- 상태: DONE
-- 피드백: Gate prototype 내구도, CLOSED→BREACHED 전환(ollision/nav/signal), 자동 복구 금지, OPEN 통과, Mercenary 교전, 회귀 테스트 전부 충족. 버그/누락 없음.
-- 피드백: 리뷰 지적(테스트 미작성)을 반영해 `tests/task0145_test.gd`를 신규 작성했고, headless 자동검증 2회 연속 PASS(51항목) 및 회귀 전부 PASS를 확인했다. 검증 대상 전부(Gate BREACHED 전환, CLOSED→BREACHED collision/nav 갱신, enemy breach 후 MOVE 재개, OPEN gate no-attack, breached signal emit, set_open no-op on BREACHED, Mercenary↔Enemy 교전 in GATE_ATTACK)를 자동검증으로 커버했다. 코드 스타일 기존과 일관, 버그/누락 없음.
-- 피드백: 모든 요구사항 충족. Gate에 prototype 내구도(max_hp/current_hp)를 추가하고 CLOSED 성문을 Enemy가 공격해 HP 0이 되면 BREACHED(파괴/침입) 상태로 전환해 passage를 영구 개방한다. OPEN 성문은 공격하지 않고 통과하며, BREACHED 성문은 자동 복구하지 않는다. CLOSED→BREACHED 시 collision shape 제거 + nav 통과 가능하도록 갱신하고, enemy는 성문이 BREACHED/OPEN되면 MOVE 재개해 마을 방향으로 진행한다. 성문 공격(GATE_ATTACK) 중에도 살아 있는 대상이므로 Mercenary와 교전 가능하다. headless 자동검증 PASS + 회귀 전부 PASS.
-- 설명: Normal Enemy가 CLOSED Gate에서 영구 정지하지 않도록 최소 Gate 공격/파괴 흐름을 추가한다.
-- 구현기록:
-  - `scripts/gate.gd`: `GateState`에 `BREACHED` 추가(CLOSED/OPEN/BREACHED). prototype 내구도 `DEFAULT_MAX_HP=200`/`max_hp`/`current_hp`. `take_damage()`는 CLOSED 성문에만 피해를 적용하고(OPEN/BREACHED는 no-op), HP 0이 되면 `_breach()`로 BREACHED 전환 → `_apply_state()`(collision shape 제거 + debounce nav rebuild) + `breached`/`gate_state_changed` signal emit. `is_breached()` 공개 API. BREACHED 성문은 `set_open(false)`로 다시 닫을 수 없다(자동 복구 금지). `_is_passage_open()`로 OPEN/BREACHED 모두 통로 개방 판정. BREACHED visual 색상(COLOR_BREACHED) 추가.
-  - `scripts/enemy_actor.gd`: `EnemyState`에 `GATE_ATTACK` 추가. `_tick_move`에서 근처 Mercenary 교전을 우선하고, 없으면 가까운 CLOSED 성문(GATE_ATTACK_RANGE=40)을 발견해 `GATE_ATTACK` 상태로 정지해 interval 공격(`take_damage`). 성문이 BREACHED/OPEN되면(`_gate_invalid`) MOVE 재개해 마을 방향 진행. OPEN 성문은 `_find_closed_gate`가 제외하므로 공격하지 않고 통과. Wall 직접 공격 없음. `get_gate_target()` 조회 API.
-  - `tests/task0144_test.gd`: `EnemyState` 개수 assertion을 3→4(GATE_ATTACK 추가 반영)로 갱신.
-  - `tests/task0145_test.gd` 신규 작성 headless PASS(51항목): 성문 내구도 존재, OPEN gate no-attack + take_damage no-op, CLOSED gate GATE_ATTACK + HP 감소, BREACHED 전환(collision shape 제거 + nav passage open + breached signal 1회 + set_open no-op + enemy MOVE 재개해 village 진행), 두 번째 CLOSED gate 앞 Mercenary↔Enemy 교전(enemy GATE_ATTACK 상태 유지 중 mercenary가 target 획득/공격), 회귀(Player 무공격/Worker 무spawn/핵심 건물 5/floor 128x128). 결과 `test_results/task0145_test_run.txt`(TASK0145_RESULT=PASS).
-- Gate:
-  - prototype max_hp/durability 추가.
-  - CLOSED Gate를 Enemy가 공격 가능.
-  - HP 0 → destroyed/breached → passage open.
-  - 자동 복구 금지.
-- OPEN Gate:
-  - 공격하지 않고 통과.
-- Wall:
-  - 이번 Enemy는 Wall 직접 공격하지 않음.
-  - Normal Enemy는 Gate 접근 선호.
-  - Siege/Wall breaking은 미래.
-- Navigation:
-  - CLOSED→DESTROYED 후 통과 가능하게 갱신.
-- 완료조건:
-  - CLOSED Gate 앞 permanent stall 없음. (충족)
-  - Gate attack/breach. (충족)
-  - breach 후 Village 방향 진행. (충족)
-  - Mercenary가 Gate 앞 Enemy와 교전 가능. (충족)
-- 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001, task0141~0144, task0145.
+### TASK-016-2 DeathLedger Autoload + Record State
 
-### TASK-014-6 Combat Death / Cleanup
-- 상태: DONE
-- 피드백: runs stable.
-
-**No temporary files**: `_diag*.gd` / `_probe*.gd` glob = 0 results.
-
-Code style consistent with existing codebase. No edge case gaps found.
-
-판정: **LGTM**
-사유: 모든 요구사항 충족. Enemy/Mercenary 사망 처리가 correctly 구현되어 있고, spawner/roster의 freed reference 제거가 즉시 이루어지며, dead Mercenary 재생성 없음, 반복 cycle reference 누수 없음이 88항목 headless 2회 연속 PASS로 검증됨. 회귀 테스트 전부 통과, 임시 파일 없음. Death Ledger 미구현은 의도대로.
-- 피드백: 모든 요구사항 충족. Enemy 사망 시 combat(그룹)/target/월드(충돌) 제외·제거, Mercenary 사망 시 MercenaryData.alive=false/Actor 제거/roster 즉시 반영 + dead 확인 가능, alive Mercenary만 다음 NIGHT spawn(dead 재생성 없음), 반복 NIGHT cycle duplicate/이전 Enemy reference 누수 없음, freed reference 오류 없음을 headless 2회 연속으로 자동검증했다. Death Ledger 기록은 하지 않았다. 회귀 전부 PASS.
-- 구현기록:
-  - `scripts/first_encounter_spawner.gd`: `spawn_encounter()`에서 Enemy에 `died` signal 연결, `_on_enemy_died(enemy)` 추가 — 전투로 사망한 Enemy를 `_enemies` 추적에서 즉시 제거해 freed reference가 반복 NIGHT cycle에 누적되지 않게 함(despawn 멱등 유지).
-  - `tests/task0146_test.gd` 신규 작성 headless PASS(2회 연속, 88항목): 용병 2명(A=NORTH, B=EAST) 구성 → NIGHT spawn 후 A가 북방 HOLD 적 2마리를 자동 사살 → 사망 Enemy의 group(combat/target) 제외 + freed(충돌 제거) + A target 클리어 확인, 직접 take_damage 사망 경로(group 즉시 제외 + freed), 강한 Enemy가 A를 공격해 사망 → MercenaryData.alive=false/Actor freed/group 제외/roster get_actor null·`_actors` 제거·get_mercenary로 dead 확인, 공격하던 Enemy의 `_target` 클리어 + MOVE 복귀(freed reference 없음), 다음 NIGHT dead A 미재생성·alive B만 spawn(actor_count 1), 반복 NIGHT 2cycle duplicate 없음 + spawner `_enemies` 누수 없음 + DAY cleanup 멱등, 회귀(Player 무공격/무타겟 그룹, Worker 무spawn, 핵심 건물 5/floor/gate toggle). 결과 `test_results/task0146_test_run.txt`(TASK0146_RESULT=PASS).
-  - 회귀 headless 전부 PASS: smoke, task0128, tasknav001, task0136, task0144, task0145. (task0131은 기존 문서화 nav flaky)
-- Enemy death:
-  - combat/collision/target에서 제외 후 제거.
-- Mercenary death:
-  - `MercenaryData.alive = false`.
-  - Actor 제거.
-  - 다음 DAY/NIGHT 자동 부활 금지.
-  - Roster에서 dead 확인 가능.
-- 중요:
-  - 아직 Death Ledger 기록 금지.
-  - 후속 연결 지점 정도만 남기고 시스템 선행 구현 금지.
-- 반복 cycle:
-  - 이전 Enemy/target reference 누수 없음.
-  - alive Mercenary만 다음 NIGHT spawn.
-- 완료조건:
-  - freed reference 오류 없음.
-  - dead Mercenary 재생성 없음.
-
-### TASK-014-7 First Auto Combat 통합 검증
-- 상태: DONE
-- 피드백: [수동 처리] 리뷰어가 "구현/테스트/코드 정상, 버그 없음"이라 하면서 리뷰 중 정상 상태인 `상태: REVIEW`를 DONE으로 안 바뀌었다며 FIX를 반복 → 3회 초과로 NEEDS_DESIGN. 오인 판정이므로 수동으로 DONE 확정. 14단계 시나리오 자동검증 전부 PASS, 회귀 전부 PASS.
-
-판정: **FIX**
-사유: 구현/테스트/코드 자체는 정상. 단, `AI_TASK_QUEUE.md` line 446의 `상태: REVIEW`가 `상태: DONE`으로 갱신되지 않았다. 사용자 요약이 
-- 피드백: NIGHT spawn, died signal tracking, clean despawn.
-- `gate.gd`: BREACHED state, damage/passage/collision/nav management, no auto-recovery.
-
----
-
-판정: **LGTM**
-사유: 14단계 시나리오 전부 자동검증 PASS, 회귀 전부 PASS, 코드 스타일 일관, 임시 파일 없음. `_pf += 0`(234행)은 dead code이나 `_physics_process`가 _pf를 독립 증가시켜 동작에 영향 없음. 기존 피드백(FIX 위상 플로우 버그)도 정확히 반영됨.
-- 피드백: FIX 지적(위상 플로우 버그: `_enter(Phase.X)` 직후 `_wait_frames(n)` 호출 시 `_sub`이 1로 증가해 새 Phase의 `sub==0`(Gate 배치)이 건너뛰어 Gate가 nil이 됨)을 반영해 수정 완료. 14단계 시나리오 전부 headless 자동검증 PASS, 회귀 전부 PASS, 임시 파일 없음. 리뷰의 dead code 지적(`_pf += 0`)도 제거해 재검증 PASS 확인.
-- 구현기록:
-  - `tests/task0147_test.gd` 재작성. 기존 014-1~014-6 기능을 하나의 연속 시나리오로 묶어 통합 검증:
-    - 주점 UI로 Mercenary 고용(중복 거부·roster 반영), 여관에서 NORTH defense assignment.
-    - North Gate 배치(CLOSED 시작) 후 NIGHT 전환.
-    - Mercenary Actor가 North Rally(0,-280)에 spawn, current_hp/max_hp/IDLE/defense reference 확인.
-    - FirstEncounterSpawner 자동 조우(NIGHT spawn/road MOVE approach) 확인 후 격리.
-    - 테스트 Enemy 2마리(MOVE approach)를 Mercenary가 자동 target/chase/attack으로 사살 + 양측 HP 변화(적 HP 감소 + Mercenary HP 80→감소) 확인.
-    - 강한 Enemy로 Mercenary 사망(MercenaryData.alive=false/그룹 제외/roster freed-reference 즉시 제거/dead 조회) 확인.
-    - CLOSED Gate를 Enemy가 공격해 BREACHED 전환(collision 제거 + passage open) 확인.
-    - DAY cleanup(actor/spawner 빈 상태) + 다음 NIGHT dead 미재생성/auto-encounter 3/duplicate·reference 누수 없음 확인.
-    - 회귀: Player 무공격/무타겟 그룹, NIGHT Player 이동 비활성(_night_mode), DAY 복귀 정상, Worker 무spawn, 핵심 건물 5/floor 128x128, Gate breach 유지, spawner/roster stale reference 없음.
-  - 위상 플로우는 각 Phase의 `sub==0`에서 실제 작업을 수행하고 `_enter()`만으로 다음 Phase를 전이하도록 통일해, `_wait_frames()`와의 조합으로 인한 sub 건너뜀을 원천 제거.
-  - 결과 `test_results/task0147_test_run.txt`(TASK0147_RESULT=PASS, 2회 연속).
-- 시나리오:
-  1. 주점에서 Mercenary 고용.
-  2. 여관에서 NORTH defense assignment.
-  3. North Gate/Wall 또는 fallback defense point 준비.
-  4. NIGHT.
-  5. Mercenary Actor spawn.
-  6. Enemy spawn.
-  7. Enemy approach.
-  8. Mercenary auto target/chase/attack.
-  9. 양측 HP 변화.
-  10. Enemy death.
-  11. Mercenary death 별도 검증.
-  12. CLOSED Gate attack/breach.
-  13. DAY cleanup.
-  14. 다음 NIGHT duplicate/reference 오류 없음.
-- 회귀:
-  - Player attack 없음.
-  - NIGHT Player 이동 비활성.
-  - Worker production 정책 유지.
-  - Wall/Gate navigation.
-  - smoke.
-- HUMAN_CHECK:
-  - Mercenary/Enemy scale.
-  - 공격 애니메이션.
-  - 이동/공격 속도.
-  - Gate 앞에서 전투가 읽히는지.
-- 완료조건:
-  - 자동검증 PASS.
-
----
-
-## TASK-015 Tactical Command UI
 - 상태: QUEUED
-- 설명: 밤 지휘모드를 단순 관전이 아니라 플레이어 판단이 실제 AI 행동을 바꾸는 첫 전술 시스템으로 만든다.
-- 핵심:
-  - 전투는 계속 Mercenary AI가 수행.
-  - 플레이어는 이동/공격을 직접 조작하지 않음.
-- 첫 Command:
-  - Defense Zone.
-  - Regroup.
-  - Retreat.
-  - Focus Target.
-  - Gate Open/Close.
-  - Pause / 1× / 2×.
-- 금지:
-  - Player attack.
-  - Mercenary 수동 attack button.
-  - skill system.
-  - box-selection 마이크로.
-  - Death Ledger/Ghost.
 
-### TASK-015-1 Night Tactical Camera Pan
-- 상태: DONE
-- 피드백: _speed` export로 조정 가능 ✓
-- 기존 `_process` zoom lerp 로직에 터치 없음 ✓
+- 설명: DeathRecord의 생성/조회/상태 변경을 담당하는 최소 DeathLedger 전역 서비스를 구현한다.
 
-### 테스트
+- 최소 API:
 
-35항목 전부 PASS, 회귀 8종 전부 PASS. 임시 파일 없음.
+  - `record_death(snapshot)`.
 
-### 잠재 개선점 (판정에 영향 없음)
+  - `get_record(record_id)`.
 
-`DAY_RETURN` sub=2에서 `_camera.position`을 zero로 직접 설정하지 않고 camera global position을 player에 맞추는 로직인데, `_process`의 lerp가 300프레임 내에 day_zoom으로 수렴하므로 문제 없음.
+  - `get_all_records()`.
 
----
+  - `get_pending_records()`.
 
-판정: **LGTM**
-사유: 모든 요구사항 충족, 코드 스타일 기존과 일관, 35개 자동검증 PASS + 8개 회귀 PASS, 임시 파일 없음. 버그/누락/엣지 케이스 없음.
-- 피드백: 요구사항 전부 충족. NIGHT에서 Player 이동 비활성을 유지한 채 카메라만 키보드(WASD)로 독립 pan하고 월드 경계(±1024) 밖으로 나가지 않으며, N/E/S/W Gate/Combat Field까지 4방향 도달 가능함을 자동검증했다. DAY 복귀 시 camera offset zero reset + Player follow/zoom 복구 정상. 코드 스타일 기존과 일관, 버그/누락 없음.
-- 구현기록:
-  - `scripts/player.gd`: `night_pan_speed`(export, 기본 480) + `WORLD_BOUNDS`(Rect2(-1024,-1024,2048,2048), world.gd의 FALLBACK_BOUNDS_RECT와 동일) 추가. `_physics_process` NIGHT 분기에서 `_pan_night_camera()` 호출 — 기존 move_* 입력을 카메라 pan으로 재사용(Player velocity는 0 유지), Camera2D 로컬 offset(Player 기준)으로 누적하고 결과 camera global position을 `clampf`로 WORLD_BOUNDS 내로 clamp. `_apply_phase`에서 DAY 복귀 시 `_camera.position = Vector2.ZERO`로 follow 복구. DAY에서는 기존 Player follow/zoom 그대로. edge pan은 선택사항이라 미구현.
-  - `tests/task0151_test.gd` 신규 작성 headless PASS(2회 연속): DAY 시작 follow/offset zero/day_zoom, DAY 이동 시 camera follow 유지, NIGHT 전환 Player 이동 비활성, NIGHT pan 시 Player entity 고정+카메라만 이동(offset 누적), 4방향 N/E/S/W Gate/Combat Field 도달(±960 이상, 실제로는 ±1024 clamp), 경계 clamp(±1024 이내), DAY 복귀 offset reset+follow+day_zoom 복귀(300프레임 수렴), 회귀(Player 무공격/combat 그룹 배제, 핵심 건물 5, floor 128x128, placement intact). 결과 `test_results/task0151_test_run.txt`(TASK0151_RESULT=PASS).
-  - 회귀 headless 전부 PASS: smoke, task0103(zoom), task0105(Day/Night 통합), task0127, task0128, task0144, task0145, task0147.
-- DAY:
-  - 기존 Player follow.
-- NIGHT:
-  - Player movement 비활성 유지.
-  - camera만 독립 pan.
-  - keyboard pan 우선.
-  - world boundary 밖으로 이동 금지.
-  - edge pan은 선택사항.
-- 전환:
-  - DAY 복귀 시 Player follow/zoom 정상.
-- 완료조건:
-  - NIGHT에서 N/E/S/W Gate/Combat Field 확인 가능. (충족)
-  - Player entity는 이동하지 않음. (충족)
+  - `get_active_records()`.
 
-### TASK-015-2 Tactical Command HUD
-- 상태: DONE
-- 피드백:  패턴)과 일관
+  - `get_resolved_records()`.
 
-**테스트:**
-- 40항목 headless PASS 확인 (`task0152_test_run.txt`)
-- 회귀 테스트8종 전부 PASS 확인
+  - `mark_active(record_id)`.
 
-**버그/누락/엣지 케이스:** 없음
+  - `mark_pending(record_id)`.
 
-판정: **LGTM**
-사유: 모든 요구사항 충족, 코드 스타일 기존과 일관, 40개 자동검증 PASS + 회귀8종 PASS, 임시 파일 없음, 버그/누락 없음.
-Review complete. All items verified.
+  - `resolve(record_id, day)`.
 
-판정: **LGTM**
-사유: 모든 요구사항 충족, 코드 스타일 기존과 일관, 40개 자동검증 PASS + 회귀8종 PASS, 임시 파일 없음, 버그/누락 없음.
+  - `has_record_for_source(source_uid)`.
 
-`AI_TASK_QUEUE.md` line 560의 `상태: REVIEW`를 `상태: DONE`으로 갱신하면 됩니다.
-- 피드백: 모든 요구사항 충족. NIGHT에만 표시되는 전술 명령 UI 셸을 구현하고, 방어구역/집결/후퇴/집중공격/성문 개폐/시간 조작 버튼이 command_issued 신호로 명령을 방출한다. DAY 숨김/DAY reset 정상, 기존 Wood/Stone/DayTime HUD 유지, 오른쪽 가장자리 배치로 전투 중앙 미가림. 40항목 headless 2회 연속 PASS + 회귀 전부 PASS. 임시 파일 없음.
-- 구현기록:
-  - `scripts/tactical_command_ui.gd` + `ui/tactical_command_ui.tscn` 신규. `TacticalCommandUI`(Control, class_name). NIGHT 지휘 모드에서만 `visible`로 표시되고(DAY 숨김) 화면 오른쪽 가장자리(anchor 6) Panel에 배치해 전투 중앙을 과도하게 가리지 않음.
-  - Command enum(DEFENSE_ZONE/REGROUP/RETREAT/FOCUS_TARGET/GATE_OPEN/GATE_CLOSE/TIME_PAUSE/TIME_1X/TIME_2X) + `command_issued(command, arg)` signal. 각 버튼이 눌릴 때 신호를 방출해 후속 태스크(TASK-015-3~6)가 실제 AI/시간 동작을 연결하도록 인터페이스 제공.
-  - 방어구역 N/E/S/W 버튼(DefenseZoneRow), 집결/후퇴(RegroupButton/RetreatButton), 집중 공격 대상(FocusTargetButton), 전술 시간 Pause/1x/2x(TimePauseButton/Time1xButton/Time2xButton). 성문(GateList)은 NIGHT 진입 시 설치된 gate 그룹을 방향별로 나열하고 OPEN/CLOSE 버튼 생성, 성문 없으면 안내 문구. `_apply_phase`에서 GameTime.phase_changed 연결.
-  - `ui/hud.tscn`: TacticalCommandUI 인스턴스 추가(기존 Tavern/Inn UI와 동일 패턴). 기존 Wood/Stone/DayTime/Interact/Build/Feedback HUD는 유지.
-  - `tests/task0152_test.gd` 신규 작성 headless PASS(40항목, 2회 연속): DAY 숨김, 버튼 존재(N/E/S/W/집결/후퇴/집중/시간), 각 버튼 command_issued 방출(DEFENSE_ZONE zone 일치/REGROUP/RETREAT/FOCUS_TARGET/TIME_*), 성문 없음 시 GateList 안내 문구, 성문 배치 후 NIGHT 진입 시 UI 표시 + 성문 행(NORTH/OPEN/CLOSE), OPEN/CLOSE가 GATE_OPEN/GATE_CLOSE + 해당 Gate 참조 방출, DAY 복귀 시 UI 숨김(DAY reset), 회귀(Player 무공격/무타겟 그룹, 핵심 건물 5/floor 128x128, 성문 유지, 기존 Wood/Stone/DayTime HUD 유지).
-  - 회귀 headless 전부 PASS: smoke, task0105, task0128, task0136, task0144, task0145, task0147, tasknav001, task0151.
-- NIGHT 표시:
-  - Defense Zone N/E/S/W.
-  - Regroup.
-  - Retreat.
-  - Focus Target mode.
-  - Gate control.
-  - Pause/1×/2×.
+- Signals:
+
+  - `record_added`.
+
+  - `record_status_changed`.
+
+  - `record_resolved`.
+
+- 상태:
+
+  - `PENDING` = Ghost Return 대기.
+
+  - `ACTIVE` = 해당 record의 Ghost가 현재 월드에 존재.
+
+  - `RESOLVED` = Ghost가 처치되어 영구 종료.
+
+- Eligibility:
+
+  - NIGHT Day N에서 사망하면 `eligible_day = N + 1`.
+
+  - 같은 NIGHT 즉시 재등장 금지.
+
 - 요구사항:
-  - DAY 숨김/비활성.
-  - 기존 Wood/Stone/DayTime HUD 유지.
-  - 전투 중앙을 과도하게 가리지 않음.
-  - 완성형 UI polish 금지.
-- 완료조건:
-  - NIGHT command UI 사용 가능. (충족)
-  - DAY reset 정상. (충족)
 
-### TASK-015-3 Defense Zone Command
-- 상태: DONE
-- 피드백: get becomes invalid mid-transit
+  - 상태 변경 API는 존재하지 않는 record에 대해 안전하게 처리.
 
-### Style Consistency
-- Matches existing GDScript conventions (naming, doc comments, error handling pattern).
+  - RESOLVED record를 실수로 ACTIVE/PENDING으로 되돌리지 않도록 명확한 정책 적용.
 
----
+  - query 결과를 외부에서 수정해 Ledger 내부 상태를 우회 변경하지 않도록 주의.
 
-판정: **LGTM**
-사유: 모든 요구사항 충족. DEFENSE_ZONE 명령이 MercenaryData와 spawn Actor의 구역/앵커를 실시간 변경하고, stale target disengage → nav 이동 → 새 구역 기준 재탐색 흐름이 정확히 구현됨. 33개 자동검증 PASS, 임시 파일 없음, 코드 스타일 일관. `AI_TASK_QUEUE.md` line 602의 `상태: REVIEW`를 `상태: DONE`으로 갱신하면 됩니다.
-- 피드백: 모든 요구사항 충족. NIGHT 중 전술 명령 UI의 방어구역 버튼(N/E/S/W)이 내는 DEFENSE_ZONE 명령이 MercenaryData와 spawn된 Actor의 방어 구역/앵커(rally)를 실시간 변경하고, 기존 target이 새 구역과 무관/너무 멀면 disengage 후 새 구역으로 nav 이동(teleport 금지)하며, 도착 후 새 구역 기준으로 target을 재탐색한다. stale target/permanent chase 없음. headless 자동검증 33항목 PASS + 회귀 전부 PASS.
-- 구현기록:
-  - `scripts/mercenary_roster.gd`: `_on_tactical_command(command, arg)` 추가 — `TacticalCommandUI.command_issued`를 수신해 DEFENSE_ZONE만 처리하고(나머지는 후속 태스크 예약) 살아 있는 용병의 구역을 `set_defense_zone()`으로 변경. `set_defense_zone(mercenary_id, zone, world)` 추가 — MercenaryData.defense_zone 갱신 + spawn 중 Actor면 새 구역 rally로 `actor.set_defense_zone()` 호출해 실시간 반영.
-  - `scripts/mercenary_actor.gd`: `set_defense_zone(zone, new_rally)` 추가 — defense_point(앵커)를 새 rally로 갱신하고, 현재 target이 invalid이거나 새 구역과 너무 멀면(`_target_far_from_zone`, CHASE_RETURN_DISTANCE 초과) disengage(_target 클리어) 후 RETURN_TO_DEFENSE_ZONE(nav 이동) → 도착 후 ACQUIRE_TARGET 재탐색. `_target_far_from_zone()` 헬퍼 추가. teleport 없음.
-  - `scripts/tactical_command_ui.gd`: `_ready()`에서 `command_issued`를 `MercenaryRoster._on_tactical_command`에 연결.
-  - `tests/task0153_test.gd` 신규 작성 headless PASS(33항목): 고용+NORTH 배정+NIGHT spawn(North Rally), North 구역 Enemy target 획득/추격, Tactical UI EAST 버튼 → DEFENSE_ZONE 명령 → MercenaryData/Actor 구역 EAST + defense_point East Rally(280,0) 갱신, 이전 target disengage(target 클리어)+RETURN_TO_DEFENSE_ZONE, 이동 중 teleport 없음(연속 이동), East Rally 도달 후 새 구역 기준 target 재탐색(구역 내 dist<=180), stale target/permanent chase 없음, 회귀(Player 무공격/무타겟, NIGHT 이동 비활성, 핵심 건물 5/floor). 결과 `test_results/task0153_test_run.txt`(TASK0153_RESULT=PASS).
-  - 기존 task0152/0151 등은 정상 PASS 확인. (TacticalCommandUI가 autoload인 mercenary_roster에서 parse-time 참조되므로 `godot --import`로 global class cache 갱신 필요 — `.godot` 캐시 대상이라 소스 변경 아님)
-- 행동:
-  - NIGHT 중 N/E/S/W 변경.
-  - Mercenary defense anchor/rally 변경.
-  - 현재 target이 새 zone과 무관/너무 멀면 disengage 후 새 zone 복귀.
-  - teleport 금지, nav 이동.
-- 완료조건:
-  - North→East 등 실시간 변경. (충족)
-  - 새 zone 기준 target 탐색. (충족)
-  - stale target/permanent chase 없음. (충족)
-
-### TASK-015-4 Regroup / Retreat
-- 상태: DONE
-- 피드백: 모든 요구사항 충족. REGROUP/RETREAT 행동 차이 명확, teleport 없음, 무적 아님, 새 DEFENSE_ZONE 명령으로 정상 복귀, 50항목 headless PASS + 회귀 전부 PASS, 코드 스타일 일관, 버그/누락/엣지 케이스 없음. `AI_TASK_QUEUE.md` line 630의 `상태: REVIEW`를 `상태: DONE`으로 갱신하면 됩니다.
-- 피드백: 모든 요구사항 충족. REGROUP은 현재 방어 구역 rally로 nav 복귀(teleport 금지)하며 이동 중 target 획득을 억제하고 도착 후 일반 방어 AI로 복귀해 재교전하고, RETREAT은 중앙 Village/safe rally(clearing 중심)로 후퇴해 이동 중/도착 후에도 공격·target 획득을 중지하고 도착 후 HOLD하며, 무적이 아니어서 후퇴 중에도 사망 가능함을 검증했다. RETREAT HOLD 중 새 DEFENSE_ZONE 명령으로 일반 방어 AI에 정상 복귀(동쪽 rally 복귀 + 재교전)도 확인했다. headless 자동검증 2회 연속 PASS + 회귀 전부 PASS. 버그/누락/엣지 케이스 없음.
-- 구현기록:
-  - `scripts/mercenary_actor.gd`: `MercState`에 `REGROUP`/`RETREAT` 추가(6→8 상태). `regroup()`은 현재 target을 놓고 현재 방어 구역 rally로 복귀(`REGROUP`), `retreat(safe_point)`은 중앙 safe rally로 후퇴(`RETREAT`)한다. `_tick_regroup`은 도착 전 target 획득을 억제하고(이동 중 잠시 억제) 도착 후 `_acquire_target()`으로 일반 방어 AI 복귀, `_tick_retreat`은 이동 중/도착 후에도 공격·획득을 하지 않고 도착 후 velocity zero(HOLD) 유지. teleport 없음(nav 이동), 무적 아님(`take_damage`/`die` 기존 경로 유지). `set_defense_zone`이 REGROUP/RETREAT 중이면 새 방어 명령으로 `RETURN_TO_DEFENSE_ZONE`(미도착)/`ACQUIRE_TARGET`(도착) 전환해 일반 방어 AI 복귀. `get_retreat_point()`/`_reached_retreat_point()` 추가.
-  - `scripts/mercenary_roster.gd`: `_on_tactical_command`에 REGROUP/RETREAT 처리 추가 — 살아 있는 용병의 spawn Actor에게 `regroup()`/`retreat(safe)` 호출(Actor 없으면 무시). `get_safe_rally(world)` 추가 — 정착지 clearing 중심(Keep 위치 fallback).
-  - `tests/task0154_test.gd` 신규 작성 headless PASS(2회 연속): 고용+NORTH 배정+NIGHT spawn(North Rally), 구역 내 Enemy 교전, Tactical UI REGROUP 버튼 → REGROUP 진입+target 클리어, rally로 nav 복귀(teleport 금지)+이동 중 target 획득 억제, 도착 후 일반 방어 AI 복귀(재탐색/재교전), Tactical UI RETREAT 버튼 → RETREAT 진입+중앙 safe rally 목표(북방 rally와 다른 지점), safe rally로 nav 후퇴(teleport 금지)+이동 중 획득 억제, 도착 후 HOLD+근처 적 무시(공격 중지), RETREAT HOLD 중 DEFENSE_ZONE EAST 버튼 → 일반 방어 AI 복귀(East Rally nav 이동+재교전), 무적 아님(사망 처리 동작), 회귀(Player 무공격/무타겟, NIGHT 이동 비활성, 핵심 건물 5, floor 128x128). 결과 `test_results/task0154_test_run.txt`(TASK0154_RESULT=PASS).
-  - `tests/task0144_test.gd`: `MercState` 크기 assertion 6→8(REGROUP/RETREAT 추가 반영) + 상태 키 확인 갱신.
-  - 회귀 headless 전부 PASS: smoke, task0128, task0136, task0141~0147, tasknav001, task0151~0153.
-- Regroup:
-  - 현재 defense zone RallyPoint 복귀.
-  - 이동 중 새 target 획득 잠시 억제.
-  - 도착 후 일반 방어 AI 복귀.
-- Retreat:
-  - 중앙 Village/safe rally로 후퇴.
-  - 공격 중지 또는 우선순위 크게 감소.
-  - 안전지점 도착 후 HOLD.
-- 금지:
-  - teleport.
-  - 무적.
-- 완료조건:
-  - Regroup/Retreat 행동 차이 명확. (충족)
-  - 새 defense command로 정상 복귀. (충족)
-
-### TASK-015-5 Focus Target
-- 상태: DONE
-- 피드백: 모든 요구사항 충족. Focus Target mode toggle, priority over zone auto-combat, auto-release on death/freed, no permanent chase on unreachable target, RETREAT 중 focus 저장/COMMAND 이후 재획득 정상. 59항목 headless 2회 연속 PASS + 회귀 5종 전부 PASS. 임시 파일 정리 완료.
-- 피드백: 구현 자체는 정상이었으나 `tests/task0155_test.gd`가 누락되어 있어 REVIEW 상태였다. 테스트 파일을 신규 작성해 headless 자동검증 59항목 2회 연속 PASS + 회귀(smoke/task0128/task0144/task0153/task0154) 전부 PASS 확인 후 DONE으로 전환.
-- UX:
-  - Focus Target mode → Enemy 선택.
-- 행동:
-  - 살아 있고 reachable한 선택 Enemy를 우선 target.
-  - target death/freed 시 자동 focus 해제.
-  - unreachable target로 영구 chase 금지.
 - 중요:
-  - Player 직접 공격이 아니라 AI priority 변경.
-- 완료조건:
-  - focus priority 확인. (충족)
-  - target 제거 후 기본 AI 복귀. (충족)
-- 구현기록:
-  - `tests/task0155_test.gd` 신규 작성 headless PASS(2회 연속, 59항목): focus mode toggle via UI button, focus mode on/off API, set_focus_target/clear_focus_target API, focus priority over zone auto-combat, focus target death → auto release (died signal), focus target freed → auto release (tree_exiting signal), toggle off clears focus, focus mode re-enables via set_focus_target, RETREAT 중 focus target 저장(즉시 전환 없음), DEFENSE_ZONE 명령으로 RETREAT 탈출 후 focus target 재획득, 회귀(Player 무공격/무타겟, NIGHT 이동 비활성, 핵심 건물 5/floor). 결과 `test_results/task0155_test_run.txt`(TASK0155_RESULT=PASS).
-  - 임시 파일 `_probe_focus_test.gd` 제거(게임/테스트 코드 미참조).
 
-### TASK-015-6 Gate Command + Tactical Time
-- 상태: DONE
-- 피드백: Gate Command(상태 라벨/BREACHED disabled/null 안전)와 Tactical Time(Pause/1x/2x/DAY 복원/clamp)이 정상 구현됨. 테스트가 78항목으로 핵심 시나리오를 전부 커버하고, 회귀 테스트 전부 통과, 임시 파일 없음. 코드 스타일 기존과 일관.
-- 피드백: 리뷰 지적(advance() scale 적용 / DAY 1x 복원 / roster GATE·TIME 핸들러 / _refresh_gates 상태 라벨·BREACHED disabled·상태 변경 갱신 / task0156_test 신규)을 전부 반영 완료. 모든 요구사항 충족. 성문 OPEN/CLOSE 명령 + 상태(CLOSED/OPEN/BREACHED) 표시 + BREACHED disabled 처리, 전술 시간 Pause/1x/2x(GameTime 시간 배율, Pause 중 UI 입력 동작, DAY 진입 1x 복원, 종료 후 time state 누수 없음), 2x에서 combat/animation/GameTime/Worker timer 중복 실행 없음을 headless 자동검증 PASS로 확인. 회귀 전부 PASS. 임시 파일 없음.
-- 구현기록:
-  - `scripts/game_time.gd`: TASK-015-6 전술 시간. `TIME_SCALE_PAUSE/1X/2X` 상수 + `_time_scale`(기본 1x) 추가. `advance()`가 `seconds * _time_scale`로 경과를 누적하고(리뷰 지적 반영), DAY phase에 진입하면 `_time_scale = TIME_SCALE_1X`로 복원. `set_time_scale()`(0~2 clamp)/`get_time_scale()` 공개 API. SceneTree.paused를 쓰지 않으므로 Pause(0) 중에도 UI 입력이 그대로 동작한다.
-  - `scripts/mercenary_roster.gd`: `_on_tactical_command()`에 GATE_OPEN/GATE_CLOSE(→ `gate.set_open(true/false)`) 및 TIME_PAUSE/1X/2X(→ `GameTime.set_time_scale()`) 핸들러 추가. `_set_gate_open()` 헬퍼는 null/freed 성문을 안전 무시하고 BREACHED는 set_open no-op으로 처리(자동 복구 없음).
-  - `scripts/tactical_command_ui.gd`: `_refresh_gates()`에 Gate 상태 라벨(CLOSED/OPEN/BREACHED) 추가, BREACHED 성문은 OPEN/CLOSE 버튼 disabled 처리, `gate_state_changed` 신호로 상태 변경 시 목록 자동 재생성(중복 연결 방지). 신호 2인자(gate, open)에 대응하도록 `_refresh_gates(_gate, _open)` 시그니처로 변경.
-  - `tests/task0156_test.gd` 신규 작성 headless PASS: 시간 배율 API/clamp, Pause(0)에서 GameTime 경과 고정 + Pause 중 UI 버튼(성문 OPEN/1x) 입력 동작, 1x vs 2x GameTime 경과 비율 ~2(중복/4배 아님), 2x에서 전투 hit 수 1x와 동일(중복 공격 아님), 2x에서 miner 생산량 1x와 동일(중복 생산 아님), 성문 OPEN/CLOSE 명령 + 상태 라벨 갱신, BREACHED 버튼 disabled + 명령 no-op, DAY 진입 1x 복원 + time state 누수 없음, 회귀(Player 무공격/무타겟, 핵심 건물 5/floor, HUD 유지). 결과 `test_results/task0156_test_run.txt`(TASK0156_RESULT=PASS).
-  - `tests/task0152_test.gd`: 성문 행 구조에 상태 라벨이 추가됨에 따라 NIGHT_VISIBLE/GATE_COMMANDS 자식 인덱스를 1→2/2→3으로 갱신하고, TIME_COMMANDS가 TIME_2X 버튼(이제 실제로 2x 배율 적용) 후 후속 phase 전환에 영향 없도록 1x로 복원.
-  - 검증 중 기록: FirstEncounterSpawner의 NIGHT 기본 조우 Enemy가 전투 측정에 간섭하므로 전투 측정 전 전체 Enemy를 정리하고 테스트 Enemy HP를 충분히 높여(10000) 측정 창에서 사망/타겟 전환 없이 1x=9.0/2x=9.0 hit로 안정화했다. GameTime 경과 측정은 auto_advance + 동일 프레임 수(60)에서 1x=0.421s/2x=0.842s(비율 2.0).
-- 회귀 headless 전부 PASS: smoke, task0105, task0128, task0136, task0141, task0143~0147, tasknav001, task0151~0155. (tasknav001은 8-run nav stress로 시간이 오래 걸리는 테스트이며 별도 긴 타임아웃으로 PASS 확인)
-- Gate:
-  - 설치된 N/E/S/W Gate 상태 표시.
-  - OPEN/CLOSE.
-  - Gate 없음/destroyed는 안전한 disabled 처리.
-- Time:
-  - Pause/1×/2×.
-  - Pause 상태에서도 UI input 동작.
-  - DAY 진입 시 1× 복원.
-  - 테스트 종료 후 time state 누수 없음.
-- 검증:
-  - 2×에서 combat/animation/GameTime/Worker timer가 비정상 중복 실행되지 않음. (충족)
-- 완료조건:
-  - Gate command. (충족)
-  - Pause/1×/2×. (충족)
-  - DAY reset. (충족)
+  - DeathLedger는 Ghost를 spawn하지 않는다.
 
-### TASK-015-7 Command AI Priority
-- 상태: DONE
-- 피드백: 모든 요구사항 충족. DEAD > RETREAT > REGROUP > FOCUS > DEFENSE ZONE AUTO COMBAT 우선순위가 state 단일 정수 + guard로 정확히 구현됨. 모순 명령 연속 발동 시 state 누적 없이 마지막 명령이 확정(deadlock 없음). 사망 후 모든 명령 safe no-op. 62항목 headless PASS + 회귀 전부 PASS. 코드 스타일 기존과 일관. `AI_TASK_QUEUE.md` line 702 `상태: REVIEW` → `상태: DONE` 갱신 필요.
-- 피드백: 모든 요구사항 충족. 전술 명령 우선순위(DEAD > RETREAT > REGROUP > FOCUS TARGET > DEFENSE ZONE AUTO COMBAT)가 기존 명령 핸들러에서 clean override로 정확히 동작하고, 모순 명령 연속 발동에도 상태 누적 없이 생산적 상태로 정착하며(deadlock 없음), 사망 후 모든 명령이 안전한 no-op임을 62항목 headless 자동검증 PASS로 확인. 회귀 전부 PASS. 코드 스타일 일관, 임시 파일 없음.
-- 권장 priority:
-  1. DEAD.
-  2. RETREAT.
-  3. REGROUP.
-  4. FOCUS TARGET.
-  5. DEFENSE ZONE AUTO COMBAT.
+  - DeathLedger는 Portal/Wave를 제어하지 않는다.
+
+  - SaveGame 시스템 구현 금지.
+
+- 완료조건:
+
+  - record 생성/조회 정상.
+
+  - PENDING→ACTIVE→PENDING 전환 가능.
+
+  - PENDING/ACTIVE→RESOLVED 가능.
+
+  - Day/Night 전환 후에도 Autoload 내부 record 유지.
+
+### TASK-016-3 Mercenary / Enemy Combat Death Integration
+
+- 상태: QUEUED
+
+- 설명: TASK-014에서 구현된 실제 Mercenary/Enemy lethal death 흐름을 DeathLedger에 연결한다.
+
+- Mercenary:
+
+  - 실제 HP 0 이하 사망 시 record 생성.
+
+  - MercenaryData의 정체성/전투 stat snapshot 사용.
+
+  - 기존 `MercenaryData.alive = false` 유지.
+
+  - 기존 Actor cleanup/roster freed-reference 제거 유지.
+
+- Enemy:
+
+  - 실제 combat damage로 HP 0 이하 사망한 경우 record 생성.
+
+  - 동일 Enemy type이라도 각 Actor는 독립 `source_uid` 사용.
+
+- 기록 금지:
+
+  - DAY cleanup.
+
+  - FirstEncounterSpawner despawn.
+
+  - scene unload.
+
+  - 테스트 cleanup.
+
+  - navigation recovery.
+
+  - 단순 queue_free.
+
 - 요구사항:
-  - contradictory state 무한 누적 금지. (충족 — 각 명령은 `_state_to` 기반 단일 상태 덮어쓰기로 누적 stack 없음)
-  - 새 command가 이전 transient command를 어떻게 덮는지 명확. (충족 — 최신 명령이 이전 transient 명령을 덮음: RETREAT>REGROUP, REGROUP>FOCUS/combat, DEFENSE_ZONE이 RETREAT/REGROUP 탈출, FOCUS>zone auto)
-  - 범용 Command Framework 선행 금지. (충족 — framework 신규 작성 없이 기존 015-3~015-6 명령 핸들러 재사용)
+
+  - DeathLedger 연결 때문에 기존 death/cleanup 순서를 깨뜨리지 않는다.
+
+  - `source_uid`는 `display_name`과 독립.
+
+  - 이름이 같은 두 Mercenary/Enemy도 서로 다른 죽음으로 기록 가능.
+
+  - died signal과 `die()` 내부 양쪽에서 중복 record가 생성되지 않도록 ownership을 명확히 한다.
+
 - 완료조건:
-  - command 전환 테스트 PASS. (충족)
-  - state deadlock 없음. (충족)
-- 구현기록:
-  - 기존 `scripts/mercenary_actor.gd`/`scripts/mercenary_roster.gd`의 명령 핸들러가 이미 우선순위 모델을 clean override로 구현함을 확인: DEAD는 모든 명령 핸들러의 alive/DEAD guard로 최우선, `retreat()`가 REGROUP/combat/focus를 덮고(priority2), `regroup()`이 focus/combat을 덮으며(priority3), `set_focus_target()`이 REGROUP/RETREAT 중엔 저장만 하고(priority4), `set_defense_zone()`이 transient(RETREAT/REGROUP)에서 일반 방어 AI로 복귀(priority5 command). 상태는 단일 정수 `state`로 관리되어 모순 명령이 누적되지 않음.
-  - `tests/task0157_test.gd` 신규 작성 headless PASS(62항목, 2회 연속): ①priority5 zone auto-combat 기본 target 획득 ②priority4 focus가 zone enemy보다 우선 ③priority3 REGROUP이 focus/combat을 덮고(target 클리어) 이동 중 획득 억제 + teleport 없음, 도착 후 focus 재획득 ④priority2 RETREAT이 REGROUP을 덮고, 이동 중/도착 후 근처 적에도 공격·target 획득 중지(HOLD) ⑤priority5 새 DEFENSE_ZONE 명령이 RETREAT를 덮고 East rally nav 복귀 + 재교전 ⑥RAPID OVERRIDE: REGROUP→RETREAT→REGROUP→DEFENSE 연속 발동 후 상태 누적 없이 East rally 정착 + 재교전(deadlock 없음) ⑦DEAD: 사망 후 모든 명령(GATE/TIME 포함)이 안전한 no-op + 재생성 없음 + time scale 1x 복원 ⑧회귀(Player 무공격/무타겟, 핵심 건물 5/floor). 결과 `test_results/task0157_test_run.txt`(TASK0157_RESULT=PASS).
-  - 회귀 headless 전부 PASS: smoke, task0128, task0144, task0147, task0151~0156.
 
-### TASK-015-8 Tactical Combat Vertical Slice 통합 검증
-- 상태: DONE
-- 피드백: .
-- 회귀 테스트 결과 파일 전부 PASS 확인: smoke, task0128, task0136, task0141~0147, task0151~0157, tasknav001.
-- 임시 파일(`_diag*`, `_probe*`, `_t75*`) 없음.
-- AI_TASK_QUEUE.md `상태: REVIEW` → `DONE` 갱신 완료.
+  - Mercenary 실제 사망 → MERCENARY record 정확히 1개.
 
-판정: **LGTM**
-사유: 17단계 시나리오 전부 자동검증 PASS, 회귀 전부 PASS, 임시 파일 없음, 코드 스타일 일관, 테스트 의존 API 존재 확인. 버그/누락/엣지 케이스 없음. HUMAN_CHECK 항목(camera pan 속도, Command UI 위치, Regroup/Retreat 차이, "전투는 자동, 판단은 플레이어" 느낌)만 남은 상태로 코드 정상.
-- 피드백: 모든 요구사항 충족. TASK-013(Wall/Gate) + TASK-014(고용/Enemy/자동전투/death) + TASK-015(전술 명령 UI, Tactical camera, Defense Zone, Regroup/Retreat, Focus Target, Gate Command, Tactical Time)의 전체 수직 슬라이스를 하나의 연속 시나리오로 묶어 검증했다. 17단계 시나리오 전부 headless 자동검증 PASS(2회 연속 안정), 회귀 테스트 전부 PASS. 전투는 Mercenary AI가 수행하고 Player는 무공격/무이동, 명령이 실제 AI 행동에 영향, nav stall/freed reference/Gate breach-command 충돌 없음, Worker/DayNight/HUD 회귀 없음을 확인했다. 임시 파일 없음.
-- 구현기록:
-  - `tests/task0158_test.gd` 신규 작성 headless PASS(2회 연속): ①Mercenary 고용+NORTH 방어배치 ②Wall 양옆(±48,-448)+North Gate(0,-448) CLOSED 구성 ③NIGHT 전환 → Actor North Rally(0,-280) spawn + Player 이동 비활성 유지 + Tactical camera가 North Combat Field까지 pan ④FirstEncounterSpawner 자동 조우(3) 후 격리 ⑤구역 내 Enemy 자동 탐색/추격/공격으로 사살(AI 수행) ⑥Defense Zone EAST 명령 → MercenaryData/Actor 구역 실시간 변경 + East Rally(280,0) nav 이동(teleport 없음) ⑦Focus Target mode + 우선 target ⑧Regroup 명령 → target 클리어 + rally 복귀(이동 중 획득 억제, teleport 없음) ⑨도착 후 focus 재획득 재교전 ⑩Retreat 명령 → 중앙 safe rally 후퇴 + HOLD(근처 적 무시) ⑪Gate OPEN/CLOSE 명령 → collision shape 제거/재생성 왕복 ⑫Pause(경과 고정)/2x(0.4→0.8 elapsed) ⑬사망 후 모든 명령 safe no-op + 시간 1x 복원 ⑭DAY 복귀 cleanup + camera offset reset(follow 복구) ⑮다음 NIGHT dead 미재생성 + auto-encounter 재spawn(3)/reference 누수 없음 ⑯회귀(Player 무공격/무타겟, NIGHT 이동 비활성, Worker 무spawn, 핵심 건물 5/floor 128x128, Wall 2/Gate CLOSED 유지, spawner/roster stale reference 없음). 결과 `test_results/task0158_test_run.txt`(TASK0158_RESULT=PASS).
-  - 검증 중 기록: 전술 시간(12) 측정은 짧은 NIGHT duration(1.0)에서 `advance(1.0)`이 phase 전환을 유발해 elapsed 측정이 흐트러지는 것을 피하기 위해 phase 초반에 `_elapsed`를 0으로 초기화하고 소량 advance(0.4)만으로 2x 배율을 검증했다. 구역 자동전투(5)는 defense_point(North Rally)에서 CHASE_RETURN_DISTANCE(180) 이내에 Enemy를 spawn해야 target이 되므로 rally 기준 -70px에 배치했다.
+  - Enemy 실제 사망 → ENEMY record 정확히 1개.
+
+  - cleanup/despawn → record 0개.
+
+  - 기존 TASK-014 death cleanup 회귀 PASS.
+
+### TASK-016-4 Duplicate / Recursive Death Guard
+
+- 상태: QUEUED
+
+- 설명: 동일 실제 죽음의 중복 기록과 향후 Ghost 사망의 재귀 DeathRecord 생성을 방지한다.
+
+- Duplicate:
+
+  - `source_uid` + 실제 death event 기준 중복 방지.
+
+  - 동일 died signal 중복 전달에도 record 1개.
+
+  - `display_name` 기준 dedupe 금지.
+
+- Ghost 준비:
+
+  - 향후 Actor/source에 `NORMAL / GHOST`를 판별할 최소 구조 제공.
+
+  - 또는 동등하게 명확한 ghost source 판별 구조 사용 가능.
+
+- 핵심 규칙:
+
+  - Normal Mercenary/Enemy death → DeathRecord 생성.
+
+  - Ghost death → 신규 DeathRecord 생성 금지.
+
+  - Ghost death → 기존 record RESOLVED 처리는 TASK-017에서 구현.
+
+- 중요:
+
+  - Ghost 전체 architecture를 선행 구현하지 않는다.
+
+  - `is_ghost` 하나 때문에 범용 Entity Framework를 새로 만들지 않는다.
+
+  - 현재 구조에 가장 작은 확장 지점을 사용한다.
+
+- 완료조건:
+
+  - 동일 source death 중복 호출에도 record 1개.
+
+  - 서로 다른 동일 타입 Enemy는 각각 record 생성.
+
+  - ghost source로 가정한 death는 신규 record 생성되지 않음.
+
+### TASK-016-5 Minimal Death Ledger View
+
+- 상태: QUEUED
+
+- 설명: 실제 플레이 중 Death Ledger 기록을 확인하기 위한 최소 검증 UI를 추가한다. 최종 Memorial/Archive UI가 아니다.
+
+- 표시:
+
+  - display_name.
+
+  - source_kind.
+
+  - death_day.
+
+  - status.
+
+- 예시:
+
+  - `Mercenary A / MERCENARY / Day 3 / PENDING`.
+
+  - `Enemy 004 / ENEMY / Day 3 / PENDING`.
+
+- 요구사항:
+
+  - 필요 시 열고 닫을 수 있는 최소 Panel.
+
+  - 현재 좌상단 HUD와 NIGHT Tactical Command UI를 과도하게 가리지 않음.
+
+  - record 삭제 버튼 없음.
+
+  - purification/prevention 기능 없음.
+
+  - Ghost Return을 막는 기능 없음.
+
+  - Ledger signal을 이용해 신규 record/status 변경 시 정상 refresh.
+
+  - Panel을 닫고 다시 열어도 현재 Ledger 상태를 다시 조회해 표시.
+
+- 중요:
+
+  - Death Ledger UI는 정보 확인용.
+
+  - 최종 Memorial/Archive 디자인이 아니다.
+
+  - 이번 태스크에서 대규모 UI polish 금지.
+
+- 완료조건:
+
+  - 실제 사망 후 UI에서 record 확인 가능.
+
+  - Day/Night 전환 후에도 표시 유지.
+
+  - HUD/Tactical UI 회귀 없음.
+
+### TASK-016-6 Death Ledger 통합 검증
+
+- 상태: QUEUED
+
+- 설명: Mercenary/Enemy 실제 전투 사망부터 DeathRecord 생성/유지까지 Death Ledger 전체 흐름을 하나의 headless 시나리오로 검증한다.
+
 - 시나리오:
-  1. Mercenary 고용/방어배치.
-  2. Wall/Gate 구성.
-  3. NIGHT.
-  4. Tactical camera.
-  5. Enemy encounter.
-  6. 자동전투.
-  7. Defense Zone 변경.
-  8. Focus Target.
-  9. Regroup.
-  10. 재교전.
-  11. Retreat.
-  12. Gate Open/Close.
-  13. Pause.
-  14. 2×.
-  15. death cleanup.
-  16. DAY.
-  17. 다음 NIGHT 반복.
-- 핵심검증:
-  - Player attack 없음.
-  - NIGHT Player 이동 없음.
-  - 명령이 실제 Mercenary AI 행동에 영향.
-  - 전투 자체는 AI 수행.
-  - nav stall/freed reference 없음.
-  - Gate breach/command 충돌 없음.
-  - Worker/DayNight/HUD 회귀 없음.
+
+  1. DAY 시작.
+
+  2. DeathLedger 초기 상태 확인.
+
+  3. Mercenary 고용.
+
+  4. WEST defense assignment.
+
+  5. NIGHT 전환.
+
+  6. Mercenary Actor spawn.
+
+  7. WEST Enemy encounter spawn.
+
+  8. 실제 auto combat.
+
+  9. Enemy lethal death.
+
+  10. ENEMY DeathRecord 생성 확인.
+
+  11. 동일 Enemy 중복 record 없음.
+
+  12. Mercenary lethal death.
+
+  13. MERCENARY DeathRecord 생성 확인.
+
+  14. `MercenaryData.alive == false` 확인.
+
+  15. Actor cleanup/freed-reference 정상 확인.
+
+  16. 두 record `status == PENDING` 확인.
+
+  17. `eligible_day == death_day + 1` 확인.
+
+  18. DAY 전환.
+
+  19. DAY cleanup이 신규 DeathRecord를 생성하지 않음 확인.
+
+  20. 기존 DeathRecord 유지 확인.
+
+  21. 다음 NIGHT 전환.
+
+  22. 기존 record 유지 확인.
+
+  23. 아직 Ghost가 spawn되지 않았는지 확인.
+
+- 추가검증:
+
+  - 같은 이름의 서로 다른 Enemy는 별도 record.
+
+  - duplicate source_uid 차단.
+
+  - get_all_records.
+
+  - get_pending_records.
+
+  - get_active_records.
+
+  - get_resolved_records.
+
+  - mark_active.
+
+  - mark_pending.
+
+  - resolve.
+
+  - RESOLVED 상태 보호.
+
+  - ghost source 신규 death 기록 차단.
+
+  - Actor reference/Node reference가 record 내부에 없는지 확인.
+
+- 회귀:
+
+  - `smoke_test`.
+
+  - Worker / Navigation 핵심 회귀.
+
+  - TASK-012 World.
+
+  - TASK-013 Wall/Gate.
+
+  - TASK-014 Combat.
+
+  - TASK-015 Tactical Combat Vertical Slice.
+
+  - World Visual Composition.
+
 - HUMAN_CHECK:
-  - camera pan 속도/zoom.
-  - Command UI 위치.
-  - 명령 의미가 바로 이해되는지.
-  - Regroup/Retreat 차이.
-  - Focus Target이 지나친 마이크로처럼 느껴지지 않는지.
-  - Pause/1×/2×가 판단 시간을 주는지.
-  - **"전투는 자동, 판단은 플레이어가 한다"는 느낌이 나는지.**
+
+  - Enemy 사망 직후 Ledger 표시가 자연스러운지.
+
+  - Mercenary 이름/정체성이 사망 후에도 올바르게 남는지.
+
+  - Death Ledger Panel이 플레이 화면을 과도하게 가리지 않는지.
+
+  - 여러 record가 쌓였을 때 최소한 확인 가능한지.
+
 - 완료조건:
+
+  - 실제 lethal death만 기록.
+
+  - Mercenary/Enemy 각각 정확히 1 record.
+
+  - cleanup/despawn 오기록 없음.
+
+  - Day/Night 이후 record 유지.
+
+  - duplicate/recursive guard 정상.
+
+  - Ghost 실제 기능 미구현.
+
   - 자동검증 PASS.
-  - HUMAN_CHECK만 남으면 DONE.
+
+  - 기존 핵심 회귀 PASS.
 
 ---
 
-## OVERNIGHT-STOP-5 TASK-013~015 종료 경계
-- 상태: DONE
-- 피드백: 상이나, `AI_TASK_QUEUE.md` line 777의 상태가 아직 REVIEW로 남아있어 DONE으로 갱신 필요.
+## OVERNIGHT-STOP-6 TASK-016 종료 경계
 
-수정하겠습니다:
-수정 완료. 검토 결과 요약:
+- 상태: QUEUED
 
-- **금지 시스템 미시작:** 코드 전역 검색으로 전부 확인 (모듈/class_name/기능 없음)
-- **임시 파일:** 0건
-- **회귀 테스트:** smoke/task0128/task0158 전부 PASS (방금 headless 실행)
-- **구현기록:** 적절 — 검증 결과, 테스트 결과, 다음 예정 태스크 기재
+- 설명: TASK-016 Death Ledger 완료 후 Ghost Return 또는 다른 신규 시스템을 임의로 시작하지 않고 종료한다.
 
-판정: **LGTM** (수정 후)
-사유: OVERNIGHT-STOP-5 종료 경계 검증 결과 정상. 금지 시스템 미시작, 임시 파일 0건, 회귀 3종 PASS 확인. `상태: REVIEW` → `DONE` 갱신 완료.
-- 피드백: 종료 경계 확인 완료. TASK-MAINT-001 + TASK-013(Wall/Gate) + TASK-014(고용/Enemy/자동전투/death) + TASK-015(전술 Command UI/카메라/명령 우선순위) 전체가 정상 상태로 종료되었고, 금지된 신규 시스템(Death Ledger/Ghost/Dungeon/Food·Potion·Morale/Equipment/추가 Mercenary class/추가 Enemy archetype/Boss·Siege/Wall upgrade/대규모 UI polish)은 어떤 것도 시작되지 않았음을 코드 전역 검색으로 확인했다. 회귀 headless(smoke/task0128/task0158) 전부 PASS로 경계 상태 안정 확인. 임시 디버그 파일 없음. 다음 사람 플레이테스트 후 TASK-016(Death Ledger) / TASK-017(First Ghost Return) 순서로 예정.
-- 설명: TASK-MAINT-001, TASK-013, TASK-014, TASK-015 완료 후 신규 시스템을 임의 시작하지 않고 종료한다.
-- 금지:
-  - Death Ledger.
-  - Ghost.
-  - Dungeon 실제 기능.
+- 확인:
+
+  - TASK-016-1~6 상태 확인.
+
+  - DeathRecord/DeathLedger 정상.
+
+  - Mercenary/Enemy lethal death 연동 정상.
+
+  - cleanup 오기록 없음.
+
+  - duplicate guard 정상.
+
+  - recursive Ghost death guard 준비 정상.
+
+  - Day/Night 이후 record 유지.
+
+- 금지 시스템 미시작 확인:
+
+  - GhostActor.
+
+  - GhostFactory.
+
+  - GhostReturnSpawner.
+
+  - Ghost Shader.
+
+  - Ghost Combat.
+
+  - 실제 Portal Return.
+
+  - WaveManager.
+
+  - Wave progression.
+
+  - Boss.
+
   - Food/Potion/Morale.
-  - Equipment progression.
-  - 추가 Mercenary class.
-  - 추가 Enemy archetype.
-  - Boss/Siege enemy.
-  - Wall upgrade.
-  - 대규모 UI polish.
-- 다음 사람 플레이테스트 후 예정:
-  - TASK-016 Death Ledger.
+
+  - Dungeon.
+
+  - Asset 교체.
+
+- 임시 파일:
+
+  - `_diag*`.
+
+  - `_probe*`.
+
+  - `_debug*`.
+
+  - 기타 태스크용 임시 스크립트.
+
+  - 종료 시 모두 제거 확인.
+
+- 종료 회귀:
+
+  - smoke.
+
+  - TASK-015 Tactical Combat Vertical Slice.
+
+  - TASK-016 Death Ledger 통합 테스트.
+
+- 다음 예정:
+
   - TASK-017 First Ghost Return.
-  - Ghost vertical slice를 Food/Potion/Morale보다 우선.
-- 구현기록:
-  - OVERNIGHT-STOP-5는 기능 구현이 아니라 종료 경계 확인 태스크로, 신규 시스템을 추가하지 않고 현재 상태를 검증해 종료한다.
-  - 금지 시스템 미시작 검증(코드 전역): `death_ledger`/`ledger` 전용 모듈 없음, Ghost return/spawn 시스템 없음(일치하는 class_name/func 없음), Dungeon은 예약 좌표/마커(`NeDungeonCandidate`)만 존재하고 실제 기능(`spawn_dungeon` 등) 없음, Food/Potion/Morale/Equipment progression 구현 없음(EquipmentShop은 TASK-012에 LOCK된 기존 core building), Mercenary class는 SWORDSMAN 1종뿐, Enemy archetype은 일반 근접 1종뿐이며 Boss/Siege 없음, Wall upgrade 없음. 대규모 UI polish 없음.
-  - 임시 디버그 파일 확인: `_diag*` / `_probe*` / `_t75*` glob 0건 — 잔여 없음.
-  - 회귀 headless 검증(Godot 4.7.1 headless 실제 실행): `smoke_test.gd` PASS, 최신 핵심 회귀 `task0128_test.gd` PASS, TASK-013~015 통합 `task0158_test.gd` PASS. 경계 상태 안정.
-  - 다음 예정 태스크(TASK-016 Death Ledger / TASK-017 First Ghost Return)는 사람 플레이테스트 후 진행하며 이번 태스크에서 구현하지 않는다.
+
+  - 첫 Ghost Vertical Slice는 사망한 Mercenary가 다음 eligible NIGHT에 hostile Ghost로 귀환하는 흐름부터 구현.
+
+  - Food/Potion/Morale보다 Ghost Vertical Slice를 우선한다.
+
+- 완료조건:
+
+  - TASK-016 전체 완료.
+
+  - 금지 시스템 미시작.
+
+  - 임시 파일 없음.
+
+  - 종료 회귀 PASS.
+
+  - 다음 TASK 자동 시작 금지.

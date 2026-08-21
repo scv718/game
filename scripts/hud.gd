@@ -1,11 +1,15 @@
-extends Control
+extends CanvasLayer
 
 @onready var wood_label: Label = %WoodLabel
 @onready var stone_label: Label = %StoneLabel
 @onready var daytime_label: Label = %DayTimeLabel
+@onready var day_progress_bar: ProgressBar = %DayProgressBar
 @onready var interact_label: Label = %InteractLabel
 @onready var build_label: Label = %BuildLabel
 @onready var feedback_label: Label = %FeedbackLabel
+@onready var _compat_wood_label: Label = $WoodLabel
+@onready var _compat_stone_label: Label = $StoneLabel
+@onready var _compat_daytime_label: Label = $DayTimeLabel
 
 var player: Node
 var _feedback_timer: SceneTreeTimer = null
@@ -45,8 +49,10 @@ func _ready() -> void:
 func _on_resources_changed(resource_id: String, _amount: int) -> void:
 	if resource_id == "wood":
 		wood_label.text = "Wood: %d" % VillageResources.get_amount("wood")
+		_compat_wood_label.text = wood_label.text
 	elif resource_id == "stone":
 		stone_label.text = "Stone: %d" % VillageResources.get_amount("stone")
+		_compat_stone_label.text = stone_label.text
 
 
 func _on_phase_changed(_phase: int, _day_number: int) -> void:
@@ -71,6 +77,8 @@ func _refresh_daytime() -> void:
 		GameTime.get_day_number(),
 		int(GameTime.get_phase_progress() * 100.0),
 	]
+	_compat_daytime_label.text = daytime_label.text
+	day_progress_bar.value = GameTime.get_phase_progress() * 100.0
 
 
 func _on_interactable_changed(interactable: Node) -> void:

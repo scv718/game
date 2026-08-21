@@ -181,6 +181,9 @@ func _process(_delta: float) -> bool:
 				_layout = _world.get_node("MapLayout")
 				_placement = root.get_node("Main").get_node("BuildingPlacement")
 				_spawner = root.get_node("FirstEncounterSpawner")
+				_check(_spawner.get_direction() == "west", "direction west default")
+				# 이 레거시 vertical slice는 북쪽 성문 전투를 격리 검증한다.
+				_spawner.set_direction("north")
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
@@ -352,7 +355,7 @@ func _process(_delta: float) -> bool:
 			if _sub == 0:
 				_spawner.set_count(5)
 				_check(_spawner.get_count() == 5, "set_count configures 5")
-				_check(_spawner.get_direction() == "north", "direction north default")
+				_check(_spawner.get_direction() == "north", "legacy scenario direction north")
 				_advance_to_next_phase()
 				_wait_frames(3)
 			elif _sub == 1 and not _waited():

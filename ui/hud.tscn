@@ -1,41 +1,118 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://ui/tavern_recruitment_ui.tscn" id="2_recruit"]
 [ext_resource type="PackedScene" path="res://ui/inn_roster_ui.tscn" id="3_inn"]
 [ext_resource type="PackedScene" path="res://ui/tactical_command_ui.tscn" id="4_tactical"]
 
-[node name="HUD" type="Control"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="StyleBoxFlat" id="StyleBox_status"]
+bg_color = Color(0.075, 0.102, 0.13, 0.91)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.47, 0.59, 0.52, 0.95)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0, 0, 0, 0.42)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_progress_bg"]
+bg_color = Color(0.03, 0.05, 0.07, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_progress_fill"]
+bg_color = Color(0.88, 0.68, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_prompt"]
+bg_color = Color(0.07, 0.09, 0.12, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.68, 0.58, 0.36, 0.95)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="HUD" type="CanvasLayer"]
+layer = 10
 script = ExtResource("1_script")
 
-[node name="WoodLabel" type="Label" parent="."]
+[node name="StatusPanel" type="Panel" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 230.0
+offset_bottom = 126.0
+theme_override_styles/panel = SubResource("StyleBox_status")
+
+[node name="DayTimeLabel" type="Label" parent="StatusPanel"]
 unique_name_in_owner = true
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 200.0
-offset_bottom = 36.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = 198.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.98, 0.85, 0.48, 1)
+theme_override_font_sizes/font_size = 17
+text = "DAY 1  0%"
+
+[node name="DayProgressBar" type="ProgressBar" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 14.0
+offset_top = 37.0
+offset_right = 198.0
+offset_bottom = 47.0
+show_percentage = false
+theme_override_styles/background = SubResource("StyleBox_progress_bg")
+theme_override_styles/fill = SubResource("StyleBox_progress_fill")
+
+[node name="Divider" type="HSeparator" parent="StatusPanel"]
+offset_left = 14.0
+offset_top = 53.0
+offset_right = 198.0
+offset_bottom = 57.0
+
+[node name="WoodLabel" type="Label" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 14.0
+offset_top = 63.0
+offset_right = 108.0
+offset_bottom = 89.0
+theme_override_colors/font_color = Color(0.86, 0.72, 0.48, 1)
+theme_override_font_sizes/font_size = 15
 text = "Wood: 0"
 
-[node name="StoneLabel" type="Label" parent="."]
+[node name="StoneLabel" type="Label" parent="StatusPanel"]
 unique_name_in_owner = true
-offset_left = 8.0
-offset_top = 36.0
-offset_right = 200.0
-offset_bottom = 64.0
+offset_left = 108.0
+offset_top = 63.0
+offset_right = 198.0
+offset_bottom = 89.0
+theme_override_colors/font_color = Color(0.7, 0.82, 0.78, 1)
+theme_override_font_sizes/font_size = 15
 text = "Stone: 0"
 
 [node name="DayTimeLabel" type="Label" parent="."]
-unique_name_in_owner = true
-offset_left = 8.0
-offset_top = 64.0
-offset_right = 200.0
-offset_bottom = 92.0
+visible = false
 text = "DAY 1  0%"
+
+[node name="WoodLabel" type="Label" parent="."]
+visible = false
+text = "Wood: 0"
+
+[node name="StoneLabel" type="Label" parent="."]
+visible = false
+text = "Stone: 0"
 
 [node name="InteractLabel" type="Label" parent="."]
 unique_name_in_owner = true
@@ -44,13 +121,15 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -48.0
-offset_right = 120.0
-offset_bottom = -16.0
+offset_left = -150.0
+offset_top = -58.0
+offset_right = 150.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBox_prompt")
 horizontal_alignment = 1
+vertical_alignment = 1
 text = "E - 채집"
 visible = false
 
@@ -61,15 +140,16 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -96.0
-offset_right = 200.0
-offset_bottom = -60.0
+offset_left = -250.0
+offset_top = -112.0
+offset_right = 250.0
+offset_bottom = -66.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBox_prompt")
 horizontal_alignment = 1
-text = "Lumberyard - Wood 10
-1/2: Select Building / Left Click: Build / ESC: Cancel"
+vertical_alignment = 1
+text = "Lumberyard - Wood 10\n1/2: Select Building / Left Click: Build / ESC: Cancel"
 visible = false
 
 [node name="TavernRecruitmentUI" parent="." instance=ExtResource("2_recruit")]
@@ -85,12 +165,14 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -132.0
-offset_right = 200.0
-offset_bottom = -104.0
+offset_left = -220.0
+offset_top = -154.0
+offset_right = 220.0
+offset_bottom = -120.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBox_prompt")
 horizontal_alignment = 1
+vertical_alignment = 1
 text = ""
 visible = false

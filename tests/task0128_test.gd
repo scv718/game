@@ -292,10 +292,10 @@ func _check_integration() -> void:
 			plaza_clear = false
 	_check(plaza_clear, "central plaza (>=120px radius around center) is clear of core buildings")
 
-	# 3. Main Road 4방향 (폭 6타일, 중앙~외곽 끊김 없음)
+	# 3. Main Road 4방향 (비주얼 폭 약 4타일, 중앙~외곽 끊김 없음)
 	var roads: Dictionary = _layout.MAIN_ROADS
 	_check(roads.size() == 4, "4 main roads defined (%d)" % roads.size())
-	_check(_layout.MAIN_ROAD_HALF == 40.0, "main road half-width 40 (6 tiles / 96px)")
+	_check(_layout.MAIN_ROAD_HALF == 28.0, "main road half-width 28 (about 4 tiles / 64px)")
 	for dir in DIRS:
 		var poly: Array = _layout.get_main_road(dir)
 		_check(poly.size() >= 2, "%s main road has waypoints (%d)" % [dir, poly.size()])

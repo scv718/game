@@ -11,6 +11,7 @@ const TREE_SCENE := "res://scenes/tree.tscn"
 const DEPOSIT_SCENE := "res://scenes/stone_deposit.tscn"
 const DECORATION_SCENE := "res://scenes/decoration.tscn"
 const CORE_SCENE := "res://scenes/core_building.tscn"
+const DRESSING_SCRIPT := "res://scripts/world_dressing.gd"
 const WORLD_MAP_SCRIPT := "res://scripts/world_map.gd"
 const OUT_PATH := "res://scenes/world.tscn"
 
@@ -25,15 +26,20 @@ const AXIS_MIDPOINTS := {
 
 # 중앙 핵심 마을 5개 건물 (TASK-011-1 / TASK-012-1 재배치 좌표).
 const CORE_BUILDINGS := {
-	"Keep": {"pos": Vector2(0, -150), "core_type": "keep"},
-	"Tavern": {"pos": Vector2(-150, -60), "core_type": "tavern"},
-	"Inn": {"pos": Vector2(150, -60), "core_type": "inn"},
-	"Grocery": {"pos": Vector2(-145, 120), "core_type": "grocery"},
-	"EquipmentShop": {"pos": Vector2(145, 120), "core_type": "equipment"},
+	"Keep": {"pos": Vector2(0, -148), "core_type": "keep"},
+	"Tavern": {"pos": Vector2(-126, -48), "core_type": "tavern"},
+	"Inn": {"pos": Vector2(126, -48), "core_type": "inn"},
+	"Grocery": {"pos": Vector2(-122, 116), "core_type": "grocery"},
+	"EquipmentShop": {"pos": Vector2(122, 116), "core_type": "equipment"},
 }
+
+var _composition_phase := 5
 
 
 func _initialize() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--phase="):
+			_composition_phase = clampi(int(arg.trim_prefix("--phase=")), 2, 5)
 	var wm_script: GDScript = load(WORLD_MAP_SCRIPT)
 	var tile_size: int = wm_script.TILE_SIZE
 	var map_tiles: int = wm_script.MAP_TILES
@@ -49,6 +55,11 @@ func _initialize() -> void:
 
 	var wm: Node = wm_script.new()
 	world.add_child(_make_floor(tile_size, cell_min, cell_max, wm))
+	var dressing := Node2D.new()
+	dressing.name = "WorldDressing"
+	dressing.set_script(load(DRESSING_SCRIPT))
+	dressing.composition_phase = _composition_phase
+	world.add_child(dressing)
 	world.add_child(_make_layout(wm_script))
 	_add_walls(world, world_size, world_half)
 	_add_entities(world, wm_script)
@@ -125,6 +136,7 @@ func _make_layout(wm_script: GDScript) -> Node2D:
 		var m := Marker2D.new()
 		m.name = "SpawnCandidate_" + name.to_upper()
 		m.position = wm_script.SPAWN_CANDIDATES[name]
+		m.set_meta("role", wm_script.DIRECTION_ROLES[name])
 		layout.add_child(m)
 
 	# TASK-012-6 Approach Route 참고 Marker (비기능). 각 방향 접근로 중앙/끝 지점에 배치.

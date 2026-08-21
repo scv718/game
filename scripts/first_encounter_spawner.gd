@@ -10,15 +10,15 @@ extends Node
 
 const ENEMY_SCENE := "res://scenes/enemy.tscn"
 
-const DEFAULT_DIRECTION := "north"
+const DEFAULT_DIRECTION := "west"
 const DEFAULT_COUNT := 3
 
-const DIRECTIONS := ["north", "south", "east", "west"]
+const DIRECTIONS := ["north", "west"]
 const DIRECTION_AXIS := {
 	"north": Vector2(0, 1),
 	"south": Vector2(0, -1),
-	"east": Vector2(1, 0),
-	"west": Vector2(-1, 0),
+	"east": Vector2(-1, 0),
+	"west": Vector2(1, 0),
 }
 
 var direction := DEFAULT_DIRECTION

@@ -197,6 +197,7 @@ func _process(_delta: float) -> bool:
 				_layout = _world.get_node("MapLayout")
 				_placement = root.get_node("Main").get_node("BuildingPlacement")
 				_spawner = root.get_node("FirstEncounterSpawner")
+				_spawner.set_direction("north")
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")

@@ -117,21 +117,21 @@ func _check_main_roads() -> void:
 		var gate_samples := _gate_corridor_samples(dir)
 		for s in gate_samples:
 			_check(_layout.is_on_access_axis(s) and _is_road_cell(_cell_at(s)), "%s gate corridor sample on road (%s)" % [dir, str(s)])
-	# 직선 구간 폭: 북쪽 도로 y≈-392 행이 정확히 6타일(96px) 폭인지 확인.
+	# World Visual Pass: 북쪽 도로 y≈-392 행이 4타일(64px) 안에 머무는지 확인.
 	var row := -25
 	var on_cells := []
 	for cx in range(-6, 7):
 		var cell := Vector2i(cx, row)
 		if _layout.is_on_access_axis(_cell_center(cell)):
 			on_cells.append(cx)
-	var expected := [-3, -2, -1, 0, 1, 2]
-	_check(on_cells == expected, "north main road straight section is exactly 6 tiles wide (96px) (%s)" % str(on_cells))
-	_check(_is_road_cell(Vector2i(3, row)) == false and _is_road_cell(Vector2i(-4, row)) == false, "road band ends exactly 40px from axis center")
+	var expected := [-2, -1, 0, 1]
+	_check(on_cells == expected, "north main road straight section is 4 tiles wide (64px) (%s)" % str(on_cells))
+	_check(_is_road_cell(Vector2i(2, row)) == false and _is_road_cell(Vector2i(-3, row)) == false, "road band ends inside 32px from axis center")
 	# 도로 변 직교점이 도로가 아님을 확인 (폭 상한).
 	var edge_center := Vector2(72, -392)
 	_check(not _layout.is_on_access_axis(edge_center), "point 72px off road axis is not road (%s)" % str(edge_center))
-	var in_road := Vector2(32, -400)
-	_check(_layout.is_on_access_axis(in_road), "point 32px from axis center is on road (%s)" % str(in_road))
+	var in_road := Vector2(24, -400)
+	_check(_layout.is_on_access_axis(in_road), "point 24px from axis center is on road (%s)" % str(in_road))
 
 
 func _sample_polyline(poly: Array, t: float) -> Vector2:

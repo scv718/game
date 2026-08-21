@@ -1,6 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/tactical_command_ui.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tactical"]
+bg_color = Color(0.055, 0.065, 0.1, 0.94)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.36, 0.29, 0.56, 0.95)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 6
 
 [node name="TacticalCommandUI" type="Control"]
 anchors_preset = 15
@@ -24,6 +38,7 @@ offset_right = -16.0
 offset_bottom = 205.0
 grow_horizontal = 0
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_tactical")
 
 [node name="Title" type="Label" parent="TacticalPanel"]
 offset_left = 12.0
@@ -31,6 +46,8 @@ offset_top = 10.0
 offset_right = 264.0
 offset_bottom = 32.0
 text = "지휘 명령 (NIGHT)"
+theme_override_colors/font_color = Color(0.83, 0.72, 1, 1)
+theme_override_font_sizes/font_size = 18
 
 [node name="DefenseZoneHint" type="Label" parent="TacticalPanel"]
 offset_left = 12.0

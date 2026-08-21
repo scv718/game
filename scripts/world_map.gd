@@ -29,11 +29,11 @@ const WALL_BUFFER_HALF := Vector2(288, 288)
 
 # --- Main Road (TASK-012-2) ---
 # 4개 Main Road: 중앙 Core Village 경계(224px)에서 Outer Wild 방향까지 이어지는
-# 중심선(centerline) 폴리라인. 반폭 40px = 6 논리 타일(96px, 권장 5~6 타일 준수).
+# 중심선(centerline) 폴리라인. 비주얼 반폭 28px = 약 56px.
 # Defense Belt / Gate Corridor 구간(224~540px)은 직선으로 유지하고,
 # 그 바깥에서 각 방향 Portal/Spawn 후보 코너 쪽으로 완만하게 굽혀
 # 인공적인 직선 십자형으로 읽히지 않게 한다.
-const MAIN_ROAD_HALF := 40.0
+const MAIN_ROAD_HALF := 28.0
 const MAIN_ROAD_INNER := 224.0
 const AXIS_OUTER := 960.0
 
@@ -55,6 +55,20 @@ const MAIN_ROADS := {
 		Vector2(-820, 60), Vector2(-960, 100),
 	],
 }
+
+# 중앙 광장과 핵심 건물을 잇는 보행로. 외곽 Main Road보다 좁고 짧아서
+# 거대한 갈색 십자가 대신 하나의 생활권으로 읽히게 한다.
+const VILLAGE_PATH_HALF := 15.0
+const VILLAGE_PATHS := [
+	[Vector2(0, -224), Vector2(0, -64)],
+	[Vector2(0, 82), Vector2(0, 224)],
+	[Vector2(-224, 0), Vector2(-72, 12)],
+	[Vector2(72, 12), Vector2(224, 0)],
+	[Vector2(-104, -44), Vector2(-54, -8)],
+	[Vector2(104, -44), Vector2(54, -8)],
+	[Vector2(-102, 108), Vector2(-50, 52)],
+	[Vector2(102, 108), Vector2(50, 52)],
+]
 
 # --- Secondary Path (TASK-012-2) ---
 # 주요 목적지(Starter Forest / Stone Zone / Agriculture / Dungeon Candidate)를
@@ -204,6 +218,15 @@ const SPAWN_CANDIDATES := {
 	"west": Vector2(-900, 160),
 }
 
+# 기존 4방향 후보 노드는 회귀 호환을 위해 유지하되, 현재 월드에서의 의미를
+# 명시적으로 분리한다. east/south는 FirstEncounterSpawner의 활성 방향이 아니다.
+const DIRECTION_ROLES := {
+	"west": "main_threat_portal",
+	"north": "secondary_threat_rift",
+	"east": "royal_road_exit",
+	"south": "future_event_threat",
+}
+
 # --- TASK-012-6 Approach Route ---
 # Portal Candidate → Main Road → Gate Corridor 흐름이 가능하도록,
 # 각 후보가 해당 방향 Main Road 끝단(Outer Wild terminus)에 자연스럽게 합류하는
@@ -311,8 +334,19 @@ func is_on_secondary_path(pos: Vector2) -> bool:
 	return false
 
 
+func is_on_village_path(pos: Vector2) -> bool:
+	# 중앙 광장은 완만한 타원형으로 넓어진다.
+	var plaza := (pos - Vector2(0, 20)) / Vector2(82, 66)
+	if plaza.length_squared() <= 1.0:
+		return true
+	for poly in VILLAGE_PATHS:
+		if _dist_to_polyline(pos, poly) <= VILLAGE_PATH_HALF:
+			return true
+	return false
+
+
 func is_on_any_path(pos: Vector2) -> bool:
-	return is_on_access_axis(pos) or is_on_secondary_path(pos)
+	return is_on_access_axis(pos) or is_on_secondary_path(pos) or is_on_village_path(pos)
 
 
 func get_main_road(direction: String) -> Array:
@@ -375,6 +409,10 @@ func get_spawn_candidates() -> Dictionary:
 
 func get_spawn_candidate(direction: String) -> Vector2:
 	return SPAWN_CANDIDATES.get(direction, SETTLEMENT_CENTER)
+
+
+func get_direction_role(direction: String) -> String:
+	return DIRECTION_ROLES.get(direction, "")
 
 
 func get_approach_route(direction: String) -> Array:
