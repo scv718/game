@@ -621,7 +621,8 @@
 
 ### TASK-016-6 Death Ledger 통합 검증
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: TASK-016-6 시나리오 23단계 전수 커버, 추가검증 15항목 전수 커버, 회귀 8종 전수 컵버. 142건 PASS, 프로덕션 코드 변경 없음, 임시 파일 없음, 테스트 누수 없음. DeathLedger API(Mark Active/Pending/Resolve/RESOLVED 보호/duplicate guard/ghost guard) 모두 정상 검증됨.
 
 - 설명: Mercenary/Enemy 실제 전투 사망부터 DeathRecord 생성/유지까지 Death Ledger 전체 흐름을 하나의 headless 시나리오로 검증한다.
 
