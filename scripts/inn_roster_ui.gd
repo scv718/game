@@ -17,6 +17,14 @@ class_name InnRosterUI
 @onready var _mercenary_list: VBoxContainer = %MercenaryList
 @onready var _close_button: Button = %CloseButton
 
+const DEFENSE_ZONES := [
+	MercenaryData.DefenseZone.NONE,
+	MercenaryData.DefenseZone.NORTH,
+	MercenaryData.DefenseZone.EAST,
+	MercenaryData.DefenseZone.SOUTH,
+	MercenaryData.DefenseZone.WEST,
+]
+
 var _facility_capacity := {}
 var _assign_buttons := {}
 var _unassign_buttons := {}
@@ -124,12 +132,37 @@ func _refresh_mercenaries() -> void:
 		_mercenary_list.add_child(empty)
 		return
 	for m in MercenaryRoster.get_mercenaries():
-		var row := HBoxContainer.new()
+		var block := VBoxContainer.new()
 		var info := Label.new()
 		info.text = "%s (%s) Lv.%d - %s" % [m.display_name, m.get_class_name(), m.level, _mercenary_status_text(m)]
-		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_child(info)
-		_mercenary_list.add_child(row)
+		block.add_child(info)
+		block.add_child(_build_defense_zone_row(m))
+		_mercenary_list.add_child(block)
+
+
+## TASK-014-2: 여관에서 용병 defense assignment(N/E/S/W)를 변경하는 최소 UI.
+## 현재 지정된 zone 버튼은 disabled로 표시하고, 다른 zone 버튼을 누르면
+## MercenaryData.defense_zone을 갱신한다.
+func _build_defense_zone_row(m: MercenaryData) -> Control:
+	var row := HBoxContainer.new()
+	var hint := Label.new()
+	hint.text = "방어:"
+	row.add_child(hint)
+	for zone in DEFENSE_ZONES:
+		var btn := Button.new()
+		btn.text = MercenaryData.DEFENSE_NAMES.get(zone, "?")
+		btn.disabled = (m.defense_zone == zone)
+		btn.pressed.connect(_on_defense_zone_pressed.bind(m, zone))
+		row.add_child(btn)
+	return row
+
+
+func _on_defense_zone_pressed(m: MercenaryData, zone: int) -> void:
+	if m == null or m.defense_zone == zone:
+		return
+	m.set_defense_zone(zone)
+	MercenaryRoster.mercenaries_changed.emit()
+	_refresh_mercenaries()
 
 
 func _mercenary_status_text(m: MercenaryData) -> String:

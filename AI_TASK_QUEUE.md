@@ -297,7 +297,8 @@
   - 회귀 headless 전부 PASS: smoke(18), task0062(31), task0064(45), task0071~0075, task0112~0117, task0128(149), tasknav001(33), task0132~0136. (task0131은 변경 전 stash 상태에서도 동일하게 FAIL하는 기존 문서화 nav flaky — 본 태스크 범위 밖)
 
 ### TASK-014-2 Defense Assignment + Mercenary NIGHT Spawn
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 요구사항 전부 충족, 코드 스타일 일관, 테스트 72개 PASS + 회귀 전부 PASS._gate 존재 시 Rally Space 중심 배치, 없으면 marker fallback, duplicate 방지, DAY 멱등 despawn, UI defense zone 변경 모두 정상 동작. 버그/누락/엣지 케이스 없음.
 - 요구사항:
   - defense zone: NORTH/EAST/SOUTH/WEST.
   - 여관에서 Mercenary defense assignment 변경.
@@ -309,6 +310,13 @@
   - DAYTIME 생활 AI.
   - RTS click-to-move.
   - formation UI.
+- 구현기록:
+  - `scripts/mercenary_actor.gd` + `scenes/mercenary.tscn` 신규. Blue Warrior(Tiny Swords) idle/run 8/6프레임 비주얼, CharacterBody2D(collision_layer 2 / mask 4) + NavigationAgent2D 기반 최소 전투 Actor. `merc_data`(Roster의 MercenaryData 참조) + `current_hp`(max_hp prototype 복사) 보관. 전투 AI/FSM은 TASK-014-4 예약이라 월드 존재/식별/위치만 담당.
+  - `scripts/mercenary_roster.gd`: `_ready()`에서 `GameTime.phase_changed` 연결 → NIGHT 시작 시 `spawn_night_actors()`, DAY 복귀 시 `despawn_night_actors()`. spawn은 살아 있고 defense zone이 NONE이 아닌 용병만 대상. `_actors`(id→actor) 사전으로 중복 방지(이미 spawn된 id는 skip), `get_rally_point_for_zone()`는 해당 방향 Gate 존재 시 해당 방향 Rally Space 중심(게이트 안쪽)을, Gate 없으면 기존 RallySpace marker(`RallySpace_N/E/S/W`) 기준 fallback RallyPoint를 반환. DAY despawn은 spawn된 Actor를 `queue_free`로 제거해 roster data 상태로 복귀(멱등). `get_actor(id)`/`get_actor_count()` 공개 API 추가.
+  - `scripts/inn_roster_ui.gd`: 용병 행에 defense zone 버튼(NONE/NORTH/EAST/SOUTH/WEST) 추가. 현재 지정 zone은 disabled 표시, 다른 zone 클릭 시 `MercenaryData.set_defense_zone()` 반영 + `mercenaries_changed` emit.
+  - `ui/inn_roster_ui.tscn`: 여관 패널 확장(±240px) + MercenaryList/CloseButton 위치 조정으로 방어 버튼 수용.
+  - `tests/task0142_test.gd` 신규 headless PASS(72항목): 여관 UI 방어 배정(NORTH/EAST), NIGHT spawn(no-gate EAST fallback RallyPoint, gate 존재 시 NORTH 게이트 안쪽 Rally Space), DAY despawn, 3회 반복 cycle duplicate 없음, spawn 멱등, alive=false/NONE zone 미spawn, Player 무공격/Worker 독립/5핵심건물/floor/nav 회귀.
+  - 회귀 headless 전부 PASS: smoke, task0062, task0064, task0128, task0132~0136, tasknav001. (task0141은 용병 행 구조(VBox block) 변경에 맞춰 label 탐색 헬퍼를 재귀형으로 갱신해 PASS 확인)
 
 ### TASK-014-3 Enemy Actor + First Night Encounter Spawner
 - 상태: QUEUED

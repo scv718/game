@@ -141,10 +141,19 @@ func _process(_delta: float) -> bool:
 
 func _find_mercenary_row_text(list: Node, name_prefix: String) -> String:
 	for child in list.get_children():
-		if child is HBoxContainer:
-			for sub in child.get_children():
-				if sub is Label and str(sub.text).begins_with(name_prefix):
-					return str(sub.text)
+		var text := _find_label_text(child, name_prefix)
+		if text != "":
+			return text
+	return ""
+
+
+func _find_label_text(node: Node, name_prefix: String) -> String:
+	if node is Label and str(node.text).begins_with(name_prefix):
+		return str(node.text)
+	for sub in node.get_children():
+		var text := _find_label_text(sub, name_prefix)
+		if text != "":
+			return text
 	return ""
 
 

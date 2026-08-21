@@ -1,0 +1,127 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://scripts/mercenary_actor.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/character_visual.gd" id="2_visual"]
+[ext_resource type="Texture2D" path="res://assets/tiny_swords/Tiny Swords (Free Pack)/Units/Blue Units/Warrior/Warrior_Idle.png" id="3_idle"]
+[ext_resource type="Texture2D" path="res://assets/tiny_swords/Tiny Swords (Free Pack)/Units/Blue Units/Warrior/Warrior_Run.png" id="4_run"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 8.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
+atlas = ExtResource("3_idle")
+region = Rect2(62, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
+atlas = ExtResource("3_idle")
+region = Rect2(254, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle2"]
+atlas = ExtResource("3_idle")
+region = Rect2(446, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle3"]
+atlas = ExtResource("3_idle")
+region = Rect2(638, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle4"]
+atlas = ExtResource("3_idle")
+region = Rect2(830, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle5"]
+atlas = ExtResource("3_idle")
+region = Rect2(1022, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle6"]
+atlas = ExtResource("3_idle")
+region = Rect2(1214, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle7"]
+atlas = ExtResource("3_idle")
+region = Rect2(1406, 48, 79, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_run0"]
+atlas = ExtResource("4_run")
+region = Rect2(62, 53, 76, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_run1"]
+atlas = ExtResource("4_run")
+region = Rect2(254, 53, 76, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_run2"]
+atlas = ExtResource("4_run")
+region = Rect2(446, 53, 76, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_run3"]
+atlas = ExtResource("4_run")
+region = Rect2(638, 53, 76, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_run4"]
+atlas = ExtResource("4_run")
+region = Rect2(830, 53, 76, 84)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_run5"]
+atlas = ExtResource("4_run")
+region = Rect2(1022, 53, 76, 84)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_char"]
+animations = [{
+"frames": [SubResource("AtlasTexture_idle0"), SubResource("AtlasTexture_idle1"), SubResource("AtlasTexture_idle2"), SubResource("AtlasTexture_idle3"), SubResource("AtlasTexture_idle4"), SubResource("AtlasTexture_idle5"), SubResource("AtlasTexture_idle6"), SubResource("AtlasTexture_idle7")],
+"loop": true,
+"name": &"idle_down",
+"speed": 4.0
+}, {
+"frames": [SubResource("AtlasTexture_idle0"), SubResource("AtlasTexture_idle1"), SubResource("AtlasTexture_idle2"), SubResource("AtlasTexture_idle3"), SubResource("AtlasTexture_idle4"), SubResource("AtlasTexture_idle5"), SubResource("AtlasTexture_idle6"), SubResource("AtlasTexture_idle7")],
+"loop": true,
+"name": &"idle_up",
+"speed": 4.0
+}, {
+"frames": [SubResource("AtlasTexture_idle0"), SubResource("AtlasTexture_idle1"), SubResource("AtlasTexture_idle2"), SubResource("AtlasTexture_idle3"), SubResource("AtlasTexture_idle4"), SubResource("AtlasTexture_idle5"), SubResource("AtlasTexture_idle6"), SubResource("AtlasTexture_idle7")],
+"loop": true,
+"name": &"idle_left",
+"speed": 4.0
+}, {
+"frames": [SubResource("AtlasTexture_idle0"), SubResource("AtlasTexture_idle1"), SubResource("AtlasTexture_idle2"), SubResource("AtlasTexture_idle3"), SubResource("AtlasTexture_idle4"), SubResource("AtlasTexture_idle5"), SubResource("AtlasTexture_idle6"), SubResource("AtlasTexture_idle7")],
+"loop": true,
+"name": &"idle_right",
+"speed": 4.0
+}, {
+"frames": [SubResource("AtlasTexture_run0"), SubResource("AtlasTexture_run1"), SubResource("AtlasTexture_run2"), SubResource("AtlasTexture_run3"), SubResource("AtlasTexture_run4"), SubResource("AtlasTexture_run5")],
+"loop": true,
+"name": &"walk_down",
+"speed": 10.0
+}, {
+"frames": [SubResource("AtlasTexture_run0"), SubResource("AtlasTexture_run1"), SubResource("AtlasTexture_run2"), SubResource("AtlasTexture_run3"), SubResource("AtlasTexture_run4"), SubResource("AtlasTexture_run5")],
+"loop": true,
+"name": &"walk_up",
+"speed": 10.0
+}, {
+"frames": [SubResource("AtlasTexture_run0"), SubResource("AtlasTexture_run1"), SubResource("AtlasTexture_run2"), SubResource("AtlasTexture_run3"), SubResource("AtlasTexture_run4"), SubResource("AtlasTexture_run5")],
+"loop": true,
+"name": &"walk_left",
+"speed": 10.0
+}, {
+"frames": [SubResource("AtlasTexture_run0"), SubResource("AtlasTexture_run1"), SubResource("AtlasTexture_run2"), SubResource("AtlasTexture_run3"), SubResource("AtlasTexture_run4"), SubResource("AtlasTexture_run5")],
+"loop": true,
+"name": &"walk_right",
+"speed": 10.0
+}]
+
+[node name="Mercenary" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+position = Vector2(-40, -89)
+centered = false
+sprite_frames = SubResource("SpriteFrames_char")
+animation = &"idle_down"
+script = ExtResource("2_visual")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 4.0
+target_desired_distance = 4.0
