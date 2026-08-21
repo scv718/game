@@ -2,6 +2,7 @@ extends Control
 class_name InnRosterUI
 
 ## TASK-011-4 여관 Worker Roster / 시설 배치 관리 UI.
+## TASK-014-1 용병 보유/대기 상태 최소 표시를 추가한다.
 ## 여관 상호작용 시 열리는 최소 관리 UI.
 ## 고용된 Worker 목록을 직업과 배치 상태(Unassigned / Lumberyard / Quarry)로 표시하고,
 ## 직업에 맞는 생산시설에 배치/해제한다.
@@ -9,9 +10,11 @@ class_name InnRosterUI
 ## 시설 slot 상태(0/N, 1/N, ...)와 가득 참 판정, 중복 배치 거부를 함께 처리한다.
 ## slot capacity는 실제 시설의 get_slot_capacity()에서 동적으로 읽는다.
 ## 내부 assign/unassign은 WorkerRoster.assign/unassign(테스트/여관 관리 로직)을 재사용한다.
+## 용병은 생산시설 배치 대상이 아니며, 보유/대기 상태만 최소 표시한다.
 
 @onready var _facility_list: VBoxContainer = %FacilityList
 @onready var _worker_list: VBoxContainer = %WorkerList
+@onready var _mercenary_list: VBoxContainer = %MercenaryList
 @onready var _close_button: Button = %CloseButton
 
 var _facility_capacity := {}
@@ -22,8 +25,10 @@ var _unassign_buttons := {}
 func _ready() -> void:
 	add_to_group("inn_roster_ui")
 	WorkerRoster.workers_changed.connect(_refresh)
+	MercenaryRoster.mercenaries_changed.connect(_refresh_mercenaries)
 	_close_button.pressed.connect(_close)
 	_refresh_facilities()
+	_refresh_mercenaries()
 	visible = false
 
 
@@ -105,6 +110,31 @@ func _refresh() -> void:
 		row.add_child(assign)
 		row.add_child(unassign)
 		_worker_list.add_child(row)
+	_refresh_mercenaries()
+
+
+## TASK-014-1: 용병 보유/대기 상태 최소 표시.
+## 용병은 Worker와 달리 생산시설 배치 대상이 아니므로 표시만 제공한다.
+func _refresh_mercenaries() -> void:
+	for child in _mercenary_list.get_children():
+		child.queue_free()
+	if MercenaryRoster.get_count() == 0:
+		var empty := Label.new()
+		empty.text = "보유 용병 없음"
+		_mercenary_list.add_child(empty)
+		return
+	for m in MercenaryRoster.get_mercenaries():
+		var row := HBoxContainer.new()
+		var info := Label.new()
+		info.text = "%s (%s) Lv.%d - %s" % [m.display_name, m.get_class_name(), m.level, _mercenary_status_text(m)]
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(info)
+		_mercenary_list.add_child(row)
+
+
+func _mercenary_status_text(m: MercenaryData) -> String:
+	var status := "대기" if m.alive else "사망"
+	return "%s (Defense: %s)" % [status, m.get_defense_name()]
 
 
 func _status_text(w: WorkerData) -> String:
@@ -132,6 +162,7 @@ func _on_unassign_pressed(w: WorkerData) -> void:
 
 func open() -> void:
 	_refresh()
+	_refresh_mercenaries()
 	visible = true
 
 

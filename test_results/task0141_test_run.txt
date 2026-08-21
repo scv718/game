@@ -1,0 +1,54 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: WorkerRoster autoload exists
+PASS: MercenaryRoster autoload exists
+PASS: MercenaryRoster separate from WorkerRoster
+PASS: tavern exists
+PASS: tavern core_type is tavern
+PASS: tavern interactable exists
+PASS: tavern interactable has interact
+PASS: recruitment UI exists in group
+PASS: recruitment UI hidden initially
+PASS: 4 worker candidates intact (4)
+PASS: 1 mercenary candidate defined (1)
+PASS: mercenary_A candidate
+PASS: mercenary candidate class SWORDSMAN
+PASS: worker roster starts empty (0)
+PASS: mercenary roster starts empty (0)
+PASS: tavern interact opens recruitment UI
+PASS: mercenary roster grew to 1 after hire (1)
+PASS: Mercenary A in mercenary roster
+PASS: Mercenary A display name
+PASS: Mercenary A class name SWORDSMAN
+PASS: Mercenary A level 1 prototype
+PASS: combat stats minimum present (hp=100 dmg=10)
+PASS: Mercenary A starts alive
+PASS: Mercenary A defense zone NONE initially
+PASS: Mercenary A defense name NONE
+PASS: duplicate mercenary hire rejected (roster stays 1)
+PASS: no mercenary combat actor spawned on hire (0 -> 0)
+PASS: get_mercenaries returns 1
+PASS: get_alive returns hired mercenary
+PASS: get_alive_count is 1
+PASS: get_mercenary unknown id returns null
+PASS: remove_mercenary(null) rejected
+PASS: add_mercenary(null) rejected
+PASS: worker hire works (roster=1)
+PASS: mercenary roster unaffected by worker hire (1)
+PASS: inn exists
+PASS: inn interactable exists
+PASS: inn roster UI exists in group
+PASS: inn roster UI hidden initially
+PASS: inn interact opens roster UI
+PASS: mercenary list has content
+PASS: mercenary row shows owned/standby status (got 'Mercenary A (SWORDSMAN) Lv.1 - ?湲?(Defense: NONE)')
+PASS: mercenary row shows defense zone NONE (got 'Mercenary A (SWORDSMAN) Lv.1 - ?湲?(Defense: NONE)')
+PASS: roster UI closes
+PASS: recruitment UI closes
+PASS: 5 core buildings intact
+PASS: no worker actor spawned by roster data (lumberjacks=0)
+PASS: no miner actor spawned by roster data (miners=0)
+PASS: world floor intact (128x128)
+TASK0141_RESULT=PASS
+

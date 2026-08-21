@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 VillageResources="*res://scripts/village_resources.gd"
 GameTime="*res://scripts/game_time.gd"
 WorkerRoster="*res://scripts/worker_roster.gd"
+MercenaryRoster="*res://scripts/mercenary_roster.gd"
 
 [display]
 

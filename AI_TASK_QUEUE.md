@@ -262,7 +262,9 @@
   - 플레이어 combat.
 
 ### TASK-014-1 MercenaryData / Roster + 주점 고용
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족, 코드 스타일 일관, 테스트가 핵심 시나리오 전부 커버, 회귀 PASS. 작업 범위 내 무결성 확인.
+- 피드백: 모든 요구사항 충족. MercenaryData/MercenaryRoster를 Worker와 분리해 구현하고, 주점 고정 Mercenary 후보 1명 고용(중복 거부), 여관 보유/대기 상태 표시, 고용 즉시 전투 Actor 미생성을 headless로 자동 검증했다. 회귀 전부 PASS. (task0131은 기존 문서화된 nav flaky로 본 태스크 범위 밖 확인)
 - 최소 데이터:
   - unique id.
   - display name.
@@ -285,6 +287,14 @@
   - Mercenary 1명 고용.
   - Roster 조회 가능.
   - 고용 즉시 낮 월드에 전투 Actor 자동 spawn할 필요 없음.
+- 구현기록:
+  - `scripts/mercenary_data.gd` 신규: `MercenaryData`(RefCounted). unique id/display_name/merc_class/level/alive/defense_zone + combat stats 최소값(max_hp=100, attack_damage=10, attack_interval=1.0, move_speed=120). DefenseZone(NONE/NORTH/EAST/SOUTH/WEST), class name/defense name getter. 월드 Actor와 분리된 순수 데이터.
+  - `scripts/mercenary_roster.gd` 신규: `MercenaryRoster` autoload(project.godot 등록). WorkerRoster와 별도 유지, 중복 id 고용 거부, get_mercenary/get_mercenaries/get_alive/get_count 등 조회 제공. NIGHT Actor spawn/despawn은 TASK-014-2에서 처리하므로 이 태스크에서는 월드 Actor를 만들지 않음.
+  - `scripts/tavern_recruitment_ui.gd`: 기존 Worker 후보 4명은 그대로 유지하고, `MERCENARY_CANDIDATES`(mercenary_A, SWORDSMAN) 1명을 "용병" 섹션으로 별도 표시. `_on_mercenary_hire_pressed`로 MercenaryRoster에 정확히 1회 추가, 중복 고용 시 버튼 disabled("고용됨"). MercenaryRoster.mercenaries_changed 연결.
+  - `ui/tavern_recruitment_ui.tscn`: Panel 확장(360px) + CandidateList/CloseButton 위치 조정으로 용병 섹션 수용.
+  - `scripts/inn_roster_ui.gd` + `ui/inn_roster_ui.tscn`: `MercenaryList` VBox 신규 추가, 보유 용병을 "Mercenary A (SWORDSMAN) Lv.1 - 대기 (Defense: NONE)" 형태로 최소 표시. 없으면 "보유 용병 없음". 생산시설 배치 대상 아님(표시만).
+  - `tests/task0141_test.gd` 신규 작성 headless PASS: MercenaryRoster autoload 존재/WorkerRoster와 분리, 주점 interact로 UI 오픈, 후보 1명(SWORDSMAN), 고용 후 Roster 정확히 1명, 중복 거부, 고용 직후 월드 전투 Actor 미생성(group 0), 조회 API, Worker 고용과 독립, 여관 보유/대기 표시, 5개 핵심 건물/Worker 시스템 회귀. 결과 `test_results/task0141_test_run.txt`(TASK0141_RESULT=PASS).
+  - 회귀 headless 전부 PASS: smoke(18), task0062(31), task0064(45), task0071~0075, task0112~0117, task0128(149), tasknav001(33), task0132~0136. (task0131은 변경 전 stash 상태에서도 동일하게 FAIL하는 기존 문서화 nav flaky — 본 태스크 범위 밖)
 
 ### TASK-014-2 Defense Assignment + Mercenary NIGHT Spawn
 - 상태: QUEUED

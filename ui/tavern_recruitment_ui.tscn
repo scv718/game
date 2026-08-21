@@ -18,9 +18,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = -150.0
+offset_top = -180.0
 offset_right = 200.0
-offset_bottom = 150.0
+offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -36,12 +36,12 @@ unique_name_in_owner = true
 offset_left = 16.0
 offset_top = 48.0
 offset_right = 384.0
-offset_bottom = 252.0
+offset_bottom = 300.0
 
 [node name="CloseButton" type="Button" parent="Panel"]
 unique_name_in_owner = true
 offset_left = 16.0
-offset_top = 260.0
+offset_top = 312.0
 offset_right = 384.0
-offset_bottom = 292.0
+offset_bottom = 344.0
 text = "닫기"
