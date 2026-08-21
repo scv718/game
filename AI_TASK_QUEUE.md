@@ -139,7 +139,15 @@
   - 비용/철거/환불 정상.
 
 ### TASK-013-4 Gate OPEN/CLOSED + Collision/Navigation
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족, 공개 API/_signal이 TASK-015에 재사용 가능, collision/nav 전환이 멱등하고 반복 toggle에 오류 누적 없음, 32개 자동검증 PASS + 5개 회귀 테스트 모두 PASS. 코드 스타일이 기존과 일관, 버그/누락/엣지 케이스 없음.
+- 피드백: 모든 요구사항 충족. 신규 Gate는 CLOSED 시작, Player Interact 상호작용 토글 + TASK-015 재사용 공개 API(is_open/set_open/set_closed/toggle + gate_state_changed signal), 반복 toggle signal 중복/오류 누적 없음, Worker nav 반복 toggle 안정(영구 MOVE stall 없음). headless 자동검증 + smoke/task0132/task0133/task0128/tasknav001 회귀 PASS.
+- 구현기록:
+  - `scripts/gate.gd`: OPEN/CLOSED 상태 추가. **이 엔진(4.7)의 nav bake(`parse_source_geometry_data`)는 CollisionShape2D.disabled / collision_layer를 무시하고 physics body shape를 항상 장애물로 파싱**하므로, OPEN이면 CollisionShape2D 노드를 제거(`free`), CLOSED면 footprint 크기로 재생성하는 방식으로 collision/nav를 함께 전환(멱등). open/closed visual 색상 구분(CLOSED 불투명 갈색 / OPEN 반투명). 상태 전환 시 기존 `world.rebuild_navigation_debounced()` 재사용. 공개 API + `gate_state_changed` signal.
+  - `scripts/gate_interactable.gd` 신규: Gate 부모를 참조해 `interact()` 시 `toggle()`, prompt에 현재 상태 반영.
+  - `scenes/gate.tscn`: Interact Area2D(CircleShape r=48) + gate_interactable 스크립트 추가.
+  - `tests/task0134_test.gd` 신규 작성 headless PASS: 기본 CLOSED/API/signal/Interact 존재, CLOSED=CollisionShape2D 존재+nav 경로가 Gate footprint 미통과+Player 물리 차단, OPEN=shape 제거+nav 경로 통과+Player 통과, 반복 6회 toggle collision/nav 일관+signal 정확 1회(1번째는 Interact.interact() 경로로 토글), Worker가 OPEN 통로로 Tree 도달 후 반복 toggle에도 재도달(영구 stall 없음).
+  - 검증 중 발견한 설계 사실(결과 기록): 열린 지형에서 성문(48x16)만으로는 nav '완전 차단'이 구조적으로 어렵다(작은 16px 높이 장애물이라 nav가 좌우로 우회하며 거의 직선과 유사한 경로를 탐색). 따라서 자동검증은 CLOSED=Gate footprint 미통과(우회)/OPEN=통과로 검증한다. 작은 Wall 엔클로저로 '유일한 통로'를 만들면 nav bake가 48px 폭 내부를 폴리곤에서 버려 엔클로저 검증은 부적합 — 성문+성벽의 실질 차단 시나리오는 TASK-013-5에서 다룬다.
 - 상태:
   - OPEN
   - CLOSED
