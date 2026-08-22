@@ -300,7 +300,18 @@
 
 ### TASK-CTRL-001-2 Mouse World Selection / Interaction
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 56개 assertion 전부 PASS. 구현이 요구사항을 충족하며, 기존 interact() API를 정확히 재사용하고, decoration/ground/자원노드 클릭 안전, build mode/modal UI/NIGHT 가드 정상, Player 의존 없음. 코드 스타일과 설계 일관성 양호. 임시 파일 없음.
+- 피드백: [재검토] 리뷰어 판정 미출력으로 파싱 실패 - 구현은 완료(taskctrl0012_test.gd 존재), 리뷰 재실행
+- 구현 노트 (TASK-CTRL-001-2):
+  - 신규 `scripts/world_selection.gd` + `scenes/main.tscn`에 `WorldSelection` 노드 추가.
+  - Left Click = 클릭 지점 최상위 유효 관리 대상(건물/시설/성문) 1개 선택 + 기존 `interact()` API 재사용(Tavern→Recruitment, Inn→Roster).
+  - decoration/ground/나무(자원 노드) click은 interaction 없음. 나무는 Worker 전용으로 제외해 마우스 직접 채집 차단.
+  - Right Click / ESC = 선택 해제(ESC는 모달 UI 닫기와 공유, handled로 삼키지 않음).
+  - Build mode 활성 / 모달 UI 열림 / NIGHT에서는 월드 click 차단(UI click-through 방지).
+  - Player 근접/물리 접근 전제 제거(Player가 멀리 있어도 클릭 interaction 동작).
+  - `building_placement.gd`에 `is_active()` 공개 접근자 추가(build mode 충돌 방지용).
+  - 신규 `tests/taskctrl0012_test.gd` 50개 assertion headless PASS.
 
 - 설명: 기존 Player InteractArea/E 접근 방식 대신 마우스 클릭으로 건물/시설/주요 상호작용 오브젝트를 선택하고 기존 UI를 열 수 있게 한다.
 

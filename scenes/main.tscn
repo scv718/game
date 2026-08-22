@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://ui/hud.tscn" id="3_hud"]
 [ext_resource type="Script" path="res://scripts/building_placement.gd" id="4_placement"]
 [ext_resource type="PackedScene" path="res://scenes/camera_controller.tscn" id="5_camera"]
+[ext_resource type="Script" path="res://scripts/world_selection.gd" id="6_selection"]
 
 [node name="Main" type="Node2D"]
 
@@ -16,6 +17,9 @@ position = Vector2(0, 60)
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 
 [node name="CameraController" parent="." instance=ExtResource("5_camera")]
+
+[node name="WorldSelection" type="Node2D" parent="." groups=["world_selection"]]
+script = ExtResource("6_selection")
 
 [node name="BuildingPlacement" type="Node2D" parent="." groups=["building_placement"]]
 script = ExtResource("4_placement")

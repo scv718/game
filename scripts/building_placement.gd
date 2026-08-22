@@ -97,6 +97,12 @@ func _process(_delta: float) -> void:
 	_show_ghost_at(target)
 
 
+## TASK-CTRL-001-2: 월드 선택/건설 mode 충돌 방지용 공개 상태 접근자.
+## WorldSelection 등 다른 입력 소유자가 build mode 활성 여부를 확인할 때 사용한다.
+func is_active() -> bool:
+	return _active
+
+
 func _set_building_type(building_type: String) -> void:
 	if _building_type == building_type:
 		return
