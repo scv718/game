@@ -57,6 +57,7 @@ var _world: Node = null
 var _roster: Node = null
 var _resources: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _hud: Node = null
 var _tac = null
 var _mercenary: MercenaryData = null
@@ -181,6 +182,8 @@ func _process(_delta: float) -> bool:
 				_roster = root.get_node("MercenaryRoster")
 				_resources = root.get_node("VillageResources")
 				_player = root.get_node("Main").get_node("Player")
+				var ctrls := get_nodes_in_group("camera_controller")
+				_controller = ctrls[0] if ctrls.size() > 0 else null
 				_hud = root.get_node("Main").get_node("HUD")
 				_tac = _hud.get_node_or_null("TacticalCommandUI")
 				_check(_game_time != null and _world != null and _roster != null \
@@ -235,7 +238,7 @@ func _process(_delta: float) -> bool:
 				return false
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "DAY -> NIGHT transition")
-				_check(_player.get("_night_mode") == true, "player night mode active")
+				_check(_controller.is_night_mode() == true, "camera controller night mode active")
 				_check(_tac.visible == true, "tactical command UI visible at NIGHT")
 				_check(_tac.get_node("%GateList").get_child_count() == 2, "two gate rows built (N/E)")
 				_enter(Phase.GATE_COMMAND)

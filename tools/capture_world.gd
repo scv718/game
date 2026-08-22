@@ -33,7 +33,10 @@ func _initialize() -> void:
 func _process(_delta: float) -> bool:
 	_frames += 1
 	if _frames == 3:
-		var camera := root.get_node_or_null("Main/Player/Camera2D") as Camera2D
+		## TASK-CTRL-001-1: Camera2D는 Player가 아니라 World Camera Controller가 소유한다.
+		var ctrls := get_nodes_in_group("camera_controller")
+		var controller: Node = ctrls[0] if ctrls.size() > 0 else null
+		var camera := controller.get_camera() as Camera2D if controller else null
 		if camera != null:
 			camera.zoom = Vector2(_zoom, _zoom)
 		if _night:

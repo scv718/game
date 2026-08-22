@@ -22,6 +22,7 @@ var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
 var _player: Node = null
+var _controller: Node = null
 var _placement: Node = null
 var _hud: Node = null
 var _resources: Node = null
@@ -79,6 +80,10 @@ func _process(_delta: float) -> bool:
 			_layout = _world.get_node_or_null("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
 			_player = main.get_node("Player")
+			var ctrls := get_nodes_in_group("camera_controller")
+			_controller = ctrls[0] if ctrls.size() > 0 else null
+			if _controller != null:
+				_controller.day_pan_speed = 2000.0
 			_placement = main.get_node("BuildingPlacement")
 			_hud = main.get_node("HUD")
 			_resources = root.get_node("VillageResources")
@@ -108,16 +113,16 @@ func _process(_delta: float) -> bool:
 			_check(get_nodes_in_group("decorations").size() >= 4, "decorations present (%d)" % get_nodes_in_group("decorations").size())
 			_enter(Phase.MOVEMENT)
 		Phase.MOVEMENT:
-			_player.global_position = Vector2.ZERO
+			_controller.global_position = Vector2.ZERO
 			Input.action_press("move_right")
 			_enter(Phase.MOVEMENT_WAIT)
 		Phase.MOVEMENT_WAIT:
-			if _elapsed() >= 180:
+			if _elapsed() >= 120:
 				Input.action_release("move_right")
-				var pos: Vector2 = _player.global_position
-				_check(pos.x > 90, "player walks from center toward east outskirts (x=%s)" % str(pos.x))
-				_check(_layout.is_in_bounds(pos), "player stays inside map bounds while moving")
-				_player.global_position = Vector2.ZERO
+				var pos: Vector2 = _controller.global_position
+				_check(pos.x > 90, "DAY: camera pans from center toward east outskirts (x=%s)" % str(pos.x))
+				_check(absf(pos.x) <= 1024.0 + 0.01, "camera stays inside map bounds while panning")
+				_controller.global_position = Vector2.ZERO
 				_enter(Phase.MAP_STRUCTURE)
 		Phase.MAP_STRUCTURE:
 			_check(_layout.get_script() != null and _layout.get_script().resource_path == "res://scripts/world_map.gd", "MapLayout uses world_map.gd")

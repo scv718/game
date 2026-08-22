@@ -50,6 +50,7 @@ var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
 var _player: Node = null
+var _controller: Node = null
 var _placement: Node = null
 var _resources: Node = null
 var _hud: Node = null
@@ -114,15 +115,15 @@ func _path_len(a: Vector2, b: Vector2) -> float:
 
 func _record_travel(name: String, dest: Vector2) -> void:
 	var dist := _path_len(Vector2(0, 60), dest)
-	var speed := float(_player.move_speed)
+	var speed := float(_controller.day_pan_speed)
 	if speed <= 0.0:
-		speed = 120.0
+		speed = 480.0
 	if dist < 0.0:
 		print("TRAVEL %s: NO NAV PATH to %s" % [name, str(dest)])
 		_check(false, "travel %s nav path exists" % name)
 		return
 	var seconds := dist / speed
-	print("TRAVEL %s -> %s: nav=%.0fpx, player_speed=%.0fpx/s, ETA=%.1fs" % [name, str(dest), dist, speed, seconds])
+	print("TRAVEL %s -> %s: nav=%.0fpx, camera_pan_speed=%.0fpx/s, ETA=%.1fs" % [name, str(dest), dist, speed, seconds])
 	_check(dist > 0.0, "travel %s measured positive distance" % name)
 
 
@@ -137,6 +138,10 @@ func _process(_delta: float) -> bool:
 			_layout = _world.get_node_or_null("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
 			_player = main.get_node("Player")
+			var ctrls := get_nodes_in_group("camera_controller")
+			_controller = ctrls[0] if ctrls.size() > 0 else null
+			if _controller != null:
+				_controller.day_pan_speed = 2000.0
 			_placement = main.get_node("BuildingPlacement")
 			_resources = root.get_node("VillageResources")
 			_hud = main.get_node("HUD")
@@ -181,16 +186,16 @@ func _process(_delta: float) -> bool:
 			var player_pos: Vector2 = _player.global_position
 			_check(player_pos.distance_to(Vector2(0, 60)) <= 24.0, "Player Start near (0,+60) (%s)" % str(player_pos))
 
-			# Player 이동 (중앙 마을)
-			_player.global_position = Vector2.ZERO
+			# Camera 이동 (중앙 마을) — WASD는 이제 Camera pan이다.
+			_controller.global_position = Vector2.ZERO
 			Input.action_press("move_right")
 			_enter(Phase.PLACEMENT)
 		Phase.PLACEMENT:
 			if _elapsed() >= 120:
 				Input.action_release("move_right")
-				var x: float = _player.global_position.x
-				_check(x > 90.0, "player walks from center toward east outskirts (x=%s)" % str(x))
-				_check(_layout.is_in_bounds(_player.global_position), "player stays inside map bounds while moving")
+				var x: float = _controller.global_position.x
+				_check(x > 90.0, "DAY: camera pans from center toward east outskirts (x=%s)" % str(x))
+				_check(absf(x) <= 1024.0 + 0.01, "camera stays inside map bounds while panning")
 				_player.global_position = Vector2(0, 60)
 
 				# Lumberyard placement
@@ -311,19 +316,19 @@ func _process(_delta: float) -> bool:
 				_game_time.advance(10.0)
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "DAY -> NIGHT transition")
-				_check(_player._night_mode == true, "NIGHT: player direct movement disabled (flag)")
+				_check(_controller.is_night_mode(), "NIGHT: camera controller tactical mode")
 				_enter(Phase.NIGHT_READ)
 		Phase.NIGHT_READ:
 			if not _step_done:
 				_step_done = true
-				_player.global_position = Vector2.ZERO
-				_start_x = _player.global_position.x
+				_controller.global_position = Vector2.ZERO
+				_start_x = _controller.global_position.x
 				Input.action_press("move_right")
 			if _elapsed() >= 120:
 				Input.action_release("move_right")
-				_check(_player.global_position.x == _start_x, "NIGHT: player does not move (input disabled)")
-				var camera: Camera2D = _player.get_node("Camera2D") as Camera2D
-				_check(camera != null, "player camera exists")
+				_check(_controller.global_position.x > _start_x, "NIGHT: tactical camera pans (player stays stationary)")
+				var camera: Camera2D = _controller.get_camera() as Camera2D
+				_check(camera != null, "world camera exists")
 				_check(camera.zoom.x < 0.7, "NIGHT: camera zoomed out from day (%.2f < 0.7)" % camera.zoom.x)
 				_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "production runs during NIGHT without stop policy")
 				_check(is_instance_valid(_lj.get_workplace()), "lumberjack workplace stable across transition")
@@ -333,7 +338,7 @@ func _process(_delta: float) -> bool:
 				# 가 night_zoom 기준으로 한 시야 또는 짧은 pan으로 읽히는지 기록.
 				var vp_h: float = ProjectSettings.get_setting("display/window/size/viewport_height", 648.0)
 				var vp_w: float = ProjectSettings.get_setting("display/window/size/viewport_width", 1152.0)
-				var nz: float = _player.night_zoom
+				var nz: float = _controller.night_zoom
 				var world_half_h: float = vp_h / nz * 0.5
 				var world_half_w: float = vp_w / nz * 0.5
 				var village_edge := 220.0
@@ -348,7 +353,7 @@ func _process(_delta: float) -> bool:
 		Phase.TRAVEL:
 			_check(_layout.get_node_or_null("SouthAgricultureZone") != null, "South Agriculture marker present")
 			_check(_layout.get_node_or_null("NeDungeonCandidate") != null, "NE Dungeon Candidate marker present")
-			print("=== TASK-012-7 이동거리 기록 (Player speed=%.0fpx/s) ===" % float(_player.move_speed))
+			print("=== TASK-012-7 이동거리 기록 (Camera pan speed=%.0fpx/s) ===" % float(_controller.day_pan_speed))
 			var starter_cluster: Dictionary = _layout.get_forest_cluster("starter")
 			_record_travel("PlayerStart->NW_StarterForest", Vector2(starter_cluster.get("center", Vector2.ZERO)))
 			_record_travel("PlayerStart->StoneDeposit", _layout.get_stone_deposit_pos())

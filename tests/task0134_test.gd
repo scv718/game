@@ -182,12 +182,14 @@ func _process(_delta: float) -> bool:
 		Phase.CLOSED_PHYSICS:
 			if not _step_done:
 				_step_done = true
+				# Player는 더 이상 WASD로 이동하지 않으므로(TASK-CTRL-001-1) 물리 통과 여부를
+				# CharacterBody2D.test_move로 검증한다. CLOSED면 게이트 collision에 막혀야 한다.
 				_player.global_position = Vector2(0, -400)
-				Input.action_press("move_up")
 				_pf = 0
-			elif _pf >= PHYSICS_HOLD_PF:
-				Input.action_release("move_up")
-				_check(_player.global_position.y > -440.0, "CLOSED gate blocks player (y=%.0f stays south of gate)" % _player.global_position.y)
+			elif _pf >= NAV_WAIT_PF:
+				var blocked: bool = _player.test_move(Transform2D(0, Vector2(0, -400)), Vector2(0, -60))
+				_check(blocked, "CLOSED gate blocks player physics (test_move)")
+				_check(_player.global_position.y == -400.0, "CLOSED gate: player body not teleported (y=%.0f)" % _player.global_position.y)
 				_enter(Phase.OPEN_NAV)
 		Phase.OPEN_NAV:
 			if not _step_done:
@@ -205,11 +207,10 @@ func _process(_delta: float) -> bool:
 			if not _step_done:
 				_step_done = true
 				_player.global_position = Vector2(0, -400)
-				Input.action_press("move_up")
 				_pf = 0
-			elif _pf >= PHYSICS_HOLD_PF:
-				Input.action_release("move_up")
-				_check(_player.global_position.y < -448.0, "OPEN gate allows player through (y=%.0f north of gate)" % _player.global_position.y)
+			elif _pf >= NAV_WAIT_PF:
+				var blocked: bool = _player.test_move(Transform2D(0, Vector2(0, -400)), Vector2(0, -60))
+				_check(not blocked, "OPEN gate allows player through (test_move)")
 				_enter(Phase.TOGGLE_REPEAT)
 		Phase.TOGGLE_REPEAT:
 			if not _toggle_armed:

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world.tscn" id="1_world"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://ui/hud.tscn" id="3_hud"]
 [ext_resource type="Script" path="res://scripts/building_placement.gd" id="4_placement"]
+[ext_resource type="PackedScene" path="res://scenes/camera_controller.tscn" id="5_camera"]
 
 [node name="Main" type="Node2D"]
 
@@ -13,6 +14,8 @@
 position = Vector2(0, 60)
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="CameraController" parent="." instance=ExtResource("5_camera")]
 
 [node name="BuildingPlacement" type="Node2D" parent="." groups=["building_placement"]]
 script = ExtResource("4_placement")

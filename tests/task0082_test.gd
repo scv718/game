@@ -12,6 +12,7 @@ var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
 var _player: Node = null
+var _controller: Node = null
 var _wm_script: GDScript = null
 
 
@@ -43,6 +44,10 @@ func _process(_delta: float) -> bool:
 			_layout = _world.get_node_or_null("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
 			_player = main.get_node("Player")
+			var ctrls := get_nodes_in_group("camera_controller")
+			_controller = ctrls[0] if ctrls.size() > 0 else null
+			if _controller != null:
+				_controller.day_pan_speed = 2000.0
 			_wm_script = load("res://scripts/world_map.gd")
 			_enter(Phase.SMOKE)
 		Phase.SMOKE:
@@ -211,15 +216,15 @@ func _process(_delta: float) -> bool:
 					_check(wall.collision_mask == 0, "%s has collision mask 0" % wn)
 					_check(wall.get_child_count() >= 1 and wall.get_child(0) is CollisionShape2D, "%s has collision shape child" % wn)
 
-			_player.global_position = Vector2.ZERO
+			_controller.global_position = Vector2.ZERO
 			Input.action_press("move_right")
 			_enter(Phase.DONE)
 		Phase.DONE:
-			if _elapsed() < 180:
+			if _elapsed() < 120:
 				return false
 			Input.action_release("move_right")
-			_check(_player.global_position.x > 90, "player walks from center toward east outskirts (x=%s)" % str(_player.global_position.x))
-			_check(_layout.is_in_bounds(_player.global_position), "player stays inside map bounds")
+			_check(_controller.global_position.x > 90, "DAY: camera pans from center toward east outskirts (x=%s)" % str(_controller.global_position.x))
+			_check(absf(_controller.global_position.x) <= 1024.0 + 0.01, "camera stays inside map bounds while panning")
 			_world.rebuild_navigation()
 			_check(true, "navigation rebuild on new terrain works")
 			print("TASK0082_RESULT=" + ("FAIL" if _failed else "PASS"))

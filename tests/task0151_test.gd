@@ -1,24 +1,28 @@
 extends SceneTree
 
-## TASK-015-1 Night Tactical Camera Pan 검증.
-## NIGHT에서 Player 이동은 비활성 유지하고 카메라만 키보드로 독립 pan하며,
-## 월드 경계 밖으로 벗어나지 않고 N/E/S/W Gate/Combat Field를 확인 가능해야 한다.
-## DAY 복귀 시 Player follow/zoom 정상 복구를 검증한다.
+## TASK-015-1 Night Tactical Camera Pan 검증 (TASK-CTRL-001-1 Camera Ownership 분리 반영).
+## Camera2D는 Player가 아니라 World Camera Controller(CameraController)가 소유한다.
+## DAY WASD = camera pan, NIGHT WASD = tactical camera pan이며, Player entity는 이동하지
+## 않는다. 카메라는 월드 경계(WORLD_BOUNDS ±1024) 밖으로 벗어나지 않고 N/E/S/W
+## Gate/Combat Field를 확인 가능해야 한다. DAY 복귀 시 zoom target 복귀 + position
+## jump 없음을 검증한다.
 ##
 ## 자동검증 항목:
-##  1. DAY 시작: camera offset zero + Player follow + day_zoom.
-##  2. DAY 이동: Player가 이동하면 camera도 함께 follow.
-##  3. NIGHT 전환: Player 이동 비활성.
-##  4. NIGHT pan: 키보드 입력으로 camera만 독립 이동(Player entity 고정).
-##  5. NIGHT 4방향: N/E/S/W Gate/Combat Field 도달 가능(경계 안).
-##  6. NIGHT 경계 clamp: 월드 경계(WORLD_BOUNDS ±1024) 밖으로 벗어나지 않음.
-##  7. DAY 복귀: camera offset reset + follow 복구 + day_zoom 복귀.
-##  8. 회귀: Player 무공격, 핵심 건물/floor/gate/Wall 시스템 유지.
+##  1. DAY 시작: camera는 World Camera Controller 소유 + world origin + day_zoom.
+##  2. DAY pan: WASD로 camera만 이동(Player entity 정지).
+##  3. Mouse wheel zoom: zoom target 증가/감소/min clamp.
+##  4. NIGHT 전환: Camera Controller tactical mode.
+##  5. NIGHT pan: 키보드 입력으로 camera만 독립 이동(Player entity 고정).
+##  6. NIGHT 4방향: N/E/S/W Gate/Combat Field 도달 가능(경계 안).
+##  7. NIGHT 경계 clamp: 월드 경계(WORLD_BOUNDS ±1024) 밖으로 벗어나지 않음.
+##  8. DAY 복귀: zoom target 복귀 + camera position jump 없음.
+##  9. 회귀: Player 무공격, 핵심 건물/floor/gate/Wall 시스템 유지.
 
 enum Phase {
 	SETUP,
 	DAY_FOLLOW,
 	DAY_MOVE,
+	WHEEL_ZOOM,
 	TO_NIGHT,
 	NIGHT_PAN,
 	NIGHT_REACH,
@@ -44,10 +48,13 @@ var _failed := false
 var _game_time: Node = null
 var _world: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _camera: Camera2D = null
 
 var _start_pf := 0
 var _hold_action := ""
+var _day_cam_pos := Vector2.ZERO
+var _zoom_target0 := 0.0
 
 
 func _check(cond: bool, msg: String) -> void:
@@ -102,6 +109,15 @@ func release_all_actions() -> void:
 		Input.action_release(a)
 
 
+## Mouse wheel zoom을 Camera Controller의 unhandled input 경로로 직접 전달한다.
+## headless에서 viewport GUI 소비 여부와 무관하게 동일 입력 정책을 검증하기 위함.
+func _send_wheel(dir: int) -> void:
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_WHEEL_UP if dir > 0 else MOUSE_BUTTON_WHEEL_DOWN
+	ev.pressed = true
+	_controller._unhandled_input(ev)
+
+
 func _process(_delta: float) -> bool:
 	_frame += 1
 	match _phase:
@@ -112,23 +128,26 @@ func _process(_delta: float) -> bool:
 				_game_time = root.get_node("GameTime")
 				_world = root.get_node("Main").get_node("World")
 				_player = root.get_node("Main").get_node("Player")
-				_camera = _player.get_node("Camera2D") as Camera2D
-				_check(_game_time != null and _world != null and _player != null and _camera != null, "core nodes present")
+				var ctrls := get_nodes_in_group("camera_controller")
+				_controller = ctrls[0] if ctrls.size() > 0 else null
+				_camera = _controller.get_camera() as Camera2D if _controller else null
+				_check(_game_time != null and _world != null and _player != null and _controller != null and _camera != null, "core nodes present (incl. CameraController)")
+				_check(_camera != null and _camera.get_parent() == _controller, "camera owned by World Camera Controller (not Player)")
 				if _game_time != null and _game_time.has_method("set_auto_advance"):
 					_game_time.set_auto_advance(false)
 				if _game_time != null and _game_time.has_method("set_durations"):
 					_game_time.set_durations(2.0, 1.0)
-				_player.night_pan_speed = 480.0
+				_controller.night_pan_speed = 480.0
 				_sub = 1
 			elif _sub == 1:
 				_enter(Phase.DAY_FOLLOW)
 		Phase.DAY_FOLLOW:
 			if _sub == 0:
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "starts in DAY")
-				_check(_player.get("_night_mode") == false, "player starts in DAY (direct control)")
-				_check(_camera.position == Vector2.ZERO, "camera offset zero at DAY")
-				_check(_camera_global().distance_to(_player.global_position) < 0.01, "camera follows player at DAY")
-				_check(_zoom_near(_player.day_zoom), "camera at day_zoom (%.2f)" % _camera.zoom.x)
+				_check(not _controller.is_night_mode(), "camera controller starts in DAY mode")
+				_check(_controller.global_position == Vector2.ZERO, "camera at world origin (independent of Player)")
+				_check(_zoom_near(_controller.day_zoom), "camera at day_zoom (%.2f)" % _camera.zoom.x)
+				_check(_camera.zoom.x == _camera.zoom.y, "camera zoom uniform")
 				_player.global_position = Vector2.ZERO
 				_sub = 1
 			elif _sub == 1:
@@ -141,11 +160,38 @@ func _process(_delta: float) -> bool:
 				if _pf - _start_pf < 60:
 					return false
 				release_all_actions()
-				_check(_player.global_position.x > 0.0, "DAY: player moves right (x=%s)" % str(_player.global_position.x))
-				_check(_camera_global().distance_to(_player.global_position) < 0.01, "DAY: camera keeps following player")
-				_check(_camera.position == Vector2.ZERO, "DAY: camera offset stays zero while following")
+				_check(_player.global_position == Vector2.ZERO, "DAY: player entity does not move (WASD = camera pan)")
+				_check(_controller.global_position.x > 0.0, "DAY: camera pans right (x=%s)" % str(_controller.global_position.x))
+				_check(_camera.position == Vector2.ZERO, "DAY: camera offset stays zero (controller-centered)")
 				_sub = 2
 			elif _sub == 2:
+				_enter(Phase.WHEEL_ZOOM)
+		Phase.WHEEL_ZOOM:
+			if _sub == 0:
+				_zoom_target0 = _controller.get_zoom_target()
+				_send_wheel(1)
+				_wait_frames(2)
+			elif _sub == 1 and not _waited():
+				return false
+			elif _sub == 1:
+				_check(_controller.get_zoom_target() > _zoom_target0,
+					"mouse wheel up increases zoom target (%.2f -> %.2f)" % [_zoom_target0, _controller.get_zoom_target()])
+				_check(_controller.get_zoom_target() <= _zoom_target0 + _controller.wheel_zoom_step + 0.001,
+					"wheel zoom step bounded by wheel_zoom_step")
+				_send_wheel(-1)
+				_send_wheel(-1)
+				_wait_frames(2)
+			elif _sub == 2 and not _waited():
+				return false
+			elif _sub == 2:
+				_check(_controller.get_zoom_target() < _zoom_target0,
+					"mouse wheel down decreases zoom target (%.2f -> %.2f)" % [_zoom_target0, _controller.get_zoom_target()])
+				for i in 50:
+					_send_wheel(-1)
+				_check(_controller.get_zoom_target() >= _controller.min_zoom - 0.001,
+					"wheel zoom clamped at min_zoom (%.2f)" % _controller.get_zoom_target())
+				_sub = 3
+			elif _sub == 3:
 				_enter(Phase.TO_NIGHT)
 		Phase.TO_NIGHT:
 			if _sub == 0:
@@ -155,7 +201,7 @@ func _process(_delta: float) -> bool:
 				return false
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "DAY -> NIGHT transition")
-				_check(_player.get("_night_mode") == true, "NIGHT: player direct movement disabled")
+				_check(_controller.is_night_mode(), "NIGHT: camera controller tactical mode")
 				_player.global_position = Vector2.ZERO
 				_wait_frames(3)
 			elif _sub == 2 and not _waited():
@@ -170,10 +216,10 @@ func _process(_delta: float) -> bool:
 				if _pf - _start_pf < PAN_HOLD_PF:
 					return false
 				var ppos: Vector2 = _player.global_position
-				var cpos: Vector2 = _camera_global()
+				var cpos: Vector2 = _controller.global_position
 				_check(ppos == Vector2.ZERO, "NIGHT: player entity does not move during pan (pos=%s)" % str(ppos))
-				_check(cpos.x > 100.0, "NIGHT: camera pans right independently (x=%s)" % str(cpos.x))
-				_check(_camera.position.x > 0.0, "NIGHT: camera offset accumulates (%.0f)" % _camera.position.x)
+				_check(cpos.x > 100.0, "NIGHT: tactical camera pans right independently (x=%s)" % str(cpos.x))
+				_check(cpos.x > 0.0, "NIGHT: camera position accumulates (%.0f)" % cpos.x)
 				release_all_actions()
 				_wait_frames(3)
 			elif _sub == 2 and not _waited():
@@ -183,7 +229,7 @@ func _process(_delta: float) -> bool:
 		Phase.NIGHT_REACH:
 			if _sub == 0:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "still NIGHT for reach test")
-				_player.night_pan_speed = 2000.0
+				_controller.night_pan_speed = 2000.0
 				_pan_until("move_up")
 				_sub = 1
 			elif _sub == 1:
@@ -241,28 +287,27 @@ func _process(_delta: float) -> bool:
 				_enter(Phase.DAY_RETURN)
 		Phase.DAY_RETURN:
 			if _sub == 0:
+				_day_cam_pos = _controller.global_position
 				_game_time.advance(1.0)
 				_wait_frames(3)
 			elif _sub == 1 and not _waited():
 				return false
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "NIGHT -> DAY transition")
-				_check(_player.get("_night_mode") == false, "DAY: direct control restored")
-				_check(_camera.position == Vector2.ZERO, "DAY: camera offset reset to zero (follow restored)")
+				_check(not _controller.is_night_mode(), "DAY: camera controller day mode restored")
+				_check(_controller.global_position == _day_cam_pos, "DAY: camera position continuous (no jump on transition)")
 				_player.global_position = Vector2(0, 60)
 				_wait_frames(3)
 			elif _sub == 2 and not _waited():
 				return false
 			elif _sub == 2:
-				_check(_camera_global().distance_to(_player.global_position) < 0.01, "DAY: camera follows player again (pos=%s)" % str(_camera_global()))
-				_check(_zoom_near(_player.day_zoom) or _camera.zoom.x >= _player.night_zoom, "DAY: camera starts returning toward day_zoom (%.2f)" % _camera.zoom.x)
-				_sub = 3
-			elif _sub == 3:
+				_check(_camera.get_parent() == _controller, "DAY: camera still owned by Camera Controller (player-independent)")
+				_check(_camera.zoom.x >= _controller.night_zoom, "DAY: camera starts returning toward day_zoom (%.2f)" % _camera.zoom.x)
 				_wait_frames(300)
-			elif _sub == 4 and not _waited():
+			elif _sub == 3 and not _waited():
 				return false
-			elif _sub == 4:
-				_check(_zoom_near(_player.day_zoom), "DAY: camera converged back to day_zoom (%.2f)" % _camera.zoom.x)
+			elif _sub == 3:
+				_check(_zoom_near(_controller.day_zoom), "DAY: camera converged back to day_zoom (%.2f)" % _camera.zoom.x)
 				_enter(Phase.REGRESSION)
 		Phase.REGRESSION:
 			if _sub == 0:

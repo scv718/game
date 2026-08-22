@@ -55,6 +55,7 @@ var _roster: Node
 var _resources: Node
 var _game_time: Node
 var _player: Node
+var _controller: Node
 var _camera: Camera2D
 var _hud: Node
 var _wood_label: Label
@@ -184,7 +185,9 @@ func _setup() -> void:
 	_resources = root.get_node("VillageResources")
 	_game_time = root.get_node("GameTime")
 	_player = _main.get_node("Player")
-	_camera = _player.get_node("Camera2D") as Camera2D
+	var ctrls := get_nodes_in_group("camera_controller")
+	_controller = ctrls[0] if ctrls.size() > 0 else null
+	_camera = _controller.get_camera() as Camera2D if _controller else null
 	_hud = _main.get_node("HUD")
 	_wood_label = _hud.get_node("WoodLabel") as Label
 	_stone_label = _hud.get_node("StoneLabel") as Label
@@ -491,7 +494,7 @@ func _daynight() -> void:
 		_wait_start = _frame
 	if _elapsed() >= 4:
 		_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "DAY -> NIGHT transition")
-		_check(_player._night_mode == true, "NIGHT: player movement disabled")
+		_check(_controller.is_night_mode(), "NIGHT: camera controller tactical mode")
 		_check(_lj_a.is_assigned(), "lumberjack A assigned across DAY/NIGHT transition")
 		_check(_miner_a.is_assigned(), "miner A assigned across DAY/NIGHT transition")
 		_check(is_instance_valid(_roster.get_actor(_lj_a)), "lumberjack A actor stable across transition")

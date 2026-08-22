@@ -75,6 +75,7 @@ var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _camera: Camera2D = null
 var _tac = null
 
@@ -87,6 +88,7 @@ var _enemy_seq := 0
 var _budget := 0
 var _prev_pos := Vector2.ZERO
 var _focus_enemy: EnemyActor = null
+var _day_cam_pos := Vector2.ZERO
 
 
 func _check(cond: bool, msg: String) -> void:
@@ -212,7 +214,9 @@ func _process(_delta: float) -> bool:
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
 				_player = root.get_node("Main").get_node("Player")
-				_camera = _player.get_node("Camera2D") as Camera2D
+				var ctrls := get_nodes_in_group("camera_controller")
+				_controller = ctrls[0] if ctrls.size() > 0 else null
+				_camera = _controller.get_camera() as Camera2D if _controller else null
 				_tac = root.get_node("Main").get_node("HUD").get_node_or_null("TacticalCommandUI")
 				_check(_game_time != null and _world != null and _placement != null \
 					and _spawner != null and _roster != null and _worker_roster != null \
@@ -221,7 +225,7 @@ func _process(_delta: float) -> bool:
 				_resources._amounts["wood"] = 10000
 				_check(_roster.get_count() == 0, "mercenary roster starts empty")
 				_safe_rally = _roster.get_safe_rally(_world)
-				_player.night_pan_speed = 2000.0
+				_controller.night_pan_speed = 2000.0
 				_sub = 1
 			elif _sub == 1:
 				_enter(Phase.HIRE_ASSIGN)
@@ -268,7 +272,7 @@ func _process(_delta: float) -> bool:
 				return false
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "phase is NIGHT")
-				_check(_player.get("_night_mode") == true, "player night mode active (movement disabled)")
+				_check(_controller.is_night_mode() == true, "camera controller night mode active (tactical)")
 				_check(_count_mercenaries() == 1, "mercenary actor spawned at NIGHT")
 				_actor = _roster.get_actor("mercenary_A")
 				_check(_actor != null, "actor retrievable by id")
@@ -290,7 +294,7 @@ func _process(_delta: float) -> bool:
 					"NIGHT: player entity stationary during camera pan")
 				_check(cpos.y <= -COMBAT_FIELD.y - 100.0 or cpos.y <= -560.0,
 					"NIGHT: camera pans to North Combat Field (y=%.0f)" % cpos.y)
-				_check(_camera.position.y < 0.0, "NIGHT: camera offset accumulates (y=%.0f)" % _camera.position.y)
+				_check(_controller.global_position.y < 0.0, "NIGHT: camera position accumulates (y=%.0f)" % _controller.global_position.y)
 				_sub = 3
 			elif _sub == 3:
 				# 5단계: Enemy encounter 자동 조우.
@@ -562,13 +566,14 @@ func _process(_delta: float) -> bool:
 				return false
 			elif _sub == 1:
 				_check(_count_enemies() == 0, "enemies cleaned before DAY")
+				_day_cam_pos = _controller.global_position
 				_advance_to_next_phase()
 				_wait_frames(3)
 			elif _sub == 2 and not _waited():
 				return false
 			elif _sub == 2:
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "phase is DAY")
-				_check(_player.get("_night_mode") == false, "player day mode restored")
+				_check(_controller.is_night_mode() == false, "camera controller day mode restored")
 				_check(_count_mercenaries() == 0, "no mercenary actor during DAY")
 				_check(_roster.get_actor_count() == 0, "roster actor_count 0 during DAY")
 				_check(_spawner._enemies.size() == 0, "spawner _enemies empty during DAY")
@@ -577,7 +582,8 @@ func _process(_delta: float) -> bool:
 			elif _sub == 3 and not _waited():
 				return false
 			elif _sub == 3:
-				_check(_camera.position == Vector2.ZERO, "DAY: camera offset reset (follow restored)")
+				_check(_controller.global_position == _day_cam_pos, "DAY: camera position continuous (no jump on transition)")
+				_check(_camera.get_parent() == _controller, "DAY: camera owned by World Camera Controller (player-independent)")
 				_enter(Phase.NEXT_NIGHT)
 		Phase.NEXT_NIGHT:
 			if _sub == 0:
@@ -609,7 +615,7 @@ func _process(_delta: float) -> bool:
 					"player has no attack method")
 				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"),
 					"player excluded from combat groups")
-				_check(_player.get("_night_mode") == true, "player night mode active during NIGHT regression")
+				_check(_controller.is_night_mode() == true, "camera controller night mode active during NIGHT regression")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected")
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")

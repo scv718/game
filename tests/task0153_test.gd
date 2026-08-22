@@ -48,6 +48,7 @@ var _world: Node = null
 var _roster: Node = null
 var _resources: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _hud: Node = null
 var _tac = null
 var _mercenary: MercenaryData = null
@@ -130,6 +131,8 @@ func _process(_delta: float) -> bool:
 				_roster = root.get_node("MercenaryRoster")
 				_resources = root.get_node("VillageResources")
 				_player = root.get_node("Main").get_node("Player")
+				var ctrls := get_nodes_in_group("camera_controller")
+				_controller = ctrls[0] if ctrls.size() > 0 else null
 				_hud = root.get_node("Main").get_node("HUD")
 				_tac = _hud.get_node_or_null("TacticalCommandUI")
 				_check(_game_time != null and _world != null and _roster != null \
@@ -161,7 +164,7 @@ func _process(_delta: float) -> bool:
 				return false
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "phase is NIGHT")
-				_check(_player.get("_night_mode") == true, "player night mode active")
+				_check(_controller.is_night_mode() == true, "camera controller night mode active")
 				_enter(Phase.SPAWN_ACTOR)
 		Phase.SPAWN_ACTOR:
 			if _sub == 0:
@@ -298,7 +301,7 @@ func _process(_delta: float) -> bool:
 			if _sub == 0:
 				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
 				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), "player excluded from combat groups")
-				_check(_player.get("_night_mode") == true, "player night mode active during NIGHT")
+				_check(_controller.is_night_mode() == true, "camera controller night mode active during NIGHT")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
 				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact")

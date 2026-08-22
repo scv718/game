@@ -54,6 +54,7 @@ var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _mercenary: MercenaryData = null
 var _actor: Node = null
 var _gate: Node = null
@@ -161,6 +162,8 @@ func _process(_delta: float) -> bool:
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
 				_player = root.get_node("Main").get_node("Player")
+				var ctrls := get_nodes_in_group("camera_controller")
+				_controller = ctrls[0] if ctrls.size() > 0 else null
 				_check(_game_time != null and _world != null and _placement != null \
 					and _spawner != null and _roster != null and _worker_roster != null \
 					and _resources != null and _player != null, "core nodes present")
@@ -207,7 +210,7 @@ func _process(_delta: float) -> bool:
 				return false
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "phase is NIGHT")
-				_check(_player.get("_night_mode") == true, "player night mode active (movement disabled)")
+				_check(_controller.is_night_mode() == true, "camera controller tactical mode (night mode active)")
 				_check(_count_mercenaries() == 1, "mercenary actor spawned at NIGHT (%d)" % _count_mercenaries())
 				_actor = _roster.get_actor("mercenary_A")
 				_check(_actor != null, "actor retrievable by id")
@@ -351,7 +354,7 @@ func _process(_delta: float) -> bool:
 				_check(_count_mercenaries() == 0, "no mercenary actor during DAY (%d)" % _count_mercenaries())
 				_check(_roster.get_actor_count() == 0, "roster actor_count 0 during DAY")
 				_check(_spawner._enemies.size() == 0, "spawner _enemies empty during DAY")
-				_check(_player.get("_night_mode") == false, "player night mode off at DAY")
+				_check(_controller.is_night_mode() == false, "camera controller day mode off at DAY")
 				_enter(Phase.NEXT_NIGHT)
 		Phase.NEXT_NIGHT:
 			if _sub == 0:
@@ -380,7 +383,7 @@ func _process(_delta: float) -> bool:
 			if _sub == 0:
 				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
 				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), "player excluded from combat groups")
-				_check(_player.get("_night_mode") == true, "player night mode active during NIGHT regression")
+				_check(_controller.is_night_mode() == true, "camera controller tactical mode during NIGHT regression")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected (%d)" % _worker_roster.get_count())
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")

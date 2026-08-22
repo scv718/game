@@ -35,6 +35,7 @@ var _failed := false
 var _game_time: Node = null
 var _world: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _camera: Camera2D = null
 var _placement: Node = null
 var _resources: Node = null
@@ -113,7 +114,9 @@ func _process(_delta: float) -> bool:
 			_game_time = root.get_node("GameTime")
 			_world = main.get_node("World")
 			_player = main.get_node("Player")
-			_camera = _player.get_node("Camera2D") as Camera2D
+			var ctrls := get_nodes_in_group("camera_controller")
+			_controller = ctrls[0] if ctrls.size() > 0 else null
+			_camera = _controller.get_camera() as Camera2D if _controller else null
 			_placement = main.get_node("BuildingPlacement")
 			_resources = root.get_node("VillageResources")
 			_hud = main.get_node("HUD")
@@ -134,7 +137,7 @@ func _process(_delta: float) -> bool:
 		TestPhase.INIT_DAY:
 			_check(_game_time != null, "GameTime autoload exists")
 			_check(_player != null, "Player exists")
-			_check(_camera != null, "Player Camera2D exists")
+			_check(_camera != null, "World Camera2D exists")
 			_check(_hud != null, "HUD exists")
 			_check(_daytime_label != null, "DayTimeLabel exists")
 			_check(_miner != null, "miner worker exists")
@@ -142,20 +145,22 @@ func _process(_delta: float) -> bool:
 			_check(_deposit != null, "stone deposit exists")
 			_check(_game_time.get_phase() == _game_time.Phase.DAY, "game starts in DAY")
 			_check(_game_time.get_day_number() == 1, "day number starts at 1")
-			_check(_player._night_mode == false, "player starts in DAY (direct control)")
-			_check(_zoom_near(_player.day_zoom), "camera starts at day_zoom (%.2f)" % _camera.zoom.x)
+			_check(not _controller.is_night_mode(), "camera controller starts in DAY (camera pan mode)")
+			_check(_zoom_near(_controller.day_zoom), "camera starts at day_zoom (%.2f)" % _camera.zoom.x)
 			_check(_camera.zoom.x == _camera.zoom.y, "camera zoom uniform")
 			_check(_label_matches("DAY 1"), "HUD label starts with DAY 1 (text=%s)" % (_daytime_label.text if _daytime_label else "null"))
 			_enter(TestPhase.DAY_START)
 		TestPhase.DAY_START:
 			if not _step_done:
 				_step_done = true
+				_controller.global_position = Vector2.ZERO
 				_player.global_position = Vector2.ZERO
-				_start_x = _player.global_position.x
+				_start_x = _controller.global_position.x
 				_hold_move("move_right")
 			if _elapsed() >= MOVE_WAIT_FRAMES:
 				_release_move("move_right")
-				_check(_player.global_position.x > _start_x, "DAY: player can move (direct control)")
+				_check(_controller.global_position.x > _start_x, "DAY: camera pans (WASD = camera pan)")
+				_check(_player.global_position == Vector2.ZERO, "DAY: player stays stationary")
 				_player.global_position = Vector2.ZERO
 				_enter(TestPhase.TO_NIGHT)
 		TestPhase.TO_NIGHT:
@@ -165,21 +170,23 @@ func _process(_delta: float) -> bool:
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "DAY -> NIGHT transition")
 				_check(_game_time.get_day_number() == 1, "day number stays 1 during NIGHT")
-				_check(_player._night_mode == true, "NIGHT: player direct movement disabled (flag)")
+				_check(_controller.is_night_mode(), "NIGHT: camera controller tactical mode")
 				_enter(TestPhase.NIGHT_CHECK)
 		TestPhase.NIGHT_CHECK:
 			if not _step_done:
 				_step_done = true
+				_controller.global_position = Vector2.ZERO
 				_player.global_position = Vector2.ZERO
-				_start_x = _player.global_position.x
+				_start_x = _controller.global_position.x
 				_hold_move("move_right")
 			if _elapsed() >= MOVE_WAIT_FRAMES:
 				_release_move("move_right")
-				_check(_player.global_position.x == _start_x, "NIGHT: player does not move (input disabled)")
+				_check(_controller.global_position.x > _start_x, "NIGHT: tactical camera pans (WASD = tactical camera pan)")
+				_check(_player.global_position == Vector2.ZERO, "NIGHT: player entity stays stationary")
 				_enter(TestPhase.NIGHT_ZOOM)
 		TestPhase.NIGHT_ZOOM:
 			if _elapsed() >= ZOOM_WAIT_FRAMES:
-				_check(_zoom_near(_player.night_zoom), "NIGHT: camera converges to night_zoom (%.2f)" % _camera.zoom.x)
+				_check(_zoom_near(_controller.night_zoom), "NIGHT: camera converges to night_zoom (%.2f)" % _camera.zoom.x)
 				_enter(TestPhase.DAY2)
 		TestPhase.DAY2:
 			if not _step_done:
@@ -188,23 +195,25 @@ func _process(_delta: float) -> bool:
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.DAY, "NIGHT -> DAY transition")
 				_check(_game_time.get_day_number() == 2, "day number increments to 2 (day=%d)" % _game_time.get_day_number())
-				_check(_player._night_mode == false, "DAY: direct control restored")
+				_check(not _controller.is_night_mode(), "DAY: camera controller day mode restored")
 				_check(_label_matches("DAY 2"), "HUD label reflects DAY 2 (text=%s)" % (_daytime_label.text if _daytime_label else "null"))
 				_enter(TestPhase.DAY2_CHECK)
 		TestPhase.DAY2_CHECK:
 			if not _step_done:
 				_step_done = true
+				_controller.global_position = Vector2.ZERO
 				_player.global_position = Vector2.ZERO
-				_start_x = _player.global_position.x
+				_start_x = _controller.global_position.x
 				_hold_move("move_right")
 			if _elapsed() >= MOVE_WAIT_FRAMES:
 				_release_move("move_right")
-				_check(_player.global_position.x > _start_x, "DAY again: player movement restored")
+				_check(_controller.global_position.x > _start_x, "DAY again: camera pans (control restored)")
+				_check(_player.global_position == Vector2.ZERO, "DAY again: player stays stationary")
 				_player.global_position = Vector2.ZERO
 				_enter(TestPhase.DAY2_ZOOM)
 		TestPhase.DAY2_ZOOM:
 			if _elapsed() >= ZOOM_WAIT_FRAMES:
-				_check(_zoom_near(_player.day_zoom), "DAY again: camera returns to day_zoom (%.2f)" % _camera.zoom.x)
+				_check(_zoom_near(_controller.day_zoom), "DAY again: camera returns to day_zoom (%.2f)" % _camera.zoom.x)
 				_enter(TestPhase.PRODUCE_ASSIGN)
 		TestPhase.PRODUCE_ASSIGN:
 			if _frame % 2 == 0:
@@ -242,7 +251,7 @@ func _process(_delta: float) -> bool:
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "transitioned into NIGHT (cycle 2)")
 				_check(_game_time.get_day_number() == 2, "day number stays 2 during NIGHT (cycle 2)")
-				_check(_player._night_mode == true, "NIGHT: movement disabled again (cycle 2)")
+				_check(_controller.is_night_mode(), "NIGHT: tactical camera mode active (cycle 2)")
 				_check(is_instance_valid(_lumberjack.get_workplace()), "lumberjack workplace ref stable across transition")
 				_check(is_instance_valid(_miner.get_workplace()), "miner workplace ref stable across transition")
 				for t in get_nodes_in_group("interactable"):
@@ -278,7 +287,7 @@ func _process(_delta: float) -> bool:
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.DAY, "NIGHT -> DAY transition (cycle 3)")
 				_check(_game_time.get_day_number() == 3, "day number increments to 3 (day=%d)" % _game_time.get_day_number())
-				_check(_player._night_mode == false, "DAY: direct control restored (cycle 3)")
+				_check(not _controller.is_night_mode(), "DAY: camera controller day mode restored (cycle 3)")
 				_check(_label_matches("DAY 3"), "HUD label reflects DAY 3 (text=%s)" % (_daytime_label.text if _daytime_label else "null"))
 				for t in get_nodes_in_group("interactable"):
 					if not t.can_interact():
@@ -295,7 +304,7 @@ func _process(_delta: float) -> bool:
 				_check(stone >= _stone_before + 3, "DAY return: miner resumes production (+%d)" % (stone - _stone_before))
 				_check(wood > _wood_before, "DAY return: lumberjack resumes production (+%d)" % (wood - _wood_before))
 				_check(_game_time.get_phase() == _game_time.Phase.DAY, "production happened during DAY")
-				_check(_player._night_mode == false, "player direct control active during DAY production")
+				_check(not _controller.is_night_mode(), "camera controller day mode during DAY production")
 				_check(is_instance_valid(_lumberjack.get_workplace()), "lumberjack workplace stable across full cycle")
 				_check(is_instance_valid(_miner.get_workplace()), "miner workplace stable across full cycle")
 				_enter(TestPhase.UI_SYNC)
@@ -325,7 +334,7 @@ func _process(_delta: float) -> bool:
 			_check(get_nodes_in_group("lumberyards").size() >= 1, "lumberyard built during integration")
 			_check(get_nodes_in_group("quarries").size() >= 1, "quarry built during integration")
 			_check(_game_time.get_phase() == _game_time.Phase.DAY, "final state is DAY")
-			_check(_player._night_mode == false, "final state direct control restored")
+			_check(not _controller.is_night_mode(), "final state camera controller day mode")
 			_enter(TestPhase.DONE)
 		TestPhase.DONE:
 			_finish()

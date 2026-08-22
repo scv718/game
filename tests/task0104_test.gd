@@ -36,6 +36,7 @@ var _game_time: Node = null
 var _world: Node = null
 var _layout: Node = null
 var _player: Node = null
+var _controller: Node = null
 var _placement: Node = null
 var _resources: Node = null
 var _lumberjack: Node = null
@@ -94,6 +95,8 @@ func _process(_delta: float) -> bool:
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
 			_player = main.get_node("Player")
+			var ctrls := get_nodes_in_group("camera_controller")
+			_controller = ctrls[0] if ctrls.size() > 0 else null
 			_placement = main.get_node("BuildingPlacement")
 			_resources = root.get_node("VillageResources")
 			_miner = (load("res://scenes/miner.tscn") as PackedScene).instantiate()
@@ -120,17 +123,18 @@ func _process(_delta: float) -> bool:
 			_check(_lumberjack != null, "lumberjack worker exists")
 			_check(_deposit != null, "stone deposit exists")
 			_check(_game_time.get_phase() == _game_time.Phase.DAY, "game starts in DAY")
-			_check(_player._night_mode == false, "player starts in DAY (direct control)")
+			_check(not _controller.is_night_mode(), "camera controller starts in DAY (camera pan mode)")
 			_enter(Phase.DAY_MOVE)
 		Phase.DAY_MOVE:
 			if not _step_done:
 				_step_done = true
+				_controller.global_position = Vector2.ZERO
 				_player.global_position = Vector2.ZERO
-				_start_x = _player.global_position.x
+				_start_x = _controller.global_position.x
 				Input.action_press("move_right")
 			if _elapsed() >= 120:
 				Input.action_release("move_right")
-				_check(_player.global_position.x > _start_x, "DAY: player can move (direct control)")
+				_check(_controller.global_position.x > _start_x, "DAY: camera pans (WASD = camera pan)")
 				_player.global_position = Vector2.ZERO
 				_enter(Phase.BUILD)
 		Phase.BUILD:
@@ -183,7 +187,7 @@ func _process(_delta: float) -> bool:
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "transitioned into NIGHT")
 				_check(_game_time.get_day_number() == 1, "day number stays 1 during NIGHT")
-				_check(_player._night_mode == true, "NIGHT: player direct movement disabled")
+				_check(_controller.is_night_mode(), "NIGHT: camera controller tactical mode")
 				_check(is_instance_valid(_lumberjack.get_workplace()), "lumberjack workplace ref stable across transition")
 				_check(is_instance_valid(_miner.get_workplace()), "miner workplace ref stable across transition")
 				# DAY 동안 lumberjack이 반경 내 나무를 모두 벌목해 STUMP 상태일 수 있으므로,
@@ -233,7 +237,7 @@ func _process(_delta: float) -> bool:
 			if _elapsed() >= 4:
 				_check(_game_time.get_phase() == _game_time.Phase.DAY, "NIGHT -> DAY transition")
 				_check(_game_time.get_day_number() == 2, "day number increments to 2")
-				_check(_player._night_mode == false, "DAY: direct control restored")
+				_check(not _controller.is_night_mode(), "DAY: camera controller day mode restored")
 				for t in get_nodes_in_group("interactable"):
 					if not t.can_interact():
 						t.regrow_time = 0.2

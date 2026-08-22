@@ -12,6 +12,7 @@ var _failed := false
 var _world: Node = null
 var _layout: Node = null
 var _player: Node = null
+var _controller: Node = null
 
 
 func _check(cond: bool, msg: String) -> void:
@@ -46,6 +47,10 @@ func _process(_delta: float) -> bool:
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
 			_player = main.get_node("Player")
+			var ctrls := get_nodes_in_group("camera_controller")
+			_controller = ctrls[0] if ctrls.size() > 0 else null
+			if _controller != null:
+				_controller.day_pan_speed = 2000.0
 			_enter(Phase.STRUCTURE)
 		Phase.STRUCTURE:
 			_check(_layout != null, "MapLayout node exists")
@@ -108,35 +113,35 @@ func _process(_delta: float) -> bool:
 		Phase.BOUNDARY_NORTH:
 			if _frame % 2 == 0:
 				return false
-			_player.global_position = Vector2(0, -980)
+			_controller.global_position = Vector2.ZERO
 			Input.action_press("move_up")
 			_enter(Phase.BOUNDARY_NORTH_WAIT)
 		Phase.BOUNDARY_NORTH_WAIT:
-			if _elapsed() >= 60:
+			if _elapsed() >= 200:
 				Input.action_release("move_up")
-				var pos: Vector2 = _player.global_position
-				_check(pos.y <= -980, "player actually moves north (y=%s)" % str(pos.y))
-				_check(pos.y >= -990, "player blocked inside north boundary (y=%s)" % str(pos.y))
-				_check(_layout.is_in_bounds(pos), "player remains inside map bounds (north)")
-				_player.global_position = Vector2(0, 980)
+				var pos: Vector2 = _controller.global_position
+				_check(pos.y <= -980, "DAY: camera actually pans north (y=%s)" % str(pos.y))
+				_check(pos.y >= -1030.0, "DAY: camera clamped inside north boundary (y=%s)" % str(pos.y))
+				_check(absf(pos.y) <= 1024.0 + 0.01, "camera remains inside map bounds (north)")
+				_controller.global_position = Vector2.ZERO
 				Input.action_press("move_down")
 				_enter(Phase.BOUNDARY_SOUTH_WAIT)
 		Phase.BOUNDARY_SOUTH_WAIT:
-			if _elapsed() >= 60:
+			if _elapsed() >= 200:
 				Input.action_release("move_down")
-				var pos: Vector2 = _player.global_position
-				_check(pos.y >= 980, "player actually moves south (y=%s)" % str(pos.y))
-				_check(pos.y <= 990, "player blocked inside south boundary (y=%s)" % str(pos.y))
-				_check(_layout.is_in_bounds(pos), "player remains inside map bounds (south)")
-				_player.global_position = Vector2.ZERO
+				var pos: Vector2 = _controller.global_position
+				_check(pos.y >= 980, "DAY: camera actually pans south (y=%s)" % str(pos.y))
+				_check(pos.y <= 1030.0, "DAY: camera clamped inside south boundary (y=%s)" % str(pos.y))
+				_check(absf(pos.y) <= 1024.0 + 0.01, "camera remains inside map bounds (south)")
+				_controller.global_position = Vector2.ZERO
 				Input.action_press("move_right")
 				_enter(Phase.WALK_OUTSKIRTS)
 		Phase.WALK_OUTSKIRTS:
-			if _elapsed() >= 240:
+			if _elapsed() >= 120:
 				Input.action_release("move_right")
-				var pos: Vector2 = _player.global_position
-				_check(pos.x >= 180, "player can actually walk from center toward outskirts (x=%s pf=%d)" % [str(pos.x), _pf])
-				_check(_layout.is_in_bounds(pos), "player stays inside bounds while walking")
+				var pos: Vector2 = _controller.global_position
+				_check(pos.x >= 180, "DAY: camera pans from center toward outskirts (x=%s)" % str(pos.x))
+				_check(absf(pos.x) <= 1024.0 + 0.01, "camera stays inside bounds while panning")
 				_enter(Phase.OUTSKIRTS)
 		Phase.OUTSKIRTS:
 			if _frame % 2 == 0:
