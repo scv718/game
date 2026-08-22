@@ -784,7 +784,9 @@
 
 ### TASK-MAP-002-3 World Map 통합 검증
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족, 85 assertions headless PASS 확인. world_to_map/map_to_world 좌표 변환 정확, camera overlay block 정상, Tactical Command state 보존 정상, 기존 시스템 회귀 정상. 코드 스타일과 기존 테스트 패턴과 일관. assertion 수 사소한 불일치(78→85)만 존재하나 검증 목적에 영향 없음. HUMAN_CHECK만 남으면 DONE 가능.
+- 피드백: 78개 assertion 전부 PASS. DAY map open/close, landmark 표시(9개 상수 accessible + 4방향 Gate/Portal/Dungeon/Stone/Forest/Agriculture/Royal Road 매핑), camera viewport rect 표시, camera pan/zoom 정상, NIGHT map open/close/toggle, Tactical Command UI state 보존(버튼 10개 존재), DAY 복귀 후 map 정상, 반복 DAY/NIGHT cycle 중복/stale reference 0건, 기존 시스템 회귀(camera/world_selection/building_placement/core_buildings/floor) 통과. headless 테스트 스위트 실행.
 
 - 시나리오:
 
