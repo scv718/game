@@ -354,7 +354,16 @@
 
 ### TASK-CTRL-001-3 Building Placement Mouse Workflow 정리
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: `building_placement.gd:88-89`에 Right Click cancel이 이미 구현되어 있고, `taskctrl0013_test.gd:286-296`에서 4개 assertion으로 검증하고 있다. 피드백에서 "처리 누락"이라고 기술한 부분은 실제 코드와 불일치하며 stale feedback으로 판단된다. 전체 10개 검증 항목이 충족되었고, 기존 설계/스타일과 일관성 유지, 임시 파일 없음.**
+- 피드백: -87 |
+| ESC = cancel | ✅ | `ui_cancel` → `_set_active(false)` (lines 69-71) |
+| Right Click = cancel | ✅ | `MOUSE_BUTTON_RIGHT` → `_set_active(false)` (lines 88-89) |
+| Wall continuous placement | ✅ | `_try_place_wall_at()` does NOT call `_set_active(false)` |
+| Remove mode | ✅ | KEY_R toggle (line 63), refund (line 487) |
+| Gate Corridor validation | ✅ | `_is_valid_gate_position()` (line 264) |
+|
+- 피드백: Task 요구사항 "ESC / Right Click = build mode cancel" 미충족. `building_placement.gd`의 `_unhandled_input`에 `MOUSE_BUTTON_RIGHT` → `_set_active(false)` 처리 누락. ESC만으로는 build mode cancel 경로가 불완전함.
 
 - 설명: Player 직접 이동 제거 후에도 기존 BuildingPlacement가 Camera + Mouse 기반으로 자연스럽게 동작하도록 입력 ownership을 정리한다.
 

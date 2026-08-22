@@ -69,18 +69,25 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_cancel"):
 		if _active:
 			_set_active(false)
-	elif event is InputEventMouseButton and event.pressed \
-			and event.button_index == MOUSE_BUTTON_LEFT and _active:
-		if _remove_mode:
-			_try_remove_wall_at(_snap(get_global_mouse_position()))
-		elif _building_type == "quarry":
-			_try_place_quarry_at(get_global_mouse_position())
-		elif _building_type == "wall":
-			_try_place_wall_at(_snap(get_global_mouse_position()))
-		elif _building_type == "gate":
-			_try_place_gate_at(_snap_gate(get_global_mouse_position()))
-		else:
-			_try_place_at(_snap(get_global_mouse_position()))
+	elif event is InputEventMouseButton and event.pressed and _active:
+		# TASK-CTRL-001-3: Build mode가 활성인 동안 mouse click은 건설 mode가 소유한다.
+		# Right Click = build mode cancel (ESC와 동일하게 contextual mode 취소).
+		# 배치 후에도 같은 click이 WorldSelection 등으로 전파돼 건물 선택/UI가
+		# 동시에 실행되는 이중 동작을 막기 위해 handled로 처리한다.
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if _remove_mode:
+				_try_remove_wall_at(_snap(get_global_mouse_position()))
+			elif _building_type == "quarry":
+				_try_place_quarry_at(get_global_mouse_position())
+			elif _building_type == "wall":
+				_try_place_wall_at(_snap(get_global_mouse_position()))
+			elif _building_type == "gate":
+				_try_place_gate_at(_snap_gate(get_global_mouse_position()))
+			else:
+				_try_place_at(_snap(get_global_mouse_position()))
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			_set_active(false)
+		get_viewport().set_input_as_handled()
 
 
 func _process(_delta: float) -> void:
