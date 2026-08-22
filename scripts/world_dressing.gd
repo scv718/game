@@ -50,19 +50,27 @@ func _draw() -> void:
 	_draw_village_ground()
 	if composition_phase >= 3:
 		_draw_west_region()
+		_draw_west_outer()
 	if composition_phase >= 4:
 		_draw_north_region()
+		_draw_north_outer()
 		_draw_east_region()
+		_draw_east_outer()
 		_draw_south_region()
+		_draw_south_outer()
 	if composition_phase >= 5:
 		_draw_resource_regions()
+		_draw_outer_wild_corners()
 	_draw_village_props()
 	if composition_phase >= 3:
 		_draw_west_props()
+		_draw_west_outer_props()
 	if composition_phase >= 4:
 		_draw_north_props()
 		_draw_east_props()
 		_draw_south_props()
+		_draw_east_outer_props()
+		_draw_south_outer_props()
 
 
 func _draw_village_ground() -> void:
@@ -248,6 +256,188 @@ func _draw_south_props() -> void:
 	_draw_crate(Vector2(400, 605), 12.0)
 
 
+func _draw_west_outer() -> void:
+	# Scattered corruption remnants fading toward the western map edge.
+	# These extend the dark atmosphere without creating a solid wall.
+	for p in [
+		Vector2(-1160, -700), Vector2(-1280, -400), Vector2(-1200, -150),
+		Vector2(-1320, 200), Vector2(-1180, 500), Vector2(-1340, 750),
+	]:
+		draw_circle(p, 28.0 + randf() * 16.0, Color(0.18, 0.14, 0.18, 0.35))
+	# Faded corruption trails -- thin dark smudges suggesting past portal influence.
+	for pair in [
+		[Vector2(-1140, -600), Vector2(-1260, -520)],
+		[Vector2(-1160, 100), Vector2(-1300, 180)],
+		[Vector2(-1140, 600), Vector2(-1280, 680)],
+	]:
+		draw_line(pair[0], pair[1], Color(0.15, 0.12, 0.15, 0.25), 18.0, false)
+	# Scattered debris crosses -- ruins of old defenses.
+	for p in [
+		Vector2(-1200, -300), Vector2(-1340, 50), Vector2(-1240, 400),
+		Vector2(-1380, 680), Vector2(-1160, -850),
+	]:
+		draw_line(p - Vector2(6, 5), p + Vector2(6, 5), INK, 2.5, false)
+		draw_line(p + Vector2(5, -6), p - Vector2(5, 6), INK, 2.5, false)
+	# Dark ground smudges near the portal approach extension.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-1120, -200), Vector2(-1400, -250), Vector2(-1380, -80),
+		Vector2(-1120, -40),
+	]), Color(0.14, 0.11, 0.14, 0.22))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-1120, 300), Vector2(-1380, 260), Vector2(-1400, 450),
+		Vector2(-1120, 500),
+	]), Color(0.14, 0.11, 0.14, 0.18))
+
+
+func _draw_west_outer_props() -> void:
+	# Scattered broken cart remnants and ruined wall fragments in the outer west.
+	for p in [Vector2(-1220, -500), Vector2(-1360, 300)]:
+		draw_rect(Rect2(p - Vector2(12, 6), Vector2(20, 12)), Color("3a2c24"))
+		draw_circle(p + Vector2(-8, 7), 5.0, INK, false, 2.0)
+	_draw_ruined_wall(Vector2(-1180, -80), Vector2(-1180, -40), 2)
+	_draw_ruined_wall(Vector2(-1320, 600), Vector2(-1320, 640), 2)
+
+
+func _draw_north_outer() -> void:
+	# Rocky slope extending the mountain toward the northern map edge.
+	var outer_slope := PackedVector2Array([
+		Vector2(-500, -1400), Vector2(480, -1400), Vector2(420, -1200),
+		Vector2(200, -1120), Vector2(-200, -1120), Vector2(-420, -1200),
+	])
+	draw_colored_polygon(outer_slope, Color(0.30, 0.34, 0.31, 0.30))
+	# Scattered boulders along the outer slope.
+	for p in [
+		Vector2(-380, -1300), Vector2(-150, -1340), Vector2(100, -1320),
+		Vector2(320, -1280), Vector2(-300, -1180), Vector2(250, -1180),
+	]:
+		draw_circle(p, 10.0 + randf() * 8.0, Color(0.42, 0.46, 0.40, 0.45))
+	# Thin rocky ridge lines suggesting mountain creases.
+	for pair in [
+		[Vector2(-400, -1280), Vector2(-200, -1260)],
+		[Vector2(100, -1300), Vector2(350, -1240)],
+		[Vector2(-100, -1160), Vector2(150, -1140)],
+	]:
+		draw_line(pair[0], pair[1], Color(0.38, 0.42, 0.37, 0.35), 6.0, false)
+	# Small rift echo near the northern edge -- faint purple arcs.
+	draw_arc(Vector2(-180, -1380), 16.0, 0.0, TAU, 12, Color("60306f"), 4.0, false)
+	draw_arc(Vector2(-180, -1380), 9.0, 0.0, TAU, 10, Color("bd65d5"), 2.0, false)
+
+
+func _draw_east_outer() -> void:
+	# Royal Road continuation toward the eastern map edge with diminishing detail.
+	var road_end := PackedVector2Array([
+		Vector2(1120, -125), Vector2(1400, -185), Vector2(1400, -145),
+		Vector2(1120, -50),
+	])
+	draw_colored_polygon(road_end, Color(0.70, 0.64, 0.45, 0.22))
+	# Road lines thinning toward the horizon.
+	draw_line(Vector2(1120, -125), Vector2(1400, -185), Color(0.77, 0.68, 0.48, 0.40), 4.0, false)
+	draw_line(Vector2(1120, -50), Vector2(1400, -145), Color(0.77, 0.68, 0.48, 0.40), 4.0, false)
+	# Sparse cobbles continuing the rhythm.
+	for i in range(1140, 1380, 52):
+		var t := float(i - 580) / 820.0
+		var p := Vector2(i, lerpf(0.0, -165.0, t))
+		draw_circle(p, 3.0, Color("d8c796", 0.50))
+	# Milestone markers along the outer road.
+	for x in [1180.0, 1320.0]:
+		_draw_stone_post(Vector2(x, -90.0 - (x - 1180.0) * 0.35))
+	# Horizon fade apron at the very edge.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(1360, -210), Vector2(1480, -230), Vector2(1480, 20),
+		Vector2(1360, -30),
+	]), Color(0.70, 0.64, 0.45, 0.15))
+
+
+func _draw_east_outer_props() -> void:
+	# Small bushes dotting the outer roadside.
+	for p in [Vector2(1180, -150), Vector2(1320, -190)]:
+		pass  # sprites added in _build_sprite_props
+
+
+func _draw_south_outer() -> void:
+	# Extended production fields stretching toward the southern map edge.
+	draw_rect(Rect2(-400, 740, 280, 200), Color(0.48, 0.52, 0.26, 0.60))
+	draw_rect(Rect2(-60, 760, 200, 180), Color(0.36, 0.50, 0.27, 0.55))
+	draw_rect(Rect2(180, 720, 260, 220), Color(0.55, 0.46, 0.24, 0.48))
+	# Crop row hatching in the extended fields.
+	for x in range(-380, -120, 20):
+		draw_line(Vector2(x, 760), Vector2(x + 6, 920), Color("bd9650"), 3.0)
+	for y in range(780, 924, 18):
+		draw_line(Vector2(-48, y), Vector2(108, y), Color("76a34e"), 3.0)
+	for x in range(196, 428, 22):
+		draw_line(Vector2(x, 740), Vector2(x - 8, 920), Color("b58b46"), 2.5)
+	# Herb garden patches -- lighter green rectangles.
+	draw_rect(Rect2(-320, 980, 160, 100), Color(0.42, 0.62, 0.34, 0.40))
+	draw_rect(Rect2(80, 1000, 140, 80), Color(0.38, 0.58, 0.30, 0.35))
+	# Fence lines bounding the outer fields.
+	_draw_fence(Vector2(-408, 724), Vector2(-112, 724), 12)
+	_draw_fence(Vector2(172, 704), Vector2(448, 704), 11)
+	_draw_fence(Vector2(-408, 950), Vector2(-116, 950), 12)
+	_draw_fence(Vector2(172, 950), Vector2(448, 950), 11)
+
+
+func _draw_south_outer_props() -> void:
+	# Crates and sacks scattered along the outer production edge.
+	_draw_crate(Vector2(-280, 940), 12.0)
+	_draw_crate(Vector2(300, 930), 10.0)
+	_draw_sack(Vector2(-140, 960))
+	_draw_sack(Vector2(200, 970))
+	_draw_sign(Vector2(50, 968), Vector2(0.5, 0.8))
+
+
+func _draw_outer_wild_corners() -> void:
+	# NW corner: dark, withered remnants suggesting old corruption.
+	var nw := OUTER_WILD_slot_rect("nw")
+	if nw.size != Vector2.ZERO:
+		draw_colored_polygon(PackedVector2Array([
+			nw.position, nw.position + Vector2(nw.size.x, 0),
+			nw.position + nw.size, nw.position + Vector2(0, nw.size.y),
+		]), Color(0.16, 0.14, 0.16, 0.12))
+		for p in [nw.position + Vector2(40, 50), nw.position + Vector2(120, 90), nw.position + Vector2(80, 140)]:
+			draw_circle(p, 6.0, Color(0.20, 0.16, 0.20, 0.20))
+	# NE corner: sparse rocky ground.
+	var ne := OUTER_WILD_slot_rect("ne")
+	if ne.size != Vector2.ZERO:
+		draw_colored_polygon(PackedVector2Array([
+			ne.position, ne.position + Vector2(ne.size.x, 0),
+			ne.position + ne.size, ne.position + Vector2(0, ne.size.y),
+		]), Color(0.44, 0.42, 0.36, 0.10))
+		for p in [ne.position + Vector2(50, 60), ne.position + Vector2(130, 120)]:
+			draw_circle(p, 5.0, Color("75817b", 0.25))
+	# SW corner: overgrown thicket suggestion.
+	var sw := OUTER_WILD_slot_rect("sw")
+	if sw.size != Vector2.ZERO:
+		draw_colored_polygon(PackedVector2Array([
+			sw.position, sw.position + Vector2(sw.size.x, 0),
+			sw.position + sw.size, sw.position + Vector2(0, sw.size.y),
+		]), Color(0.14, 0.30, 0.18, 0.10))
+		for p in [sw.position + Vector2(60, 40), sw.position + Vector2(120, 100), sw.position + Vector2(40, 130)]:
+			draw_circle(p, 7.0, Color(0.18, 0.34, 0.22, 0.15))
+	# SE corner: quarry-like rocky ground.
+	var se := OUTER_WILD_slot_rect("se")
+	if se.size != Vector2.ZERO:
+		draw_colored_polygon(PackedVector2Array([
+			se.position, se.position + Vector2(se.size.x, 0),
+			se.position + se.size, se.position + Vector2(0, se.size.y),
+		]), Color(0.48, 0.43, 0.35, 0.12))
+		for p in [se.position + Vector2(50, 70), se.position + Vector2(110, 110)]:
+			draw_circle(p, 6.0, Color("75817b", 0.20))
+
+
+func OUTER_WILD_slot_rect(id: String) -> Rect2:
+	# Access world_map constants without a node reference.
+	match id:
+		"nw":
+			return Rect2(-1500, -1500, 180, 180)
+		"ne":
+			return Rect2(1320, -1500, 180, 180)
+		"sw":
+			return Rect2(-1500, 1320, 180, 180)
+		"se":
+			return Rect2(1320, 1320, 180, 180)
+	return Rect2()
+
+
 func _draw_resource_regions() -> void:
 	# Forest floors are tinted differently so the three wood regions read as places.
 	draw_colored_polygon(PackedVector2Array([
@@ -287,6 +477,12 @@ func _build_sprite_props() -> void:
 			_add_rock(item[0], item[1], item[2])
 		for item in [[Vector2(-922, 250), 0], [Vector2(-796, 202), 2], [Vector2(-860, -176), 3]]:
 			_add_stump(item[0], item[1], 0.34)
+		# Outer west debris rocks.
+		for item in [
+			[Vector2(-1200, -350), 2, 0.40], [Vector2(-1340, 100), 0, 0.36],
+			[Vector2(-1260, 550), 3, 0.38],
+		]:
+			_add_rock(item[0], item[1], item[2])
 	if composition_phase >= 4:
 		# North mountain walls leave a broad vertical combat/readability lane.
 		for item in [
@@ -299,6 +495,17 @@ func _build_sprite_props() -> void:
 		for p in [Vector2(684, -120), Vector2(774, -148), Vector2(890, -182), Vector2(1010, -204)]:
 			_add_bush(p, 0, 0.30)
 		_add_sprite(SICKLE_SPRITE, Vector2(86, 590), 0.28)
+		# Outer east roadside bushes.
+		for item in [
+			[Vector2(1180, -150), 0, 0.26], [Vector2(1320, -190), 1, 0.24],
+		]:
+			_add_bush(item[0], item[1], item[2])
+		# Outer south field-edge bushes.
+		for item in [
+			[Vector2(-260, 950), 2, 0.28], [Vector2(310, 940), 0, 0.26],
+			[Vector2(-150, 1010), 1, 0.24], [Vector2(220, 1020), 3, 0.26],
+		]:
+			_add_bush(item[0], item[1], item[2])
 	if composition_phase >= 5:
 		for item in [
 			[Vector2(-636, -382), 2, 0.32], [Vector2(-582, -292), 0, 0.30],
@@ -315,6 +522,11 @@ func _build_sprite_props() -> void:
 			_add_rock(item[0], item[1], item[2])
 		for item in [[Vector2(-614, -508), 1], [Vector2(-712, 620), 3], [Vector2(-480, 614), 0]]:
 			_add_stump(item[0], item[1], 0.30)
+		# Outer south field-edge rocks.
+		for item in [
+			[Vector2(-350, 1060), 0, 0.44], [Vector2(380, 1050), 2, 0.42],
+		]:
+			_add_rock(item[0], item[1], item[2])
 
 
 func _add_bush(pos: Vector2, variant: int, size: float) -> void:

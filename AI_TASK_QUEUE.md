@@ -630,7 +630,8 @@
 
 ### TASK-MAP-001-4 Expanded World Visual Dressing
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족. 4방향 외곽 영역이 192×192 bounds 내에서 의도적으로 구성되었고, 기존 코드 스타일/패턴/헬퍼 함수를 일관되게 재사용하며, phase gating 정상, 임시 파일 없음, 테스트 13/13 PASS.
 
 - 설명: 192×192 확장으로 생긴 공간이 거대한 빈 grass field처럼 보이지 않도록 기존 World Visual Composition 규칙을 확장한다.
 
