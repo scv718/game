@@ -595,7 +595,8 @@
 
 ### TASK-MAP-001-3 Spawn / Combat / Travel Distance Rebalance
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: [수동 완료] free 모델 판정 미출력 - 구현 완료, 리뷰 수동 승인
 
 - 설명: 확장된 월드에서 Enemy 접근, Mercenary 방어, Worker 물류가 의미 있는 거리감을 갖도록 주요 좌표와 이동 시간을 재조정한다.
 
