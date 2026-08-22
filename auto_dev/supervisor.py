@@ -307,7 +307,7 @@ def run_reviewer(task, summary):
     extra = ["--file", os.path.join(cfg("project_dir"), cfg("queue_file"))]
     _, text, err = run_opencode(prompt, cfg("reviewer_model"), extra, cfg("reviewer_timeout_sec"))
     if err:
-        return None, "", err
+        return None, err
     return extract_verdict(text)
 
 

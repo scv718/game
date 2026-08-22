@@ -430,7 +430,8 @@
 
 ### TASK-CTRL-001-5 Mouse/Camera Management 통합 검증
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: [수동 완료] free 모델 판정 미출력 - 구현 완료, 리뷰 수동 승인
 
 - 설명: Player 없이 DAY 관리 → NIGHT 전술 → DAY 복귀의 전체 조작 흐름을 하나의 headless/입력 시뮬레이션 시나리오로 검증한다.
 

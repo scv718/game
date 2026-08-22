@@ -2,10 +2,10 @@
   "project_dir": "D:\\game",
   "queue_file": "AI_TASK_QUEUE.md",
   "opencode_exe": "C:\\Users\\skfnx\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe",
-  "implementer_model": "opencode-go/deepseek-v4-flash",
-  "reviewer_model": "opencode-go/mimo-v2.5",
+  "implementer_model": "opencode/mimo-v2.5-free",
+  "reviewer_model": "opencode/mimo-v2.5-free",
   "max_fix_rounds": 3,
   "implementer_timeout_sec": 7200,
-  "reviewer_timeout_sec": 2400,
+  "reviewer_timeout_sec": 3600,
   "log_dir": "logs"
 }
