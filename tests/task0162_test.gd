@@ -257,18 +257,14 @@ func _process(_delta: float) -> bool:
 		TestPhase.REGRESSION:
 			var main: Node = root.get_node("Main")
 			_check(main != null, "main.tscn intact")
-			_check(main.get_node("Player") != null and main.get_node("HUD") != null, "player/HUD intact")
+			_check(main.get_node("HUD") != null, "HUD intact")
+			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (no direct combat)")
 			var floor_node: TileMapLayer = main.get_node("World/Floor") as TileMapLayer
 			_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, \
 				"world floor intact (128x128)")
 			_check(root.get_node("VillageResources") != null, "VillageResources autoload intact")
 			_check(root.get_node("MercenaryRoster") != null, "MercenaryRoster autoload intact")
 			_check(root.get_node("FirstEncounterSpawner") != null, "FirstEncounterSpawner autoload intact")
-			var player: Node = main.get_node("Player")
-			_check(not player.has_method("attack") and not player.has_method("_attack"), \
-				"player has no attack method (no direct combat)")
-			_check(not player.is_in_group("enemies") and not player.is_in_group("mercenaries"), \
-				"player excluded from combat groups")
 			_check(get_nodes_in_group("ghosts").size() == 0, "no ghost actor spawned by DeathLedger")
 			_phase = TestPhase.DONE
 		TestPhase.DONE:

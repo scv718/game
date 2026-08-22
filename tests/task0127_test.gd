@@ -49,7 +49,6 @@ var _main: Node = null
 var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
-var _player: Node = null
 var _controller: Node = null
 var _placement: Node = null
 var _resources: Node = null
@@ -137,7 +136,6 @@ func _process(_delta: float) -> bool:
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			if _controller != null:
@@ -183,8 +181,8 @@ func _process(_delta: float) -> bool:
 			for t in CORE_TYPES:
 				_check(seen.has(t), "core type %s present" % t)
 
-			var player_pos: Vector2 = _player.global_position
-			_check(player_pos.distance_to(Vector2(0, 60)) <= 24.0, "Player Start near (0,+60) (%s)" % str(player_pos))
+			var start_pos := Vector2(0, 60)
+			_check(_layout.is_in_clearing(start_pos), "settlement start point (0,+60) inside clearing")
 
 			# Camera 이동 (중앙 마을) — WASD는 이제 Camera pan이다.
 			_controller.global_position = Vector2.ZERO
@@ -196,7 +194,6 @@ func _process(_delta: float) -> bool:
 				var x: float = _controller.global_position.x
 				_check(x > 90.0, "DAY: camera pans from center toward east outskirts (x=%s)" % str(x))
 				_check(absf(x) <= 1024.0 + 0.01, "camera stays inside map bounds while panning")
-				_player.global_position = Vector2(0, 60)
 
 				# Lumberyard placement
 				_resources._amounts["wood"] = 0

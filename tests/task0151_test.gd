@@ -47,7 +47,6 @@ var _failed := false
 
 var _game_time: Node = null
 var _world: Node = null
-var _player: Node = null
 var _controller: Node = null
 var _camera: Camera2D = null
 
@@ -127,11 +126,10 @@ func _process(_delta: float) -> bool:
 					return false
 				_game_time = root.get_node("GameTime")
 				_world = root.get_node("Main").get_node("World")
-				_player = root.get_node("Main").get_node("Player")
 				var ctrls := get_nodes_in_group("camera_controller")
 				_controller = ctrls[0] if ctrls.size() > 0 else null
 				_camera = _controller.get_camera() as Camera2D if _controller else null
-				_check(_game_time != null and _world != null and _player != null and _controller != null and _camera != null, "core nodes present (incl. CameraController)")
+				_check(_game_time != null and _world != null and _controller != null and _camera != null, "core nodes present (incl. CameraController)")
 				_check(_camera != null and _camera.get_parent() == _controller, "camera owned by World Camera Controller (not Player)")
 				if _game_time != null and _game_time.has_method("set_auto_advance"):
 					_game_time.set_auto_advance(false)
@@ -148,7 +146,6 @@ func _process(_delta: float) -> bool:
 				_check(_controller.global_position == Vector2.ZERO, "camera at world origin (independent of Player)")
 				_check(_zoom_near(_controller.day_zoom), "camera at day_zoom (%.2f)" % _camera.zoom.x)
 				_check(_camera.zoom.x == _camera.zoom.y, "camera zoom uniform")
-				_player.global_position = Vector2.ZERO
 				_sub = 1
 			elif _sub == 1:
 				_enter(Phase.DAY_MOVE)
@@ -160,7 +157,6 @@ func _process(_delta: float) -> bool:
 				if _pf - _start_pf < 60:
 					return false
 				release_all_actions()
-				_check(_player.global_position == Vector2.ZERO, "DAY: player entity does not move (WASD = camera pan)")
 				_check(_controller.global_position.x > 0.0, "DAY: camera pans right (x=%s)" % str(_controller.global_position.x))
 				_check(_camera.position == Vector2.ZERO, "DAY: camera offset stays zero (controller-centered)")
 				_sub = 2
@@ -202,7 +198,6 @@ func _process(_delta: float) -> bool:
 			elif _sub == 1:
 				_check(_game_time.get_phase() == GameTime.Phase.NIGHT, "DAY -> NIGHT transition")
 				_check(_controller.is_night_mode(), "NIGHT: camera controller tactical mode")
-				_player.global_position = Vector2.ZERO
 				_wait_frames(3)
 			elif _sub == 2 and not _waited():
 				return false
@@ -215,9 +210,7 @@ func _process(_delta: float) -> bool:
 			elif _sub == 1:
 				if _pf - _start_pf < PAN_HOLD_PF:
 					return false
-				var ppos: Vector2 = _player.global_position
 				var cpos: Vector2 = _controller.global_position
-				_check(ppos == Vector2.ZERO, "NIGHT: player entity does not move during pan (pos=%s)" % str(ppos))
 				_check(cpos.x > 100.0, "NIGHT: tactical camera pans right independently (x=%s)" % str(cpos.x))
 				_check(cpos.x > 0.0, "NIGHT: camera position accumulates (%.0f)" % cpos.x)
 				release_all_actions()
@@ -236,7 +229,6 @@ func _process(_delta: float) -> bool:
 				if _pf - _start_pf < REACH_HOLD_PF:
 					return false
 				_check(_camera_global().y <= -REACH_MARGIN, "NIGHT: camera reaches North Gate/Combat Field (y=%s)" % str(_camera_global().y))
-				_check(_player.global_position == Vector2.ZERO, "NIGHT: player still stationary while reaching north")
 				release_all_actions()
 				_pan_until("move_down")
 				_sub = 2
@@ -296,7 +288,6 @@ func _process(_delta: float) -> bool:
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "NIGHT -> DAY transition")
 				_check(not _controller.is_night_mode(), "DAY: camera controller day mode restored")
 				_check(_controller.global_position == _day_cam_pos, "DAY: camera position continuous (no jump on transition)")
-				_player.global_position = Vector2(0, 60)
 				_wait_frames(3)
 			elif _sub == 2 and not _waited():
 				return false
@@ -311,8 +302,7 @@ func _process(_delta: float) -> bool:
 				_enter(Phase.REGRESSION)
 		Phase.REGRESSION:
 			if _sub == 0:
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
-				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), "player excluded from combat groups")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
 				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")

@@ -259,16 +259,13 @@ func _process(_delta: float) -> bool:
 		TestPhase.REGRESSION:
 			if _sub == 0:
 				var main: Node = root.get_node("Main")
-				_check(main != null and main.get_node("Player") != null and main.get_node("HUD") != null, \
+				_check(main != null and main.get_node("HUD") != null, \
 					"main scene intact")
+				_check(get_nodes_in_group("player").size() == 0, \
+					"no runtime player Actor (no direct combat)")
 				_check(root.get_node("MercenaryRoster") != null \
 					and root.get_node("FirstEncounterSpawner") != null, \
 					"combat autoloads intact")
-				var player: Node = main.get_node("Player")
-				_check(not player.has_method("attack") and not player.has_method("_attack"), \
-					"player has no attack method (no direct combat)")
-				_check(not player.is_in_group("enemies") and not player.is_in_group("mercenaries"), \
-					"player excluded from combat groups")
 				_check(get_nodes_in_group("ghosts").size() == 0, \
 					"no ghost actor spawned (Ghost actual feature not implemented)")
 				_check(get_nodes_in_group("enemies").size() == 0, \

@@ -390,7 +390,15 @@
 
 ### TASK-CTRL-001-4 Player Avatar Dependency 제거
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든 요구사항 충족. Player 노드/파일 완전 제거, HUD 전환 정상, 31개 테스트 no-player 검증 패턴 일관, 런타임 dangling reference 0건, 기존 시스템 영향 없음. headless smoke PASS 확인. PLAYER_AVATAR 제거 Lock 10개 항목 전부 충족.
+- 구현 노트 (TASK-CTRL-001-4):
+  - `scenes/main.tscn`에서 Player 인스턴스/player.tscn ext_resource 제거 (runtime Player Actor 없음).
+  - `scripts/hud.gd` Player proximity prompt 제거 → WorldSelection.selection_changed 기반 마우스 컨텍스트 prompt 전환("E - " → "Click - "). `ui/hud.tscn` InteractLabel 기본 텍스트 갱신.
+  - 미사용 `scenes/player.tscn` / `scripts/player.gd` / `scripts/player.gd.uid` 안전 제거 (참조 0건 확인).
+  - GameTime/NIGHT Player movement disable 의존 없음 확인 (기존에 Player를 참조하지 않음).
+  - 테스트 41개 갱신: `_player` var/할당 제거, `player exists` assertion → `get_nodes_in_group("player").size() == 0` (Player 비전투 핵심 규칙 의도 유지), Player Start 좌표 assertion → Settlement Start (0,+60) clearing/axis 검증, task0134는 테스트 전용 CharacterBody2D physics probe fixture로 대체, task0144 enemy-probe는 정착지 중심 고정 좌표로 대체.
+  - 회귀: 전체 테스트 스위트 headless 실행. task0082/task0122는 HEAD 시점부터 존재하던 pre-existing 실패(settlement center grass / secondary path 시작점), taskctrl0013은 headless mouse-position 문제로 pre-existing 실패(HEAD 원복 후에도 동일). 그 외 전부 PASS.
 
 - 설명: Camera/Interaction/BuildingPlacement 전환 후 Player Actor와 Player-specific runtime 의존성을 제거한다.
 

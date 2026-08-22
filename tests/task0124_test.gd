@@ -442,8 +442,8 @@ func _verify_regression() -> void:
 	for t in CORE_TYPES:
 		_check(seen.has(t), "core type %s present" % t)
 
-	var player_pos: Vector2 = _main.get_node("Player").global_position
-	_check(player_pos.distance_to(Vector2(0, 60)) <= 24.0, "Player Start near (0,+60) (%s)" % str(player_pos))
+	var start_pos := Vector2(0, 60)
+	_check(_layout.is_in_clearing(start_pos), "settlement start point (0,+60) inside clearing")
 
 	var nav_map: RID = _world.get_world_2d().get_navigation_map()
 	var reachable := true

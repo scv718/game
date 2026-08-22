@@ -54,7 +54,6 @@ var _main: Node = null
 var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
-var _player: Node = null
 var _controller: Node = null
 var _placement: Node = null
 var _resources: Node = null
@@ -129,7 +128,6 @@ func _process(_delta: float) -> bool:
 			_world = main.get_node("World")
 			_layout = _world.get_node("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			_placement = main.get_node("BuildingPlacement")
@@ -210,7 +208,7 @@ func _process(_delta: float) -> bool:
 				Input.action_press("move_right")
 			if _elapsed() >= 120:
 				Input.action_release("move_right")
-				_check(_controller.global_position.x > _start_x, "NIGHT: tactical camera pans (player stays stationary)")
+				_check(_controller.global_position.x > _start_x, "NIGHT: tactical camera pans (tactical camera mode)")
 				var camera: Camera2D = _controller.get_camera() as Camera2D
 				_check(camera != null and camera.zoom.x < 0.7, "NIGHT: camera zoomed out (%.2f < 0.7)" % camera.zoom.x)
 				_check(_game_time.get_phase() == _game_time.Phase.NIGHT, "production runs during NIGHT without stop policy")

@@ -55,7 +55,6 @@ var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
 var _ledger: Node = null
-var _player: Node = null
 var _hud: Node = null
 
 var _mercenary: MercenaryData = null
@@ -201,11 +200,10 @@ func _process(_delta: float) -> bool:
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
 				_ledger = root.get_node("DeathLedger")
-				_player = root.get_node("Main").get_node("Player")
 				_hud = root.get_node("Main").get_node("HUD")
 				_check(_game_time != null and _world != null and _placement != null \
 					and _spawner != null and _roster != null and _worker_roster != null \
-					and _resources != null and _ledger != null and _player != null and _hud != null,
+					and _resources != null and _ledger != null and _hud != null,
 					"core autoloads + world + hud present")
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "scenario starts in DAY")
 				_check(_ledger.get_all_records().size() == 0, "DeathLedger starts empty")
@@ -516,12 +514,10 @@ func _process(_delta: float) -> bool:
 		Phase.REGRESSION:
 			if _sub == 0:
 				var main: Node = root.get_node("Main")
-				_check(main != null and main.get_node("Player") != null and main.get_node("HUD") != null, \
+				_check(main != null and main.get_node("HUD") != null, \
 					"main scene intact")
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), \
-					"player has no attack method (no direct combat)")
-				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), \
-					"player excluded from combat groups")
+				_check(get_nodes_in_group("player").size() == 0, \
+					"no runtime player Actor (no direct combat)")
 				_check(get_nodes_in_group("tactical_command_ui").size() == 1, \
 					"TASK-015 Tactical Command UI intact")
 				_check(_hud.get_node_or_null("StatusPanel") != null, "HUD StatusPanel intact")

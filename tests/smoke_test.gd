@@ -16,14 +16,8 @@ func _process(_delta: float) -> bool:
 		var main: Node = root.get_node("Main")
 		_check(main != null, "main.tscn loads")
 
-		var player: Node = main.get_node("Player")
-		var pvis: AnimatedSprite2D = player.get_node("Visual")
-		var pframes := pvis.sprite_frames
-		_check(pframes.get_animation_names().has("idle_down") and pframes.get_animation_names().has("walk_right"), "player has idle/walk anims")
-		_check(pframes.get_frame_count("idle_down") == 8, "player idle_down has 8 frames")
-		_check(pframes.get_frame_count("walk_right") == 6, "player walk_right has 6 frames")
-		var pidle: AtlasTexture = pframes.get_frame_texture("idle_down", 0)
-		_check(pidle.region.size.x > 40.0, "player idle frame region ~53px wide (%s)" % str(pidle.region))
+		# TASK-CTRL-001-4: runtime에 Player Actor가 존재하지 않는다.
+		_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 
 		var ljs := get_nodes_in_group("lumberjacks")
 		_check(ljs.size() >= 1, "lumberjack present")

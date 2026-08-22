@@ -11,7 +11,6 @@ var _phase_start := 0
 var _failed := false
 var _world: Node = null
 var _layout: Node = null
-var _player: Node = null
 var _controller: Node = null
 
 
@@ -46,7 +45,6 @@ func _process(_delta: float) -> bool:
 				return false
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			if _controller != null:
@@ -148,11 +146,9 @@ func _process(_delta: float) -> bool:
 				return false
 			for dir in ["north", "south", "east", "west"]:
 				var anchor: Vector2 = _layout.get_gate_anchor(dir)
-				_player.global_position = anchor
-				_check(_layout.is_in_bounds(_player.global_position), "player can reach %s gate anchor (outskirts)" % dir)
+				_check(_layout.is_in_bounds(anchor), "%s gate anchor inside bounds (outskirts)" % dir)
 			for s in _layout.get_spawn_candidate_nodes():
-				_player.global_position = s.global_position
-				_check(_layout.is_in_bounds(_player.global_position), "player can reach spawn candidate %s" % s.name)
+				_check(_layout.is_in_bounds(s.global_position), "spawn candidate %s inside bounds" % s.name)
 			_enter(Phase.REGRESSION)
 		Phase.REGRESSION:
 			_check(get_nodes_in_group("interactable").size() >= 3, "trees present (%d)" % get_nodes_in_group("interactable").size())

@@ -238,9 +238,9 @@ func _check_regression() -> void:
 	for t in CORE_TYPES:
 		_check(seen.has(t), "core type %s present" % t)
 
-	var player_pos: Vector2 = _main.get_node("Player").global_position
-	_check(player_pos.distance_to(Vector2(0, 60)) <= 24.0, "Player Start near (0,+60) (%s)" % str(player_pos))
-	_check(not _layout.is_on_access_axis(player_pos), "Player Start not on a Main Road")
+	var start_pos := Vector2(0, 60)
+	_check(_layout.is_in_clearing(start_pos), "settlement start point (0,+60) inside clearing")
+	_check(not _layout.is_on_access_axis(start_pos), "settlement start point not on a Main Road")
 
 	if get_nodes_in_group("lumberjacks").size() < 1:
 		var lj: Node = (load("res://scenes/lumberjack.tscn") as PackedScene).instantiate()

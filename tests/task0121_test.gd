@@ -90,10 +90,10 @@ func _process(_delta: float) -> bool:
 			plaza_deco_block += 1
 	_check(plaza_deco_block == 0, "no decoration blocks central plaza (%d found)" % plaza_deco_block)
 
-	# 4. Player Start: 광장 내부 또는 남쪽 가장자리 (0, +40~+80).
-	var player_pos: Vector2 = main.get_node("Player").global_position
-	_check(player_pos.distance_to(Vector2(0, 60)) <= 24.0, "Player Start near (0,+60) (%s)" % str(player_pos))
-	_check(not layout.is_on_access_axis(player_pos), "Player Start not on a Main Road/axis")
+	# 4. Settlement Start 지점: 광장 내부 또는 남쪽 가장자리 (0, +60). Player Avatar는 제거됨.
+	var start_pos := Vector2(0, 60)
+	_check(layout.is_in_clearing(start_pos), "settlement start point (0,+60) inside clearing")
+	_check(not layout.is_on_access_axis(start_pos), "settlement start point not on a Main Road/axis")
 
 	# 5. N/E/S/W 도로가 중앙을 통과하거나 자연스럽게 연결 (회귀: 기존 road generation 유지).
 	var floor_node: TileMapLayer = world.get_node("Floor") as TileMapLayer

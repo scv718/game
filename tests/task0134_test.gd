@@ -35,7 +35,7 @@ var _failed := false
 var _world: Node = null
 var _placement: Node = null
 var _resources: Node = null
-var _player: CharacterBody2D = null
+var _probe_body: CharacterBody2D = null
 var _gate: Node = null
 
 var _signal_count := 0
@@ -151,8 +151,19 @@ func _process(_delta: float) -> bool:
 			_world = root.get_node("Main").get_node("World")
 			_placement = root.get_node("Main").get_node("BuildingPlacement")
 			_resources = root.get_node("VillageResources")
-			_player = root.get_node("Main").get_node("Player") as CharacterBody2D
-			_check(_world != null and _placement != null and _resources != null and _player != null, "core nodes present")
+			_check(_world != null and _placement != null and _resources != null, "core nodes present")
+			# TASK-CTRL-001-4: Player Avatar 제거에 따라 게이트 물리 통과 검증용
+			# 테스트 전용 CharacterBody2D fixture를 생성해 사용한다.
+			_probe_body = CharacterBody2D.new()
+			_probe_body.name = "PhysicsProbe"
+			_probe_body.collision_layer = 1
+			_probe_body.collision_mask = 4
+			var probe_shape := CollisionShape2D.new()
+			var probe_rect := RectangleShape2D.new()
+			probe_rect.size = Vector2(16, 16)
+			probe_shape.shape = probe_rect
+			_probe_body.add_child(probe_shape)
+			_world.add_child(_probe_body)
 			_resources._amounts["wood"] = 10000
 			_placement._set_building_type("gate")
 			_placement._try_place_gate_at(_placement._snap_gate(NORTH_GATE))
@@ -162,7 +173,7 @@ func _process(_delta: float) -> bool:
 				if not _gate.gate_state_changed.is_connected(_on_gate_signal):
 					_gate.gate_state_changed.connect(_on_gate_signal)
 				var gi: Node = _gate.get_node_or_null("Interact")
-				_check(gi != null and gi is Interactable, "gate has Interactable for player toggle")
+				_check(gi != null and gi is Interactable, "gate has Interactable for toggle")
 				_check(gi != null and gi.prompt != "", "gate interact prompt set")
 			_enter(Phase.CLOSED_NAV)
 		Phase.CLOSED_NAV:
@@ -182,14 +193,14 @@ func _process(_delta: float) -> bool:
 		Phase.CLOSED_PHYSICS:
 			if not _step_done:
 				_step_done = true
-				# Player는 더 이상 WASD로 이동하지 않으므로(TASK-CTRL-001-1) 물리 통과 여부를
-				# CharacterBody2D.test_move로 검증한다. CLOSED면 게이트 collision에 막혀야 한다.
-				_player.global_position = Vector2(0, -400)
+				# Player Avatar 제거(TASK-CTRL-001-4) 후 물리 통과 여부를 테스트 전용
+				# CharacterBody2D fixture의 test_move로 검증한다. CLOSED면 게이트 collision에 막혀야 한다.
+				_probe_body.global_position = Vector2(0, -400)
 				_pf = 0
 			elif _pf >= NAV_WAIT_PF:
-				var blocked: bool = _player.test_move(Transform2D(0, Vector2(0, -400)), Vector2(0, -60))
-				_check(blocked, "CLOSED gate blocks player physics (test_move)")
-				_check(_player.global_position.y == -400.0, "CLOSED gate: player body not teleported (y=%.0f)" % _player.global_position.y)
+				var blocked: bool = _probe_body.test_move(Transform2D(0, Vector2(0, -400)), Vector2(0, -60))
+				_check(blocked, "CLOSED gate blocks probe body physics (test_move)")
+				_check(_probe_body.global_position.y == -400.0, "CLOSED gate: probe body not teleported (y=%.0f)" % _probe_body.global_position.y)
 				_enter(Phase.OPEN_NAV)
 		Phase.OPEN_NAV:
 			if not _step_done:
@@ -206,11 +217,11 @@ func _process(_delta: float) -> bool:
 		Phase.OPEN_PHYSICS:
 			if not _step_done:
 				_step_done = true
-				_player.global_position = Vector2(0, -400)
+				_probe_body.global_position = Vector2(0, -400)
 				_pf = 0
 			elif _pf >= NAV_WAIT_PF:
-				var blocked: bool = _player.test_move(Transform2D(0, Vector2(0, -400)), Vector2(0, -60))
-				_check(not blocked, "OPEN gate allows player through (test_move)")
+				var blocked: bool = _probe_body.test_move(Transform2D(0, Vector2(0, -400)), Vector2(0, -60))
+				_check(not blocked, "OPEN gate allows probe body through (test_move)")
 				_enter(Phase.TOGGLE_REPEAT)
 		Phase.TOGGLE_REPEAT:
 			if not _toggle_armed:
@@ -220,9 +231,9 @@ func _process(_delta: float) -> bool:
 				# 1번째 토글은 Player 상호작용 경로(Interact.interact)로 수행해 prototype toggle 검증.
 				if _toggle_i == 0:
 					var gi: Node = _gate.get_node_or_null("Interact")
-					_check(gi != null and gi.has_method("interact"), "gate Interact exposes interact() for player")
+					_check(gi != null and gi.has_method("interact"), "gate Interact exposes interact()")
 					if gi != null:
-						gi.interact(_player)
+						gi.interact(_probe_body)
 				else:
 					_gate.set_open(want_open)
 				_pf = 0

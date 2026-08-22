@@ -53,7 +53,6 @@ var _spawner: Node = null
 var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
-var _player: Node = null
 var _controller: Node = null
 var _mercenary: MercenaryData = null
 var _actor: Node = null
@@ -161,12 +160,11 @@ func _process(_delta: float) -> bool:
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
-				_player = root.get_node("Main").get_node("Player")
 				var ctrls := get_nodes_in_group("camera_controller")
 				_controller = ctrls[0] if ctrls.size() > 0 else null
 				_check(_game_time != null and _world != null and _placement != null \
 					and _spawner != null and _roster != null and _worker_roster != null \
-					and _resources != null and _player != null, "core nodes present")
+					and _resources != null, "core nodes present")
 				_resources._amounts["wood"] = 10000
 				_check(_roster.get_count() == 0, "mercenary roster starts empty")
 				_sub = 1
@@ -381,8 +379,7 @@ func _process(_delta: float) -> bool:
 				_enter(Phase.REGRESSION)
 		Phase.REGRESSION:
 			if _sub == 0:
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
-				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), "player excluded from combat groups")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(_controller.is_night_mode() == true, "camera controller tactical mode during NIGHT regression")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected (%d)" % _worker_roster.get_count())
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")

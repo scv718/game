@@ -35,7 +35,6 @@ var _failed := false
 var _game_time: Node = null
 var _world: Node = null
 var _layout: Node = null
-var _player: Node = null
 var _controller: Node = null
 var _placement: Node = null
 var _resources: Node = null
@@ -94,7 +93,6 @@ func _process(_delta: float) -> bool:
 			_game_time = root.get_node("GameTime")
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			_placement = main.get_node("BuildingPlacement")
@@ -117,7 +115,6 @@ func _process(_delta: float) -> bool:
 			_check(_game_time != null, "GameTime autoload exists")
 			_check(_world != null, "world exists")
 			_check(_layout != null, "MapLayout exists")
-			_check(_player != null, "player exists")
 			_check(_placement != null, "BuildingPlacement exists")
 			_check(_miner != null, "miner worker exists")
 			_check(_lumberjack != null, "lumberjack worker exists")
@@ -129,13 +126,11 @@ func _process(_delta: float) -> bool:
 			if not _step_done:
 				_step_done = true
 				_controller.global_position = Vector2.ZERO
-				_player.global_position = Vector2.ZERO
 				_start_x = _controller.global_position.x
 				Input.action_press("move_right")
 			if _elapsed() >= 120:
 				Input.action_release("move_right")
 				_check(_controller.global_position.x > _start_x, "DAY: camera pans (WASD = camera pan)")
-				_player.global_position = Vector2.ZERO
 				_enter(Phase.BUILD)
 		Phase.BUILD:
 			_resources._amounts["wood"] = 50
@@ -274,7 +269,7 @@ func _process(_delta: float) -> bool:
 			_check(_lumberyard.get_node_or_null("DepositPoint") != null, "lumberyard DepositPoint preserved across rebuild")
 			_enter(Phase.SMOKE)
 		Phase.SMOKE:
-			_check(main.get_node("Player") != null, "player exists")
+			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 			_check(main.get_node("HUD") != null, "HUD exists")
 			var floor_node: TileMapLayer = main.get_node("World/Floor") as TileMapLayer
 			_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")

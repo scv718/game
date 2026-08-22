@@ -18,7 +18,6 @@ var _step_done := false
 var _failed := false
 
 var _game_time: Node = null
-var _player: Node = null
 var _controller: Node = null
 var _camera: Camera2D = null
 var _start_x := 0.0
@@ -72,7 +71,6 @@ func _process(_delta: float) -> bool:
 				return false
 			_game_time = root.get_node("GameTime")
 			var main: Node = root.get_node("Main")
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			_camera = _controller.get_camera() as Camera2D if _controller else null
@@ -86,7 +84,6 @@ func _process(_delta: float) -> bool:
 			_enter(TestPhase.INIT_DAY)
 		TestPhase.INIT_DAY:
 			_check(_game_time != null, "GameTime autoload exists")
-			_check(_player != null, "Player exists")
 			_check(_camera != null, "World Camera2D exists")
 			_check(not _controller.is_night_mode(), "camera controller starts in DAY (camera pan mode)")
 			_check(_zoom_near(_controller.day_zoom), "camera zoom starts at day_zoom (%.2f)" % _camera.zoom.x)
@@ -98,13 +95,11 @@ func _process(_delta: float) -> bool:
 			if not _step_done:
 				_step_done = true
 				_controller.global_position = Vector2.ZERO
-				_player.global_position = Vector2(0, 0)
 				_start_x = _controller.global_position.x
 				_hold_move("move_right")
 			if _elapsed() >= MOVE_WAIT_FRAMES:
 				_release_move("move_right")
 				_check(_controller.global_position.x > _start_x, "DAY: camera pans right (WASD = camera pan, x=%s)" % str(_controller.global_position.x))
-				_check(_player.global_position == Vector2(0, 0), "DAY: player stays stationary")
 				_enter(TestPhase.TO_NIGHT)
 		TestPhase.TO_NIGHT:
 			if not _step_done:
@@ -118,13 +113,11 @@ func _process(_delta: float) -> bool:
 			if not _step_done:
 				_step_done = true
 				_controller.global_position = Vector2.ZERO
-				_player.global_position = Vector2(0, 0)
 				_start_x = _controller.global_position.x
 				_hold_move("move_right")
 			if _elapsed() >= MOVE_WAIT_FRAMES:
 				_release_move("move_right")
 				_check(_controller.global_position.x > _start_x, "NIGHT: tactical camera pans (WASD = tactical camera pan, x=%s)" % str(_controller.global_position.x))
-				_check(_player.global_position == Vector2(0, 0), "NIGHT: player entity stays stationary")
 				_enter(TestPhase.CYCLE_ZOOM)
 		TestPhase.CYCLE_ZOOM:
 			if _elapsed() >= ZOOM_WAIT_FRAMES:
@@ -143,7 +136,6 @@ func _process(_delta: float) -> bool:
 			if not _step_done:
 				_step_done = true
 				_controller.global_position = Vector2.ZERO
-				_player.global_position = Vector2(0, 0)
 				_start_x = _controller.global_position.x
 				_hold_move("move_right")
 			if _elapsed() >= MOVE_WAIT_FRAMES:
@@ -164,7 +156,7 @@ func _process(_delta: float) -> bool:
 				_enter(TestPhase.SMOKE)
 		TestPhase.SMOKE:
 			var main: Node = root.get_node("Main")
-			_check(main.get_node("Player") != null, "player exists")
+			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 			_check(main.get_node("HUD") != null, "HUD exists")
 			var floor_node: TileMapLayer = main.get_node("World/Floor") as TileMapLayer
 			_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")

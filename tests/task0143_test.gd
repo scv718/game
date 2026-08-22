@@ -54,7 +54,6 @@ var _spawner: Node = null
 var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
-var _player: Node = null
 var _gate: Node = null
 var _core := Vector2(0, -150)
 
@@ -187,10 +186,9 @@ func _process(_delta: float) -> bool:
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
-				_player = root.get_node("Main").get_node("Player")
 				_check(_game_time != null and _world != null and _layout != null and _placement != null \
-					and _spawner != null and _roster != null and _worker_roster != null and _resources != null \
-					and _player != null, "core nodes present")
+					and _spawner != null and _roster != null and _worker_roster != null and _resources != null,
+					"core nodes present")
 				_resources._amounts["wood"] = 10000
 				_check(load("res://scenes/enemy.tscn") != null, "enemy scene loads")
 				var keep := _world.get_node_or_null("Keep") as Node2D
@@ -200,7 +198,7 @@ func _process(_delta: float) -> bool:
 				_check(_count_enemies() == 0, "no enemies during DAY on start")
 				_check(_spawner.get_enemy_count() == 0, "spawner enemy_count 0 during DAY")
 				_check(not _spawner.is_night_active(), "spawner night not active during DAY")
-				_check(not _player.has_method("attack"), "player has no attack method")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_enter(Phase.DAY_GUARD)
 		Phase.DAY_GUARD:
 			if _sub == 0:
@@ -376,8 +374,7 @@ func _process(_delta: float) -> bool:
 		Phase.REGRESSION:
 			if _sub == 0:
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "REGRESSION starts in DAY")
-				_check(not _player.has_method("attack"), "player has no attack method")
-				_check(not _player.has_method("_attack"), "player has no internal attack")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(_roster.get_count() == 0, "mercenary roster unaffected (%d)" % _roster.get_count())
 				_check(get_nodes_in_group("mercenaries").size() == 0, "no mercenary actor spawned")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected (%d)" % _worker_roster.get_count())

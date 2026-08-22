@@ -126,7 +126,7 @@ func _process(_delta: float) -> bool:
 				_enter(TestPhase.SMOKE)
 		TestPhase.SMOKE:
 			var main: Node = root.get_node("Main")
-			_check(main.get_node("Player") != null, "player exists")
+			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 			_check(main.get_node("HUD") != null, "HUD exists")
 			var floor_node: TileMapLayer = main.get_node("World/Floor") as TileMapLayer
 			_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")

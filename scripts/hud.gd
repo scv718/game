@@ -11,7 +11,6 @@ extends CanvasLayer
 @onready var _compat_stone_label: Label = $StoneLabel
 @onready var _compat_daytime_label: Label = $DayTimeLabel
 
-var player: Node
 var _feedback_timer: SceneTreeTimer = null
 var _current_workplace: Node = null
 var _current_interactable: Node = null
@@ -27,16 +26,18 @@ const BUILD_TYPE_HINTS := {
 
 
 func _ready() -> void:
-	player = get_tree().get_first_node_in_group("player")
-	if player:
-		player.current_interactable_changed.connect(_on_interactable_changed)
+	# TASK-CTRL-001-4: Player proximity prompt 대신 마우스 선택(WorldSelection) 기반
+	# interaction prompt로 전환. 선택된 건물/시설의 prompt를 표시한다.
+	var selection := get_tree().get_first_node_in_group("world_selection")
+	if selection != null and selection.has_signal("selection_changed"):
+		selection.selection_changed.connect(_on_interactable_changed)
 	VillageResources.changed.connect(_on_resources_changed)
 	_on_resources_changed("wood", VillageResources.get_amount("wood"))
 	_on_resources_changed("stone", VillageResources.get_amount("stone"))
 	GameTime.phase_changed.connect(_on_phase_changed)
 	_refresh_daytime()
 	_schedule_daytime_refresh()
-	_on_interactable_changed(player.current_interactable if player else null)
+	_on_interactable_changed(null)
 	var placement: Node = get_tree().get_first_node_in_group("building_placement")
 	if placement:
 		placement.mode_changed.connect(_on_placement_mode_changed)
@@ -85,7 +86,7 @@ func _on_interactable_changed(interactable: Node) -> void:
 	_disconnect_workplace()
 	_current_interactable = interactable
 	if interactable:
-		interact_label.text = "E - %s" % interactable.prompt
+		interact_label.text = "Click - %s" % interactable.prompt
 		interact_label.visible = true
 		var workplace: Node = null
 		if interactable.has_method("get_lumberyard"):
@@ -110,7 +111,7 @@ func _disconnect_workplace() -> void:
 func _refresh_interact_label(_filled: int = 0, _capacity: int = 0) -> void:
 	if not is_instance_valid(_current_interactable):
 		return
-	interact_label.text = "E - %s" % _current_interactable.prompt
+	interact_label.text = "Click - %s" % _current_interactable.prompt
 
 
 func _on_placement_mode_changed(active: bool) -> void:

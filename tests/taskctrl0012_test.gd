@@ -56,7 +56,6 @@ var _selection: Node = null
 var _placement: Node = null
 var _game_time: Node = null
 var _resources: Node = null
-var _player: Node = null
 var _controller: Node = null
 
 var _tavern: Node = null
@@ -133,7 +132,6 @@ func _process(_delta: float) -> bool:
 				_game_time.set_auto_advance(false)
 				_game_time.set_durations(2.0, 1.0)
 				_resources = root.get_node("VillageResources")
-				_player = _main.get_node("Player")
 				var ctrls := get_nodes_in_group("camera_controller")
 				_controller = ctrls[0] if ctrls.size() > 0 else null
 				_tavern = _world.get_node("Tavern")
@@ -143,7 +141,7 @@ func _process(_delta: float) -> bool:
 				_ui_inn = get_first_node_in_group("inn_roster_ui") as Control
 				_resources._amounts["wood"] = 10000
 				_check(_main != null and _world != null and _selection != null \
-					and _placement != null and _game_time != null and _player != null \
+					and _placement != null and _game_time != null \
 					and _controller != null, "core nodes present")
 				_check(_selection != null and _selection.is_in_group("world_selection"), \
 					"WorldSelection in world_selection group")
@@ -158,8 +156,6 @@ func _process(_delta: float) -> bool:
 				_enter(Phase.SELECT_BUILDINGS)
 		Phase.SELECT_BUILDINGS:
 			if _sub == 0:
-				# Player를 멀리 이동 → 근접 전제 없이도 클릭 interaction이 동작해야 함.
-				_player.global_position = Vector2(0, 900)
 				var sel: Node = _selected_at(TAVERN_POS)
 				_check(sel == _tavern_interact, \
 					"tavern click selects tavern Interact (got %s)" % str(sel))
@@ -314,8 +310,8 @@ func _process(_delta: float) -> bool:
 					"world floor intact (128x128)")
 				_check(_controller != null and _controller.get_camera() != null, \
 					"Camera Controller intact (TASK-CTRL-001-1)")
-				_check(_player != null and not _player.has_method("attack"), \
-					"player has no combat method")
+				_check(get_nodes_in_group("player").size() == 0, \
+					"no runtime player Actor (player has no combat method)")
 				_selection.clear_selection()
 				_check(_selection.get_selected() == null, "clear_selection clears at end")
 				_enter(Phase.DONE)

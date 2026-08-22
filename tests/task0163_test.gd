@@ -394,10 +394,7 @@ func _process(_delta: float) -> bool:
 				_enter(Phase.REGRESSION)
 		Phase.REGRESSION:
 			if _sub == 0:
-				var player: Node = root.get_node("Main").get_node("Player")
-				_check(player != null, "player intact")
-				_check(not player.has_method("attack") and not player.has_method("_attack"), "player has no attack method")
-				_check(not player.is_in_group("enemies") and not player.is_in_group("mercenaries"), "player excluded from combat groups")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(root.get_node("WorkerRoster").get_count() == 0, "worker roster unaffected")
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")

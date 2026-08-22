@@ -11,7 +11,6 @@ var _failed := false
 var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
-var _player: Node = null
 var _controller: Node = null
 var _wm_script: GDScript = null
 
@@ -43,7 +42,6 @@ func _process(_delta: float) -> bool:
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			if _controller != null:

@@ -191,15 +191,13 @@ func _process(_delta: float) -> bool:
 			_check(_view.get_record_count() == 2, "records retained after day/night (%d)" % _view.get_record_count())
 			_phase = TestPhase.REGRESSION
 		TestPhase.REGRESSION:
-			_check(_main != null and _main.get_node("Player") != null and _main.get_node("HUD") != null, \
+			_check(_main != null and _main.get_node("HUD") != null, \
 				"main scene intact")
+			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (no direct combat)")
 			_check(get_nodes_in_group("tactical_command_ui").size() == 1, "tactical command UI intact")
 			var hud: Node = _main.get_node("HUD")
 			_check(hud.get_node_or_null("StatusPanel") != null, "HUD StatusPanel intact")
 			_check(hud.get_node_or_null("DeathLedgerView") != null, "DeathLedgerView still under HUD")
-			var player: Node = _main.get_node("Player")
-			_check(not player.has_method("attack") and not player.has_method("_attack"), \
-				"player has no attack method (no direct combat)")
 			_check(get_nodes_in_group("ghosts").size() == 0, "no ghost actor spawned")
 			_phase = TestPhase.DONE
 		TestPhase.DONE:

@@ -39,7 +39,6 @@ var _failed := false
 
 var _game_time: Node = null
 var _world: Node = null
-var _player: Node = null
 var _hud: Node = null
 var _tac = null
 var _resources: Node = null
@@ -96,12 +95,11 @@ func _process(_delta: float) -> bool:
 					return false
 				_game_time = root.get_node("GameTime")
 				_world = root.get_node("Main").get_node("World")
-				_player = root.get_node("Main").get_node("Player")
 				_hud = root.get_node("Main").get_node("HUD")
 				_resources = root.get_node("VillageResources")
 				_tac = _hud.get_node_or_null("TacticalCommandUI")
 				_check(_tac != null, "TacticalCommandUI present in HUD")
-				_check(_game_time != null and _world != null and _player != null, "core nodes present")
+				_check(_game_time != null and _world != null, "core nodes present")
 				_game_time.set_auto_advance(false)
 				_game_time.set_durations(2.0, 1.0)
 				_sub = 1
@@ -226,8 +224,7 @@ func _process(_delta: float) -> bool:
 				_enter(Phase.REGRESSION)
 		Phase.REGRESSION:
 			if _sub == 0:
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
-				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), "player excluded from combat groups")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
 				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")

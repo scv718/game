@@ -76,9 +76,7 @@ func _process(_delta: float) -> bool:
 			_check(interact.prompt == "Workers: 1/2 - Assign Worker", "interact node prompt updates to 1/2 (got '%s')" % interact.prompt)
 			hud._on_interactable_changed(interact)
 			_ly.workers_changed.emit(_ly.get_filled_slots(), _ly.get_slot_capacity())
-			_check(hud.interact_label.text == "E - Workers: 1/2 - Assign Worker", "HUD interact label refreshes on workers_changed (got '%s')" % hud.interact_label.text)
-			var player: Node = main.get_node("Player")
-			player.global_position = _ly.global_position + Vector2(40, 0)
+			_check(hud.interact_label.text == "Click - Workers: 1/2 - Assign Worker", "HUD interact label refreshes on workers_changed (got '%s')" % hud.interact_label.text)
 			_phase = Phase.SECOND_YARD_REJECT
 		Phase.SECOND_YARD_REJECT:
 			if _frame % 2 == 0:

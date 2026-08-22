@@ -131,7 +131,7 @@ grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBox_prompt")
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "E - 채집"
+text = "Click - Select"
 visible = false
 
 [node name="BuildLabel" type="Label" parent="."]

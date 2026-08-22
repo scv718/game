@@ -46,7 +46,6 @@ var _spawner: Node = null
 var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
-var _player: Node = null
 var _gate: Node = null
 var _gate2: Node = null
 var _mercenary: MercenaryData = null
@@ -201,10 +200,9 @@ func _process(_delta: float) -> bool:
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
-				_player = root.get_node("Main").get_node("Player")
 				_check(_game_time != null and _world != null and _layout != null and _placement != null \
-					and _spawner != null and _roster != null and _worker_roster != null and _resources != null \
-					and _player != null, "core nodes present")
+					and _spawner != null and _roster != null and _worker_roster != null and _resources != null,
+					"core nodes present")
 				_resources._amounts["wood"] = 10000
 				var ui: Control = get_first_node_in_group("recruitment_ui")
 				_check(ui != null, "recruitment UI present")
@@ -222,7 +220,7 @@ func _process(_delta: float) -> bool:
 					_check(_gate.max_hp > 0 and _gate.current_hp == _gate.max_hp, "gate has prototype durability (max_hp/current_hp)")
 					_check(not _gate.is_breached(), "new gate not breached")
 					_gate.breached.connect(_on_gate_breached)
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(EnemyActor.EnemyState.size() == 4, "EnemyState has 4 states (GATE_ATTACK added)")
 				_check(Gate.GateState.size() == 3, "GateState has 3 states (BREACHED added)")
 				_check(EnemyActor.EnemyState.GATE_ATTACK == 3, "GATE_ATTACK constant intact")
@@ -389,7 +387,7 @@ func _process(_delta: float) -> bool:
 		Phase.REGRESSION:
 			if _sub == 0:
 				_check(_count_mercenaries() == 0, "no mercenary actor during DAY regression")
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected (%d)" % _worker_roster.get_count())
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")

@@ -54,7 +54,6 @@ var _world: Node
 var _roster: Node
 var _resources: Node
 var _game_time: Node
-var _player: Node
 var _controller: Node
 var _camera: Camera2D
 var _hud: Node
@@ -184,7 +183,6 @@ func _setup() -> void:
 	_roster = root.get_node("WorkerRoster")
 	_resources = root.get_node("VillageResources")
 	_game_time = root.get_node("GameTime")
-	_player = _main.get_node("Player")
 	var ctrls := get_nodes_in_group("camera_controller")
 	_controller = ctrls[0] if ctrls.size() > 0 else null
 	_camera = _controller.get_camera() as Camera2D if _controller else null

@@ -40,7 +40,6 @@ var _placement: Node = null
 var _resources: Node = null
 var _roster: Node = null
 var _worker_roster: Node = null
-var _player: Node = null
 var _mercenary: MercenaryData = null
 
 var _cycle_i := 0
@@ -131,9 +130,8 @@ func _process(_delta: float) -> bool:
 				_resources = root.get_node("VillageResources")
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
-				_player = root.get_node("Main").get_node("Player")
 				_check(_game_time != null and _world != null and _placement != null and _resources != null \
-					and _roster != null and _worker_roster != null and _player != null, "core nodes present")
+					and _roster != null and _worker_roster != null, "core nodes present")
 				_resources._amounts["wood"] = 10000
 				var ui: Control = get_first_node_in_group("recruitment_ui")
 				_check(ui != null, "recruitment UI present")
@@ -294,8 +292,7 @@ func _process(_delta: float) -> bool:
 		Phase.REGRESSION:
 			if _sub == 0:
 				_check(_game_time.get_phase() == GameTime.Phase.DAY, "REGRESSION starts in DAY")
-				_check(not _player.has_method("attack"), "player has no attack method")
-				_check(not _player.has_method("_attack"), "player has no internal attack")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected by mercenary (%d)" % _worker_roster.get_count())
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")

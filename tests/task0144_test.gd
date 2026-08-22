@@ -48,7 +48,6 @@ var _spawner: Node = null
 var _roster: Node = null
 var _worker_roster: Node = null
 var _resources: Node = null
-var _player: Node = null
 var _mercenary: MercenaryData = null
 var _actor: Node = null
 
@@ -151,10 +150,9 @@ func _process(_delta: float) -> bool:
 				_roster = root.get_node("MercenaryRoster")
 				_worker_roster = root.get_node("WorkerRoster")
 				_resources = root.get_node("VillageResources")
-				_player = root.get_node("Main").get_node("Player")
 				_check(_game_time != null and _world != null and _placement != null \
 					and _spawner != null and _roster != null and _worker_roster != null \
-					and _resources != null and _player != null, "core nodes present")
+					and _resources != null, "core nodes present")
 				_resources._amounts["wood"] = 10000
 				var ui: Control = get_first_node_in_group("recruitment_ui")
 				_check(ui != null, "recruitment UI present")
@@ -173,7 +171,7 @@ func _process(_delta: float) -> bool:
 				_placement._set_building_type("gate")
 				_placement._try_place_gate_at(_placement._snap_gate(GATE_POS))
 				_check(_find_gate_at(GATE_POS) != null, "north gate placed")
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(MercenaryActor.MercState.size() == 8, "MercState has 8 states (FSM)")
 				_check(EnemyActor.EnemyState.size() == 4, "EnemyState has 4 states (ATTACK, GATE_ATTACK)")
 				_check(MercenaryActor.MercState.keys().has("RETURN_TO_DEFENSE_ZONE") \
@@ -420,22 +418,22 @@ func _process(_delta: float) -> bool:
 			if _sub == 0:
 				_check(_count_mercenaries() == 0, "no mercenary actor during DAY regression")
 				_check(_roster.get_count() == 1, "mercenary roster data retained (%d)" % _roster.get_count())
-				_check(not _player.has_method("attack") and not _player.has_method("_attack"), "player has no attack method")
-				_check(not _player.is_in_group("enemies") and not _player.is_in_group("mercenaries"), "player excluded from enemy/mercenary target groups")
+				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(_worker_roster.get_count() == 0, "worker roster unaffected (%d)" % _worker_roster.get_count())
 				_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor spawned")
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
 				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact")
-				# Enemy가 Player를 target으로 삼지 않음: Player 주변에 배치해도 ATTACK 진입 금지.
-				var eprobe := _spawn_enemy((_player as Node2D).global_position + Vector2(0, 30), 60, true)
-				_check(eprobe != null, "enemy probe near player spawned")
+				# Enemy는 비전투(non-mercenary) 액터를 target으로 삼지 않음:
+				# 정착지 중심(전 플레이어 시작 지점)에 배치해도 ATTACK 진입 금지.
+				var eprobe := _spawn_enemy(Vector2(0, 90), 60, true)
+				_check(eprobe != null, "enemy probe near settlement center spawned")
 				_budget = 0
 				_sub = 1
 			elif _sub == 1:
 				if _budget >= 60:
-					_check(eprobe_state_near_player() == EnemyActor.EnemyState.MOVE, "enemy near player stays MOVE (player not targeted)")
+					_check(eprobe_state() == EnemyActor.EnemyState.MOVE, "enemy near non-mercenary stays MOVE (no target)")
 					for e in get_nodes_in_group("enemies"):
 						if is_instance_valid(e):
 							e.queue_free()
@@ -462,8 +460,8 @@ func _process(_delta: float) -> bool:
 	return false
 
 
-## regression에서 사용: 플레이어 주변에 배치한 test enemy의 state를 그룹에서 찾아 반환.
-func eprobe_state_near_player() -> int:
+## regression에서 사용: 정착지 중심 근처에 배치한 test enemy의 state를 그룹에서 찾아 반환.
+func eprobe_state() -> int:
 	for e in get_nodes_in_group("enemies"):
 		if not is_instance_valid(e):
 			continue

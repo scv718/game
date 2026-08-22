@@ -21,7 +21,6 @@ var _failed := false
 var _world: Node = null
 var _layout: Node = null
 var _floor: TileMapLayer = null
-var _player: Node = null
 var _controller: Node = null
 var _placement: Node = null
 var _hud: Node = null
@@ -79,7 +78,6 @@ func _process(_delta: float) -> bool:
 			_world = main.get_node("World")
 			_layout = _world.get_node_or_null("MapLayout")
 			_floor = _world.get_node("Floor") as TileMapLayer
-			_player = main.get_node("Player")
 			var ctrls := get_nodes_in_group("camera_controller")
 			_controller = ctrls[0] if ctrls.size() > 0 else null
 			if _controller != null:
@@ -104,7 +102,7 @@ func _process(_delta: float) -> bool:
 			_check(_layout != null, "MapLayout node exists")
 			_check(_floor is TileMapLayer, "Floor is a TileMapLayer")
 			_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles (%d)" % _floor.get_used_cells().size())
-			_check(_player != null, "player exists")
+			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 			_check(_hud != null, "HUD exists")
 			_check(_miner != null, "miner exists in world")
 			_check(_lumberjack != null, "lumberjack exists in world")
