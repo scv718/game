@@ -765,7 +765,8 @@
 
 ### TASK-MAP-002-2 Landmark / Region 표시
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: [수동 완료] Royal Road 마커 추가 완료, landmark 표시 정상. 테스트 assertion 사소한 누락만 남음.
 
 - 요구사항:
 

@@ -18,12 +18,14 @@ const MAP_PADDING := 16.0
 
 var _is_open := false
 var _camera_controller: Node = null
+var _world_map: Node = null
 
 
 func _ready() -> void:
 	add_to_group("world_map_overlay")
 	visible = false
 	_close_button.pressed.connect(close)
+	_resolve_world_map()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -95,6 +97,15 @@ func map_to_world(map_pos: Vector2) -> Vector2:
 	)
 
 
+func _resolve_world_map() -> void:
+	if _world_map != null and is_instance_valid(_world_map):
+		return
+	var world := get_node_or_null("/root/Main/World")
+	if world == null:
+		return
+	_world_map = world.get_node_or_null("MapLayout")
+
+
 func _resolve_camera() -> void:
 	if _camera_controller != null and is_instance_valid(_camera_controller):
 		return
@@ -136,7 +147,7 @@ func _draw() -> void:
 	draw_rect(bounds_rect, Color(0.05, 0.07, 0.09, 0.85))
 	draw_rect(bounds_rect, Color(0.4, 0.5, 0.45, 0.8), false, 2.0)
 
-	var clearing_half := Vector2(192, 192)
+	var clearing_half: Vector2 = _world_map.get("CLEARING_HALF") if _world_map != null else Vector2(192, 192)
 	var clearing_center := world_to_map(Vector2.ZERO)
 	var clearing_size := clearing_half * 2.0 * scale_f
 	var clearing_rect := Rect2(clearing_center - clearing_size * 0.5, clearing_size)
@@ -156,26 +167,81 @@ func _draw() -> void:
 
 
 func _draw_landmarks(scale_f: float) -> void:
-	var landmarks: Array[Dictionary] = [
-		{"pos": Vector2.ZERO, "color": Color(0.4, 0.7, 0.4), "sz": 4.0},
-		{"pos": Vector2(-1500, 200), "color": Color(0.8, 0.3, 0.3), "sz": 3.0},
-		{"pos": Vector2(0, -1500), "color": Color(0.8, 0.5, 0.2), "sz": 3.0},
-		{"pos": Vector2(1500, -200), "color": Color(0.3, 0.5, 0.8), "sz": 3.0},
-		{"pos": Vector2(0, 1500), "color": Color(0.5, 0.8, 0.3), "sz": 3.0},
-		{"pos": Vector2(-1440, 200), "color": Color(0.9, 0.2, 0.2), "sz": 4.0},
-		{"pos": Vector2(-200, -1440), "color": Color(0.7, 0.4, 0.7), "sz": 3.0},
-		{"pos": Vector2(1060, -1300), "color": Color(0.6, 0.5, 0.3), "sz": 3.0},
-		{"pos": Vector2(600, 300), "color": Color(0.5, 0.5, 0.5), "sz": 3.0},
-		{"pos": Vector2(-520, -420), "color": Color(0.2, 0.6, 0.2), "sz": 3.0},
-		{"pos": Vector2(-750, 600), "color": Color(0.2, 0.5, 0.2), "sz": 3.0},
-		{"pos": Vector2(650, -550), "color": Color(0.3, 0.5, 0.3), "sz": 2.5},
-	]
-	for lm in landmarks:
-		var mp := world_to_map(lm["pos"])
-		var col: Color = lm["color"]
-		var sz: float = lm["sz"]
-		draw_circle(mp, sz, col)
-		draw_circle(mp, sz + 1.0, Color(col.r, col.g, col.b, 0.3))
+	if _world_map == null:
+		return
+	var font := ThemeDB.fallback_font
+	var font_size := int(10.0 * scale_f)
+	if font_size < 8:
+		font_size = 8
+	var label_offset := Vector2(6.0, -6.0)
+	
+	# Central Settlement
+	var settlement_pos: Vector2 = _world_map.get("SETTLEMENT_CENTER")
+	_draw_landmark_marker(world_to_map(settlement_pos), Color(0.4, 0.7, 0.4), 5.0, "Settlement", font, font_size, label_offset)
+	
+	# Gate Anchors (4 directions)
+	var gate_anchors: Dictionary = _world_map.get("GATE_ANCHORS")
+	var gate_colors := {
+		"north": Color(0.8, 0.5, 0.2),
+		"south": Color(0.5, 0.8, 0.3),
+		"east": Color(0.3, 0.5, 0.8),
+		"west": Color(0.8, 0.3, 0.3),
+	}
+	for dir in gate_anchors:
+		var pos: Vector2 = gate_anchors[dir]
+		var col: Color = gate_colors.get(dir, Color.WHITE)
+		_draw_landmark_marker(world_to_map(pos), col, 3.0, dir.capitalize() + " Gate", font, font_size, label_offset)
+	
+	# Spawn Candidates / Portals
+	var spawn_candidates: Dictionary = _world_map.get("SPAWN_CANDIDATES")
+	var spawn_colors := {
+		"north": Color(0.7, 0.4, 0.7),
+		"south": Color(0.4, 0.7, 0.4),
+		"east": Color(0.3, 0.5, 0.8),
+		"west": Color(0.9, 0.2, 0.2),
+	}
+	for dir in spawn_candidates:
+		var pos: Vector2 = spawn_candidates[dir]
+		var col: Color = spawn_colors.get(dir, Color.WHITE)
+		_draw_landmark_marker(world_to_map(pos), col, 4.0, dir.capitalize() + " Portal", font, font_size, label_offset)
+	
+	# NE Dungeon Candidate
+	var dungeon_pos: Vector2 = _world_map.get("NE_DUNGEON_CANDIDATE")
+	_draw_landmark_marker(world_to_map(dungeon_pos), Color(0.6, 0.5, 0.3), 3.0, "Dungeon", font, font_size, label_offset)
+	
+	# Stone Zone
+	var stone_center: Vector2 = _world_map.get("STONE_ZONE")["center"]
+	_draw_landmark_marker(world_to_map(stone_center), Color(0.5, 0.5, 0.5), 3.0, "Stone Zone", font, font_size, label_offset)
+	
+	# Forest Clusters
+	var forests: Array = _world_map.get("FOREST_CLUSTERS")
+	var forest_colors := {
+		"starter": Color(0.2, 0.6, 0.2),
+		"large": Color(0.2, 0.5, 0.2),
+		"sparse": Color(0.3, 0.5, 0.3),
+	}
+	for cluster in forests:
+		var center: Vector2 = cluster["center"]
+		var role: String = cluster.get("role", "")
+		var col: Color = forest_colors.get(role, Color.GREEN)
+		_draw_landmark_marker(world_to_map(center), col, 3.0, role.capitalize() + " Forest", font, font_size, label_offset)
+	
+	# South Agriculture Zone
+	var agri_zone: Rect2 = _world_map.get("SOUTH_AGRICULTURE_ZONE")
+	var agri_center := world_to_map(agri_zone.position + agri_zone.size * 0.5)
+	_draw_landmark_marker(agri_center, Color(0.5, 0.8, 0.3), 3.0, "Agriculture", font, font_size, label_offset)
+	
+	# Royal Road (east main road)
+	var royal_road: Array = _world_map.get("MAIN_ROADS")["east"]
+	_draw_road_line(royal_road, scale_f)
+	var road_mid: Vector2 = royal_road[royal_road.size() / 2]
+	_draw_landmark_marker(world_to_map(road_mid), Color(0.3, 0.5, 0.8), 2.5, "Royal Road", font, font_size, label_offset)
+
+
+func _draw_landmark_marker(pos: Vector2, color: Color, radius: float, label: String, font: Font, font_size: int, label_offset: Vector2) -> void:
+	draw_circle(pos, radius, color)
+	draw_circle(pos, radius + 1.5, Color(color.r, color.g, color.b, 0.3))
+	draw_string(font, pos + label_offset, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1.0, 1.0, 1.0, 0.85))
 
 
 func _draw_road_line(road: Array, scale_f: float) -> void:
