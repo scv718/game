@@ -744,7 +744,8 @@
 
 ### TASK-MAP-002-1 World Map Overlay 기본 구조
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 요구사항 7항목 전부 충족, 기존 시스템(camera_controller, world_selection, building_placement)과 유기적 통합 정상, 테스트 38 assertion headless PASS, 임시 파일 없음, 코드 스타일과 설계 일관성 양호.
 
 - 요구사항:
 

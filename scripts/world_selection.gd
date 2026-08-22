@@ -20,7 +20,7 @@ signal selection_changed(interactable)
 const INTERACT_COLLISION_LAYER := 8
 
 ## 마우스 선택 대상 그룹. 열린 동안 월드 클릭을 차단하는 DAY 모달 UI.
-const MODAL_UI_GROUPS := ["recruitment_ui", "inn_roster_ui"]
+const MODAL_UI_GROUPS := ["recruitment_ui", "inn_roster_ui", "world_map_overlay"]
 
 var _selected: Interactable = null
 

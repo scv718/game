@@ -59,6 +59,8 @@ func _process(delta: float) -> void:
 ## WASD로 camera pan. DAY는 일반 pan, NIGHT는 tactical pan(속도만 다름).
 ## 카메라가 Player에 종속되지 않으므로 컨트롤러 자체 위치를 이동한다.
 func _physics_process(delta: float) -> void:
+	if _is_map_overlay_open():
+		return
 	var pan_speed := night_pan_speed if _night_mode else day_pan_speed
 	var pan_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if pan_dir == Vector2.ZERO:
@@ -78,6 +80,8 @@ func pan_camera(offset: Vector2) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _is_map_overlay_open():
+		return
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_zoom_target = clampf(_zoom_target + wheel_zoom_step, min_zoom, max_zoom)
@@ -109,3 +113,8 @@ func get_zoom_target() -> float:
 
 func get_world_bounds() -> Rect2:
 	return WORLD_BOUNDS
+
+
+func _is_map_overlay_open() -> bool:
+	var overlay := get_tree().get_first_node_in_group("world_map_overlay")
+	return overlay != null and overlay.has_method("is_open") and overlay.is_open()
