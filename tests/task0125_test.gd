@@ -90,7 +90,7 @@ func _check_south_agriculture() -> void:
 
 func _check_ne_dungeon() -> void:
 	var pos: Vector2 = _layout.get_ne_dungeon_candidate()
-	_check(pos.distance_to(Vector2(720, -700)) <= 40.0, "NE dungeon candidate near (+720,-700) (%s)" % str(pos))
+	_check(pos.distance_to(Vector2(1060, -1300)) <= 40.0, "NE dungeon candidate near (+1060,-1300) (%s)" % str(pos))
 	_check(_layout.is_in_bounds(pos), "NE dungeon candidate inside map bounds")
 	_check(not _layout.is_in_clearing(pos), "NE dungeon candidate is in Outer Wild, not the village clearing")
 	_check(not _layout.is_on_access_axis(pos), "NE dungeon candidate not on a Main Road")

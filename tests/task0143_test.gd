@@ -23,7 +23,7 @@ enum Phase {
 	DONE,
 }
 
-const NORTH_CANDIDATE := Vector2(-140, -900)
+const NORTH_CANDIDATE := Vector2(-200, -1440)
 const GATE_POS := Vector2(0, -448)
 const GATE_RECT := Rect2(Vector2(-24, -456), Vector2(48, 16))
 ## 성문 바로 안/밖의 짧은 path 쌍. 열린 지형에서 성문(48x16)만으로는 장거리 nav '완전

@@ -35,28 +35,28 @@ const WALL_BUFFER_HALF := Vector2(288, 288)
 # 인공적인 직선 십자형으로 읽히지 않게 한다.
 const MAIN_ROAD_HALF := 28.0
 const MAIN_ROAD_INNER := 224.0
-const AXIS_OUTER := 1440.0
+const AXIS_OUTER := 1500.0
 
 const MAIN_ROADS := {
 	"north": [
 		Vector2(0, -224), Vector2(0, -540), Vector2(-30, -650),
 		Vector2(-60, -820), Vector2(-100, -960), Vector2(-140, -1200),
-		Vector2(-180, -1380), Vector2(-200, -1440),
+		Vector2(-175, -1380), Vector2(-200, -1500),
 	],
 	"south": [
 		Vector2(0, 224), Vector2(0, 540), Vector2(30, 650),
 		Vector2(60, 820), Vector2(100, 960), Vector2(140, 1200),
-		Vector2(180, 1380), Vector2(200, 1440),
+		Vector2(175, 1380), Vector2(200, 1500),
 	],
 	"east": [
 		Vector2(224, 0), Vector2(540, 0), Vector2(650, -30),
 		Vector2(820, -60), Vector2(960, -100), Vector2(1200, -140),
-		Vector2(1380, -180), Vector2(1440, -200),
+		Vector2(1380, -180), Vector2(1500, -200),
 	],
 	"west": [
 		Vector2(-224, 0), Vector2(-540, 0), Vector2(-650, 30),
 		Vector2(-820, 60), Vector2(-960, 100), Vector2(-1200, 140),
-		Vector2(-1380, 180), Vector2(-1440, 200),
+		Vector2(-1380, 180), Vector2(-1500, 200),
 	],
 }
 
@@ -82,17 +82,17 @@ const SECONDARY_PATH_HALF := 16.0
 
 const SECONDARY_PATHS := {
 	"starter_forest": [
-		Vector2(-224, -40), Vector2(-320, -160), Vector2(-400, -280), Vector2(-430, -340),
+		Vector2(-224, -40), Vector2(-340, -180), Vector2(-440, -320), Vector2(-480, -380),
 	],
 	"stone_zone": [
-		Vector2(280, 0), Vector2(360, 140), Vector2(440, 280), Vector2(480, 360),
+		Vector2(320, 0), Vector2(420, 160), Vector2(520, 320), Vector2(580, 400),
 	],
 	"south_agriculture": [
-		Vector2(0, 380), Vector2(40, 500), Vector2(60, 620), Vector2(80, 800),
+		Vector2(0, 380), Vector2(50, 520), Vector2(80, 660), Vector2(100, 850),
 	],
 	"ne_dungeon": [
-		Vector2(300, 0), Vector2(460, -200), Vector2(620, -440),
-		Vector2(720, -650), Vector2(800, -900), Vector2(860, -1100),
+		Vector2(340, 0), Vector2(520, -240), Vector2(700, -520),
+		Vector2(840, -780), Vector2(960, -1060), Vector2(1060, -1300),
 	],
 }
 
@@ -114,43 +114,43 @@ const FOREST_CLUSTERS := [
 	{
 		"id": "starter_forest",
 		"role": "starter",
-		"center": Vector2(-480, -380),
+		"center": Vector2(-520, -420),
 		"trees": [
-			Vector2(-540, -470), Vector2(-500, -480), Vector2(-570, -440),
-			Vector2(-530, -445), Vector2(-585, -400), Vector2(-545, -405),
-			Vector2(-510, -430), Vector2(-565, -350), Vector2(-520, -360),
-			Vector2(-480, -440), Vector2(-440, -420), Vector2(-495, -340),
-			Vector2(-575, -495),
-			Vector2(-605, -460), Vector2(-620, -420), Vector2(-595, -370),
-			Vector2(-410, -330), Vector2(-360, -340), Vector2(-355, -295),
-			Vector2(-400, -385),
+			Vector2(-580, -510), Vector2(-540, -520), Vector2(-610, -480),
+			Vector2(-570, -485), Vector2(-625, -440), Vector2(-585, -445),
+			Vector2(-550, -470), Vector2(-605, -390), Vector2(-560, -400),
+			Vector2(-520, -480), Vector2(-480, -460), Vector2(-535, -380),
+			Vector2(-615, -535),
+			Vector2(-645, -500), Vector2(-660, -460), Vector2(-635, -410),
+			Vector2(-450, -370), Vector2(-400, -380), Vector2(-395, -335),
+			Vector2(-440, -425),
 		],
 	},
 	{
 		"id": "large_forest",
 		"role": "large",
-		"center": Vector2(-680, 530),
+		"center": Vector2(-750, 600),
 		"trees": [
-			Vector2(-560, 400), Vector2(-620, 395), Vector2(-680, 390),
-			Vector2(-740, 395), Vector2(-520, 450), Vector2(-580, 450),
-			Vector2(-640, 455), Vector2(-700, 460), Vector2(-800, 470),
-			Vector2(-540, 510), Vector2(-600, 520), Vector2(-680, 520),
-			Vector2(-740, 515), Vector2(-800, 520), Vector2(-840, 510),
-			Vector2(-560, 570), Vector2(-620, 580), Vector2(-680, 580),
-			Vector2(-740, 570), Vector2(-580, 630), Vector2(-640, 640),
-			Vector2(-700, 635), Vector2(-780, 600), Vector2(-820, 580),
-			Vector2(-760, 650), Vector2(-760, 450),
+			Vector2(-630, 470), Vector2(-690, 465), Vector2(-750, 460),
+			Vector2(-810, 465), Vector2(-590, 520), Vector2(-650, 520),
+			Vector2(-710, 525), Vector2(-770, 530), Vector2(-870, 540),
+			Vector2(-610, 580), Vector2(-670, 590), Vector2(-750, 590),
+			Vector2(-810, 585), Vector2(-870, 590), Vector2(-910, 580),
+			Vector2(-630, 640), Vector2(-690, 650), Vector2(-750, 650),
+			Vector2(-810, 640), Vector2(-650, 700), Vector2(-710, 710),
+			Vector2(-770, 705), Vector2(-850, 670), Vector2(-890, 650),
+			Vector2(-830, 720), Vector2(-830, 520),
 		],
 	},
 	{
 		"id": "sparse_forest",
 		"role": "sparse",
-		"center": Vector2(580, -490),
+		"center": Vector2(650, -550),
 		"trees": [
-			Vector2(440, -430), Vector2(490, -460), Vector2(510, -490),
-			Vector2(580, -500), Vector2(630, -480), Vector2(680, -440),
-			Vector2(510, -550), Vector2(570, -570), Vector2(630, -540),
-			Vector2(720, -510), Vector2(770, -540),
+			Vector2(500, -490), Vector2(550, -520), Vector2(570, -550),
+			Vector2(640, -560), Vector2(690, -540), Vector2(740, -500),
+			Vector2(570, -610), Vector2(630, -630), Vector2(690, -600),
+			Vector2(780, -570), Vector2(830, -600),
 		],
 	},
 ]
@@ -172,8 +172,8 @@ const STARTER_TREES := [
 # SE Stone Zone의 공간 역할(탐색/확장 대상, 성벽 안/밖 선택)을 유지하면서
 # 초반~중반 Quarry 확장의 동선에 맞춰 중심을 (+480,+360) 후보에서 (+500,+260)으로 조정했다.
 const STONE_ZONE := {
-	"center": Vector2(500, 260),
-	"deposit_pos": Vector2(500, 260),
+	"center": Vector2(600, 300),
+	"deposit_pos": Vector2(600, 300),
 }
 
 # 장식용 오브젝트 (순수 시각 전용, 충돌/내비게이션 영향 없음). 랜덤 배치 아님.
@@ -194,12 +194,12 @@ const DECORATIONS := [
 	{"type": "bush", "pos": Vector2(350, -700), "scale": 0.6},
 	{"type": "bush", "pos": Vector2(-350, 700), "scale": 0.6},
 	# SE Stone Zone 주변 장식 바위 (TASK-012-4). 순수 시각용(충돌 없음)이라
-	# Quarry placement를 막지 않는다. StoneDeposit 중심(+500,+260)에서 약 70~100px 거리에 배치.
-	{"type": "rock", "pos": Vector2(440, 200), "scale": 0.7},
-	{"type": "rock", "pos": Vector2(560, 320), "scale": 0.6},
-	{"type": "rock", "pos": Vector2(440, 320), "scale": 0.8},
-	{"type": "rock", "pos": Vector2(560, 200), "scale": 0.7},
-	{"type": "rock", "pos": Vector2(480, 170), "scale": 0.6},
+	# Quarry placement를 막지 않는다. StoneDeposit 중심(+600,+300)에서 약 70~100px 거리에 배치.
+	{"type": "rock", "pos": Vector2(540, 240), "scale": 0.7},
+	{"type": "rock", "pos": Vector2(660, 360), "scale": 0.6},
+	{"type": "rock", "pos": Vector2(540, 360), "scale": 0.8},
+	{"type": "rock", "pos": Vector2(660, 240), "scale": 0.7},
+	{"type": "rock", "pos": Vector2(600, 210), "scale": 0.6},
 ]
 
 # 향후 Gate Anchor 후보 지점 (비기능 Marker). 맵 가장자리 근처.
@@ -216,10 +216,10 @@ const GATE_ANCHORS := {
 # Gate 정면의 완전한 직선상(lane map)처럼 보이지 않게 한다.
 # 실제 Portal/Enemy spawn 기능은 구현하지 않는다.
 const SPAWN_CANDIDATES := {
-	"north": Vector2(-200, -1350),
-	"south": Vector2(180, 1350),
-	"east": Vector2(1350, -180),
-	"west": Vector2(-1350, 240),
+	"north": Vector2(-200, -1440),
+	"south": Vector2(200, 1440),
+	"east": Vector2(1440, -200),
+	"west": Vector2(-1440, 200),
 }
 
 # 기존 4방향 후보 노드는 회귀 호환을 위해 유지하되, 현재 월드에서의 의미를
@@ -240,63 +240,63 @@ const DIRECTION_ROLES := {
 const APPROACH_ROUTE_HALF := 32.0
 
 const APPROACH_ROUTES := {
-	"north": [Vector2(-200, -1350), Vector2(-180, -1380)],
-	"south": [Vector2(180, 1350), Vector2(180, 1380)],
-	"east": [Vector2(1350, -180), Vector2(1380, -180)],
-	"west": [Vector2(-1350, 240), Vector2(-1380, 200)],
+	"north": [Vector2(-200, -1440), Vector2(-180, -1500)],
+	"south": [Vector2(200, 1440), Vector2(200, 1500)],
+	"east": [Vector2(1440, -200), Vector2(1500, -200)],
+	"west": [Vector2(-1440, 200), Vector2(-1500, 200)],
 }
 
 # --- TASK-012-5 미래 콘텐츠 슬롯 (레벨디자인상 공간만 확보, 실제 기능 없음) ---
 # 이 상수들은 향후 Farm/Herb/Dungeon/이벤트 등이 들어갈 공간을 좌표로 예약한다.
 # 실제 시스템(건설/생산/전투/이동 규칙/씬 전환)은 구현하지 않는다.
 
-# South Agriculture Zone: 남쪽 +450~+650px에 걸친 평평한 미래 농업 공간.
+# South Agriculture Zone: 남쪽 +520~+820px에 걸친 평평한 미래 농업 공간.
 # 다른 방향보다 대형 자연 장애물(숲/석재)을 적게 두어 Farm/Herb Field/Greenhouse
 # 배치를 위한 충분한 여지를 남긴다. 실제 Farm/Herb 시스템은 구현하지 않는다.
-const SOUTH_AGRICULTURE_ZONE := Rect2(-360, 500, 720, 260)
+const SOUTH_AGRICULTURE_ZONE := Rect2(-400, 520, 800, 300)
 
 # NE Dungeon Candidate: Player가 향후 직접 발견하러 갈 수 있는 Outer Wild 위치.
 # Marker/placeholder(비기능) 수준만 허용. 실제 entrance/combat/씬 전환 금지.
-const NE_DUNGEON_CANDIDATE := Vector2(860, -1100)
+const NE_DUNGEON_CANDIDATE := Vector2(1060, -1300)
 
 # Outer Wild 미래 콘텐츠 슬롯: 맵 코너를 장식으로 전부 채우지 않고 예약해 둔다.
 # 각 슬롯은 참고용 Marker + 범위로 식별 가능. 실제 시스템처럼 동작하지 않는다.
 const OUTER_WILD_SLOTS := {
-	"nw": Rect2(-1440, -1440, 160, 160),
-	"ne": Rect2(1280, -1440, 160, 160),
-	"sw": Rect2(-1440, 1280, 160, 160),
-	"se": Rect2(1280, 1280, 160, 160),
+	"nw": Rect2(-1500, -1500, 180, 180),
+	"ne": Rect2(1320, -1500, 180, 180),
+	"sw": Rect2(-1500, 1320, 180, 180),
+	"se": Rect2(1320, 1320, 180, 180),
 }
 
 # --- Defense Belt / Gate Corridor (TASK-012-3) ---
-# 자유 성벽 배치를 위해 확보하는 연속 빈 공간. 중심에서 약 360~520px.
-const DEFENSE_BELT_INNER := 360.0
-const DEFENSE_BELT_OUTER := 600.0
+# 자유 성벽 배치를 위해 확보하는 연속 빈 공간. 중심에서 약 380~640px.
+const DEFENSE_BELT_INNER := 380.0
+const DEFENSE_BELT_OUTER := 640.0
 
 # Gate Corridor: 각 Main Road를 중심으로 성벽과 도로가 교차할 수 있는 허용 구간.
 # Gate를 정확히 한 점에 강제하지 않고, 이 영역 안 어디든 Wall/Gate가 들어갈 수 있게
 # 레벨디자인상 확보해 둔다. 실제 Gate 기능/placement validation은 구현하지 않는다.
 const GATE_CORRIDORS := {
-	"north": Rect2(-56, -620, 112, 210),
-	"south": Rect2(-56, 410, 112, 210),
-	"west": Rect2(-620, -56, 210, 112),
-	"east": Rect2(410, -56, 210, 112),
+	"north": Rect2(-56, -680, 112, 230),
+	"south": Rect2(-56, 450, 112, 230),
+	"west": Rect2(-680, -56, 230, 112),
+	"east": Rect2(450, -56, 230, 112),
 }
 
 # Gate 바깥 Combat Field: 각 Gate Corridor 외측에 최소 약 200x160 open space.
 const COMBAT_FIELDS := {
-	"north": Rect2(-140, -1050, 280, 200),
-	"south": Rect2(-140, 850, 280, 200),
-	"west": Rect2(-1050, -140, 200, 280),
-	"east": Rect2(850, -140, 200, 280),
+	"north": Rect2(-160, -1180, 320, 220),
+	"south": Rect2(-160, 960, 320, 220),
+	"west": Rect2(-1180, -160, 220, 320),
+	"east": Rect2(960, -160, 220, 320),
 }
 
 # Gate 안쪽 Rally Space: 각 Gate Corridor 안쪽에 약 120~160px 깊이의 비교적 열린 공간.
 const RALLY_SPACES := {
-	"north": Rect2(-80, -350, 160, 140),
-	"south": Rect2(-80, 210, 160, 140),
-	"west": Rect2(-350, -80, 140, 160),
-	"east": Rect2(210, -80, 140, 160),
+	"north": Rect2(-90, -380, 180, 150),
+	"south": Rect2(-90, 230, 180, 150),
+	"west": Rect2(-380, -90, 150, 180),
+	"east": Rect2(230, -90, 150, 180),
 }
 
 

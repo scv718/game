@@ -285,7 +285,7 @@ func _verify_stone() -> void:
 		_enter(Phase.VERIFY_GROVE)
 		return
 	var pos: Vector2 = _deposit.global_position
-	_check(pos.distance_to(Vector2(500, 260)) <= 32.0, "stone deposit near (+500,260) (%s)" % str(pos))
+	_check(pos.distance_to(Vector2(600, 300)) <= 32.0, "stone deposit near (+600,300) (%s)" % str(pos))
 	var dist := pos.distance_to(Vector2.ZERO)
 	_check(dist >= 420.0, "stone deposit is a meaningful expansion target (dist %.0f)" % dist)
 	_check(not _layout.is_in_clearing(pos), "stone deposit outside central clearing")

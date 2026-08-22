@@ -320,7 +320,7 @@ func _check_integration() -> void:
 	_check(inner_free >= 200, "inner expansion ring (220~360px) has free building space (%d tiles)" % inner_free)
 
 	# 6. Defense Belt / Gate Corridor 4개
-	_check(_layout.get_defense_belt_inner() == 360.0 and _layout.get_defense_belt_outer() == 520.0, "defense belt 360~520px")
+	_check(_layout.get_defense_belt_inner() == 380.0 and _layout.get_defense_belt_outer() == 640.0, "defense belt 380~640px")
 	var corridors: Dictionary = _layout.GATE_CORRIDORS
 	_check(corridors.size() == 4, "4 gate corridors defined (%d)" % corridors.size())
 	for dir in DIRS:
@@ -360,12 +360,12 @@ func _check_integration() -> void:
 	_check(get_nodes_in_group("stone_deposits").size() == 1, "exactly 1 stone deposit (%d)" % get_nodes_in_group("stone_deposits").size())
 	if _deposit != null:
 		var sp2: Vector2 = _deposit.global_position
-		_check(sp2.distance_to(Vector2(500, 260)) <= 32.0, "stone deposit at (+500,+260) (%s)" % str(sp2))
+		_check(sp2.distance_to(Vector2(600, 300)) <= 32.0, "stone deposit at (+600,+300) (%s)" % str(sp2))
 		_check(not _layout.is_in_defense_belt(sp2), "stone deposit outside defense belt (wall in/out choice)")
 
 	# 10. South Agriculture / NE Dungeon
 	_check(_layout.get_south_agriculture_zone().size.x >= 400.0 and _layout.get_south_agriculture_zone().size.y >= 120.0, "south agriculture zone is a meaningful area")
-	_check(_layout.get_ne_dungeon_candidate().distance_to(Vector2(720, -700)) <= 40.0, "NE dungeon candidate near (+720,-700)")
+	_check(_layout.get_ne_dungeon_candidate().distance_to(Vector2(1060, -1300)) <= 40.0, "NE dungeon candidate near (+1060,-1300)")
 	_check(_layout.get_south_agriculture_marker() != null, "SouthAgricultureZone marker exists")
 	_check(_layout.get_ne_dungeon_marker() != null, "NeDungeonCandidate marker exists")
 
@@ -374,8 +374,8 @@ func _check_integration() -> void:
 	_check(candidates.size() == 4, "4 spawn candidates defined (%d)" % candidates.size())
 	_check(_layout.get_spawn_candidate_nodes().size() == 4, "4 spawn candidate markers present")
 	var expected_cands := {
-		"north": Vector2(-140, -900), "south": Vector2(120, 900),
-		"east": Vector2(900, -120), "west": Vector2(-900, 160),
+		"north": Vector2(-200, -1440), "south": Vector2(200, 1440),
+		"east": Vector2(1440, -200), "west": Vector2(-1440, 200),
 	}
 	for dir in DIRS:
 		var cpos: Vector2 = _layout.get_spawn_candidate(dir)

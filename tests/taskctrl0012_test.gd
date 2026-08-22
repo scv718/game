@@ -42,7 +42,7 @@ const TREE1_POS := Vector2(340, 320)
 const DECO0_POS := Vector2(220, 200)
 const EMPTY_POS := Vector2(0, 300)
 const LUMBERYARD_POS := Vector2(300, 260)
-const QUARRY_POS := Vector2(500, 260)
+const QUARRY_POS := Vector2(600, 300)
 const GATE_POS := Vector2(-528, 0)
 
 var _frame := 0

@@ -61,12 +61,12 @@ func _process(_delta: float) -> bool:
 func _check_defense_belt() -> void:
 	var inner: float = _layout.get_defense_belt_inner()
 	var outer: float = _layout.get_defense_belt_outer()
-	_check(inner == 360.0, "defense belt inner radius 360 (%s)" % str(inner))
-	_check(outer == 520.0, "defense belt outer radius 520 (%s)" % str(outer))
+	_check(inner == 380.0, "defense belt inner radius 380 (%s)" % str(inner))
+	_check(outer == 640.0, "defense belt outer radius 640 (%s)" % str(outer))
 	_check(_layout.is_in_defense_belt(Vector2(0, 400)), "point at 400px is in defense belt")
 	_check(_layout.is_in_defense_belt(Vector2(340, 320)), "SE starter tree zone is in belt band (dist 467)")
 	_check(not _layout.is_in_defense_belt(Vector2(0, 300)), "300px is inner expansion, not belt")
-	_check(not _layout.is_in_defense_belt(Vector2(0, 600)), "600px is production belt, not defense belt")
+	_check(not _layout.is_in_defense_belt(Vector2(0, 700)), "700px is production belt, not defense belt")
 
 
 func _check_gate_corridors() -> void:

@@ -543,7 +543,9 @@
 
 ### TASK-MAP-001-2 Region Layout Expansion
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 모든マーカー位置(GateAnchor, SpawnCandidate, ApproachRoute, GateCorridor, CombatField, RallySpace, OuterWild, SouthAgricultureZone, NeDungeonCandidate, BoundaryWall)が `world_map.gd` 定数と完全に一致。前回レビューで指摘された GateAnchor 960/1500 不一致は現在のシーンファイルでは解消済み（±1500 正確に設定）。`generate_world_map.gd` が `world_map.gd` 定数から直接読むため、シーン-コード整合性が保証。方向別ロール(WEST=threat, NORTH=rift, EAST=royal road, SOUTH=production)が明確に区別され、192×192 拡張レイアウトが正しく構成されている。一時ファイルなし。コードスタイルと既存設計との一貫性も良好。
+- 피드백: `world.tscn`의 `GateAnchor_*` 4개 마커 위치(960)가 `world_map.gd`의 `GATE_ANCHORS` 상수(1500)와 불일치. `generate_world_map.gd` 재실행 또는 scene 파일에서4개 GateAnchor 위치를 ±1500으로 갱신 필요. SpawnCandidate/GateCorridor/CombatField/RallySpace/OuterWild 등 나머지 모든 마커는 정확히 일치.
 
 - 설명: 기존 방향별 역할을 유지하면서 확장된 외곽 공간에 주요 Region/Approach를 재배치한다.
 

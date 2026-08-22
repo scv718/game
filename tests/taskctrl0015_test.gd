@@ -14,7 +14,7 @@ enum Phase {
 const TAVERN_POS := Vector2(-126, -48)
 const INN_POS := Vector2(126, -48)
 const LUMBERYARD_POS := Vector2(300, 260)
-const QUARRY_POS := Vector2(500, 260)
+const QUARRY_POS := Vector2(600, 300)
 const WALL_POS := Vector2(0, 300)
 const GATE_POS := Vector2(-528, 0)
 const LUMBERYARD_COST := 10

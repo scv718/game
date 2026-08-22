@@ -133,141 +133,141 @@ func _draw_village_props() -> void:
 
 func _draw_west_region() -> void:
 	var outer := PackedVector2Array([
-		Vector2(-1024, -1024), Vector2(-610, -1024), Vector2(-650, -730),
-		Vector2(-590, -520), Vector2(-690, -300), Vector2(-650, -120),
-		Vector2(-720, 90), Vector2(-650, 310), Vector2(-700, 570),
-		Vector2(-620, 790), Vector2(-650, 1024), Vector2(-1024, 1024),
+		Vector2(-1120, -1120), Vector2(-680, -1120), Vector2(-720, -810),
+		Vector2(-660, -580), Vector2(-760, -340), Vector2(-720, -140),
+		Vector2(-800, 80), Vector2(-720, 350), Vector2(-780, 640),
+		Vector2(-690, 880), Vector2(-720, 1120), Vector2(-1120, 1120),
 	])
 	draw_colored_polygon(outer, Color(0.20, 0.16, 0.20, 0.70))
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(-720, -760), Vector2(-610, -700), Vector2(-570, -470),
-		Vector2(-640, -260), Vector2(-604, -80), Vector2(-654, 120),
-		Vector2(-608, 340), Vector2(-650, 590), Vector2(-590, 790),
-		Vector2(-690, 870),
+		Vector2(-800, -840), Vector2(-680, -780), Vector2(-640, -530),
+		Vector2(-720, -300), Vector2(-680, -100), Vector2(-740, 100),
+		Vector2(-680, 380), Vector2(-730, 660), Vector2(-660, 880),
+		Vector2(-770, 960),
 	]), Color(0.30, 0.23, 0.22, 0.30))
 	# Battlefield stays open and readable, with a scuffed lane rather than a tunnel.
-	draw_rect(Rect2(-718, -118, 190, 236), Color(0.34, 0.27, 0.23, 0.72))
-	for p in [Vector2(-680, -78), Vector2(-636, 78), Vector2(-594, -56), Vector2(-548, 82)]:
-		draw_circle(p, 13.0, Color(0.23, 0.19, 0.19, 0.55))
+	draw_rect(Rect2(-798, -138, 210, 276), Color(0.34, 0.27, 0.23, 0.72))
+	for p in [Vector2(-760, -88), Vector2(-710, 88), Vector2(-664, -66), Vector2(-614, 92)]:
+		draw_circle(p, 15.0, Color(0.23, 0.19, 0.19, 0.55))
 	# Ruined, slightly crooked approach route from the portal.
 	var approach := PackedVector2Array([
-		Vector2(-920, 158), Vector2(-850, 120), Vector2(-790, 132),
-		Vector2(-726, 78), Vector2(-664, 54),
+		Vector2(-1020, 158), Vector2(-940, 120), Vector2(-870, 132),
+		Vector2(-800, 78), Vector2(-730, 54),
 	])
 	draw_polyline(approach, Color("49383a"), 58.0, false)
 	draw_polyline(approach, Color("755548"), 38.0, false)
 	# Portal focal point.
-	draw_circle(Vector2(-920, 158), 46.0, Color(0.08, 0.06, 0.12, 0.95))
-	draw_arc(Vector2(-920, 158), 50.0, 0.0, TAU, 32, Color(0.57, 0.15, 0.68, 0.58), 7.0, false)
-	draw_arc(Vector2(-920, 158), 42.0, 0.0, TAU, 32, PURPLE, 9.0, false)
-	draw_arc(Vector2(-920, 158), 29.0, 0.0, TAU, 24, PURPLE_GLOW, 5.0, false)
-	draw_circle(Vector2(-920, 158), 19.0, Color("20162c"))
+	draw_circle(Vector2(-1020, 158), 50.0, Color(0.08, 0.06, 0.12, 0.95))
+	draw_arc(Vector2(-1020, 158), 54.0, 0.0, TAU, 32, Color(0.57, 0.15, 0.68, 0.58), 7.0, false)
+	draw_arc(Vector2(-1020, 158), 46.0, 0.0, TAU, 32, PURPLE, 9.0, false)
+	draw_arc(Vector2(-1020, 158), 32.0, 0.0, TAU, 24, PURPLE_GLOW, 5.0, false)
+	draw_circle(Vector2(-1020, 158), 21.0, Color("20162c"))
 	for i in 8:
 		var a := float(i) / 8.0 * TAU
-		var p := Vector2(-920, 158) + Vector2(cos(a), sin(a)) * 55.0
+		var p := Vector2(-1020, 158) + Vector2(cos(a), sin(a)) * 60.0
 		draw_colored_polygon(PackedVector2Array([p + Vector2(-5, 7), p + Vector2(0, -12), p + Vector2(6, 7)]), Color("3f3346"))
 
 
 func _draw_west_props() -> void:
 	# West gate suggestion and broken defenses.  These are visual-only and leave the
 	# tested placement corridor unobstructed.
-	_draw_ruined_wall(Vector2(-526, -76), Vector2(-526, -34), 3)
-	_draw_ruined_wall(Vector2(-526, 36), Vector2(-526, 78), 3)
-	_draw_banner(Vector2(-505, -86), Color("873b43"))
-	_draw_broken_cart(Vector2(-766, -8))
-	for p in [Vector2(-842, 58), Vector2(-806, 194), Vector2(-744, 176), Vector2(-690, -154)]:
+	_draw_ruined_wall(Vector2(-596, -86), Vector2(-596, -44), 3)
+	_draw_ruined_wall(Vector2(-596, 26), Vector2(-596, 68), 3)
+	_draw_banner(Vector2(-575, -96), Color("873b43"))
+	_draw_broken_cart(Vector2(-846, -8))
+	for p in [Vector2(-922, 58), Vector2(-886, 194), Vector2(-824, 176), Vector2(-770, -154)]:
 		draw_line(p - Vector2(8, 7), p + Vector2(8, 7), INK, 3.0)
 		draw_line(p + Vector2(7, -8), p - Vector2(7, 8), INK, 3.0)
 
 
 func _draw_north_region() -> void:
 	var mountain := PackedVector2Array([
-		Vector2(-410, -1024), Vector2(390, -1024), Vector2(326, -850),
-		Vector2(220, -735), Vector2(124, -704), Vector2(96, -532),
-		Vector2(-96, -532), Vector2(-126, -704), Vector2(-240, -748),
+		Vector2(-460, -1120), Vector2(440, -1120), Vector2(370, -940),
+		Vector2(250, -820), Vector2(140, -790), Vector2(110, -600),
+		Vector2(-110, -600), Vector2(-140, -790), Vector2(-270, -830),
 	])
 	draw_colored_polygon(mountain, Color(0.34, 0.39, 0.35, 0.46))
 	# Smaller rift at the head of the narrow approach.
-	draw_arc(Vector2(-140, -900), 25.0, 0.0, TAU, 20, Color("60306f"), 7.0, false)
-	draw_arc(Vector2(-140, -900), 14.0, 0.0, TAU, 16, Color("bd65d5"), 3.0, false)
+	draw_arc(Vector2(-160, -1000), 28.0, 0.0, TAU, 20, Color("60306f"), 7.0, false)
+	draw_arc(Vector2(-160, -1000), 16.0, 0.0, TAU, 16, Color("bd65d5"), 3.0, false)
 	# North battlefield is deliberately open in front of the gate.
-	draw_rect(Rect2(-96, -700, 192, 156), Color(0.47, 0.43, 0.33, 0.34))
+	draw_rect(Rect2(-110, -780, 220, 176), Color(0.47, 0.43, 0.33, 0.34))
 
 
 func _draw_north_props() -> void:
-	_draw_stone_gate(Vector2(0, -526), false)
+	_draw_stone_gate(Vector2(0, -596), false)
 	# Ancient nonfunctional dungeon ruin in the NE.
-	_draw_ruined_wall(Vector2(672, -722), Vector2(752, -722), 5)
-	_draw_stone_post(Vector2(680, -686))
-	_draw_stone_post(Vector2(748, -686))
-	draw_arc(Vector2(716, -690), 27.0, PI, TAU, 14, Color("4e4552"), 8.0, false)
+	_draw_ruined_wall(Vector2(752, -802), Vector2(842, -802), 5)
+	_draw_stone_post(Vector2(760, -766))
+	_draw_stone_post(Vector2(838, -766))
+	draw_arc(Vector2(800, -770), 30.0, PI, TAU, 14, Color("4e4552"), 8.0, false)
 
 
 func _draw_east_region() -> void:
 	# Clean roadside shoulders and evenly spaced cobbles establish the Royal Road.
-	draw_line(Vector2(520, -34), Vector2(1010, -113), Color(0.77, 0.68, 0.48, 0.62), 5.0)
-	draw_line(Vector2(520, 34), Vector2(1010, -45), Color(0.77, 0.68, 0.48, 0.62), 5.0)
-	for i in range(560, 1000, 56):
-		var t := float(i - 520) / 490.0
-		var p := Vector2(i, lerpf(0.0, -79.0, t))
+	draw_line(Vector2(580, -34), Vector2(1120, -125), Color(0.77, 0.68, 0.48, 0.62), 5.0)
+	draw_line(Vector2(580, 34), Vector2(1120, -50), Color(0.77, 0.68, 0.48, 0.62), 5.0)
+	for i in range(620, 1100, 56):
+		var t := float(i - 580) / 540.0
+		var p := Vector2(i, lerpf(0.0, -88.0, t))
 		draw_circle(p, 4.0, Color("d8c796"))
 	# Horizon apron prevents the road from looking abruptly cut off.
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(930, -145), Vector2(1024, -160), Vector2(1024, 12), Vector2(930, -24),
+		Vector2(1040, -160), Vector2(1140, -175), Vector2(1140, 14), Vector2(1040, -26),
 	]), Color(0.70, 0.64, 0.45, 0.30))
 
 
 func _draw_east_props() -> void:
-	_draw_stone_gate(Vector2(526, 0), true)
-	for x in [616.0, 760.0, 900.0]:
-		_draw_banner(Vector2(x, -70.0 - (x - 616.0) * 0.16), BLUE)
-	_draw_sign(Vector2(742, 34), Vector2(1, -0.18))
-	_draw_sentry_box(Vector2(610, 62))
+	_draw_stone_gate(Vector2(596, 0), true)
+	for x in [696.0, 850.0, 1000.0]:
+		_draw_banner(Vector2(x, -78.0 - (x - 696.0) * 0.16), BLUE)
+	_draw_sign(Vector2(832, 38), Vector2(1, -0.18))
+	_draw_sentry_box(Vector2(690, 66))
 
 
 func _draw_south_region() -> void:
 	# Future production belt: visible fields and herb rows, no gameplay building.
-	draw_rect(Rect2(-310, 454, 216, 148), Color(0.50, 0.54, 0.27, 0.76))
-	draw_rect(Rect2(-70, 474, 160, 122), Color(0.38, 0.53, 0.28, 0.70))
-	draw_rect(Rect2(118, 448, 192, 156), Color(0.58, 0.48, 0.25, 0.58))
-	for x in range(-292, -100, 20):
-		draw_line(Vector2(x, 470), Vector2(x + 6, 584), Color("bd9650"), 4.0)
-	for y in range(490, 586, 18):
-		draw_line(Vector2(-54, y), Vector2(72, y), Color("76a34e"), 4.0)
-	for x in range(136, 302, 22):
-		draw_line(Vector2(x, 462), Vector2(x - 8, 588), Color("b58b46"), 3.0)
+	draw_rect(Rect2(-360, 510, 250, 170), Color(0.50, 0.54, 0.27, 0.76))
+	draw_rect(Rect2(-80, 534, 180, 140), Color(0.38, 0.53, 0.28, 0.70))
+	draw_rect(Rect2(138, 504, 220, 180), Color(0.58, 0.48, 0.25, 0.58))
+	for x in range(-340, -110, 22):
+		draw_line(Vector2(x, 530), Vector2(x + 7, 660), Color("bd9650"), 4.0)
+	for y in range(550, 664, 20):
+		draw_line(Vector2(-62, y), Vector2(82, y), Color("76a34e"), 4.0)
+	for x in range(156, 348, 24):
+		draw_line(Vector2(x, 520), Vector2(x - 9, 670), Color("b58b46"), 3.0)
 
 
 func _draw_south_props() -> void:
-	_draw_fence(Vector2(-318, 438), Vector2(-88, 438), 9)
-	_draw_fence(Vector2(112, 430), Vector2(316, 430), 8)
-	_draw_fence(Vector2(-318, 612), Vector2(-92, 612), 9)
-	_draw_fence(Vector2(112, 614), Vector2(316, 614), 8)
-	_draw_sign(Vector2(94, 420), Vector2(0.7, 0.7))
-	_draw_crate(Vector2(332, 540), 15.0)
-	_draw_crate(Vector2(348, 545), 12.0)
+	_draw_fence(Vector2(-368, 494), Vector2(-100, 494), 10)
+	_draw_fence(Vector2(130, 486), Vector2(366, 486), 9)
+	_draw_fence(Vector2(-368, 690), Vector2(-104, 690), 10)
+	_draw_fence(Vector2(130, 692), Vector2(366, 692), 9)
+	_draw_sign(Vector2(108, 476), Vector2(0.7, 0.7))
+	_draw_crate(Vector2(382, 600), 15.0)
+	_draw_crate(Vector2(400, 605), 12.0)
 
 
 func _draw_resource_regions() -> void:
 	# Forest floors are tinted differently so the three wood regions read as places.
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(-600, -520), Vector2(-320, -520), Vector2(-270, -242),
-		Vector2(-520, -220), Vector2(-610, -330),
+		Vector2(-670, -580), Vector2(-360, -580), Vector2(-310, -282),
+		Vector2(-590, -260), Vector2(-680, -380),
 	]), Color(0.18, 0.35, 0.23, 0.13))
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(-860, 300), Vector2(-410, 300), Vector2(-350, 690),
-		Vector2(-820, 690), Vector2(-940, 520),
+		Vector2(-940, 360), Vector2(-460, 360), Vector2(-400, 780),
+		Vector2(-900, 780), Vector2(-1040, 590),
 	]), Color(0.10, 0.29, 0.20, 0.18))
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(350, -600), Vector2(740, -570), Vector2(790, -330),
-		Vector2(420, -300),
+		Vector2(400, -670), Vector2(810, -640), Vector2(860, -380),
+		Vector2(470, -350),
 	]), Color(0.38, 0.48, 0.29, 0.10))
 	# Stone zone uses dry ground chips and clustered scree.
 	draw_colored_polygon(PackedVector2Array([
-		Vector2(382, 138), Vector2(625, 132), Vector2(670, 354),
-		Vector2(418, 390), Vector2(350, 270),
+		Vector2(452, 178), Vector2(710, 172), Vector2(760, 414),
+		Vector2(488, 450), Vector2(410, 310),
 	]), Color(0.50, 0.45, 0.34, 0.38))
-	for p in [Vector2(395, 194), Vector2(424, 355), Vector2(470, 160), Vector2(590, 180), Vector2(630, 282), Vector2(552, 370)]:
+	for p in [Vector2(465, 234), Vector2(494, 415), Vector2(540, 200), Vector2(670, 220), Vector2(710, 322), Vector2(622, 430)]:
 		draw_circle(p, 4.0, Color("75817b"))
 
 
@@ -281,39 +281,39 @@ func _build_sprite_props() -> void:
 	_add_sprite(HAMMER_SPRITE, Vector2(148, 111), 0.34)
 	if composition_phase >= 3:
 		for item in [
-			[Vector2(-878, 88), 2, 0.55], [Vector2(-820, 222), 0, 0.45],
-			[Vector2(-746, -132), 3, 0.52], [Vector2(-670, 156), 1, 0.42],
+			[Vector2(-958, 88), 2, 0.55], [Vector2(-900, 222), 0, 0.45],
+			[Vector2(-826, -132), 3, 0.52], [Vector2(-750, 156), 1, 0.42],
 		]:
 			_add_rock(item[0], item[1], item[2])
-		for item in [[Vector2(-842, 250), 0], [Vector2(-716, 202), 2], [Vector2(-780, -176), 3]]:
+		for item in [[Vector2(-922, 250), 0], [Vector2(-796, 202), 2], [Vector2(-860, -176), 3]]:
 			_add_stump(item[0], item[1], 0.34)
 	if composition_phase >= 4:
 		# North mountain walls leave a broad vertical combat/readability lane.
 		for item in [
-			[Vector2(-250, -820), 0, 0.72], [Vector2(-185, -760), 2, 0.62],
-			[Vector2(-126, -720), 1, 0.56], [Vector2(120, -722), 3, 0.62],
-			[Vector2(184, -770), 0, 0.70], [Vector2(252, -830), 2, 0.78],
-			[Vector2(344, -900), 1, 0.68], [Vector2(-348, -900), 3, 0.68],
+			[Vector2(-290, -910), 0, 0.72], [Vector2(-215, -840), 2, 0.62],
+			[Vector2(-146, -800), 1, 0.56], [Vector2(140, -802), 3, 0.62],
+			[Vector2(214, -860), 0, 0.70], [Vector2(292, -920), 2, 0.78],
+			[Vector2(394, -1000), 1, 0.68], [Vector2(-398, -1000), 3, 0.68],
 		]:
 			_add_rock(item[0], item[1], item[2])
-		for p in [Vector2(604, -110), Vector2(694, -138), Vector2(810, -172), Vector2(922, -194)]:
+		for p in [Vector2(684, -120), Vector2(774, -148), Vector2(890, -182), Vector2(1010, -204)]:
 			_add_bush(p, 0, 0.30)
-		_add_sprite(SICKLE_SPRITE, Vector2(76, 530), 0.28)
+		_add_sprite(SICKLE_SPRITE, Vector2(86, 590), 0.28)
 	if composition_phase >= 5:
 		for item in [
-			[Vector2(-566, -332), 2, 0.32], [Vector2(-512, -252), 0, 0.30],
-			[Vector2(-398, -412), 1, 0.27], [Vector2(-742, 358), 3, 0.36],
-			[Vector2(-812, 510), 2, 0.38], [Vector2(-450, 604), 0, 0.34],
-			[Vector2(420, -354), 1, 0.28], [Vector2(632, -532), 3, 0.30],
+			[Vector2(-636, -382), 2, 0.32], [Vector2(-582, -292), 0, 0.30],
+			[Vector2(-458, -462), 1, 0.27], [Vector2(-822, 418), 3, 0.36],
+			[Vector2(-902, 580), 2, 0.38], [Vector2(-520, 674), 0, 0.34],
+			[Vector2(480, -414), 1, 0.28], [Vector2(712, -592), 3, 0.30],
 		]:
 			_add_bush(item[0], item[1], item[2])
 		for item in [
-			[Vector2(402, 224), 1, 0.48], [Vector2(432, 338), 3, 0.52],
-			[Vector2(574, 168), 0, 0.58], [Vector2(628, 318), 2, 0.50],
-			[Vector2(540, 382), 1, 0.42],
+			[Vector2(482, 264), 1, 0.48], [Vector2(512, 398), 3, 0.52],
+			[Vector2(654, 208), 0, 0.58], [Vector2(708, 378), 2, 0.50],
+			[Vector2(620, 442), 1, 0.42],
 		]:
 			_add_rock(item[0], item[1], item[2])
-		for item in [[Vector2(-544, -448), 1], [Vector2(-632, 550), 3], [Vector2(-410, 544), 0]]:
+		for item in [[Vector2(-614, -508), 1], [Vector2(-712, 620), 3], [Vector2(-480, 614), 0]]:
 			_add_stump(item[0], item[1], 0.30)
 
 

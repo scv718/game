@@ -17,10 +17,10 @@ const CORE_TYPES := ["keep", "tavern", "inn", "grocery", "equipment"]
 
 # TASK-012-6 작업 좌표 후보 (부근 허용 오차).
 const EXPECTED := {
-	"north": Vector2(-140, -900),
-	"south": Vector2(120, 900),
-	"east": Vector2(900, -120),
-	"west": Vector2(-900, 160),
+	"north": Vector2(-200, -1440),
+	"south": Vector2(200, 1440),
+	"east": Vector2(1440, -200),
+	"west": Vector2(-1440, 200),
 }
 
 var _frame := 0

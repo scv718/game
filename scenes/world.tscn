@@ -54,44 +54,44 @@ script = ExtResource("5_7t5mc")
 [node name="SettlementCenter" type="Marker2D" parent="MapLayout" unique_id=52819845]
 
 [node name="GateAnchor_NORTH" type="Marker2D" parent="MapLayout" unique_id=670610888]
-position = Vector2(0, -960)
+position = Vector2(0, -1500)
 
 [node name="GateAnchor_SOUTH" type="Marker2D" parent="MapLayout" unique_id=1998688384]
-position = Vector2(0, 960)
+position = Vector2(0, 1500)
 
 [node name="GateAnchor_EAST" type="Marker2D" parent="MapLayout" unique_id=1922119449]
-position = Vector2(960, 0)
+position = Vector2(1500, 0)
 
 [node name="GateAnchor_WEST" type="Marker2D" parent="MapLayout" unique_id=202424618]
-position = Vector2(-960, 0)
+position = Vector2(-1500, 0)
 
 [node name="SpawnCandidate_NORTH" type="Marker2D" parent="MapLayout" unique_id=218593724]
-position = Vector2(-140, -900)
+position = Vector2(-200, -1440)
 metadata/role = "secondary_threat_rift"
 
 [node name="SpawnCandidate_SOUTH" type="Marker2D" parent="MapLayout" unique_id=657573697]
-position = Vector2(120, 900)
+position = Vector2(200, 1440)
 metadata/role = "future_event_threat"
 
 [node name="SpawnCandidate_EAST" type="Marker2D" parent="MapLayout" unique_id=892713679]
-position = Vector2(900, -120)
+position = Vector2(1440, -200)
 metadata/role = "royal_road_exit"
 
 [node name="SpawnCandidate_WEST" type="Marker2D" parent="MapLayout" unique_id=988970715]
-position = Vector2(-900, 160)
+position = Vector2(-1440, 200)
 metadata/role = "main_threat_portal"
 
 [node name="ApproachRoute_NORTH" type="Marker2D" parent="MapLayout" unique_id=953515439]
-position = Vector2(-100, -960)
+position = Vector2(-180, -1500)
 
 [node name="ApproachRoute_SOUTH" type="Marker2D" parent="MapLayout" unique_id=713922438]
-position = Vector2(100, 960)
+position = Vector2(200, 1500)
 
 [node name="ApproachRoute_EAST" type="Marker2D" parent="MapLayout" unique_id=1601782755]
-position = Vector2(960, -100)
+position = Vector2(1500, -200)
 
 [node name="ApproachRoute_WEST" type="Marker2D" parent="MapLayout" unique_id=1614404480]
-position = Vector2(-960, 100)
+position = Vector2(-1500, 200)
 
 [node name="Axis_NORTH" type="Marker2D" parent="MapLayout" unique_id=349908975]
 position = Vector2(0, -540)
@@ -106,58 +106,58 @@ position = Vector2(540, 0)
 position = Vector2(-540, 0)
 
 [node name="GateCorridor_NORTH" type="Marker2D" parent="MapLayout" unique_id=1285700590]
-position = Vector2(0, -445)
+position = Vector2(0, -565)
 
 [node name="GateCorridor_SOUTH" type="Marker2D" parent="MapLayout" unique_id=764888508]
-position = Vector2(0, 445)
+position = Vector2(0, 565)
 
 [node name="GateCorridor_WEST" type="Marker2D" parent="MapLayout" unique_id=1031708013]
-position = Vector2(-445, 0)
+position = Vector2(-565, 0)
 
 [node name="GateCorridor_EAST" type="Marker2D" parent="MapLayout" unique_id=1166507193]
-position = Vector2(445, 0)
+position = Vector2(565, 0)
 
 [node name="CombatField_NORTH" type="Marker2D" parent="MapLayout" unique_id=1491798965]
-position = Vector2(0, -620)
+position = Vector2(0, -1070)
 
 [node name="CombatField_SOUTH" type="Marker2D" parent="MapLayout" unique_id=1920575206]
-position = Vector2(0, 620)
+position = Vector2(0, 1070)
 
 [node name="CombatField_WEST" type="Marker2D" parent="MapLayout" unique_id=253495085]
-position = Vector2(-620, 0)
+position = Vector2(-1070, 0)
 
 [node name="CombatField_EAST" type="Marker2D" parent="MapLayout" unique_id=1098563157]
-position = Vector2(620, 0)
+position = Vector2(1070, 0)
 
 [node name="RallySpace_NORTH" type="Marker2D" parent="MapLayout" unique_id=1768307870]
-position = Vector2(0, -280)
+position = Vector2(0, -305)
 
 [node name="RallySpace_SOUTH" type="Marker2D" parent="MapLayout" unique_id=32676709]
-position = Vector2(0, 280)
+position = Vector2(0, 305)
 
 [node name="RallySpace_WEST" type="Marker2D" parent="MapLayout" unique_id=611085066]
-position = Vector2(-280, 0)
+position = Vector2(-305, 0)
 
 [node name="RallySpace_EAST" type="Marker2D" parent="MapLayout" unique_id=469799486]
-position = Vector2(280, 0)
+position = Vector2(305, 0)
 
 [node name="SouthAgricultureZone" type="Marker2D" parent="MapLayout" unique_id=604100310]
-position = Vector2(0, 550)
+position = Vector2(0, 670)
 
 [node name="NeDungeonCandidate" type="Marker2D" parent="MapLayout" unique_id=1921564972]
-position = Vector2(720, -700)
+position = Vector2(1060, -1300)
 
 [node name="OuterWild_NW" type="Marker2D" parent="MapLayout" unique_id=1638322066]
-position = Vector2(-850, -850)
+position = Vector2(-1410, -1410)
 
 [node name="OuterWild_NE" type="Marker2D" parent="MapLayout" unique_id=1026399329]
-position = Vector2(850, -850)
+position = Vector2(1410, -1410)
 
 [node name="OuterWild_SW" type="Marker2D" parent="MapLayout" unique_id=61379431]
-position = Vector2(-850, 850)
+position = Vector2(-1410, 1410)
 
 [node name="OuterWild_SE" type="Marker2D" parent="MapLayout" unique_id=1170686009]
-position = Vector2(850, 850)
+position = Vector2(1410, 1410)
 
 [node name="BoundaryWall_North" type="StaticBody2D" parent="." unique_id=1034827733]
 position = Vector2(0, -1536)
@@ -210,349 +210,349 @@ collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree4" type="Area2D" parent="." unique_id=971724890 instance=ExtResource("6_lakw3")]
-position = Vector2(-490, -420)
+position = Vector2(-580, -510)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree5" type="Area2D" parent="." unique_id=1276483318 instance=ExtResource("6_lakw3")]
-position = Vector2(-450, -430)
+position = Vector2(-540, -520)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree6" type="Area2D" parent="." unique_id=1301256305 instance=ExtResource("6_lakw3")]
-position = Vector2(-520, -390)
+position = Vector2(-610, -480)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree7" type="Area2D" parent="." unique_id=488748163 instance=ExtResource("6_lakw3")]
-position = Vector2(-480, -395)
+position = Vector2(-570, -485)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree8" type="Area2D" parent="." unique_id=902164512 instance=ExtResource("6_lakw3")]
-position = Vector2(-535, -350)
+position = Vector2(-625, -440)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree9" type="Area2D" parent="." unique_id=292389724 instance=ExtResource("6_lakw3")]
-position = Vector2(-495, -355)
+position = Vector2(-585, -445)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree10" type="Area2D" parent="." unique_id=1378822419 instance=ExtResource("6_lakw3")]
-position = Vector2(-460, -380)
+position = Vector2(-550, -470)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree11" type="Area2D" parent="." unique_id=1322389747 instance=ExtResource("6_lakw3")]
-position = Vector2(-515, -300)
+position = Vector2(-605, -390)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree12" type="Area2D" parent="." unique_id=894758091 instance=ExtResource("6_lakw3")]
-position = Vector2(-470, -310)
+position = Vector2(-560, -400)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree13" type="Area2D" parent="." unique_id=1616804154 instance=ExtResource("6_lakw3")]
-position = Vector2(-430, -390)
+position = Vector2(-520, -480)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree14" type="Area2D" parent="." unique_id=1862785175 instance=ExtResource("6_lakw3")]
-position = Vector2(-390, -370)
+position = Vector2(-480, -460)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree15" type="Area2D" parent="." unique_id=1132518607 instance=ExtResource("6_lakw3")]
-position = Vector2(-445, -290)
+position = Vector2(-535, -380)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree16" type="Area2D" parent="." unique_id=1693421735 instance=ExtResource("6_lakw3")]
-position = Vector2(-525, -445)
+position = Vector2(-615, -535)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree17" type="Area2D" parent="." unique_id=44528212 instance=ExtResource("6_lakw3")]
-position = Vector2(-555, -410)
+position = Vector2(-645, -500)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree18" type="Area2D" parent="." unique_id=1782851971 instance=ExtResource("6_lakw3")]
-position = Vector2(-570, -370)
+position = Vector2(-660, -460)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree19" type="Area2D" parent="." unique_id=1080839936 instance=ExtResource("6_lakw3")]
-position = Vector2(-545, -320)
+position = Vector2(-635, -410)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree20" type="Area2D" parent="." unique_id=1399959632 instance=ExtResource("6_lakw3")]
-position = Vector2(-360, -280)
+position = Vector2(-450, -370)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree21" type="Area2D" parent="." unique_id=98832465 instance=ExtResource("6_lakw3")]
-position = Vector2(-310, -290)
+position = Vector2(-400, -380)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree22" type="Area2D" parent="." unique_id=2066224907 instance=ExtResource("6_lakw3")]
-position = Vector2(-305, -245)
+position = Vector2(-395, -335)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree23" type="Area2D" parent="." unique_id=1132754640 instance=ExtResource("6_lakw3")]
-position = Vector2(-350, -335)
+position = Vector2(-440, -425)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree24" type="Area2D" parent="." unique_id=1540626995 instance=ExtResource("6_lakw3")]
-position = Vector2(-500, 350)
+position = Vector2(-630, 470)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree25" type="Area2D" parent="." unique_id=371839598 instance=ExtResource("6_lakw3")]
-position = Vector2(-560, 345)
+position = Vector2(-690, 465)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree26" type="Area2D" parent="." unique_id=1652512844 instance=ExtResource("6_lakw3")]
-position = Vector2(-620, 340)
+position = Vector2(-750, 460)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
-[node name="ForestTree27" type="Area2D" parent="." unique_id=1232551872 instance=ExtResource("6_lakw3")]
-position = Vector2(-680, 345)
+[node name="ForestTree27" type="Area2D" parent="." unique_id=123251872 instance=ExtResource("6_lakw3")]
+position = Vector2(-810, 465)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree28" type="Area2D" parent="." unique_id=59326536 instance=ExtResource("6_lakw3")]
-position = Vector2(-460, 400)
+position = Vector2(-590, 520)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree29" type="Area2D" parent="." unique_id=1691389164 instance=ExtResource("6_lakw3")]
-position = Vector2(-520, 400)
+position = Vector2(-650, 520)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree30" type="Area2D" parent="." unique_id=1727946261 instance=ExtResource("6_lakw3")]
-position = Vector2(-580, 405)
+position = Vector2(-710, 525)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree31" type="Area2D" parent="." unique_id=414809856 instance=ExtResource("6_lakw3")]
-position = Vector2(-640, 410)
+position = Vector2(-770, 530)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree32" type="Area2D" parent="." unique_id=725005666 instance=ExtResource("6_lakw3")]
-position = Vector2(-740, 420)
+position = Vector2(-870, 540)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree33" type="Area2D" parent="." unique_id=587832380 instance=ExtResource("6_lakw3")]
-position = Vector2(-480, 460)
+position = Vector2(-610, 580)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree34" type="Area2D" parent="." unique_id=1589074231 instance=ExtResource("6_lakw3")]
-position = Vector2(-540, 470)
+position = Vector2(-670, 590)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree35" type="Area2D" parent="." unique_id=2012026236 instance=ExtResource("6_lakw3")]
-position = Vector2(-600, 470)
+position = Vector2(-750, 590)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree36" type="Area2D" parent="." unique_id=2061326057 instance=ExtResource("6_lakw3")]
-position = Vector2(-660, 465)
+position = Vector2(-810, 585)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree37" type="Area2D" parent="." unique_id=984800715 instance=ExtResource("6_lakw3")]
-position = Vector2(-720, 470)
+position = Vector2(-870, 590)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree38" type="Area2D" parent="." unique_id=1484260978 instance=ExtResource("6_lakw3")]
-position = Vector2(-760, 460)
+position = Vector2(-910, 580)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree39" type="Area2D" parent="." unique_id=1317785310 instance=ExtResource("6_lakw3")]
-position = Vector2(-500, 520)
+position = Vector2(-630, 640)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree40" type="Area2D" parent="." unique_id=1241266018 instance=ExtResource("6_lakw3")]
-position = Vector2(-560, 530)
+position = Vector2(-690, 650)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree41" type="Area2D" parent="." unique_id=283884465 instance=ExtResource("6_lakw3")]
-position = Vector2(-620, 530)
+position = Vector2(-750, 650)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree42" type="Area2D" parent="." unique_id=82163747 instance=ExtResource("6_lakw3")]
-position = Vector2(-680, 520)
+position = Vector2(-810, 640)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree43" type="Area2D" parent="." unique_id=615888962 instance=ExtResource("6_lakw3")]
-position = Vector2(-520, 580)
+position = Vector2(-650, 700)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree44" type="Area2D" parent="." unique_id=1235942539 instance=ExtResource("6_lakw3")]
-position = Vector2(-580, 590)
+position = Vector2(-710, 710)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree45" type="Area2D" parent="." unique_id=474108014 instance=ExtResource("6_lakw3")]
-position = Vector2(-640, 585)
+position = Vector2(-770, 705)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree46" type="Area2D" parent="." unique_id=818789872 instance=ExtResource("6_lakw3")]
-position = Vector2(-720, 550)
+position = Vector2(-850, 670)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree47" type="Area2D" parent="." unique_id=492679458 instance=ExtResource("6_lakw3")]
-position = Vector2(-760, 530)
+position = Vector2(-890, 650)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree48" type="Area2D" parent="." unique_id=1590273347 instance=ExtResource("6_lakw3")]
-position = Vector2(-700, 600)
+position = Vector2(-830, 720)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree49" type="Area2D" parent="." unique_id=592496378 instance=ExtResource("6_lakw3")]
-position = Vector2(-700, 400)
+position = Vector2(-830, 520)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree50" type="Area2D" parent="." unique_id=1782459849 instance=ExtResource("6_lakw3")]
-position = Vector2(400, -380)
+position = Vector2(500, -490)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree51" type="Area2D" parent="." unique_id=1918480484 instance=ExtResource("6_lakw3")]
-position = Vector2(450, -410)
+position = Vector2(550, -520)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree52" type="Area2D" parent="." unique_id=1225114579 instance=ExtResource("6_lakw3")]
-position = Vector2(470, -440)
+position = Vector2(570, -550)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree53" type="Area2D" parent="." unique_id=1298871127 instance=ExtResource("6_lakw3")]
-position = Vector2(520, -450)
+position = Vector2(640, -560)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree54" type="Area2D" parent="." unique_id=930939742 instance=ExtResource("6_lakw3")]
-position = Vector2(570, -430)
+position = Vector2(690, -540)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree55" type="Area2D" parent="." unique_id=58854312 instance=ExtResource("6_lakw3")]
-position = Vector2(620, -390)
+position = Vector2(740, -500)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree56" type="Area2D" parent="." unique_id=1169337999 instance=ExtResource("6_lakw3")]
-position = Vector2(470, -500)
+position = Vector2(570, -610)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree57" type="Area2D" parent="." unique_id=852582586 instance=ExtResource("6_lakw3")]
-position = Vector2(530, -520)
+position = Vector2(630, -630)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree58" type="Area2D" parent="." unique_id=1865982611 instance=ExtResource("6_lakw3")]
-position = Vector2(590, -490)
+position = Vector2(690, -600)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree59" type="Area2D" parent="." unique_id=1868595628 instance=ExtResource("6_lakw3")]
-position = Vector2(660, -460)
+position = Vector2(780, -570)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="ForestTree60" type="Area2D" parent="." unique_id=1598760523 instance=ExtResource("6_lakw3")]
-position = Vector2(710, -490)
+position = Vector2(830, -600)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("7_pm21f")
 
 [node name="StoneDeposit" type="Node2D" parent="." unique_id=196566345 instance=ExtResource("8_2lf6f")]
-position = Vector2(500, 260)
+position = Vector2(600, 300)
 script = ExtResource("9_7iits")
 
 [node name="Keep" type="StaticBody2D" parent="." unique_id=879006659 instance=ExtResource("10_oo54l")]
@@ -638,23 +638,23 @@ position = Vector2(-350, 700)
 script = ExtResource("13_xgqkh")
 
 [node name="Deco12" type="Node2D" parent="." unique_id=1095191170 instance=ExtResource("12_ctatt")]
-position = Vector2(440, 200)
+position = Vector2(540, 240)
 script = ExtResource("13_xgqkh")
 
 [node name="Deco13" type="Node2D" parent="." unique_id=230579995 instance=ExtResource("12_ctatt")]
-position = Vector2(560, 320)
+position = Vector2(660, 360)
 script = ExtResource("13_xgqkh")
 
 [node name="Deco14" type="Node2D" parent="." unique_id=313088521 instance=ExtResource("12_ctatt")]
-position = Vector2(440, 320)
+position = Vector2(540, 360)
 script = ExtResource("13_xgqkh")
 
 [node name="Deco15" type="Node2D" parent="." unique_id=241322281 instance=ExtResource("12_ctatt")]
-position = Vector2(560, 200)
+position = Vector2(660, 240)
 script = ExtResource("13_xgqkh")
 
 [node name="Deco16" type="Node2D" parent="." unique_id=2001096656 instance=ExtResource("12_ctatt")]
-position = Vector2(480, 170)
+position = Vector2(600, 210)
 script = ExtResource("13_xgqkh")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=879114168]
