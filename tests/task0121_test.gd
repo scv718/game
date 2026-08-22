@@ -97,7 +97,7 @@ func _process(_delta: float) -> bool:
 
 	# 5. N/E/S/W 도로가 중앙을 통과하거나 자연스럽게 연결 (회귀: 기존 road generation 유지).
 	var floor_node: TileMapLayer = world.get_node("Floor") as TileMapLayer
-	_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles")
+	_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles")
 	_check(floor_node.get_cell_source_id(Vector2i(19, 0)) == 1, "east Main Road reads as road")
 	_check(floor_node.get_cell_source_id(Vector2i(-19, 0)) == 1, "west Main Road reads as road")
 	_check(floor_node.get_cell_source_id(Vector2i(0, -19)) == 1, "north Main Road reads as road")

@@ -306,8 +306,8 @@ func _process(_delta: float) -> bool:
 					"WorldSelection still present")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, \
-					"world floor intact (128x128)")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, \
+					"world floor intact (192x192)")
 				_check(_controller != null and _controller.get_camera() != null, \
 					"Camera Controller intact (TASK-CTRL-001-1)")
 				_check(get_nodes_in_group("player").size() == 0, \

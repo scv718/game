@@ -461,8 +461,8 @@ func _verify_regression() -> void:
 	_check(_world.has_method("rebuild_navigation"), "world exposes rebuild_navigation")
 	_world.rebuild_navigation()
 
-	_check(_layout.get_bounds_rect().size == Vector2(2048, 2048), "bounds size 2048x2048")
-	_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles")
+	_check(_layout.get_bounds_rect().size == Vector2(3072, 3072), "bounds size 3072x3072")
+	_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles")
 	_check(_floor.get_cell_source_id(Vector2i(19, 0)) == 1, "east Main Road reads as road")
 	_check(_floor.get_cell_source_id(Vector2i(0, 19)) == 1, "south Main Road reads as road")
 	var game_time := root.get_node("GameTime")

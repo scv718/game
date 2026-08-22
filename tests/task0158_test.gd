@@ -618,8 +618,8 @@ func _process(_delta: float) -> bool:
 				if _gate != null:
 					_check(_gate.is_closed(), "gate CLOSED (command roundtrip, no breach conflict)")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128,
-					"world floor intact (128x128)")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192,
+					"world floor intact (192x192)")
 				_check(_spawner._enemies.size() == 0, "spawner holds no stale references at end")
 				_check(_roster._actors.size() == 0, "roster _actors empty at end")
 				_enter(Phase.DONE)

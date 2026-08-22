@@ -214,7 +214,7 @@ func _regression() -> void:
 	_check(get_first_node_in_group("recruitment_ui") != null, "recruitment UI intact")
 	_check(get_first_node_in_group("inn_roster_ui") != null, "inn roster UI intact")
 	var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-	_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+			_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 	_check(_min_wood >= 0 and _min_stone >= 0, "resources never went negative (min wood=%d stone=%d)" % [_min_wood, _min_stone])
 	_phase = Phase.DONE
 

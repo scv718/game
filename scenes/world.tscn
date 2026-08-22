@@ -27,16 +27,16 @@ sources/0 = SubResource("TileSetAtlasSource_munwf")
 sources/1 = SubResource("TileSetAtlasSource_ts3gi")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_37qwj"]
-size = Vector2(2048, 64)
+size = Vector2(3072, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_navra"]
-size = Vector2(2048, 64)
+size = Vector2(3072, 64)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_luhhm"]
-size = Vector2(64, 2048)
+size = Vector2(64, 3072)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fh13f"]
-size = Vector2(64, 2048)
+size = Vector2(64, 3072)
 
 [node name="World" type="Node2D" unique_id=670993429]
 script = ExtResource("1_jhx03")
@@ -160,7 +160,7 @@ position = Vector2(-850, 850)
 position = Vector2(850, 850)
 
 [node name="BoundaryWall_North" type="StaticBody2D" parent="." unique_id=1034827733]
-position = Vector2(0, -1024)
+position = Vector2(0, -1536)
 collision_layer = 4
 collision_mask = 0
 
@@ -168,7 +168,7 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_37qwj")
 
 [node name="BoundaryWall_South" type="StaticBody2D" parent="." unique_id=625096498]
-position = Vector2(0, 1024)
+position = Vector2(0, 1536)
 collision_layer = 4
 collision_mask = 0
 
@@ -176,7 +176,7 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_navra")
 
 [node name="BoundaryWall_East" type="StaticBody2D" parent="." unique_id=366700666]
-position = Vector2(1024, 0)
+position = Vector2(1536, 0)
 collision_layer = 4
 collision_mask = 0
 
@@ -184,7 +184,7 @@ collision_mask = 0
 shape = SubResource("RectangleShape2D_luhhm")
 
 [node name="BoundaryWall_West" type="StaticBody2D" parent="." unique_id=1217031575]
-position = Vector2(-1024, 0)
+position = Vector2(-1536, 0)
 collision_layer = 4
 collision_mask = 0
 

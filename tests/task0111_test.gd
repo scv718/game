@@ -59,7 +59,7 @@ func _process(_delta: float) -> bool:
 
 	# 회귀: 기존 맵/생산/worker 구조 유지
 	var floor_node: TileMapLayer = world.get_node("Floor") as TileMapLayer
-	_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles")
+	_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles")
 	if get_nodes_in_group("lumberjacks").size() < 1:
 		var lj: Node = (load("res://scenes/lumberjack.tscn") as PackedScene).instantiate()
 		lj.position = Vector2(300, 200)

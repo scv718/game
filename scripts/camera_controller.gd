@@ -30,8 +30,8 @@ class_name CameraController
 @export var min_zoom: float = 0.4
 @export var max_zoom: float = 2.0
 
-## TASK-015-1 월드 경계. world.gd의 FALLBACK_BOUNDS_RECT와 동일한 2048x2048 맵.
-const WORLD_BOUNDS := Rect2(-1024, -1024, 2048, 2048)
+## TASK-MAP-001 월드 경계. world.gd의 FALLBACK_BOUNDS_RECT와 동일한 3072x3072 맵.
+const WORLD_BOUNDS := Rect2(-1536, -1536, 3072, 3072)
 
 var _night_mode := false
 var _zoom_target := 1.0

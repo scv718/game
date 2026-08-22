@@ -58,11 +58,11 @@ func _process(_delta: float) -> bool:
 			_check(_layout.get_script() != null and _layout.get_script().resource_path == "res://scripts/world_map.gd", "MapLayout uses world_map.gd")
 
 			var floor: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-			_check(floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles (%d)" % floor.get_used_cells().size())
+			_check(floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles (%d)" % floor.get_used_cells().size())
 
 			var bounds: Rect2 = _layout.get_bounds_rect()
-			_check(bounds.size == Vector2(2048, 2048), "bounds size 2048x2048 (%s)" % str(bounds.size))
-			_check(bounds.position == Vector2(-1024, -1024), "bounds centered at origin (%s)" % str(bounds.position))
+			_check(bounds.size == Vector2(3072, 3072), "bounds size 3072x3072 (%s)" % str(bounds.size))
+			_check(bounds.position == Vector2(-1536, -1536), "bounds centered at origin (%s)" % str(bounds.position))
 
 			var clearing: Rect2 = _layout.get_clearing_rect()
 			_check(clearing.has_point(Vector2.ZERO), "settlement center inside clearing")

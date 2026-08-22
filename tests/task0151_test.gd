@@ -32,7 +32,7 @@ enum Phase {
 	DONE,
 }
 
-const WORLD_HALF := 1024.0
+const WORLD_HALF := 1536.0
 const ZOOM_TOLERANCE := 0.02
 const PAN_HOLD_PF := 30
 const REACH_HOLD_PF := 90
@@ -305,7 +305,7 @@ func _process(_delta: float) -> bool:
 				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 				_check(get_nodes_in_group("gates").size() == 0, "no gates pre-placed (placement intact)")
 				_enter(Phase.DONE)
 		Phase.DONE:

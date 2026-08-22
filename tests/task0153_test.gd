@@ -301,7 +301,7 @@ func _process(_delta: float) -> bool:
 				_check(_controller.is_night_mode() == true, "camera controller night mode active during NIGHT")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact")
 				if _actor != null and is_instance_valid(_actor):
 					_check(_actor.get_defense_zone() == MercenaryData.DefenseZone.EAST,
 						"actor still EAST after re-acquire (no stale zone)")

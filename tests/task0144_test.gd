@@ -424,7 +424,7 @@ func _process(_delta: float) -> bool:
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact")
 				# Enemy는 비전투(non-mercenary) 액터를 target으로 삼지 않음:
 				# 정착지 중심(전 플레이어 시작 지점)에 배치해도 ATTACK 진입 금지.
 				var eprobe := _spawn_enemy(Vector2(0, 90), 60, true)

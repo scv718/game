@@ -178,7 +178,7 @@ func _verify() -> void:
 	_check(get_nodes_in_group("lumberjacks").size() >= 1, "lumberjack actor spawned on assign (%d)" % get_nodes_in_group("lumberjacks").size())
 	_check(get_nodes_in_group("miners").size() >= 1, "miner actor spawned on assign (%d)" % get_nodes_in_group("miners").size())
 	var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-	_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+			_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 
 	_phase = Phase.DONE
 

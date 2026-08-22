@@ -2,7 +2,7 @@ extends SceneTree
 
 ## TASK-008-5 World Map 통합 검증
 ## TASK-008(맵 골격/테라인/생산 체인 이전/Nav 회귀) 전체를 하나의 시나리오로 통합 검증한다.
-## 목적은 새 128x128 오버월드에서 실제 게임 루프(이동→건설→배치→생산→재생장)가
+## 목적은 새 192x192 오버월드에서 실제 게임 루프(이동→건설→배치→생산→재생장)가
 ## 한 번에 정상 동작하는지를 자동으로 확인하는 것이다.
 
 enum Phase {
@@ -101,7 +101,7 @@ func _process(_delta: float) -> bool:
 			_check(_world != null, "world node present")
 			_check(_layout != null, "MapLayout node exists")
 			_check(_floor is TileMapLayer, "Floor is a TileMapLayer")
-			_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles (%d)" % _floor.get_used_cells().size())
+			_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles (%d)" % _floor.get_used_cells().size())
 			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 			_check(_hud != null, "HUD exists")
 			_check(_miner != null, "miner exists in world")
@@ -126,10 +126,10 @@ func _process(_delta: float) -> bool:
 			_check(_layout.get_script() != null and _layout.get_script().resource_path == "res://scripts/world_map.gd", "MapLayout uses world_map.gd")
 
 			var bounds: Rect2 = _layout.get_bounds_rect()
-			_check(bounds.size == Vector2(2048, 2048), "bounds size 2048x2048 (%s)" % str(bounds.size))
-			_check(bounds.position == Vector2(-1024, -1024), "bounds centered at origin (%s)" % str(bounds.position))
-			_check(not _layout.is_in_bounds(Vector2(1100, 0)), "point beyond east bound rejected")
-			_check(not _layout.is_in_bounds(Vector2(0, -1100)), "point beyond north bound rejected")
+			_check(bounds.size == Vector2(3072, 3072), "bounds size 3072x3072 (%s)" % str(bounds.size))
+			_check(bounds.position == Vector2(-1536, -1536), "bounds centered at origin (%s)" % str(bounds.position))
+			_check(not _layout.is_in_bounds(Vector2(1600, 0)), "point beyond east bound rejected")
+			_check(not _layout.is_in_bounds(Vector2(0, -1600)), "point beyond north bound rejected")
 
 			var clearing: Rect2 = _layout.get_clearing_rect()
 			_check(clearing.size == Vector2(384, 384), "clearing 384x384 (%s)" % str(clearing.size))

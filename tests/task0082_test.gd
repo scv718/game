@@ -56,7 +56,7 @@ func _process(_delta: float) -> bool:
 				return true
 			_check(_layout.get_script().resource_path == "res://scripts/world_map.gd", "MapLayout uses world_map.gd")
 			_check(_floor is TileMapLayer, "Floor is a TileMapLayer")
-			_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles (%d)" % _floor.get_used_cells().size())
+			_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles (%d)" % _floor.get_used_cells().size())
 			_enter(Phase.TERRAIN)
 		Phase.TERRAIN:
 			var grass_count := 0
@@ -183,8 +183,8 @@ func _process(_delta: float) -> bool:
 			_check(get_nodes_in_group("decorations").size() >= 4, "decorations present (%d)" % get_nodes_in_group("decorations").size())
 
 			var bounds: Rect2 = _layout.get_bounds_rect()
-			_check(bounds.size == Vector2(2048, 2048), "bounds size 2048x2048 (%s)" % str(bounds.size))
-			_check(bounds.position == Vector2(-1024, -1024), "bounds centered at origin (%s)" % str(bounds.position))
+			_check(bounds.size == Vector2(3072, 3072), "bounds size 3072x3072 (%s)" % str(bounds.size))
+			_check(bounds.position == Vector2(-1536, -1536), "bounds centered at origin (%s)" % str(bounds.position))
 			_check(_layout.is_in_clearing(Vector2.ZERO), "settlement center inside clearing")
 			_check(not _layout.is_in_clearing(Vector2(250, 0)), "point outside clearing rejected")
 

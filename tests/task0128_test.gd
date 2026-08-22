@@ -7,7 +7,7 @@ extends SceneTree
 ##
 ## 이 태스크는 순수 검증 태스크 — 게임 코드를 변경하지 않는다.
 ## 아래 자동검증 항목을 한 번에 검사한다:
-##  1. 128x128 logical map / 2048x2048 경계 / 16px building grid 유지.
+##  1. 192x192 logical map / 3072x3072 경계 / 16px building grid 유지.
 ##  2. 중앙 Core Village / Plaza + 핵심 건물 5개.
 ##  3. N/E/S/W Main Road (4개, 폭 6타일, 끊김 없음).
 ##  4. Secondary Path 4개 (자원/미래 콘텐츠 연결).
@@ -256,13 +256,13 @@ func _check_integration() -> void:
 	_check(_floor != null, "Floor TileMapLayer exists")
 
 	# 1. 경계 / 그리드
-	_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles (%d)" % _floor.get_used_cells().size())
-	_check(_layout.get_bounds_rect().size == Vector2(2048, 2048), "bounds size 2048x2048 (%s)" % str(_layout.get_bounds_rect().size))
-	_check(_layout.get_bounds_rect().position == Vector2(-1024, -1024), "bounds centered at origin (%s)" % str(_layout.get_bounds_rect().position))
-	_check(not _layout.is_in_bounds(Vector2(1100, 0)), "point beyond east bound rejected")
-	_check(not _layout.is_in_bounds(Vector2(0, -1100)), "point beyond north bound rejected")
+	_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles (%d)" % _floor.get_used_cells().size())
+	_check(_layout.get_bounds_rect().size == Vector2(3072, 3072), "bounds size 3072x3072 (%s)" % str(_layout.get_bounds_rect().size))
+	_check(_layout.get_bounds_rect().position == Vector2(-1536, -1536), "bounds centered at origin (%s)" % str(_layout.get_bounds_rect().position))
+	_check(not _layout.is_in_bounds(Vector2(1600, 0)), "point beyond east bound rejected")
+	_check(not _layout.is_in_bounds(Vector2(0, -1600)), "point beyond north bound rejected")
 	# 16px logical building grid: 건설 배치가 16px 그리드 기반인지 상수 확인.
-	_check(_layout.TILE_SIZE == 16 and _layout.MAP_TILES == 128, "logical grid stays 16px / 128 tiles")
+	_check(_layout.TILE_SIZE == 16 and _layout.MAP_TILES == 192, "logical grid stays 16px / 192 tiles")
 
 	# 2. 중앙 Core Village / Plaza + 핵심 건물 5개
 	var cores := get_nodes_in_group("core_buildings")

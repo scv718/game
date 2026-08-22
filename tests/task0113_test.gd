@@ -92,7 +92,7 @@ func _process(_delta: float) -> bool:
 	# 회귀: 5개 핵심 건물 / 기존 시스템 유지
 	_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 	var floor_node: TileMapLayer = world.get_node("Floor") as TileMapLayer
-	_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+	_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 	# TASK-011-5: 시작 시 테스트용 Worker Actor가 월드에 미리 배치되지 않는다.
 	_check(get_nodes_in_group("lumberjacks").size() == 0, "no lumberjack actor at start (%d)" % get_nodes_in_group("lumberjacks").size())
 	_check(get_nodes_in_group("miners").size() == 0, "no miner actor at start (%d)" % get_nodes_in_group("miners").size())

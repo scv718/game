@@ -1,16 +1,16 @@
 extends Node2D
 class_name WorldMap
 
-## 128x128 finite overworld skeleton layout (TASK-008-1 / TASK-012-2).
+## 192x192 finite overworld skeleton layout (TASK-MAP-001).
 ## 이 노드는 맵의 공간 구조(중앙 정착지 clearing, Main Road / Secondary Path,
 ## 성벽 예비 공간, Gate Anchor/Portal-Enemy Spawn 후보)를
 ## 코드와 씬 양쪽에서 식별 가능하게 유지한다.
 ## 실제 게임 기능(Gate/Portal/Enemy)은 구현하지 않으며 Marker/metadata만 제공한다.
 
 const TILE_SIZE := 16
-const MAP_TILES := 128
-const WORLD_SIZE := MAP_TILES * TILE_SIZE  # 2048 px
-const WORLD_HALF := WORLD_SIZE / 2         # 1024 px
+const MAP_TILES := 192
+const WORLD_SIZE := MAP_TILES * TILE_SIZE  # 3072 px
+const WORLD_HALF := WORLD_SIZE / 2         # 1536 px
 
 const BOUNDS_RECT := Rect2(-WORLD_HALF, -WORLD_HALF, WORLD_SIZE, WORLD_SIZE)
 const NAV_INSET := 32.0
@@ -35,24 +35,28 @@ const WALL_BUFFER_HALF := Vector2(288, 288)
 # 인공적인 직선 십자형으로 읽히지 않게 한다.
 const MAIN_ROAD_HALF := 28.0
 const MAIN_ROAD_INNER := 224.0
-const AXIS_OUTER := 960.0
+const AXIS_OUTER := 1440.0
 
 const MAIN_ROADS := {
 	"north": [
 		Vector2(0, -224), Vector2(0, -540), Vector2(-30, -650),
-		Vector2(-60, -820), Vector2(-100, -960),
+		Vector2(-60, -820), Vector2(-100, -960), Vector2(-140, -1200),
+		Vector2(-180, -1380), Vector2(-200, -1440),
 	],
 	"south": [
 		Vector2(0, 224), Vector2(0, 540), Vector2(30, 650),
-		Vector2(60, 820), Vector2(100, 960),
+		Vector2(60, 820), Vector2(100, 960), Vector2(140, 1200),
+		Vector2(180, 1380), Vector2(200, 1440),
 	],
 	"east": [
 		Vector2(224, 0), Vector2(540, 0), Vector2(650, -30),
-		Vector2(820, -60), Vector2(960, -100),
+		Vector2(820, -60), Vector2(960, -100), Vector2(1200, -140),
+		Vector2(1380, -180), Vector2(1440, -200),
 	],
 	"west": [
 		Vector2(-224, 0), Vector2(-540, 0), Vector2(-650, 30),
-		Vector2(-820, 60), Vector2(-960, 100),
+		Vector2(-820, 60), Vector2(-960, 100), Vector2(-1200, 140),
+		Vector2(-1380, 180), Vector2(-1440, 200),
 	],
 }
 
@@ -84,11 +88,11 @@ const SECONDARY_PATHS := {
 		Vector2(280, 0), Vector2(360, 140), Vector2(440, 280), Vector2(480, 360),
 	],
 	"south_agriculture": [
-		Vector2(0, 380), Vector2(40, 500), Vector2(60, 620),
+		Vector2(0, 380), Vector2(40, 500), Vector2(60, 620), Vector2(80, 800),
 	],
 	"ne_dungeon": [
 		Vector2(300, 0), Vector2(460, -200), Vector2(620, -440),
-		Vector2(720, -650), Vector2(720, -700),
+		Vector2(720, -650), Vector2(800, -900), Vector2(860, -1100),
 	],
 }
 
@@ -110,43 +114,43 @@ const FOREST_CLUSTERS := [
 	{
 		"id": "starter_forest",
 		"role": "starter",
-		"center": Vector2(-430, -330),
+		"center": Vector2(-480, -380),
 		"trees": [
-			Vector2(-490, -420), Vector2(-450, -430), Vector2(-520, -390),
-			Vector2(-480, -395), Vector2(-535, -350), Vector2(-495, -355),
-			Vector2(-460, -380), Vector2(-515, -300), Vector2(-470, -310),
-			Vector2(-430, -390), Vector2(-390, -370), Vector2(-445, -290),
-			Vector2(-525, -445),
-			Vector2(-555, -410), Vector2(-570, -370), Vector2(-545, -320),
-			Vector2(-360, -280), Vector2(-310, -290), Vector2(-305, -245),
-			Vector2(-350, -335),
+			Vector2(-540, -470), Vector2(-500, -480), Vector2(-570, -440),
+			Vector2(-530, -445), Vector2(-585, -400), Vector2(-545, -405),
+			Vector2(-510, -430), Vector2(-565, -350), Vector2(-520, -360),
+			Vector2(-480, -440), Vector2(-440, -420), Vector2(-495, -340),
+			Vector2(-575, -495),
+			Vector2(-605, -460), Vector2(-620, -420), Vector2(-595, -370),
+			Vector2(-410, -330), Vector2(-360, -340), Vector2(-355, -295),
+			Vector2(-400, -385),
 		],
 	},
 	{
 		"id": "large_forest",
 		"role": "large",
-		"center": Vector2(-600, 470),
+		"center": Vector2(-680, 530),
 		"trees": [
-			Vector2(-500, 350), Vector2(-560, 345), Vector2(-620, 340),
-			Vector2(-680, 345), Vector2(-460, 400), Vector2(-520, 400),
-			Vector2(-580, 405), Vector2(-640, 410), Vector2(-740, 420),
-			Vector2(-480, 460), Vector2(-540, 470), Vector2(-600, 470),
-			Vector2(-660, 465), Vector2(-720, 470), Vector2(-760, 460),
-			Vector2(-500, 520), Vector2(-560, 530), Vector2(-620, 530),
-			Vector2(-680, 520), Vector2(-520, 580), Vector2(-580, 590),
-			Vector2(-640, 585), Vector2(-720, 550), Vector2(-760, 530),
-			Vector2(-700, 600), Vector2(-700, 400),
+			Vector2(-560, 400), Vector2(-620, 395), Vector2(-680, 390),
+			Vector2(-740, 395), Vector2(-520, 450), Vector2(-580, 450),
+			Vector2(-640, 455), Vector2(-700, 460), Vector2(-800, 470),
+			Vector2(-540, 510), Vector2(-600, 520), Vector2(-680, 520),
+			Vector2(-740, 515), Vector2(-800, 520), Vector2(-840, 510),
+			Vector2(-560, 570), Vector2(-620, 580), Vector2(-680, 580),
+			Vector2(-740, 570), Vector2(-580, 630), Vector2(-640, 640),
+			Vector2(-700, 635), Vector2(-780, 600), Vector2(-820, 580),
+			Vector2(-760, 650), Vector2(-760, 450),
 		],
 	},
 	{
 		"id": "sparse_forest",
 		"role": "sparse",
-		"center": Vector2(520, -440),
+		"center": Vector2(580, -490),
 		"trees": [
-			Vector2(400, -380), Vector2(450, -410), Vector2(470, -440),
-			Vector2(520, -450), Vector2(570, -430), Vector2(620, -390),
-			Vector2(470, -500), Vector2(530, -520), Vector2(590, -490),
-			Vector2(660, -460), Vector2(710, -490),
+			Vector2(440, -430), Vector2(490, -460), Vector2(510, -490),
+			Vector2(580, -500), Vector2(630, -480), Vector2(680, -440),
+			Vector2(510, -550), Vector2(570, -570), Vector2(630, -540),
+			Vector2(720, -510), Vector2(770, -540),
 		],
 	},
 ]
@@ -212,10 +216,10 @@ const GATE_ANCHORS := {
 # Gate 정면의 완전한 직선상(lane map)처럼 보이지 않게 한다.
 # 실제 Portal/Enemy spawn 기능은 구현하지 않는다.
 const SPAWN_CANDIDATES := {
-	"north": Vector2(-140, -900),
-	"south": Vector2(120, 900),
-	"east": Vector2(900, -120),
-	"west": Vector2(-900, 160),
+	"north": Vector2(-200, -1350),
+	"south": Vector2(180, 1350),
+	"east": Vector2(1350, -180),
+	"west": Vector2(-1350, 240),
 }
 
 # 기존 4방향 후보 노드는 회귀 호환을 위해 유지하되, 현재 월드에서의 의미를
@@ -236,10 +240,10 @@ const DIRECTION_ROLES := {
 const APPROACH_ROUTE_HALF := 32.0
 
 const APPROACH_ROUTES := {
-	"north": [Vector2(-140, -900), Vector2(-100, -960)],
-	"south": [Vector2(120, 900), Vector2(100, 960)],
-	"east": [Vector2(900, -120), Vector2(960, -100)],
-	"west": [Vector2(-900, 160), Vector2(-960, 100)],
+	"north": [Vector2(-200, -1350), Vector2(-180, -1380)],
+	"south": [Vector2(180, 1350), Vector2(180, 1380)],
+	"east": [Vector2(1350, -180), Vector2(1380, -180)],
+	"west": [Vector2(-1350, 240), Vector2(-1380, 200)],
 }
 
 # --- TASK-012-5 미래 콘텐츠 슬롯 (레벨디자인상 공간만 확보, 실제 기능 없음) ---
@@ -249,42 +253,42 @@ const APPROACH_ROUTES := {
 # South Agriculture Zone: 남쪽 +450~+650px에 걸친 평평한 미래 농업 공간.
 # 다른 방향보다 대형 자연 장애물(숲/석재)을 적게 두어 Farm/Herb Field/Greenhouse
 # 배치를 위한 충분한 여지를 남긴다. 실제 Farm/Herb 시스템은 구현하지 않는다.
-const SOUTH_AGRICULTURE_ZONE := Rect2(-320, 450, 640, 200)
+const SOUTH_AGRICULTURE_ZONE := Rect2(-360, 500, 720, 260)
 
 # NE Dungeon Candidate: Player가 향후 직접 발견하러 갈 수 있는 Outer Wild 위치.
 # Marker/placeholder(비기능) 수준만 허용. 실제 entrance/combat/씬 전환 금지.
-const NE_DUNGEON_CANDIDATE := Vector2(720, -700)
+const NE_DUNGEON_CANDIDATE := Vector2(860, -1100)
 
 # Outer Wild 미래 콘텐츠 슬롯: 맵 코너를 장식으로 전부 채우지 않고 예약해 둔다.
 # 각 슬롯은 참고용 Marker + 범위로 식별 가능. 실제 시스템처럼 동작하지 않는다.
 const OUTER_WILD_SLOTS := {
-	"nw": Rect2(-930, -930, 160, 160),   # future dungeon/event 후보
-	"ne": Rect2(770, -930, 160, 160),    # 첫 Dungeon Candidate 방향(Outer NE)
-	"sw": Rect2(-930, 770, 160, 160),    # future event/resource
-	"se": Rect2(770, 770, 160, 160),     # future special area
+	"nw": Rect2(-1440, -1440, 160, 160),
+	"ne": Rect2(1280, -1440, 160, 160),
+	"sw": Rect2(-1440, 1280, 160, 160),
+	"se": Rect2(1280, 1280, 160, 160),
 }
 
 # --- Defense Belt / Gate Corridor (TASK-012-3) ---
 # 자유 성벽 배치를 위해 확보하는 연속 빈 공간. 중심에서 약 360~520px.
 const DEFENSE_BELT_INNER := 360.0
-const DEFENSE_BELT_OUTER := 520.0
+const DEFENSE_BELT_OUTER := 600.0
 
 # Gate Corridor: 각 Main Road를 중심으로 성벽과 도로가 교차할 수 있는 허용 구간.
 # Gate를 정확히 한 점에 강제하지 않고, 이 영역 안 어디든 Wall/Gate가 들어갈 수 있게
 # 레벨디자인상 확보해 둔다. 실제 Gate 기능/placement validation은 구현하지 않는다.
 const GATE_CORRIDORS := {
-	"north": Rect2(-48, -540, 96, 190),
-	"south": Rect2(-48, 350, 96, 190),
-	"west": Rect2(-540, -48, 190, 96),
-	"east": Rect2(350, -48, 190, 96),
+	"north": Rect2(-56, -620, 112, 210),
+	"south": Rect2(-56, 410, 112, 210),
+	"west": Rect2(-620, -56, 210, 112),
+	"east": Rect2(410, -56, 210, 112),
 }
 
 # Gate 바깥 Combat Field: 각 Gate Corridor 외측에 최소 약 200x160 open space.
 const COMBAT_FIELDS := {
-	"north": Rect2(-100, -700, 200, 160),
-	"south": Rect2(-100, 540, 200, 160),
-	"west": Rect2(-700, -100, 160, 200),
-	"east": Rect2(540, -100, 160, 200),
+	"north": Rect2(-140, -1050, 280, 200),
+	"south": Rect2(-140, 850, 280, 200),
+	"west": Rect2(-1050, -140, 200, 280),
+	"east": Rect2(850, -140, 200, 280),
 }
 
 # Gate 안쪽 Rally Space: 각 Gate Corridor 안쪽에 약 120~160px 깊이의 비교적 열린 공간.

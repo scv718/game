@@ -132,7 +132,7 @@ func _process(_delta: float) -> bool:
 	_check(get_nodes_in_group("lumberjacks").size() == 0, "no worker actor spawned by roster data (lumberjacks=%d)" % get_nodes_in_group("lumberjacks").size())
 	_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned by roster data (miners=%d)" % get_nodes_in_group("miners").size())
 	var floor_node: TileMapLayer = world.get_node("Floor") as TileMapLayer
-	_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+	_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 
 	print("TASK0141_RESULT=" + ("FAIL" if _failed else "PASS"))
 	quit()

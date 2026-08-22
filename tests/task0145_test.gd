@@ -393,7 +393,7 @@ func _process(_delta: float) -> bool:
 				_check(get_nodes_in_group("miners").size() == 0, "no miner actor spawned")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact")
 				_check(_gate != null and _gate.is_breached(), "gate1 remains breached at end")
 				_check(_gate2 != null and _gate2.is_closed(), "gate2 remains CLOSED at end")
 				_check(Gate.GateState.BREACHED == 2, "GateState.BREACHED constant intact")

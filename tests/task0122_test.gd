@@ -71,7 +71,7 @@ func _is_road_cell(cell: Vector2i) -> bool:
 
 
 func _check_floor() -> void:
-	_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles")
+	_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles")
 	var grass_count := 0
 	var path_count := 0
 	for cell in _floor.get_used_cells():
@@ -288,7 +288,7 @@ func _check_regression() -> void:
 	_check(_layout.get_spawn_candidate_nodes().size() >= 2, "spawn candidate markers present")
 	for dir in ["north", "south", "east", "west"]:
 		_check(_layout.get_node_or_null("Axis_" + dir.to_upper()) != null, "Axis_%s marker exists" % dir.to_upper())
-	_check(_layout.get_bounds_rect().size == Vector2(2048, 2048), "bounds size 2048x2048")
+	_check(_layout.get_bounds_rect().size == Vector2(3072, 3072), "bounds size 3072x3072")
 
 
 func _initialize() -> void:

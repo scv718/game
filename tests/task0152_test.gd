@@ -227,7 +227,7 @@ func _process(_delta: float) -> bool:
 				_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor (Player never fights)")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 				_check(get_nodes_in_group("gates").size() == 1, "placed gate intact")
 				_check(_hud.get_node("WoodLabel") != null and _hud.get_node("StoneLabel") != null and _hud.get_node("DayTimeLabel") != null, "existing Wood/Stone/DayTime HUD intact")
 				_enter(Phase.DONE)

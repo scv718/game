@@ -317,7 +317,7 @@ func _process(_delta: float) -> bool:
 			_check(get_nodes_in_group("player").size() == 0, "no runtime player Actor")
 			_check(main.get_node("HUD") != null, "HUD exists")
 			var floor_node: TileMapLayer = main.get_node("World/Floor") as TileMapLayer
-			_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+			_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 			_check(get_nodes_in_group("lumberjacks").size() >= 1, "lumberjack system intact")
 			_check(get_nodes_in_group("miners").size() >= 1, "miner system intact")
 			_check(get_nodes_in_group("lumberyards").size() >= 1, "lumberyard built during integration")

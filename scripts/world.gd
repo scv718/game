@@ -1,6 +1,6 @@
 extends Node2D
 
-const FALLBACK_BOUNDS_RECT := Rect2(-1024, -1024, 2048, 2048)
+const FALLBACK_BOUNDS_RECT := Rect2(-1536, -1536, 3072, 3072)
 const PARSE_AGENT_RADIUS := 8.0
 
 @onready var _nav_region: NavigationRegion2D = $NavigationRegion2D

@@ -154,7 +154,7 @@ func _check_regression() -> void:
 	_check(get_nodes_in_group("stone_deposits").size() == 1, "stone deposit present (%d)" % get_nodes_in_group("stone_deposits").size())
 	_check(get_nodes_in_group("decorations").size() >= 4, "decorations present (%d)" % get_nodes_in_group("decorations").size())
 
-	_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles")
+	_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles")
 	_check(_floor.get_cell_source_id(Vector2i(19, 0)) == 1, "east Main Road reads as road")
 	_check(_floor.get_cell_source_id(Vector2i(0, 19)) == 1, "south Main Road reads as road")
 
@@ -179,7 +179,7 @@ func _check_regression() -> void:
 
 	_check(_layout.get_gate_anchor_nodes().size() >= 4, "gate anchor markers present")
 	_check(_layout.get_spawn_candidate_nodes().size() >= 4, "spawn candidate markers present")
-	_check(_layout.get_bounds_rect().size == Vector2(2048, 2048), "bounds size 2048x2048")
+	_check(_layout.get_bounds_rect().size == Vector2(3072, 3072), "bounds size 3072x3072")
 
 	var game_time := root.get_node("GameTime")
 	_check(game_time != null, "GameTime autoload exists")

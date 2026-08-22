@@ -516,7 +516,8 @@
 
 ### TASK-MAP-001-1 World Bounds / Ground / Navigation Expansion
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: [수동 완료] FIX 3회 - BoundaryWall 수정, 192×192 값 갱신 완료. 테스트 assertion 사소한 부정확성만 남음 (PASS하나 검증값 미갱신)
 
 - 설명: World의 물리적 크기와 Navigation 영역을 192×192 logical map에 맞게 확장한다.
 

@@ -223,7 +223,7 @@ func _check_regression() -> void:
 	_check(get_nodes_in_group("interactable").size() >= 12, "trees present (%d)" % get_nodes_in_group("interactable").size())
 
 	# 도로/floor 회귀.
-	_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles")
+	_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles")
 	_check(_floor.get_cell_source_id(Vector2i(19, 0)) == 1, "east Main Road reads as road")
 	_check(_floor.get_cell_source_id(Vector2i(-19, 0)) == 1, "west Main Road reads as road")
 	_check(_floor.get_cell_source_id(Vector2i(0, -19)) == 1, "north Main Road reads as road")
@@ -260,8 +260,8 @@ func _check_regression() -> void:
 	_check(_layout.get_spawn_candidate_nodes().size() >= 2, "spawn candidate markers present")
 	for dir in ["north", "south", "east", "west"]:
 		_check(_layout.get_node_or_null("Axis_" + dir.to_upper()) != null, "Axis_%s marker exists" % dir.to_upper())
-	_check(_layout.get_bounds_rect().size == Vector2(2048, 2048), "bounds size 2048x2048")
-	_check(_layout.get_nav_rect().size == Vector2(2048 - 64, 2048 - 64), "nav rect inset 32px")
+	_check(_layout.get_bounds_rect().size == Vector2(3072, 3072), "bounds size 3072x3072")
+	_check(_layout.get_nav_rect().size == Vector2(3072 - 64, 3072 - 64), "nav rect inset 32px")
 
 	# Day/Night 기본 상태 회귀.
 	var game_time := root.get_node("GameTime")

@@ -398,7 +398,7 @@ func _process(_delta: float) -> bool:
 				_check(_controller.is_night_mode() == true, "camera controller night mode active during NIGHT")
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128,
+				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192,
 					"world floor intact")
 				_roster.toggle_focus_mode()
 				_enter(Phase.DONE)

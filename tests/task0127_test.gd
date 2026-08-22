@@ -7,7 +7,7 @@ extends SceneTree
 ## 자동검증:
 ##  1. Player가 중앙 핵심 마을에서 이동 가능.
 ##  2. N/E/S/W Outer Wild 접근 가능 (nav).
-##  3. 월드 경계 정상 (128x128 / 2048x2048).
+##  3. 월드 경계 정상 (192x192 / 3072x3072).
 ##  4. Lumberyard placement 정상.
 ##  5. Quarry valid/invalid placement 정상.
 ##  6. Lumberjack 2명 동시 작업 정상.
@@ -166,11 +166,11 @@ func _process(_delta: float) -> bool:
 			_check(_world != null, "world node present")
 			_check(_layout != null, "MapLayout node exists")
 			_check(_layout.get_script() != null and _layout.get_script().resource_path == "res://scripts/world_map.gd", "MapLayout uses world_map.gd")
-			_check(_floor.get_used_cells().size() == 128 * 128, "floor covers 128x128 tiles (%d)" % _floor.get_used_cells().size())
-			_check(_layout.get_bounds_rect().size == Vector2(2048, 2048), "bounds size 2048x2048 (%s)" % str(_layout.get_bounds_rect().size))
-			_check(_layout.get_bounds_rect().position == Vector2(-1024, -1024), "bounds centered at origin (%s)" % str(_layout.get_bounds_rect().position))
-			_check(not _layout.is_in_bounds(Vector2(1100, 0)), "point beyond east bound rejected")
-			_check(not _layout.is_in_bounds(Vector2(0, -1100)), "point beyond north bound rejected")
+			_check(_floor.get_used_cells().size() == 192 * 192, "floor covers 192x192 tiles (%d)" % _floor.get_used_cells().size())
+			_check(_layout.get_bounds_rect().size == Vector2(3072, 3072), "bounds size 3072x3072 (%s)" % str(_layout.get_bounds_rect().size))
+			_check(_layout.get_bounds_rect().position == Vector2(-1536, -1536), "bounds centered at origin (%s)" % str(_layout.get_bounds_rect().position))
+			_check(not _layout.is_in_bounds(Vector2(1600, 0)), "point beyond east bound rejected")
+			_check(not _layout.is_in_bounds(Vector2(0, -1600)), "point beyond north bound rejected")
 
 			var cores := get_nodes_in_group("core_buildings")
 			_check(cores.size() == 5, "5 core buildings present (%d)" % cores.size())

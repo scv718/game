@@ -524,7 +524,7 @@ func _hud_smoke() -> void:
 		_check(get_nodes_in_group("quarries").size() >= 1, "quarry built")
 		_check(_roster.get_count() == 6, "roster holds 6 workers (4 hired + 2 third)" if _roster.get_count() == 6 else "roster holds %d workers" % _roster.get_count())
 		var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-		_check(floor_node != null and floor_node.get_used_cells().size() == 128 * 128, "world floor intact (128x128)")
+		_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, "world floor intact (192x192)")
 		_check(_min_wood >= 0 and _min_stone >= 0, "resources never went negative (min wood=%d stone=%d)" % [_min_wood, _min_stone])
 		_enter(Phase.DONE)
 
