@@ -522,7 +522,8 @@
 
 ### TASK-3D-RES-001-1 ResourceNode3D Base / Selection
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 피드백: 5개 요구사항·4개 완료조건을 실제 코드에서 전부 확인했고, 테스트 3종(51/15/23 assertions)을 reviewer가 직접 headless 재실행하여 전부 PASS 재현. 기존 2D claim/gather/deplete/nav 규약과의 일관성, LOCK 준수, 엣지 케이스(freed timer, 공유 shape 리소스, stale claim) 모두 안전. 지적 2건은 비차단 보고 수치·문서 해석 수준.
 - 피드백: [대기] 프로바이더 장애(exit=1 지속, 06:43~07:38) - 복구 후 재실행. 구현물/테스트 3종은 기존 커밋 존재
 
 - 요구사항:
