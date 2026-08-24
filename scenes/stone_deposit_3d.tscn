@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/stone_deposit_3d.gd" id="1_script"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_block"]
+radius = 2.25
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rock"]
+albedo_color = Color(0.48, 0.48, 0.47, 1)
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_rock"]
+material = SubResource("StandardMaterial3D_rock")
+radius = 1.75
+height = 2.4
+
+[node name="StoneDeposit3D" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Block" type="StaticBody3D" parent="."]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Block"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
+shape = SubResource("SphereShape3D_block")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="RockVisual" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1.25, 0, 0, 0, 0.85, 0, 0, 0, 1.15, 0, 0.95, 0)
+mesh = SubResource("SphereMesh_rock")

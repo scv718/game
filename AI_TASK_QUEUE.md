@@ -488,7 +488,8 @@
 
 ## TASK-3D-RES-001 Resource / Gathering 3D Migration
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 리뷰어가 판정 형식을 지키지 않음 - 직접 확인 필요
 
 - 설명: 기존 Resource 시스템의 게임 규칙을 유지하면서 Tree / Stone 등 Runtime 표현과 상호작용을 3D로 이전한다.
 
