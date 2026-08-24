@@ -1,0 +1,50 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads and runs
+PASS: world root is Node3D based
+PASS: existing HUD overlay loads
+PASS: world root joins world3d group
+PASS: legacy 2D world group untouched in this runtime
+PASS: ground Y = 0 (XZ ground plane policy)
+PASS: ground StaticBody3D exists
+PASS: ground body uses GROUND layer
+PASS: static ground body mask is passive 0
+PASS: PX_TO_UNIT = 0.125
+PASS: logical tile 16px = 2 world units
+PASS: grid cell = 2 units
+PASS: logical <-> world round trip preserves coordinates
+PASS: stone deposit (600,300) -> (75,0,37.5)
+PASS: north gate anchor stays on -Z (direction semantics preserved)
+PASS: west gate anchor stays on -X
+PASS: gameplay distance preserved by uniform scale (no rebalance)
+PASS: 4 direction axes mapped to XZ consistently
+PASS: snap_xz_to_grid matches legacy building grid snap
+PASS: flatten projects to ground plane (no free height drift)
+PASS: world bounds AABB = legacy BOUNDS_RECT in XZ units
+PASS: is_in_bounds_xz matches legacy WorldMap.is_in_bounds on edges
+PASS: Rect2 zone center containment parity (gate corridor south)
+PASS: Rect2 zone outside exclusion parity
+PASS: polyline conversion keeps waypoint count (8)
+PASS: main road first waypoint converted with direction preserved
+PASS: rally space rect scaled without size distortion
+PASS: 8 categories use distinct collision bits
+PASS: actor solid mask = ground+statics
+PASS: actors do not physically collide with actors (matches 2D actor mask=statics)
+PASS: each category layer isolates its own body in shape queries
+PASS: placement blocker mask detects building
+PASS: placement blocker mask ignores actor bodies
+PASS: actor solid mask collides with wall
+PASS: actor solid mask ignores enemy body
+PASS: selection mask picks interactable area via point query
+PASS: enemy layer is not picked by selection mask (categories separated)
+PASS: ground plane queryable on GROUND layer
+PASS: world boundary expressible in 3D XZ on GROUND layer
+PASS: HUD stays a CanvasLayer above 3D world
+PASS: HUD overlay visible over empty 3D world
+PASS: HUD canvas layer renders above default 3D viewport
+PASS: UI and 3D world remain separate branches (no UI reparenting into world)
+PASS: exactly one 3D world root
+PASS: foundation world stays light on physics shapes (5)
+PASS: in-bounds ground coordinate accepted after full run
+PASS: outside-bound coordinate rejected
+TASK3D0012_RESULT=PASS

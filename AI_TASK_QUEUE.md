@@ -375,7 +375,8 @@
 
 ### TASK-3D-001-3 Camera3D Pan / Zoom / Screen-to-World
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 9개 요구사항 전부 구현 확인, 42 assertions를 reviewer가 직접 headless 재실행하여 PASS 재현, 0012 회귀·smoke도 통과, Foundation/2D 무수정 LOCK 준수 및 UTF-8 인코딩 관례 준수 확인. 지적된 2건은 비차단 개선 여지이며 후속 태스크(001-4) 범위.
 
 - 설명: 기존 Camera + Mouse 관리 조작을 Orthographic Camera3D로 이전한다.
 
