@@ -340,7 +340,10 @@
 
 ### TASK-3D-001-2 World3D / Coordinate / Collision Foundation
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 이전 피드백 2건(mojibake 재작성, exit=1 무응답 백오프 재시도 편입) 모두 해소를 코드·바이트 단위로 확인했고, 47/47 PASS 및 smoke PASS를 리뷰어가 직접 재실행으로 재현함. 요구사항·완료조건·금지 항목 전부 충족, 기존 스타일/운영 규칙(migration map 5, LOCK 12) 준수.
+- 피드백: `tests/task3d0012_test.gd`의 한글 주석이 바이트 단위 mojibake로 손상됨(저장소 UTF-8 관례와 불일치, 내용 복구 불가). 주석을 유효 UTF-8 한국어로 재작성 후 재검토 필요. 그 외 요구사항·완료조건·회귀는 실제 headless 실행으로 전부 충족 확인(47/47 PASS, smoke PASS, LOCK 12 준수).
+- 피드백: [재시도] exit=1 무응답도 백오프 재시도 대상에 포함 후 재실행
 
 - 설명: 기존 게임 규칙을 담을 3D World Root와 공통 좌표/충돌 정책을 만든다.
 

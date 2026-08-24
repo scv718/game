@@ -288,15 +288,17 @@ def format_task_context(task):
 
 
 def run_opencode_retry(prompt, model, extra, timeout_sec, task_id="", attempts=4):
-    """free 모델의 간헐적 빈 응답(프로바이더 무응답) 방어 - 백오프 재시도."""
+    """free 모델의 간헐적 빈 응답/exit=1 무응답(프로바이더 불안정) 방어 - 백오프 재시도."""
     sid, text, err = None, "", None
     for i in range(1, attempts + 1):
         sid, text, err = run_opencode(prompt, model, extra, timeout_sec)
-        if err or (text or "").strip():
+        if not err and (text or "").strip():
+            return sid, text, err
+        if err and "실행 시간 초과" in (err or ""):
             return sid, text, err
         if i < attempts:
             wait = 20 * i
-            log(f"[{task_id}] 빈 응답 ({i}/{attempts}) - {wait}초 후 재시도")
+            log(f"[{task_id}] 실패({(err or '빈 응답')[:60]}) ({i}/{attempts}) - {wait}초 후 재시도")
             time.sleep(wait)
     return sid, text, err
 

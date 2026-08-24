@@ -1,46 +1,34 @@
-### TASK-3D-001-1 Current 2D Runtime Audit / Migration Map
+### TASK-3D-001-2 World3D / Coordinate / Collision Foundation
 
 - 상태: REVIEW
-- 피드백: 산출물 자체는 요구사항을 충족하나, 감사 문서의 수치 근거에 오류 2건 — (1) building_placement.gd get_global_mouse_position 호출 수 "10곳"→실제 9곳(section 0 #4 및 산출물 1 해당 행 수정, #15(b) 라인 목록과 일치시킬 것), (2) world.tscn MapLayout Marker2D "27개"→실제 35개(section 0 #1, 산출물 1-B, 산출물 3 Map/Layout 행 3곳 수정). 두 수치만 교정 후 재검토 없이 완료 처리 가능.
-- 피드백: 태스크의 필수 산출물(Migration Map 문서 5개 항목)이 하나도 작성되지 않았음. 제출된 "요약"은 작업 시작 의사 선언일 뿐 구현 결과가 아니며, 완료조건 3항 모두 미충족. 실제 코드 reference 검색을 수행하고 파일 수준 Migration Map 문서를 산출한 후 재검토 요청할 것.
+- 피드백: `tests/task3d0012_test.gd`의 한글 주석이 바이트 단위 mojibake로 손상됨(저장소 UTF-8 관례와 불일치, 내용 복구 불가). 주석을 유효 UTF-8 한국어로 재작성 후 재검토 필요. 그 외 요구사항·완료조건·회귀는 실제 headless 실행으로 전부 충족 확인(47/47 PASS, smoke PASS, LOCK 12 준수).
+- 피드백: [재시도] exit=1 무응답도 백오프 재시도 대상에 포함 후 재실행
 
-- 설명: 실제 현재 코드에서 2D Runtime 의존성을 추적하고 도메인별 Migration Map을 만든다.
+- 설명: 기존 게임 규칙을 담을 3D World Root와 공통 좌표/충돌 정책을 만든다.
 
-- 확인 대상:
+- 요구사항:
 
-  - Main World Scene.
-  - Camera2D / camera controller.
-  - Mouse selection / interaction.
-  - BuildingPlacement.
-  - Resource Node.
-  - Worker / Lumberjack / Miner.
-  - NavigationRegion2D / NavigationAgent2D / nav rebuild.
-  - Wall / Gate collision/navigation.
-  - Mercenary / Enemy.
-  - Tactical command world reference.
-  - World bounds.
-  - Spawn / Region / landmark coordinate.
-  - Day/Night visual hooks.
-  - Death Ledger의 Actor reference 경계.
-  - UI가 world position을 사용하는 모든 지점.
+  - `Node3D` 기반 World Root.
+  - XZ ground plane.
+  - Y = height.
+  - 기존 logical grid의 의미를 보존하는 world unit 변환 상수/유틸리티.
+  - 기존 Region/World bounds를 3D XZ로 표현 가능.
+  - 공통 collision layer/mask 정책 문서화.
+  - Interactable / Building / Resource / Worker / Mercenary / Enemy / Wall / Gate 구분 가능.
+  - UI는 별도 CanvasLayer/Control 구조 유지.
+  - 2D Main World를 즉시 삭제하지 않음.
 
-- 산출물:
+- 금지:
 
-  - 2D 전용 의존 목록.
-  - 그대로 유지 가능한 순수 game/data logic 목록.
-  - 3D 변환이 필요한 Scene/Script 목록.
-  - 공유 파일 목록.
-  - 병렬 태스크별 파일 ownership 초안.
-
-- 중요:
-
-  - Audit 단계에서 대량 수정 금지.
-  - 문서만 보고 판단하지 말고 실제 reference 검색.
-  - 이미 3D 또는 dimension-neutral 구조가 있으면 재작성하지 않는다.
+  - 3D라는 이유로 world size 확대/축소.
+  - 기존 gameplay distance 임의 재밸런스.
+  - physics-heavy terrain.
+  - 자유 높이 이동/점프.
 
 - 완료조건:
 
-  - 2D → 3D Migration 경계가 파일 수준으로 기록됨.
-  - 병렬 작업 충돌 위험 파일이 식별됨.
-  - 구현 전 reference 누락 없음.
+  - 빈 3D World 정상 실행.
+  - World bounds/ground coordinate 확인.
+  - 공통 layer/mask 충돌 테스트 PASS.
+  - 기존 UI overlay를 3D World 위에 표시 가능.
 
