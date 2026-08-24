@@ -543,7 +543,8 @@
 
 ### TASK-3D-RES-001-2 Tree / Stone Quaternius Visual
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 6개 요구사항 중 검증 가능한 전 항목을 실제 코드와 독립 headless 재실행(3종 전부 PASS)으로 확인했고, 스크린샷 2장이 실제 렌더임을 확인함. MegaKit 실물 mesh는 큐 설계상 VIS-001-1/VIS-002-1 소유로 문서화되어 있어 본 태스크 범위 내 결함 없음. 남은 HUMAN_CHECK 3항목만 사람 확인 대상.
 
 - 요구사항:
 
