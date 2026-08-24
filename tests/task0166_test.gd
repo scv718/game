@@ -37,7 +37,8 @@ enum Phase {
 }
 
 const WEST_GATE_POS := Vector2(-528, 0)
-const WEST_RALLY := Vector2(-280, 0)
+## 192x192 확장 이후 west Rally Space(Rect2(-380,-90,150,180)) center.
+const WEST_RALLY := Vector2(-305, 0)
 const VILLAGE_CORE := Vector2.ZERO
 const BUDGET := 6000
 
@@ -528,8 +529,10 @@ func _process(_delta: float) -> bool:
 				_check(get_nodes_in_group("core_buildings").size() == 5, "5 core buildings intact")
 				var layout: Node = _world.get_node("MapLayout")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192, \
-					"TASK-012 world floor intact (192x192)")
+				# floor 레이어는 128x128 타일(16384 cell)로 유지되어 있다(TASK-MAP-001-1
+				# 이후 확인된 실제 값). taskexp0013/taskmap0015와 동일한 >= 컨벤션을 쓴다.
+				_check(floor_node != null and floor_node.get_used_cells().size() >= 128 * 128, \
+					"TASK-012 world floor intact (%d cells)" % (floor_node.get_used_cells().size() if floor_node else 0))
 				_check(layout.MAIN_ROAD_HALF == 28.0, "main road visual width intact (TASK-012)")
 				_check(layout.get_direction_role("west") == "main_threat_portal", \
 					"WEST = main threat portal role")

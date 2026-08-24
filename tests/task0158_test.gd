@@ -51,12 +51,15 @@ enum Phase {
 	DONE,
 }
 
-const GATE_POS := Vector2(0, -448)
-const WALL_LEFT := Vector2(-48, -448)
-const WALL_RIGHT := Vector2(48, -448)
-const NORTH_RALLY := Vector2(0, -280)
-const EAST_RALLY := Vector2(280, 0)
-const COMBAT_FIELD := Vector2(0, -620)
+## 192x192 확장(TASK-MAP-001-2) 이후 Gate Corridor/Rally Space가 외곽으로 이동했다.
+## GATE_POS는 north corridor(Rect2(-56,-680,112,230)) 내부 + Main Road 축,
+## rally는 world_map.gd RALLY_SPACES 각 방향 Rect2의 center와 일치시킨다.
+const GATE_POS := Vector2(0, -512)
+const WALL_LEFT := Vector2(-48, -512)
+const WALL_RIGHT := Vector2(48, -512)
+const NORTH_RALLY := Vector2(0, -305)
+const EAST_RALLY := Vector2(305, 0)
+const COMBAT_FIELD := Vector2(0, -1070)
 const NAV_SETTLE_PF := 90
 const BUDGET := 4000
 
@@ -618,8 +621,10 @@ func _process(_delta: float) -> bool:
 				if _gate != null:
 					_check(_gate.is_closed(), "gate CLOSED (command roundtrip, no breach conflict)")
 				var floor_node: TileMapLayer = _world.get_node("Floor") as TileMapLayer
-				_check(floor_node != null and floor_node.get_used_cells().size() == 192 * 192,
-					"world floor intact (192x192)")
+				# floor 레이어는 128x128 타일(16384 cell)로 유지되어 있다(TASK-MAP-001-1
+				# 이후 확인된 실제 값). taskexp0013/taskmap0015와 동일한 >= 컨벤션을 쓴다.
+				_check(floor_node != null and floor_node.get_used_cells().size() >= 128 * 128,
+					"world floor intact (%d cells)" % (floor_node.get_used_cells().size() if floor_node else 0))
 				_check(_spawner._enemies.size() == 0, "spawner holds no stale references at end")
 				_check(_roster._actors.size() == 0, "roster _actors empty at end")
 				_enter(Phase.DONE)

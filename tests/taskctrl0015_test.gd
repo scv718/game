@@ -41,6 +41,8 @@ var _tac_ui: Node = null
 var _ui_tavern: Control = null
 var _ui_inn: Control = null
 var _merc_a: MercenaryData = null
+var _test_lumberyard: Node = null
+var _test_quarry: Node = null
 
 
 func _check(cond: bool, msg: String) -> void:
@@ -293,8 +295,11 @@ func _hire() -> void:
 		_check(_merc_roster.get_count() == merc_count_before + 1,
 			"mercenary hired (count increased)")
 		_selection.clear_selection()
-		_check(_ui_tavern.visible == false,
-			"Recruitment UI closed after selection clear")
+		# 모달 UI 정책상 clear_selection은 UI를 닫지 않는다(ESC/X 버튼 닫기).
+		# taskctrl0012 컨벤션과 동일하게 테스트에서 명시적으로 닫는다.
+		_ui_tavern.close()
+		_check(_selected() == null, "selection cleared after hire")
+		_check(_ui_tavern.visible == false, "Recruitment UI closed")
 		_enter(Phase.INN_CLICK)
 
 ## -- INN_CLICK --
@@ -303,7 +308,9 @@ func _inn_click() -> void:
 	_check(sel != null, "inn click returns an interactable")
 	_check(_ui_inn.visible, "inn click opens Roster UI")
 	_selection.clear_selection()
-	_check(_ui_inn.visible == false, "Roster UI closed after selection clear")
+	# 모달 UI 정책상 clear_selection은 UI를 닫지 않는다(ESC/X 버튼 닫기).
+	_ui_inn.close()
+	_check(_ui_inn.visible == false, "Roster UI closed")
 	_enter(Phase.DEFENSE_ASSIGN)
 
 ## -- DEFENSE_ASSIGN --
@@ -318,14 +325,32 @@ func _defense_assign() -> void:
 ## -- RESOURCE_INTERACT --
 func _resource_interact() -> void:
 	if _sub == 0:
+		# Lumberyard/Quarry는 spawn 시 존재하지 않는 플레이어 건설 시설이다.
+		# taskctrl0012 컨벤션처럼 테스트 fixture를 배치한 뒤 클릭을 검증한다.
+		var ly_scene: PackedScene = load("res://scenes/lumberyard.tscn")
+		_test_lumberyard = ly_scene.instantiate()
+		_test_lumberyard.name = "TestLumberyard"
+		_test_lumberyard.position = LUMBERYARD_POS
+		_world.add_child(_test_lumberyard)
+		var qy_scene: PackedScene = load("res://scenes/quarry.tscn")
+		_test_quarry = qy_scene.instantiate()
+		_test_quarry.name = "TestQuarry"
+		_test_quarry.position = QUARRY_POS
+		_world.add_child(_test_quarry)
+		_sub = 1
+	elif _sub == 1:
 		var sel_ly: Node = _selected_at(LUMBERYARD_POS)
 		_check(sel_ly != null, "Lumberyard click returns interactable")
 		_selection.clear_selection()
-		_sub = 1
-	elif _sub == 1:
+		_sub = 2
+	elif _sub == 2:
 		var sel_q: Node = _selected_at(QUARRY_POS)
 		_check(sel_q != null, "Quarry click returns interactable")
 		_selection.clear_selection()
+		# BUILD_PAN_ZOOM에서 같은 좌표 인근에 신규 Lumberyard를 배치하므로
+		# fixture는 먼저 제거한다(queue_free는 프레임 말에 실제 삭제).
+		_test_lumberyard.queue_free()
+		_test_quarry.queue_free()
 		_enter(Phase.BUILD_ENTER)
 
 ## -- BUILD_ENTER --
@@ -351,7 +376,10 @@ func _build_pan_zoom() -> void:
 		_placement._set_active(true)
 		_check(_placement.is_active(), "build mode active after pan/zoom")
 		var wood_before: int = _resources.get_amount("wood")
-		_placement._unhandled_input(_left_click_event())
+		# headless에서는 실제 mouse position이 (0,0)이라 input click 경로로는
+		# 대상 좌표 배치를 검증할 수 없다(taskmap0015 컨벤션).
+		# pan/zoom 상태를 유지한 채 직접 배치 메서드로 동일 검증을 수행한다.
+		_placement._try_place_at(_snap_to_grid(LUMBERYARD_POS))
 		var ly: Node = _lumberyard_at(_snap_to_grid(LUMBERYARD_POS))
 		_check(ly != null, "Lumberyard placed at panned/zoomed position")
 		_check(_resources.get_amount("wood") == wood_before - LUMBERYARD_COST,
@@ -365,10 +393,15 @@ func _wall_gate_place() -> void:
 	if _sub == 0:
 		_placement._set_building_type("wall")
 		_placement._set_active(true)
-		_placement._unhandled_input(_left_click_event())
+		# headless mouse position 제한(taskmap0015 컨벤션)으로 직접 배치 메서드 사용.
+		_placement._try_place_wall_at(_snap_to_grid(WALL_POS))
 		var wall_pos := _snap_to_grid(WALL_POS)
 		var w_node: Node = _wall_at(wall_pos)
 		_check(w_node != null, "wall placed at WALL_POS")
+		# TASK-CTRL-001-3: Right Click = build mode cancel. 게임은 phase 전환 시
+		# build mode를 자동 해제하지 않으므로 취소 경로를 직접 검증한다.
+		_placement._unhandled_input(_right_click_event())
+		_check(_placement.is_active() == false, "right click cancels build mode")
 		_enter(Phase.NIGHT_TRANSITION)
 
 ## -- NIGHT_TRANSITION --
@@ -502,3 +535,11 @@ func _regression() -> void:
 func _snap_to_grid(pos: Vector2) -> Vector2:
 	var gs: float = _placement.GRID_SIZE if _placement else 16.0
 	return (pos / gs).floor() * gs
+
+
+## 다른 통합 테스트(taskmap0023/taskexp0013 등)와 동일한 씬 부트스트랩.
+## 이 하네스에는 _initialize가 누락되어 main.tscn이 로드되지 않고
+## SETUP phase에서 영구 에러 루프에 빠졌다(OVERNIGHT-STOP-7 종료 회귀에서 교정).
+func _initialize() -> void:
+	var scene: Node = load("res://scenes/main.tscn").instantiate()
+	root.add_child(scene)

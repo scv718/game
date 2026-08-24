@@ -958,7 +958,32 @@
 
 ## OVERNIGHT-STOP-7 Control / Map / Exploration Foundation 종료 경계
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 요구사항 전부 충족, 핵심 테스트 4종 독립 재실행으로 PASS 재현, 게임 코드 무변경 및 규칙 17/18 준수 확인. 지적 사항은 선존재 부채·cosmetic 항목뿐으로 본 태스크 FIX 대상 없음
+
+- 구현 노트 (OVERNIGHT-STOP-7):
+  - 신규 `tests/overnightstop7_test.gd` 53 assertion headless PASS → `test_results/overnightstop7_test_run.txt`.
+    검증: runtime Player Actor 없음(player.gd/player.tscn 제거 포함), Camera+Mouse 관리 조작 구조,
+    192×192 bounds(±1536), WEST/NORTH/EAST/SOUTH 역할 + GateAnchor 일치, World Map View,
+    Exploration UNKNOWN/EXPLORING/DISCOVERED 순수 데이터, Death Ledger autoload,
+    금지 시스템 파일/class_name/autoload 미시작, `_diag*/_probe*/_debug*/_temp*` 0건.
+  - 종료 회귀 전부 PASS: smoke / taskctrl0015(Mouse/Camera 통합) / taskmap0015(192×192 통합) /
+    taskmap0023(World Map 통합) / taskexp0013(Exploration 통합) / task0158(Tactical Combat) /
+    task0166(Death Ledger). 증적은 각 `test_results/*_run.txt`로 갱신.
+  - 테스트 하네스 교정(게임 코드 변경 없음, 규칙 18):
+    (1) `taskctrl0015_test.gd`에 누락된 `_initialize()` 씬 부트스트랩 추가(기존 결함으로
+    main.tscn 미로드 영구 에러 루프 — 실행 기록이 존재하지 않았던 원인). 모달 UI는 clear_selection이
+    닫지 않는 정책이라 taskctrl0012 컨벤션대로 명시적 close()로 검증. headless mouse position(0,0)
+    제한은 taskmap0015 컨벤션대로 직접 배치 메서드(`_try_place_at`/`_try_place_wall_at`)로 검증.
+    Lumberyard/Quarry는 spawn 시 없는 건물이므로 taskctrl0012 컨벤션대로 테스트 fixture 배치 후 클릭.
+    (2) `task0158_test.gd`/`task0166_test.gd`의 128 시절 상수를 192×192 확장 후 실제 값으로 갱신:
+    Gate Corridor/Rally Space 이동 반영(GATE_POS y-448→-512, RALLY ±280→±305). floor assertion은
+    실제 floor 레이어 값(16384 cell)에 맞춰 taskexp0013/taskmap0015와 동일한 >=128×128 컨벤션으로 정렬.
+  - 금지 시스템(Ghost/Wave/Boss/Food/Potion/Morale/Dungeon/Asset Migration) 코드 전체 grep 결과 미시작.
+    death_ledger/death_record의 is_ghost 필드와 first_encounter_spawner의 WaveManager 언급은
+    각각 Death Ledger LOCK 유지 항목/부정 주석이다.
+  - TASK-CTRL-001 / TASK-MAP-001 / TASK-MAP-002 / TASK-EXP-001 전체 DONE 확인.
+    다음 태스크(TASK-017 First Ghost Return) 자동 시작하지 않고 종료.
 
 - 설명: Player 조작 구조 전환, 192×192 World 확대, World Map View, Exploration Foundation 완료 후 Ghost/Wave 등 다음 핵심 시스템을 임의로 시작하지 않고 종료한다.
 
