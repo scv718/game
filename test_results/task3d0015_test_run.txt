@@ -1,0 +1,47 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: navigation manager loads under world root
+PASS: manager joins navigation_3d group (domain request contract)
+PASS: manager owns a NavigationRegion3D child
+PASS: initial bake ran on ready (world.gd parity)
+PASS: navigation map RID is valid
+PASS: actor radius convention = legacy PARSE_AGENT_RADIUS scaled by PX_TO_UNIT
+PASS: actor radius = 1.0 unit
+PASS: actor height convention = one logical grid cell (2 units)
+PASS: agent desired distances preserve legacy 4px tuning ratio
+PASS: stuck guard constants preserve lumberjack/enemy stall-prevention feel
+PASS: bake mask single source = actor solid set
+PASS: ground plane is parsed as walkable surface
+PASS: actors are never parsed as nav obstacles
+PASS: velocity_towards_xz strips Y and preserves XZ speed (ground XZ basis)
+PASS: zero-length XZ direction is a safe zero velocity
+PASS: reached_xz ignores height per ground-plane basis
+PASS: reached_xz still enforces XZ tolerance
+PASS: rebuild request without tree is a safe no-op
+PASS: configure_agent applies common radius/height to any domain agent
+PASS: configure_agent applies shared desired-distance tuning
+PASS: avoidance stays off (matches legacy actors pushing-free policy)
+PASS: test agent gets a 3D ground path across open ground
+PASS: path exists around static wall (obstacle carves but does not seal)
+PASS: sealed pen target reported unreachable before any movement starts
+PASS: CLOSED gate passage blocks the cross-gate path
+PASS: test agent completed 3D ground path move (505 frames)
+PASS: mover arrival within reach tolerance of ground target
+PASS: movement stayed height-locked on ground plane (no vertical drift)
+PASS: mover position stays finite
+PASS: detour probe reached target behind the static wall (506 frames)
+PASS: actual route went around the wall (max lateral deviation 8.09 unit)
+PASS: detour route stayed on ground plane as well
+PASS: unreachable target stops via BLOCKED path-exhaustion judgment (no permanent MOVE)
+PASS: stopped near press point instead of drifting (9.50 unit from start)
+PASS: stopped probe holds zero velocity
+PASS: stall path leaves no NaN/drift in position
+PASS: domain rebuild request routes through navigation_3d group contract
+PASS: gate body itself remains; only passage shape presence encodes state
+PASS: passage removal triggered exactly one debounced rebake
+PASS: navigation_baked emitted once for the gate-driven rebake
+PASS: OPEN/BREACHED passage becomes traversable after rebake
+PASS: rapid placement requests coalesce into a single debounced rebake
+PASS: coalesced rebake emits navigation_baked exactly once
+TASK3D0015_RESULT=PASS

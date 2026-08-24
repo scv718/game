@@ -443,7 +443,10 @@
 
 ### TASK-3D-001-5 Navigation3D Convention / Foundation Lock
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: reviewer 지적 4건이 모두 코드로 실제 반영되었음을 직접 확인했고, 신규 44 assertions 및 회귀 4종을 직접 실행해 전부 PASS를 재현함. 요구사항 8건과 완료조건 4건이 문서/코드/테스트로 충족되어 Foundation 기준점으로 확정 가능.
+- 피드백: reviewer 지적 4건 전부 수정 + 재검증 완료. (1) is_target_reachable이 부분 경로를 reachable로 오판하던 것을 종점 일치 판정으로 수정, (2) 부분 경로 종점 접촉면 진동이 stuck guard를 무한 리셋하는 문제를 NavigationPolicy3D.judge_path_status(MOVING/ARRIVED/BLOCKED) 단일 종료 규약으로 policy 수준 해결, (3) gate 양끝을 경계 벽까지 잇는 회랑 벽 추가로 CLOSED 차단 assertion 성립 + Actor Origin LOCK(지면 접지 origin)·nav raster 해상도(1px cell) 확정, (4) scenes/_nav_test*.uid 3건 제거. task3d0015 신규 테스트 44 assertions PASS, 회귀 0012(47)·0013(42)·0014(45)·smoke(15) 전부 PASS.
+- 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 
 - 설명: Worker/Combat/Building 병렬 태스크가 서로 다른 Navigation 방식을 만들지 않도록 최소 Navigation3D 규칙을 확정한다.
 

@@ -76,3 +76,52 @@ Mask 규칙:
 - 신규 파일만 추가: `scripts/world_coords_3d.gd`, `scripts/collision_layers_3d.gd`,
   `scripts/world_root_3d.gd`, `scenes/world3d.tscn`, `tests/task3d0012_test.gd`, 본 문서.
 - 테스트는 migration map 운영 규칙 5에 따라 기존 tests를 수정하지 않는 신규 `task3d*` 파일로 추가했다.
+
+---
+
+# TASK-3D-001-5 Navigation3D Convention / Foundation Policy
+
+> Worker/Combat/Building 병렬 태스크가 공통으로 따르는 Navigation3D 기준점.
+> 단일 소스: `scripts/navigation_policy_3d.gd`(NavigationPolicy3D — 정책/상수),
+> `scripts/navigation_manager_3d.gd`(NavigationManager3D — region/bake 런타임 소유).
+> World Root(`scenes/world3d.tscn`)에 add_child로 연결한다. 그룹 `"navigation_3d"`.
+
+## 1. 구조 / bake
+
+| 항목 | 규칙 |
+|------|------|
+| region 소유 | NavigationManager3D가 NavigationRegion3D 자식을 생성/보유. scene 사전 배치 불요 |
+| parse | `PARSED_GEOMETRY_STATIC_COLLIDERS`, mask = `BAKE_MASK` = `MASK_ACTOR_SOLID`(GROUND 보행면 + BUILDING/WALL/GATE/RESOURCE 장애물). Actor layer는 파싱 대상 아님 |
+| raster 해상도 | `NAV_CELL_SIZE_UNITS` = `NAV_CELL_HEIGHT_UNITS` = 1 논리 px(0.125). map 쪽 cell size/height도 매니저가 동일값으로 세팅(불일치 경고 제거). 표면이 ground Y에서 cell 1개 이내로 떨어져 agent desired_distance 판정이 성립한다 |
+| agent 치수 | radius = 1.0 unit(기존 PARSE_AGENT_RADIUS 8px 환산), height = 2.0 unit(grid 1칸) |
+| bake 타이밍 | 동기 bake(rebuild_navigation). 비동기/동적 부분 갱신은 의도적으로 미구현(현재 버전 안정성 우선) |
+| map sync | region 할당 반영은 다음 physics sync. rebuild 직후 path 질의는 최소 1 physics frame 대기 |
+
+## 2. 지면 XZ 이동 / Actor convention
+
+- 목적지·path·velocity는 전부 지면 좌표만 사용(Y 성분 상수 0, 자유 높이 이동 금지).
+- **Actor Origin LOCK**: actor node origin = 지면 접지점(Y = GROUND_Y). 시각/충돌 볼륨은
+  자식에서 위로 오프셋. origin이 공중에 뜨면 NavigationAgent3D의 waypoint 전진 판정이
+  수직 거리로 깨진다.
+- 공통 이동 API: `configure_agent()`(agent 공통 튜닝, avoidance off) →
+  `judge_path_status()`(MOVING/ARRIVED/BLOCKED 단일 종료 규약) →
+  `path_follow_velocity_xz()`(지면 투영 direction) → `reached_xz()`(도달 판정).
+- 도메인별 개별 agent 튜닝 금지. Worker/Mercenary/Enemy는 위 조합만 사용한다.
+
+## 3. Runtime 변경 / Gate 표현
+
+- Building placement/철거/Gate 상태 전환 후 nav 갱신은 **전체 rebake** 원칙.
+  호출부는 `NavigationPolicy3D.request_rebuild_debounced(get_tree())` 하나만 사용
+  (0.1s debounce coalesce, 기존 world.gd 계약의 3D판).
+- Gate OPEN/CLOSED/BREACHED는 passage CollisionShape3D 노드 존재 여부로 표현한다
+  (2D gate.gd와 동일 계약): shape 있음 = CLOSED 차단, 제거 = OPEN/BREACHED 통과.
+  collision_layer 토글이 아니라 shape 노드 add/remove + rebake 요청.
+- unreachable target: `judge_path_status() == BLOCKED`(부분 경로 소진)로 bounded 정지.
+  stuck guard(STUCK_TIMEOUT 1.5s / epsilon 0.25 unit, lumberjack/enemy 비율 보존)는
+  2차 안전망. 영구 MOVE/재시도 무한루프 금지 원칙 유지.
+
+## 4. 참고 구현 검증
+
+- `tests/task3d0015_test.gd`: open-ground path 이동, wall 우회, 밀폐 pen unreachable,
+  gate 차단→통과 전환, debounced rebake coalesce까지 44 assertions headless PASS.
+

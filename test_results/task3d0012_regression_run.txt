@@ -1,4 +1,4 @@
-Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
 
 PASS: empty 3D world loads and runs
 PASS: world root is Node3D based
