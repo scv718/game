@@ -489,7 +489,8 @@
 ## TASK-3D-RES-001 Resource / Gathering 3D Migration
 
 - 상태: NEEDS_DESIGN
-- 피드백: 리뷰어가 판정 형식을 지키지 않음 - 직접 확인 필요
+- 피드백: 구현 실행 오류: 알 수 없는 오류
+- 피드백: [재구성 반영] 리프 실행 당시 구현물+테스트 3종 이미 존재(커밋됨). 하위 태스크에서 검증/보완 진행
 
 - 설명: 기존 Resource 시스템의 게임 규칙을 유지하면서 Tree / Stone 등 Runtime 표현과 상호작용을 3D로 이전한다.
 
@@ -521,7 +522,8 @@
 
 ### TASK-3D-RES-001-1 ResourceNode3D Base / Selection
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
+- 피드백: [대기] 프로바이더 장애(exit=1 지속, 06:43~07:38) - 복구 후 재실행. 구현물/테스트 3종은 기존 커밋 존재
 
 - 요구사항:
 

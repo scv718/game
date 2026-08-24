@@ -22,7 +22,7 @@ if sys.stderr:
 
 STATES = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "DONE", "NEEDS_DESIGN")
 SENTINEL_IDS = ("OVERNIGHT-STOP",)
-TASK_ID_RE = re.compile(r"^(TASK(?:-[A-Z0-9]+){1,3}|OVERNIGHT-STOP(?:-\d+)?)$")
+TASK_ID_RE = re.compile(r"^(TASK(?:-[A-Z0-9]+){1,5}|OVERNIGHT-STOP(?:-\d+)?)$")
 STATUS_RE = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
 FEEDBACK_RE = re.compile(r"^-\s*피드백\s*[:：]\s*(.*?)\s*$")
 HEADING_RE = re.compile(r"^(#{2,3})\s+(.+?)\s*$")
@@ -297,7 +297,7 @@ def run_opencode_retry(prompt, model, extra, timeout_sec, task_id="", attempts=4
         if err and "실행 시간 초과" in (err or ""):
             return sid, text, err
         if i < attempts:
-            wait = 20 * i
+            wait = 120 * i
             log(f"[{task_id}] 실패({(err or '빈 응답')[:60]}) ({i}/{attempts}) - {wait}초 후 재시도")
             time.sleep(wait)
     return sid, text, err
