@@ -197,6 +197,7 @@ def update_queue(tasks, path, task_id, status, feedback=None):
 def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
     exe = cfg("opencode_exe")
     args = [exe, "run", prompt, "--model", model, "--auto", "--format", "json",
+            "--variant", "max",
             "--dir", cfg("project_dir")]
     args += extra_args or []
     env = os.environ.copy()
