@@ -1,0 +1,44 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: exactly 1 WorldMapOverlay (1)
+PASS: WorldMapOverlay exists
+PASS: WorldMapOverlay has is_open()
+PASS: WorldMapOverlay has open()
+PASS: WorldMapOverlay has close()
+PASS: WorldMapOverlay has toggle()
+PASS: WorldMapOverlay has world_to_map()
+PASS: WorldMapOverlay has map_to_world()
+PASS: overlay starts closed
+PASS: overlay hidden initially
+PASS: CameraController present
+PASS: Camera2D present
+PASS: M key opens map overlay
+PASS: overlay visible after M key
+PASS: ESC closes map overlay
+PASS: overlay hidden after ESC
+PASS: M key re-opens overlay
+PASS: M key toggles overlay closed
+PASS: open() opens overlay
+PASS: close() closes overlay
+PASS: world (0,0) maps to positive map coords ((8.0, 8.0))
+PASS: world (-1536,-1536) maps near top-left ((16.0, 16.0))
+PASS: center and top-left map to different positions
+PASS: world->map->world roundtrip error 0.00 < 10
+PASS: camera controller detects map overlay open
+PASS: camera controller still detects map overlay
+PASS: camera controller detects map overlay closed
+PASS: world click disabled while map overlay open
+PASS: world click re-enabled after map overlay close
+PASS: camera controller intact
+PASS: world selection intact
+PASS: building placement intact
+PASS: 5 core buildings intact
+PASS: no player actor
+PASS: floor exists
+PASS: phase is NIGHT
+PASS: map opens during NIGHT
+PASS: map closes during NIGHT
+PASS: back to DAY
+PASS: map opens after DAY return
+TASKMAP0021_RESULT=PASS
+

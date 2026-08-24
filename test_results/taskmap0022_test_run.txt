@@ -1,0 +1,49 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: exactly 1 WorldMapOverlay
+PASS: WorldMapOverlay exists
+PASS: WorldMap node resolved in overlay
+PASS: has world_to_map()
+PASS: has map_to_world()
+PASS: SETTLEMENT_CENTER constant exists
+PASS: GATE_ANCHORS constant exists
+PASS: SPAWN_CANDIDATES constant exists
+PASS: NE_DUNGEON_CANDIDATE constant exists
+PASS: STONE_ZONE constant exists
+PASS: FOREST_CLUSTERS constant exists
+PASS: SOUTH_AGRICULTURE_ZONE constant exists
+PASS: MAIN_ROADS constant exists
+PASS: CLEARING_HALF constant exists
+PASS: GATE_ANCHORS has 4 entries (got 4)
+PASS: SPAWN_CANDIDATES has 4 entries (got 4)
+PASS: FOREST_CLUSTERS has 3 entries (got 3)
+PASS: MAIN_ROADS contains east (Royal Road)
+PASS: GATE_ANCHORS has 'north'
+PASS: GATE_ANCHORS has 'south'
+PASS: GATE_ANCHORS has 'east'
+PASS: GATE_ANCHORS has 'west'
+PASS: SPAWN_CANDIDATES has 'north'
+PASS: SPAWN_CANDIDATES has 'south'
+PASS: SPAWN_CANDIDATES has 'east'
+PASS: SPAWN_CANDIDATES has 'west'
+PASS: Settlement center maps to positive coords ((8.0, 8.0))
+PASS: North Gate maps to positive coords ((8.0, 15.8125))
+PASS: South Gate maps to positive coords ((8.0, 0.1875))
+PASS: East Gate maps to positive coords ((0.1875, 8.0))
+PASS: West Gate maps to positive coords ((15.8125, 8.0))
+PASS: 4 distinct Gate Anchor map positions (got 4)
+PASS: North Portal maps to positive coords ((9.041667, 15.5))
+PASS: South Portal maps to positive coords ((6.958333, 0.5))
+PASS: East Portal maps to positive coords ((0.5, 9.041667))
+PASS: West Portal maps to positive coords ((15.5, 6.958333))
+PASS: Dungeon maps to positive coords ((2.479167, 14.77083))
+PASS: Stone Zone maps to positive coords ((4.875, 6.4375))
+PASS: Starter Forest maps to positive coords ((10.70833, 10.1875))
+PASS: Large Forest maps to positive coords ((11.90625, 4.875))
+PASS: Sparse Forest maps to positive coords ((4.614583, 10.86458))
+PASS: Agriculture maps to positive coords ((8.0, 4.510417))
+PASS: Royal Road has 8 points (>= 2)
+PASS: Royal Road midpoint maps to positive coords ((3.0, 8.520833))
+PASS: all 9 landmark roundtrips within 10px error
+TASKMAP0022_RESULT=PASS
+

@@ -1,0 +1,59 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: core nodes present
+PASS: WorldSelection in world_selection group
+PASS: WorldSelection exposes selection_changed
+PASS: exactly 1 WorldSelection node (1)
+PASS: starts in DAY
+PASS: modal UIs closed initially
+PASS: tavern click selects tavern Interact (got Interact:<Area2D#61840820401>)
+PASS: selection holds tavern Interact
+PASS: tavern click opens Recruitment UI
+PASS: world click blocked while modal UI open
+PASS: selection unchanged while modal UI open
+PASS: right click clears selection
+PASS: inn click selects inn Interact (got Interact:<Area2D#61924706486>)
+PASS: inn click opens Roster UI
+PASS: ESC clears selection
+PASS: keep click selects keep Interact (got Interact:<Area2D#61756934316>)
+PASS: keep click opens no modal UI
+PASS: grocery click selects grocery Interact
+PASS: equipment shop click selects equipment Interact
+PASS: empty ground click does not interact
+PASS: empty ground click keeps selection
+PASS: decoration click does not interact
+PASS: decoration click keeps selection
+PASS: tree click does not select (worker-only resource)
+PASS: tree click does not gather wood (5)
+PASS: tree click keeps selection
+PASS: lumberyard click selects lumberyard Interact
+PASS: quarry click selects quarry Interact
+PASS: lumberyard/quarry click opens no modal UI
+PASS: test west gate placed
+PASS: gate starts CLOSED
+PASS: gate click selects gate Interact (got Interact:<Area2D#76235672300>)
+PASS: gate click toggles CLOSED -> OPEN
+PASS: gate selection retained
+PASS: world click disabled while build mode active
+PASS: build mode blocks facility selection
+PASS: build mode leaves selection unchanged
+PASS: build mode click opens no UI
+PASS: build mode blocks _unhandled_input left click
+PASS: build mode left click opens no UI via input
+PASS: world click disabled while modal UI open
+PASS: modal UI blocks world click (no click-through)
+PASS: modal UI still open after world click (no click-through)
+PASS: phase is NIGHT
+PASS: world click disabled at NIGHT (tactical UI owns input)
+PASS: NIGHT building click does not open UI
+PASS: NIGHT click leaves recruitment UI closed
+PASS: NIGHT gate click does not select
+PASS: NIGHT gate click does not toggle gate
+PASS: WorldSelection still present
+PASS: 5 core buildings intact
+FAIL: world floor intact (192x192)
+PASS: Camera Controller intact (TASK-CTRL-001-1)
+PASS: no runtime player Actor (player has no combat method)
+PASS: clear_selection clears at end
+TASKCTRL0012_RESULT=FAIL
+

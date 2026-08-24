@@ -68,15 +68,18 @@ func _process(_delta: float) -> bool:
 		Phase.LANDMARK_DATA:
 			if _sub == 0:
 				# Verify all landmark constants from world_map.gd are accessible.
-				_check(_world_map.has("SETTLEMENT_CENTER"), "SETTLEMENT_CENTER constant exists")
-				_check(_world_map.has("GATE_ANCHORS"), "GATE_ANCHORS constant exists")
-				_check(_world_map.has("SPAWN_CANDIDATES"), "SPAWN_CANDIDATES constant exists")
-				_check(_world_map.has("NE_DUNGEON_CANDIDATE"), "NE_DUNGEON_CANDIDATE constant exists")
-				_check(_world_map.has("STONE_ZONE"), "STONE_ZONE constant exists")
-				_check(_world_map.has("FOREST_CLUSTERS"), "FOREST_CLUSTERS constant exists")
-				_check(_world_map.has("SOUTH_AGRICULTURE_ZONE"), "SOUTH_AGRICULTURE_ZONE constant exists")
-				_check(_world_map.has("MAIN_ROADS"), "MAIN_ROADS constant exists")
-				_check(_world_map.has("CLEARING_HALF"), "CLEARING_HALF constant exists")
+				# NOTE(TASK-EXP-001-2 FIX): Node에는 has()가 없어 매 프레임 SCRIPT ERROR
+				# 루프로 테스트가 완주하지 못했던 pre-existing 버그. taskmap0023과 동일한
+				# get(...) != null 접근성 패턴으로 교정(assertion 의도 유지).
+				_check(_world_map.get("SETTLEMENT_CENTER") != null, "SETTLEMENT_CENTER constant exists")
+				_check(_world_map.get("GATE_ANCHORS") != null, "GATE_ANCHORS constant exists")
+				_check(_world_map.get("SPAWN_CANDIDATES") != null, "SPAWN_CANDIDATES constant exists")
+				_check(_world_map.get("NE_DUNGEON_CANDIDATE") != null, "NE_DUNGEON_CANDIDATE constant exists")
+				_check(_world_map.get("STONE_ZONE") != null, "STONE_ZONE constant exists")
+				_check(_world_map.get("FOREST_CLUSTERS") != null, "FOREST_CLUSTERS constant exists")
+				_check(_world_map.get("SOUTH_AGRICULTURE_ZONE") != null, "SOUTH_AGRICULTURE_ZONE constant exists")
+				_check(_world_map.get("MAIN_ROADS") != null, "MAIN_ROADS constant exists")
+				_check(_world_map.get("CLEARING_HALF") != null, "CLEARING_HALF constant exists")
 				_sub = 1
 			elif _sub == 1:
 				# Verify data types and expected counts.

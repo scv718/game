@@ -23,6 +23,7 @@ WorkerRoster="*res://scripts/worker_roster.gd"
 MercenaryRoster="*res://scripts/mercenary_roster.gd"
 FirstEncounterSpawner="*res://scripts/first_encounter_spawner.gd"
 DeathLedger="*res://scripts/death_ledger.gd"
+ExplorationManager="*res://scripts/exploration_manager.gd"
 
 [display]
 

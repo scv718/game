@@ -1,0 +1,47 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: ExplorationManager autoload registered
+PASS: prototype region 'ne_dungeon' registered
+PASS: region starts UNKNOWN
+PASS: display_name set
+PASS: linked to existing WorldMap marker id
+PASS: world_position matches NE Dungeon Candidate
+PASS: duration/risk configured (45s)
+PASS: get_region_at hit-test works
+PASS: initial progress 0
+PASS: can_start_exploration true
+PASS: map overlay opens
+PASS: no selection: Explore disabled
+PASS: real mouse input selects region (Backdrop IGNORE click-through)
+PASS: click on region marker selects region
+PASS: selected region shows Explore enabled
+PASS: status label shows UNKNOWN
+PASS: click outside region clears selection
+PASS: UI Explore starts exploration (EXPLORING)
+PASS: exploration_started emitted exactly once
+PASS: repeated UI press does not duplicate start
+PASS: manager rejects duplicate start while EXPLORING
+PASS: button disabled while EXPLORING
+PASS: non-positive advance ignored
+PASS: progress accumulates 9s/45s
+PASS: progress monotonic accumulation
+PASS: DAY->NIGHT crossed
+PASS: phase transition does not alter progress
+PASS: progress advances during NIGHT (same policy)
+PASS: NIGHT->DAY crossed
+PASS: progress advances during DAY again (same policy)
+PASS: completion switches to DISCOVERED
+PASS: progress clamped to 1.0
+PASS: region_discovered emitted exactly once
+PASS: fixed deterministic discovery features applied
+PASS: extra advance after completion emits nothing
+PASS: restart rejected after DISCOVERED
+PASS: map panel refreshed after discovery
+PASS: Explore stays disabled after discovery
+PASS: TASK-012 world floor intact (>=128x128 cells)
+PASS: 5 core buildings intact
+PASS: no runtime player Actor
+PASS: GameTime phase valid
+TASKEXP0012_RESULT=PASS
+

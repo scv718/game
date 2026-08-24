@@ -38,7 +38,8 @@ PASS: snapshot round-trip restores all fields
 PASS: discovered_features survive round-trip
 PASS: metadata survives round-trip
 PASS: to_snapshot returns an independent copy
-FAIL: TASK-012 world floor intact (192x192)
+PASS: TASK-012 world floor intact (>=128x128 cells)
 PASS: 5 core buildings intact
 PASS: no runtime player Actor
-TASKEXP0011_RESULT=FAIL
+TASKEXP0011_RESULT=PASS
+

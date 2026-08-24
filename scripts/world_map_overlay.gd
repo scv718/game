@@ -4,6 +4,7 @@ class_name WorldMapOverlay
 ## TASK-MAP-002-1 World Map Overlay.
 ## Full-screen overlay showing a scaled-down overview of the 192x192 world.
 ## Information-only screen; no combat/build/RTS commands.
+## TASK-EXP-001-2: ExplorationRegion 상태 표시 + region 선택/Explore 시작만 허용.
 ## Root scene node is a CanvasLayer (for layering); this script lives on the
 ## child Control node which provides _draw() / queue_redraw().
 
@@ -11,6 +12,10 @@ class_name WorldMapOverlay
 @onready var _close_button: Button = %CloseButton
 @onready var _title_label: Label = %TitleLabel
 @onready var _hint_label: Label = %HintLabel
+@onready var _region_panel: PanelContainer = %RegionPanel
+@onready var _region_title_label: Label = %RegionTitleLabel
+@onready var _region_status_label: Label = %RegionStatusLabel
+@onready var _explore_button: Button = %ExploreButton
 
 const WORLD_SIZE := 3072
 const WORLD_HALF := 1536
@@ -19,13 +24,26 @@ const MAP_PADDING := 16.0
 var _is_open := false
 var _camera_controller: Node = null
 var _world_map: Node = null
+var _exploration: Node = null
+var _selected_region_id := ""
 
 
 func _ready() -> void:
 	add_to_group("world_map_overlay")
 	visible = false
 	_close_button.pressed.connect(close)
+	_explore_button.pressed.connect(_on_explore_pressed)
 	_resolve_world_map()
+	_resolve_exploration()
+
+
+func _resolve_exploration() -> void:
+	if _exploration != null and is_instance_valid(_exploration):
+		return
+	_exploration = get_node_or_null("/root/ExplorationManager")
+	if _exploration != null:
+		_exploration.exploration_started.connect(_on_region_state_changed)
+		_exploration.region_discovered.connect(_on_region_state_changed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -42,6 +60,7 @@ func open() -> void:
 	_is_open = true
 	visible = true
 	_resolve_camera()
+	_refresh_region_panel()
 	queue_redraw()
 
 
@@ -59,6 +78,108 @@ func toggle() -> void:
 
 func is_open() -> bool:
 	return _is_open
+
+
+## --- TASK-EXP-001-2 Region 선택 / Explore 시작 ---
+
+func select_region(region_id: String) -> void:
+	var region: ExplorationRegion = null if _exploration == null \
+		else _exploration.get_region(region_id)
+	_selected_region_id = region.region_id if region != null else ""
+	_refresh_region_panel()
+	queue_redraw()
+
+
+func get_selected_region_id() -> String:
+	return _selected_region_id
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton \
+			and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		_handle_map_click(event.position)
+
+
+## Map 좌표 클릭을 region hit-test로 변환한다. 그리기와 동일한 world_to_map/
+## map_to_world 변환을 사용해 marker 클릭이 어긋나지 않게 한다.
+func _handle_map_click(click_pos: Vector2) -> void:
+	if not _is_open or _exploration == null:
+		return
+	var world_pos := map_to_world(click_pos)
+	for region in _exploration.get_regions():
+		if region.contains_world_position(world_pos):
+			select_region(region.region_id)
+			return
+	select_region("")
+
+
+func _on_explore_pressed() -> void:
+	if _exploration == null or _selected_region_id == "":
+		return
+	_exploration.start_exploration(_selected_region_id)
+	_refresh_region_panel()
+	queue_redraw()
+
+
+func _on_region_state_changed(_region_id: String) -> void:
+	_refresh_region_panel()
+	queue_redraw()
+
+
+func _refresh_region_panel() -> void:
+	if _region_panel == null:
+		return
+	if _exploration == null:
+		_resolve_exploration()
+	if _exploration == null:
+		_region_panel.visible = false
+		return
+	_region_panel.visible = true
+	if _selected_region_id == "":
+		_region_title_label.text = "Region: none"
+		_region_status_label.text = "Click a region marker on the map."
+		_explore_button.disabled = true
+		_explore_button.text = "Explore"
+		return
+	var region: ExplorationRegion = _exploration.get_region(_selected_region_id)
+	if region == null:
+		_selected_region_id = ""
+		_refresh_region_panel()
+		return
+	_region_title_label.text = region.display_name
+	match region.get_discovery_state():
+		ExplorationRegion.DiscoveryState.UNKNOWN:
+			_region_status_label.text = "UNKNOWN | Risk %d | %ds survey" \
+				% [region.base_risk, int(region.exploration_duration)]
+			_explore_button.disabled = false
+			_explore_button.text = "Explore"
+		ExplorationRegion.DiscoveryState.EXPLORING:
+			_region_status_label.text = "EXPLORING | %d%%" \
+				% int(round(_exploration.get_progress(region.region_id) * 100.0))
+			_explore_button.disabled = true
+			_explore_button.text = "Exploring..."
+		ExplorationRegion.DiscoveryState.DISCOVERED:
+			var features := ", ".join(PackedStringArray(region.get_discovered_features()))
+			_region_status_label.text = "DISCOVERED | Found: %s" % features
+			_explore_button.disabled = true
+			_explore_button.text = "Discovered"
+
+
+func _has_exploring_region() -> bool:
+	if _exploration == null:
+		return false
+	for region in _exploration.get_regions():
+		if region.get_discovery_state() == ExplorationRegion.DiscoveryState.EXPLORING:
+			return true
+	return false
+
+
+func _process(_delta: float) -> void:
+	# EXPLORING 중에는 진행도 표시를 실시간 갱신한다(열려 있을 때만).
+	if not _is_open or not _has_exploring_region():
+		return
+	_refresh_region_panel()
+	queue_redraw()
 
 
 func world_to_map(world_pos: Vector2) -> Vector2:
@@ -155,6 +276,7 @@ func _draw() -> void:
 	draw_rect(clearing_rect, Color(0.5, 0.65, 0.5, 0.7), false, 1.0)
 
 	_draw_landmarks(scale_f)
+	_draw_exploration_regions()
 
 	var vp := _get_camera_viewport_rect()
 	if vp.size.x > 0.0 and vp.size.y > 0.0:
@@ -242,6 +364,39 @@ func _draw_landmark_marker(pos: Vector2, color: Color, radius: float, label: Str
 	draw_circle(pos, radius, color)
 	draw_circle(pos, radius + 1.5, Color(color.r, color.g, color.b, 0.3))
 	draw_string(font, pos + label_offset, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1.0, 1.0, 1.0, 0.85))
+
+
+## TASK-EXP-001-2 ExplorationRegion 상태 마커.
+## UNKNOWN = 회색 외곽선, EXPLORING = 호박색 + 진행도 arc, DISCOVERED = 채워진 초록.
+## 기존 Dungeon landmark와 겹치지 않게 라벨은 marker 하단에 표시한다.
+func _draw_exploration_regions() -> void:
+	if _exploration == null or not _exploration.is_inside_tree():
+		return
+	var font := ThemeDB.fallback_font
+	for region in _exploration.get_regions():
+		var pos := world_to_map(region.world_position)
+		var state: int = region.get_discovery_state()
+		var col := Color(0.55, 0.62, 0.7, 0.95)
+		var label_suffix := " (?)"
+		if state == ExplorationRegion.DiscoveryState.EXPLORING:
+			col = Color(0.95, 0.75, 0.3, 0.95)
+			label_suffix = " %d%%" % int(round(_exploration.get_progress(region.region_id) * 100.0))
+		elif state == ExplorationRegion.DiscoveryState.DISCOVERED:
+			col = Color(0.4, 0.85, 0.45, 0.95)
+			label_suffix = " (Discovered)"
+		if region.region_id == _selected_region_id:
+			draw_circle(pos, 11.0, Color(1.0, 1.0, 1.0, 0.35), false, 1.5)
+		if state == ExplorationRegion.DiscoveryState.DISCOVERED \
+				or state == ExplorationRegion.DiscoveryState.EXPLORING:
+			draw_circle(pos, 6.0, col)
+		else:
+			draw_circle(pos, 6.0, col, false, 2.0)
+		if state == ExplorationRegion.DiscoveryState.EXPLORING:
+			var progress: float = _exploration.get_progress(region.region_id)
+			draw_arc(pos, 9.0, -PI / 2.0, -PI / 2.0 + TAU * progress, 24,
+				Color(0.95, 0.75, 0.3, 0.8), 2.0)
+		draw_string(font, pos + Vector2(-30.0, 22.0), region.display_name + label_suffix,
+			HORIZONTAL_ALIGNMENT_CENTER, 60, 10, Color(1.0, 1.0, 1.0, 0.9))
 
 
 func _draw_road_line(road: Array, scale_f: float) -> void:

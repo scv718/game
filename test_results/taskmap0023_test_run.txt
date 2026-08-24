@@ -1,0 +1,99 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: exactly 1 WorldMapOverlay (1)
+PASS: WorldMapOverlay exists
+PASS: WorldMapOverlay has is_open()
+PASS: WorldMapOverlay has open()
+PASS: WorldMapOverlay has close()
+PASS: WorldMapOverlay has toggle()
+PASS: WorldMapOverlay has world_to_map()
+PASS: WorldMapOverlay has map_to_world()
+PASS: overlay starts closed
+PASS: overlay hidden initially
+PASS: CameraController present
+PASS: Camera2D present
+PASS: exactly 1 TacticalCommandUI (1)
+PASS: starting in DAY phase
+PASS: map opens in DAY
+PASS: overlay visible in DAY
+PASS: world_map resolved in overlay
+PASS: SETTLEMENT_CENTER accessible
+PASS: GATE_ANCHORS accessible
+PASS: SPAWN_CANDIDATES accessible
+PASS: NE_DUNGEON_CANDIDATE accessible
+PASS: STONE_ZONE accessible
+PASS: FOREST_CLUSTERS accessible
+PASS: SOUTH_AGRICULTURE_ZONE accessible
+PASS: MAIN_ROADS accessible
+PASS: CLEARING_HALF accessible
+PASS: Settlement center maps to positive coords ((8.0, 8.0))
+PASS: North Gate maps to positive coords ((8.0, 15.8125))
+PASS: South Gate maps to positive coords ((8.0, 0.1875))
+PASS: East Gate maps to positive coords ((0.1875, 8.0))
+PASS: West Gate maps to positive coords ((15.8125, 8.0))
+PASS: 4 distinct Gate Anchor map positions (got 4)
+PASS: North Portal maps to positive coords ((9.041667, 15.5))
+PASS: South Portal maps to positive coords ((6.958333, 0.5))
+PASS: East Portal maps to positive coords ((0.5, 9.041667))
+PASS: West Portal maps to positive coords ((15.5, 6.958333))
+PASS: Dungeon maps to positive coords ((2.479167, 14.77083))
+PASS: Stone Zone maps to positive coords ((4.875, 6.4375))
+PASS: Starter Forest maps to positive coords ((10.70833, 10.1875))
+PASS: Large Forest maps to positive coords ((11.90625, 4.875))
+PASS: Sparse Forest maps to positive coords ((4.614583, 10.86458))
+PASS: Agriculture maps to positive coords ((8.0, 4.510417))
+PASS: Royal Road has 8 points (>= 2)
+PASS: Royal Road midpoint maps to positive coords ((3.0, 8.520833))
+PASS: camera viewport rect has positive size ((64.0, 64.0))
+PASS: camera viewport center within world bounds ((0.0, 0.0))
+PASS: viewport top-left maps to positive coords ((8.166667, 8.166667))
+PASS: viewport bottom-right maps to positive coords ((7.833333, 7.833333))
+PASS: map closes
+PASS: overlay hidden after close
+PASS: camera controller detects map overlay closed
+PASS: world click re-enabled after map overlay close
+PASS: camera pan right increased x (0.0 -> 100.0)
+PASS: zoom target changed after wheel up (1.00 -> 1.10)
+PASS: camera position within world bounds after pan/zoom ((100.0, 0.0))
+PASS: phase is NIGHT
+PASS: camera controller in night mode
+PASS: tactical command UI exists
+PASS: tactical command UI visible in NIGHT
+PASS: map opens during NIGHT
+PASS: overlay visible during NIGHT
+PASS: map closes during NIGHT
+PASS: overlay hidden after NIGHT close
+PASS: M key opens map during NIGHT
+PASS: M key toggles map closed during NIGHT
+PASS: tactical UI still visible after map operations
+PASS: regroup button exists
+PASS: retreat button exists
+PASS: focus target button exists
+PASS: time pause button exists
+PASS: time 1x button exists
+PASS: time 2x button exists
+PASS: defense zone button 1 exists
+PASS: defense zone button 2 exists
+PASS: defense zone button 3 exists
+PASS: defense zone button 4 exists
+PASS: back to DAY
+PASS: camera controller in day mode
+PASS: tactical UI hidden in DAY
+PASS: map opens after DAY return
+PASS: map closes after DAY return
+PASS: camera pan works after DAY return
+PASS: camera controller intact
+PASS: world selection intact
+PASS: building placement intact
+PASS: 5 core buildings intact
+PASS: no player actor
+PASS: floor exists
+PASS: second NIGHT phase
+PASS: map opens during second NIGHT
+PASS: map closes during second NIGHT
+PASS: second DAY phase
+PASS: exactly 1 overlay after repeated cycles
+PASS: exactly 1 camera controller after repeated cycles
+PASS: exactly 1 tactical UI after repeated cycles
+TASKMAP0023_RESULT=PASS
+
