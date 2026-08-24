@@ -1,0 +1,81 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: ExplorationManager autoload registered
+PASS: prototype region 'ne_dungeon' registered
+PASS: region starts UNKNOWN
+PASS: encounter direction west (WEST = main threat)
+PASS: exactly 1 WorldMapOverlay (1)
+PASS: TacticalCommandUI present
+PASS: DeathLedger starts empty
+PASS: 1. no runtime Player Actor
+PASS: camera controller intact
+PASS: 5 core buildings intact
+PASS: world floor intact (>=128x128 cells)
+PASS: 2. World Map opens via M key
+PASS: map click selects exploration region
+PASS: 3. region shown UNKNOWN before explore
+PASS: Explore enabled for UNKNOWN region
+PASS: 4. UI Explore button starts exploration (EXPLORING)
+PASS: exploration_started emitted exactly once
+PASS: button disabled while EXPLORING
+PASS: panel shows EXPLORING right after start
+PASS: 5. progress accumulates from real frame ticks (0.0144)
+PASS: 6. progress monotonic increase at 1x (+0.0182)
+PASS: tactical Pause freezes exploration progress (0.0337)
+PASS: progress resumes after Pause (+0.0185)
+PASS: tactical 2x scales exploration rate (0.0370 vs 0.0182)
+PASS: mid-exploration NIGHT entered
+PASS: phase transition does not reset exploration (0.0981)
+PASS: auto-encounter despawned during exploration NIGHT
+PASS: progress advances during NIGHT (same policy)
+PASS: back to DAY mid-exploration
+PASS: 7. exploration completed by real runtime progression
+PASS: 8. region state DISCOVERED
+PASS: signals exactly once each (started=1 discovered=1)
+PASS: progress clamped to 1.0
+PASS: fixed deterministic discovery features applied
+PASS: map still open during completion (live refresh path)
+PASS: selection preserved
+PASS: 9. map panel refreshed to DISCOVERED with features (DISCOVERED | Found: dungeon_entrance, safe_approach)
+PASS: Explore button switched to disabled 'Discovered'
+PASS: marker state persists after map reopen
+PASS: 10. repeated UI press does not restart or duplicate signals
+PASS: manager rejects repeated start after DISCOVERED
+PASS: no deaths from exploration/cycles so far
+PASS: 11. map opens during repeated NIGHT
+PASS: map closes during repeated NIGHT
+PASS: encounter despawn leaves no stale enemies
+PASS: cycle 1 back to DAY
+PASS: tactical UI hidden in DAY
+PASS: no mercenary actors without hire
+PASS: cycle 2 back to DAY
+PASS: repeated cycles leave no duplicate systems
+PASS: no duplicated regions
+PASS: DISCOVERED persists across repeated cycles
+PASS: no duplicate signals after cycles
+PASS: stone deposit present
+PASS: 12. quarry built on deposit (worker regression)
+PASS: quarry assigns miner ({ "action": "assign", "success": true })
+PASS: assigned miner produces stone (1)
+PASS: miner unassigned cleanly after production check
+PASS: recruitment UI present
+PASS: mercenary_A hired alive
+PASS: NIGHT for combat regression
+PASS: mercenary actor spawned at NIGHT
+PASS: mercenary actor retrievable
+PASS: west encounter spawned on NIGHT
+PASS: dead enemy removed from combat (target/group)
+PASS: lethal death recorded exactly once (1)
+PASS: ENEMY record identity retained
+PASS: death day/phase retained (NIGHT)
+PASS: record PENDING with eligible_day = death_day + 1
+PASS: mercenary survived combat
+PASS: DAY return after combat
+PASS: DAY despawn removes mercenary actor (no stale reference)
+PASS: surviving merc returns to data
+PASS: cleanup/despawn created no new death records
+PASS: spawner holds no stale references during DAY
+PASS: still no Player Actor at end
+PASS: core buildings intact at end
+PASS: exploration state untouched by worker/combat regression
+TASKEXP0013_RESULT=PASS

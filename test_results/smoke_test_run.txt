@@ -1,4 +1,4 @@
-﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
 
 PASS: main.tscn loads
 PASS: no runtime player Actor
@@ -16,4 +16,3 @@ PASS: floor tile renders tile data
 PASS: lumberyard scene loads
 PASS: lumberyard house texture big ((res://scenes/lumberyard.tscn::AtlasTexture_house):<AtlasTexture#-9223371991455627710>)
 SMOKE_RESULT=PASS
-
