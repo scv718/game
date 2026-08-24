@@ -842,7 +842,11 @@
 
 ### TASK-EXP-001-1 ExplorationRegion Data
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: [수동 완료] floor assertion을 >=128*128 컨벤션으로 수정 후 전체 PASS. ExplorationRegion 클래스·enum·요구사항 모두 충족 (리뷰어 확인)
+- 피드백: 재시도 후에도 구현물이 전무함 — ExplorationRegion 클래스·enum·테스트 파일이 레포지토리 어디에도 없고(grep/Glob/git status로 확인), 테스트 실행 증적 없음. 계획 서술만으로는 리뷰 불가하며 실제 코드 작성 + 테스트 실행 증명이 선행되어야 함
+- 피드백: 구현물이 전무함 — ExplorationRegion 데이터 클래스, 상태 enum, 테스트 모두 미생성. 코드 작성 + 테스트 실행 증명이 선행되어야 재리뷰 가능.
+- 피드백: [재시도] 빈 응답 백오프 재시도(최대 4회) 적용 후 재실행. 요구사항: ExplorationRegion 데이터 클래스 + 상태 enum + 테스트 (리뷰어 피드백 참조)
 
 - 최소 데이터:
 

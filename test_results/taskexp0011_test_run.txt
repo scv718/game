@@ -1,0 +1,44 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: ExplorationRegion created
+PASS: region_id retained
+PASS: display_name defaults to empty
+PASS: default discovery_state is UNKNOWN
+PASS: state name 'UNKNOWN'
+PASS: exploration_duration/base_risk default to 0
+PASS: features/metadata start empty
+PASS: source_marker_id starts empty
+PASS: basic fields assignable
+PASS: UNKNOWN -> EXPLORING accepted (optional progress state)
+PASS: state is EXPLORING
+PASS: EXPLORING -> DISCOVERED accepted
+PASS: state is DISCOVERED
+PASS: invalid enum values rejected
+PASS: state unchanged after rejected set
+PASS: feature added
+PASS: empty feature id rejected
+PASS: duplicate feature rejected
+PASS: set_discovered_features stores a copy (external mutation isolated)
+PASS: get_discovered_features returns a copy (internal state protected)
+PASS: set_metadata stores a copy
+PASS: get_metadata returns a copy (internal state protected)
+PASS: MapLayout node exists
+PASS: dungeon candidate from layout matches WorldMap const ((1060.0, -1300.0))
+PASS: dungeon region linkable to existing WorldMap marker by id ('NeDungeonCandidate')
+PASS: center inside dungeon region bounds
+PASS: village center outside dungeon region bounds
+PASS: sparse_forest resource region exists on WorldMap
+PASS: resource region bound to WorldMap forest cluster center
+PASS: forest cluster center inside resource region bounds
+PASS: point beyond bounds rejected
+PASS: region is pure RefCounted data (no Actor/Node)
+PASS: snapshot contains only pure save-safe values
+PASS: snapshot round-trip restores all fields
+PASS: discovered_features survive round-trip
+PASS: metadata survives round-trip
+PASS: to_snapshot returns an independent copy
+FAIL: TASK-012 world floor intact (192x192)
+PASS: 5 core buildings intact
+PASS: no runtime player Actor
+TASKEXP0011_RESULT=FAIL

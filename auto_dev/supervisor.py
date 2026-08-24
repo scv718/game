@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
@@ -285,15 +286,56 @@ def format_task_context(task):
     return "\n".join(parts)
 
 
+def run_opencode_retry(prompt, model, extra, timeout_sec, task_id="", attempts=4):
+    """free 모델의 간헐적 빈 응답(프로바이더 무응답) 방어 - 백오프 재시도."""
+    sid, text, err = None, "", None
+    for i in range(1, attempts + 1):
+        sid, text, err = run_opencode(prompt, model, extra, timeout_sec)
+        if err or (text or "").strip():
+            return sid, text, err
+        if i < attempts:
+            wait = 20 * i
+            log(f"[{task_id}] 빈 응답 ({i}/{attempts}) - {wait}초 후 재시도")
+            time.sleep(wait)
+    return sid, text, err
+
+
+def build_task_file(task, queue_path):
+    """큐에서 해당 태스크 블록만 추출해 축소 컨텍스트 파일로 저장 (대형 모델 컨텍스트 절약)."""
+    with open(queue_path, encoding="utf-8") as f:
+        lines = f.readlines()
+    header = f"### {task['id']}"
+    capture = False
+    block = []
+    for line in lines:
+        if line.startswith(header):
+            capture = True
+            block.append(line)
+            continue
+        if capture:
+            if line.startswith("### ") or line.startswith("## "):
+                break
+            block.append(line)
+    out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "task_context.md")
+    with open(out_path, "w", encoding="utf-8") as f:
+        if block:
+            f.writelines(block)
+        else:
+            f.write(format_task_context(task))
+    return out_path
+
+
 def run_implementer(task, session_id=None, review_feedback=None):
     prompt = load_prompt("implementer.md")
     prompt += "\n\n" + format_task_context(task)
     if review_feedback:
         prompt += f"\n\n[리뷰어 피드백 - 반드시 반영하고 수정하세요]\n{review_feedback}"
-    extra = ["--file", os.path.join(cfg("project_dir"), cfg("queue_file"))]
+    queue_path = os.path.join(cfg("project_dir"), cfg("queue_file"))
+    extra = ["--file", build_task_file(task, queue_path)]
     if session_id:
         extra += ["--session", session_id]
-    sid, text, err = run_opencode(prompt, cfg("implementer_model"), extra, cfg("implementer_timeout_sec"))
+    sid, text, err = run_opencode_retry(prompt, cfg("implementer_model"), extra,
+                                        cfg("implementer_timeout_sec"), task_id=task["id"])
     summary = extract_summary(text)
     if not summary:
         summary = (text or "").strip()[-800:]
@@ -304,8 +346,10 @@ def run_reviewer(task, summary):
     prompt = load_prompt("reviewer.md")
     prompt += "\n\n" + format_task_context(task)
     prompt += f"\n\n[구현 결과 요약]\n{summary or '(요약 없음 - 직접 코드를 확인하세요)'}"
-    extra = ["--file", os.path.join(cfg("project_dir"), cfg("queue_file"))]
-    _, text, err = run_opencode(prompt, cfg("reviewer_model"), extra, cfg("reviewer_timeout_sec"))
+    queue_path = os.path.join(cfg("project_dir"), cfg("queue_file"))
+    extra = ["--file", build_task_file(task, queue_path)]
+    _, text, err = run_opencode_retry(prompt, cfg("reviewer_model"), extra,
+                                      cfg("reviewer_timeout_sec"), task_id=task["id"])
     if err:
         return None, err
     return extract_verdict(text)
