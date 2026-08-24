@@ -411,7 +411,9 @@
 
 ### TASK-3D-001-4 Interaction3D / Selection Contract
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 요구사항 7건·완료조건 4건 전부 실제 코드에서 확인되었고, 45 assertions 포함 전 회귀(47/42/15)를 reviewer가 직접 headless 재실행하여 PASS 재현. 금지 항목 부재, LOCK/운영 규칙·기존 2D 정책과의 일관성 확인. 지적 사항은 전부 비차단 서술 수준.
+- 피드백: 요구사항 7건 전부 구현 확인, 신규 task3d0014 테스트 45 assertions headless 실행 PASS, 0012(47)·0013(42)·smoke(15) 회귀 통과. Foundation 신규 파일만 추가하고 2D interactable/world_selection 및 기존 도메인 파일 무수정(LOCK 12/운영 규칙 4 준수). re-base는 각 도메인(RES/BLD) 전환 태스크가 자기 파일만 수행.
 
 - 설명: 기존 2D mouse selection/interaction 의미를 3D Raycast 기반으로 연결할 최소 공통 계약을 만든다.
 

@@ -1,35 +1,31 @@
-### TASK-3D-001-3 Camera3D Pan / Zoom / Screen-to-World
+### TASK-3D-001-4 Interaction3D / Selection Contract
 
 - 상태: REVIEW
+- 피드백: 요구사항 7건 전부 구현 확인, 신규 task3d0014 테스트 45 assertions headless 실행 PASS, 0012(47)·0013(42)·smoke(15) 회귀 통과. Foundation 신규 파일만 추가하고 2D interactable/world_selection 및 기존 도메인 파일 무수정(LOCK 12/운영 규칙 4 준수). re-base는 각 도메인(RES/BLD) 전환 태스크가 자기 파일만 수행.
 
-- 설명: 기존 Camera + Mouse 관리 조작을 Orthographic Camera3D로 이전한다.
+- 설명: 기존 2D mouse selection/interaction 의미를 3D Raycast 기반으로 연결할 최소 공통 계약을 만든다.
 
 - 요구사항:
 
-  - 고정 Top-down 사선 Pitch/Yaw.
-  - WASD = XZ Camera Pan.
-  - Mouse Wheel = orthographic size 기반 Zoom.
-  - 최소/최대 Zoom clamp.
-  - World boundary clamp.
-  - Camera rotation 입력 없음.
-  - Screen mouse position → 3D ground/world raycast 가능.
-  - UI 위 Mouse 입력이 world click으로 누수되지 않음.
-  - DAY/NIGHT Camera policy를 이후 Tactical Migration에서 재사용 가능.
+  - Left Click → 유효한 3D selectable/interactable 1개 선택.
+  - 빈 ground / decoration click 안전.
+  - Right Click / ESC selection 해제.
+  - UI open 상태 world interaction 누수 없음.
+  - 기존 interact/select API가 dimension-neutral하면 최대한 재사용.
+  - 3D node 자체를 순수 game data owner로 강제하지 않음.
+  - 기능 도메인이 별도 거대 Selection Framework를 만들 필요 없는 최소 API 제공.
 
-- HUMAN_CHECK:
+- 금지:
 
-  - 프로젝트 좀보이드처럼 월드를 내려다보는 느낌이 자연스러운지.
-  - 최대 Zoom-out에서 마을 운영 상황이 읽히는지.
-  - Zoom-in에서 Worker 작업을 관찰할 수 있는지.
-  - 카메라 각도가 건물/캐릭터를 지나치게 가리지 않는지.
-  - Pan/Zoom 속도가 관리 게임에 적절한지.
+  - Box Selection.
+  - Drag Selection.
+  - RTS formation framework.
+  - 새로운 범용 ECS.
 
 - 완료조건:
 
-  - Pan 정상.
-  - Zoom 정상.
-  - boundary clamp 정상.
-  - mouse → world 좌표 정상.
-  - UI click-through 없음.
-  - HUMAN_CHECK만 남으면 DONE.
+  - Test interactable 3D object 선택/해제 PASS.
+  - decoration/ground 안전.
+  - UI 차단 PASS.
+  - 병렬 Building/Resource/Combat 태스크가 공통 계약 사용 가능.
 
