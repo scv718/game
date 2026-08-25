@@ -18,6 +18,9 @@ QUEUE_LOCK_PATH = os.path.join(BASE_DIR, ".queue_lock")
 PROMPT_DIR = os.path.join(BASE_DIR, "prompts")
 GROUP_ID = None  # --group 지정 시 해당 그룹 서브트리만 처리 (병렬 레인)
 WORKTREE_DIR = None  # --group 에 매핑된 git worktree (에이전트 작업 디렉터리)
+FALLBACK_STATE_PATH = os.path.join(BASE_DIR, "fallback_state.json")
+QUOTA_RE = re.compile(r"insufficient|quota|balance|credit|usage limit|limit reached|exhausted|402|429",
+                      re.IGNORECASE)
 
 if sys.stdout:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -247,12 +250,33 @@ def write_result(task, verdict, reason):
                 f"- 완료 시각: {datetime.datetime.now().isoformat()}\n\n")
 
 
+def reviewer_model():
+    """유료 리뷰어. 할당량 소진 시 C(무료)로 자동 폴백."""
+    if os.path.exists(FALLBACK_STATE_PATH):
+        try:
+            with open(FALLBACK_STATE_PATH, encoding="utf-8") as f:
+                if json.load(f).get("fallback"):
+                    return cfg("reviewer_fallback_model")
+        except (OSError, json.JSONDecodeError):
+            pass
+    return cfg("reviewer_model")
+
+
+def mark_reviewer_fallback(reason):
+    with open(FALLBACK_STATE_PATH, "w", encoding="utf-8") as f:
+        json.dump({"fallback": True, "reason": reason[:200],
+                   "when": datetime.datetime.now().isoformat()}, f, ensure_ascii=False, indent=2)
+    log(f"리뷰어 유료 할당량 소진 감지 - 폴백 모델로 전환: {reason[:100]}")
+
+
 def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
     exe = cfg("opencode_exe")
     agent_dir = WORKTREE_DIR or cfg("project_dir")
     args = [exe, "run", prompt, "--model", model, "--auto", "--format", "json",
-            "--variant", "max",
             "--dir", agent_dir]
+    variant = cfg("variant") if "variant" in CONFIG else ""
+    if variant:
+        args += ["--variant", variant]
     args += extra_args or []
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
@@ -272,9 +296,33 @@ def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
             stdout, stderr = "", ""
         return None, "", f"실행 시간 초과 ({timeout_sec}초)"
     if proc.returncode != 0:
-        log(f"opencode 실패 (exit={proc.returncode}): {stderr[-2000:]}")
-        return None, "", stderr[-2000:] or "알 수 없는 오류"
+        err_msg = extract_error_event(stdout) or stderr[-2000:] or "알 수 없는 오류"
+        log(f"opencode 실패 (exit={proc.returncode}): {err_msg[:200]}")
+        return None, "", err_msg
     return parse_run_output(stdout)
+
+
+def extract_error_event(stdout):
+    """stdout의 JSON error 이벤트에서 메시지 추출 (빈 stderr + 오류 마스킹 방지)."""
+    for line in (stdout or "").splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        err = ev.get("error")
+        if isinstance(err, dict):
+            msg = err.get("message") or ""
+            status = err.get("statusCode") or ""
+            name = err.get("name") or ""
+            detail = ""
+            data = err.get("data")
+            if isinstance(data, dict) and isinstance(data.get("message"), str):
+                detail = data["message"]
+            return f"{name} [{status}] {msg} {detail}".strip()
+    return None
 
 
 def parse_run_output(raw):
@@ -413,8 +461,12 @@ def run_reviewer(task, summary, recovery_file=None):
         prompt += f"\n\n[구현 결과 요약]\n{summary or '(요약 없음 - 직접 코드를 확인하세요)'}"
         queue_path = os.path.join(cfg("project_dir"), cfg("queue_file"))
         extra = ["--file", build_task_file(task, queue_path)]
-    _, text, err = run_opencode_retry(prompt, cfg("reviewer_model"), extra,
+    _, text, err = run_opencode_retry(prompt, reviewer_model(), extra,
                                       cfg("reviewer_timeout_sec"), task_id=task["id"])
+    if err and QUOTA_RE.search(err or ""):
+        mark_reviewer_fallback(err)
+        _, text, err = run_opencode_retry(prompt, reviewer_model(), extra,
+                                          cfg("reviewer_timeout_sec"), task_id=task["id"])
     return text, err
 
 
