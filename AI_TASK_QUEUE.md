@@ -876,7 +876,7 @@
 
 ### TASK-3D-CMB-001-1 Mercenary / Enemy Actor3D
 
-- 상태: IMPLEMENT
+- 상태: DONE
 
 - 요구사항:
 
@@ -897,7 +897,8 @@
 
 ### TASK-3D-CMB-001-2 Tactical Command World3D Wiring
 
-- 상태: QUEUED
+- 상태: REVIEW
+- 구현 기록: 신규 파일만 추가(2D/타 도메인 무수정). `scripts/mercenary_roster_3d.gd`(NIGHT spawn/DAY despawn + XZ rally/safe 좌표 + 전술 명령 처리 + focus ray pick), `scripts/first_encounter_spawner_3d.gd`(EnemyActor3D NIGHT spawn, WorldMap 상수의 WorldCoords3D XZ 해석), `scripts/tactical_command_ui_3d.gd` + `ui/tactical_command_ui_3d.tscn`(Control 계층 유지, gates_3d duck-typing 조회, 명령 코드는 기존 TacticalCommandUI.Command 재사용), `tests/task3dcmb0012_test.gd`(79 assertions headless PASS, 로그 `test_results/task3dcmb0012_test_run.txt`). Foundation CameraController3D는 소비만 하고 수정 없음(DAY/NIGHT zoom policy 재사용, rotation 경로 없음 검증). 주의: -s 테스트에서 bare autoload 참조 스크립트(mercenary_roster_3d.gd/tactical_command_ui 계열)를 정적 참조하면 autoload 미등록 컴파일 단계가 깨지므로 런타임 load()/duck-typing만 사용해야 함(테스트 파일 헤더에 기록).
 
 - 요구사항:
 
