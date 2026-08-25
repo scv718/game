@@ -24,7 +24,8 @@ if sys.stdout:
 if sys.stderr:
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-STATES = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "DONE", "NEEDS_DESIGN")
+STATES = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "DONE", "NEEDS_DESIGN", "REVIEW_PARSE_ERROR")
+RETRYABLE = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "REVIEW_PARSE_ERROR")
 SENTINEL_IDS = ("OVERNIGHT-STOP",)
 TASK_ID_RE = re.compile(r"^(TASK(?:-[A-Z0-9]+){1,5}|OVERNIGHT-STOP(?:-\d+)?)$")
 STATUS_RE = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
@@ -398,22 +399,56 @@ def run_implementer(task, session_id=None, review_feedback=None):
     return sid, summary, err
 
 
-def run_reviewer(task, summary):
-    prompt = load_prompt("reviewer.md")
-    prompt += "\n\n" + format_task_context(task)
-    prompt += f"\n\n[구현 결과 요약]\n{summary or '(요약 없음 - 직접 코드를 확인하세요)'}"
-    queue_path = os.path.join(cfg("project_dir"), cfg("queue_file"))
-    extra = ["--file", build_task_file(task, queue_path)]
+def run_reviewer(task, summary, recovery_file=None):
+    """리뷰어 호출. recovery_file 지정 시 이전 리뷰 출력만으로 판정만 다시 받는다.
+    반환: (원문 텍스트, err)"""
+    if recovery_file:
+        prompt = ("아래는 이전 리뷰어의 출력입니다. 이 출력만 보고 판정을 추론해 "
+                  "마지막 줄에 정확히 `판정: LGTM | FIX | NEEDS_DESIGN` 형식으로 "
+                  "판정 한 줄만 다시 남기세요. 그 외 어떤 내용도 작성하지 마세요.")
+        extra = ["--file", recovery_file]
+    else:
+        prompt = load_prompt("reviewer.md")
+        prompt += "\n\n" + format_task_context(task)
+        prompt += f"\n\n[구현 결과 요약]\n{summary or '(요약 없음 - 직접 코드를 확인하세요)'}"
+        queue_path = os.path.join(cfg("project_dir"), cfg("queue_file"))
+        extra = ["--file", build_task_file(task, queue_path)]
     _, text, err = run_opencode_retry(prompt, cfg("reviewer_model"), extra,
                                       cfg("reviewer_timeout_sec"), task_id=task["id"])
-    if err:
-        return None, err
-    return extract_verdict(text)
+    return text, err
+
+
+def parse_attempts_path(task):
+    runs_dir = os.path.join(BASE_DIR, "runs", GROUP_ID) if GROUP_ID else os.path.join(BASE_DIR, "runs", "_default")
+    os.makedirs(runs_dir, exist_ok=True)
+    return os.path.join(runs_dir, f"parse_attempts_{task['id']}.json")
+
+
+def get_parse_attempts(task):
+    p = parse_attempts_path(task)
+    if os.path.exists(p):
+        with open(p, encoding="utf-8") as f:
+            return json.load(f).get("count", 0)
+    return 0
+
+
+def bump_parse_attempts(task):
+    p = parse_attempts_path(task)
+    n = get_parse_attempts(task) + 1
+    with open(p, "w", encoding="utf-8") as f:
+        json.dump({"count": n, "updated": datetime.datetime.now().isoformat()}, f, ensure_ascii=False)
+    return n
+
+
+def reset_parse_attempts(task):
+    p = parse_attempts_path(task)
+    if os.path.exists(p):
+        os.remove(p)
 
 
 def pick_next_task(tasks):
     for t in tasks:
-        if t["leaf"] and t["status"] in ("QUEUED", "IMPLEMENT", "REVIEW", "FIX"):
+        if t["leaf"] and t["status"] in RETRYABLE:
             if t["id"] in SENTINEL_IDS:
                 continue
             return t
@@ -510,8 +545,8 @@ def main():
             return
         session_id = None
         summary = ""
-        if task["status"] == "REVIEW":
-            log(f"[{task['id']}] REVIEW 상태에서 재개 (구현 완료분 그대로 리뷰)")
+        if task["status"] in ("REVIEW", "REVIEW_PARSE_ERROR"):
+            log(f"[{task['id']}] {task['status']} 상태에서 재개 (구현 완료분 그대로 리뷰)")
         else:
             update_queue(tasks, queue_path, task["id"], "IMPLEMENT")
             log(f"[{task['id']}] IMPLEMENT 시작")
@@ -523,8 +558,12 @@ def main():
                                  feedback=f"이전 시도 시간 초과: {err}")
                 else:
                     log(f"[{task['id']}] 구현 실패: {err}")
-                    update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
-                                 feedback=f"구현 실행 오류: {err[:300]}")
+                    if err == "알 수 없는 오류":
+                        update_queue(tasks, queue_path, task["id"], "IMPLEMENT",
+                                     feedback=f"구현자 프로바이더 무응답: {err} - 다음 사이클 재시도")
+                    else:
+                        update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                     feedback=f"구현 실행 오류: {err[:300]}")
                 return
             log(f"[{task['id']}] 구현 완료 (session={session_id})")
             log(f"[{task['id']}] 구현 요약: {summary[:300]}")
@@ -535,15 +574,42 @@ def main():
             update_queue(tasks, queue_path, task["id"], "REVIEW")
             log(f"[{task['id']}] REVIEW 라운드 {round_no}/{cfg('max_fix_rounds')} 시작")
 
-            verdict, reason = run_reviewer(task, summary)
-            if not verdict:
-                log(f"[{task['id']}] 판정 파싱 실패 (리뷰어 출력에 판정 없음) - 1회 재시도")
-                verdict, reason = run_reviewer(task, summary)
-            if not verdict:
-                log(f"[{task['id']}] 판정 파싱 실패 재시도 후에도 실패 - 수동 개입 필요")
-                update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
-                             feedback="리뷰어가 판정 형식을 지키지 않음 - 직접 확인 필요")
+            text, err = run_reviewer(task, summary)
+            if err:
+                if err == "알 수 없는 오류":
+                    log(f"[{task['id']}] 리뷰어 무응답(provider) - REVIEW 유지, 다음 사이클 재시도")
+                    update_queue(tasks, queue_path, task["id"], "REVIEW",
+                                 feedback=f"리뷰어 프로바이더 무응답: {err}")
+                    return
+                log(f"[{task['id']}] 리뷰어 실행 오류: {err}")
+                update_queue(tasks, queue_path, task["id"], "REVIEW",
+                             feedback=f"리뷰어 실행 오류: {err[:300]}")
                 return
+            verdict, reason = extract_verdict(text)
+            if not verdict:
+                recovery_file = os.path.join(BASE_DIR, "runs", "recovery",
+                                             f"review_output_{task['id']}.md")
+                os.makedirs(os.path.dirname(recovery_file), exist_ok=True)
+                with open(recovery_file, "w", encoding="utf-8") as f:
+                    f.write(text or "(빈 출력)")
+                log(f"[{task['id']}] 판정 파싱 실패 - 판정 복구 호출 시도")
+                text2, err2 = run_reviewer(task, summary, recovery_file=recovery_file)
+                if err2:
+                    verdict, reason = None, ""
+                else:
+                    verdict, reason = extract_verdict(text2)
+            if not verdict:
+                n = bump_parse_attempts(task)
+                if n >= 3:
+                    log(f"[{task['id']}] 판정 파싱 3회 이상 실패 - 수동 개입 필요")
+                    update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                 feedback=f"리뷰어가 판정 형식을 3회 이상 미준수 - 직접 확인 필요 (시도 {n}회)")
+                    return
+                log(f"[{task['id']}] 판정 파싱 실패 ({n}회) - REVIEW_PARSE_ERROR, 다음 사이클 재시도")
+                update_queue(tasks, queue_path, task["id"], "REVIEW_PARSE_ERROR",
+                             feedback=f"리뷰어 판정 파싱 실패 ({n}/3회) - 자동 재시도 대기")
+                return
+            reset_parse_attempts(task)
             log(f"[{task['id']}] 리뷰 판정: {verdict} | 사유: {reason[:300]}")
 
             if verdict == "LGTM":
@@ -569,8 +635,12 @@ def main():
                                      feedback=f"재구현 시간 초과: {err}\n리뷰 피드백: {reason[:300]}")
                     else:
                         log(f"[{task['id']}] 재구현 실패: {err}")
-                        update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
-                                     feedback=f"재구현 실행 오류: {err[:300]}")
+                        if err == "알 수 없는 오류":
+                            update_queue(tasks, queue_path, task["id"], "FIX",
+                                         feedback=f"재구현 프로바이더 무응답: {err} - 다음 사이클 재시도")
+                        else:
+                            update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                         feedback=f"재구현 실행 오류: {err[:300]}")
                     return
                 log(f"[{task['id']}] 재구현 완료: {summary[:200]}")
             else:

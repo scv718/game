@@ -8,7 +8,7 @@ for ($i = 1; $i -le $MaxCycles; $i++) {
     & $py $sup --group $Group 2>&1 | Out-File -FilePath "D:\game\auto_dev\logs\lane_$Group.log" -Append -Encoding utf8
     Start-Sleep -Seconds 10
     $status = (& $py $sup --group $Group --status 2>&1) | Out-String
-    if ($status -notmatch "QUEUED|IMPLEMENT|REVIEW|FIX") {
+    if ($status -notmatch "QUEUED|IMPLEMENT|REVIEW|FIX|REVIEW_PARSE_ERROR") {
         "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] 그룹 $Group 완료 - 레인 종료" | Out-File -FilePath "D:\game\auto_dev\logs\lane_$Group.log" -Append -Encoding utf8
         break
     }

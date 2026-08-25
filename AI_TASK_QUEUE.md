@@ -649,7 +649,8 @@
 
 ### TASK-3D-BLD-001-2 BuildingPlacement XZ Grid
 
-- 상태: REVIEW
+- 상태: FIX
+- 피드백: 회귀 테스트 하네스의 `_sp` off-by-one(tests/task3dbld0012_test.gd:371 등 전 페이즈 전환 지점)으로 인해 KEY_B 활성화 이후 전 체인이 붕괴하며 TIMEOUT — QUARRY/WALL/GATE/REMOVE_REFUND/FINAL_CHECKS가 미검증 상태이고 PASS 로그가 존재하지 않음. 수정 항목: (1) `_enter(...)` 호출 분기는 즉시 `return`하여 페이즈 잔류 시에만 `_sp += 1`이 실행되게 할 것, (2) 재실행하여 FAIL/SCRIPT ERROR 0건 + `TASK3DBLD0012_RESULT=PASS` 로그를 test_results에 보관할 것
 - 피드백: [재검토] 리뷰어 판정 미출력 - 구현 완료(task3dbld0012_test.gd 존재), 리뷰 재실행
 
 - 요구사항:
@@ -761,7 +762,8 @@
 
 ### TASK-3D-WRK-001-1 WorkerActor3D / Movement
 
-- 상태: REVIEW
+- 상태: DONE
+- 피드백: 요구사항 8항목·완료조건 4항목 모두 실제 코드에서 확인되었고, Foundation Navigation convention(NavigationPolicy3D/CollisionLayers3D 단일 소스)을 준수하며, headless 회귀 테스트 47 assertion을 리뷰어가 직접 재실행하여 PASS를 검증함. 기존 2D worker 코드 무수정 및 LOCK 규칙 위반 없음.
 - 피드백: [재검토] 리뷰어 판정 미출력 - 구현 완료(task3dwrk0011_test.gd 존재), 리뷰 재실행
 
 - 요구사항:
@@ -784,7 +786,7 @@
 
 ### TASK-3D-WRK-001-2 Lumberjack / Miner State Machine Wiring
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 
 - 요구사항:
 
@@ -992,7 +994,8 @@
 
 ### TASK-3D-VIS-001-1 Asset Acquire / License / Import
 
-- 상태: REVIEW
+- 상태: DONE
+- 피드백: 요구사항 9건·완료조건 4건 전부를 실제 코드/문서/에셋에서 확인했고, 137 assertions 본 테스트 및 smoke·RES-001-3 회귀를 reviewer가 직접 headless 재실행하여 전부 PASS 재현. 공유 파일 무수정, 신규 task3d* 파일만 추가 등 운영 규칙·LOCK 준수 확인. 지적 사항은 비차단 스타일 수준.
 - 피드백: [재검토] 리뷰어 판정 미출력 - 구현 완료(task3dvis0011_test.gd 존재), 리뷰 재실행
 
 - 대상:
@@ -1026,7 +1029,7 @@
 
 ### TASK-3D-VIS-001-2 Visual Catalog / Scale Convention
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 
 - 설명: AI가 이후 일관된 모델을 고를 수 있도록 실제 사용 후보를 카탈로그화한다.
 
