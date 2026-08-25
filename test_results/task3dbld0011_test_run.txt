@@ -1,0 +1,33 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: camera controller 3D loads
+PASS: world selection 3D loads
+PASS: Building3D base is a StaticBody3D (static world collision holder)
+PASS: CoreBuilding3D extends the Building3D base
+PASS: CoreBuildingInteractable3D extends the Foundation Interactable3D contract
+PASS: default core_type keeps the legacy tavern default
+PASS: all 5 core types keep the legacy label/level/prompt identity data
+PASS: all 5 buildings register 3D groups/layers and delegate prompts to building data
+PASS: tavern prompt keeps the legacy format (二쇱젏 (Lv.1))
+PASS: clicking the tavern selects its Interactable3D volume
+PASS: tavern click opens the legacy recruitment_ui via the same group contract
+PASS: clicking the inn selects the inn volume
+PASS: inn click opens the legacy inn_roster_ui and does not retrigger the tavern
+PASS: keep is selectable like in 2D
+PASS: grocery is selectable like in 2D
+PASS: prompt-only buildings keep the legacy empty interact result
+PASS: prompt-only building clicks never open any UI
+PASS: empty ground click is a safe no-op that keeps the current selection
+PASS: right-click clears the building selection
+PASS: building body blocks actors as a static BUILDING layer collider
+PASS: selection probe hits the Interact area, not the building body (2D convention)
+PASS: destination behind the keep stays reachable
+PASS: navigation routes around the static keep collision (baked obstacle)
+PASS: Building3D exposes the Visual slot for the VIS domain
+PASS: no visual mesh lives outside the Visual slot
+PASS: Visual slot holds no collision/physics nodes (visual/logic separation)
+PASS: placeholder colors differ per core_type (top-down identifiability)
+PASS: nameplate shows the legacy building label
+PASS: building scene contains only 3D runtime nodes (no 2D sprite/collision dependency)
+TASK3DBLD0011_RESULT=PASS
