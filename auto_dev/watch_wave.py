@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import shutil
 import subprocess
@@ -29,6 +30,39 @@ FEATURES = {
     "TASK-025": ("f-portal", "ai/f-portal"),
 }
 VIS2 = ("visual2", "ai/3d-visual-002")
+CONFIG_JSON = r"D:\game\auto_dev\config.json"
+PHASES = [
+    ("impl_fun\\01_TASK_026_028_EXPEDITION_DUNGEON.md", "PHASE-1 Expedition/Dungeon"),
+    ("impl_fun\\02_TASK_029_032_EQUIPMENT_MERCENARY.md", "PHASE-2 Equipment/Mercenary"),
+    ("impl_fun\\03_TASK_033_040_ENEMY_VILLAGE_PROGRESSION.md", "PHASE-3 Enemy/Village"),
+    ("impl_fun\\04_TASK_041_045_BOSS_WORLD_PORTAL.md", "PHASE-4 Boss/World/Portal"),
+    ("impl_fun\\05_TASK_046_049_PERSISTENCE_PRODUCT.md", "PHASE-5 Persistence/Product"),
+    ("impl_fun\\06_TASK_050_052_BALANCE_STRESS_DEMO.md", "PHASE-6 Balance/Stress/Demo"),
+]
+
+
+def set_queue_file(rel_path):
+    with open(CONFIG_JSON, encoding="utf-8") as f:
+        cfg = json.load(f)
+    cfg["queue_file"] = rel_path
+    with open(CONFIG_JSON, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, ensure_ascii=False, indent=2)
+    log(f"queue_file 전환: {rel_path}")
+
+
+def queue_has_work():
+    for line in status_text().splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and parts[1] in ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "REVIEW_PARSE_ERROR"):
+            return True
+    return False
+
+
+def start_phase_lane():
+    subprocess.run(["powershell", "-NoProfile", "-Command",
+                    "Start-Process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File D:\\game\\auto_dev\\run_phase.ps1' -WindowStyle Hidden"],
+                   capture_output=True, encoding="utf-8", errors="replace", timeout=60)
+    log("phase 레인 시작")
 
 
 def log(msg):
@@ -150,6 +184,26 @@ def main():
             start_lane("TASK-POST3D-REG-001")
             stage = 6
             log("스테이지 6: 최종 회귀 진행 중")
+        elif stage == 6 and group_done("TASK-POST3D-REG-001"):
+            log("POST3D-REG-001 DONE - impl_fun phase 순차 실행 시작")
+            set_queue_file(PHASES[0][0])
+            time.sleep(30)
+            start_phase_lane()
+            stage = 100 + 1  # 101 = phase 1 진행
+            log("스테이지 101: PHASE-1 진행 중")
+        elif stage in range(101, 107):
+            idx = stage - 101
+            if not queue_has_work():
+                log(f"{PHASES[idx][1]} 완료")
+                if idx + 1 < len(PHASES):
+                    set_queue_file(PHASES[idx + 1][0])
+                    time.sleep(30)
+                    start_phase_lane()
+                    stage = 101 + idx + 1
+                    log(f"스테이지 {101 + idx + 1}: {PHASES[idx + 1][1]} 진행 중")
+                else:
+                    log("모든 phase 완료 - 전체 자동화 종료")
+                    stage = 999
 
 
 if __name__ == "__main__":

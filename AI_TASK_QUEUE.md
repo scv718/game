@@ -708,7 +708,8 @@
 
 ### TASK-3D-BLD-001-3 Wall / Gate 3D
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 피드백: TASK-3D-BLD-001-3 요구사항·완료조건 5항이 실제 코드와 독립 headless 재실행(83 assertions PASS)으로 모두 충족됨. 2D gate/wall 계약과 1:1 일치, Foundation 좌표/충돌/nav convention 준수, 2D 파일 및 공유 진입점 무수정, 임시 파일 부재. 지적 사항은 비차단 서술 수준.
 
 - 요구사항:
 
@@ -730,7 +731,8 @@
 
 ### TASK-3D-BLD-001-4 Building Regression
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 자동검증 10항목이 headless 재실행으로 83 assertions 전부 PASS 확인(기록 로그와 일치, 재현성 검증). placement/remove/refund/pan-zoom 좌표/resource overlap/3D collision/gate state machine/wall link/UI interaction이 2D 기존 계약과 Foundation 단일 소스(WorldCoords3D/CollisionLayers3D/WorldMap 상수 읽기 전용, NavigationPolicy3D 단일 rebake 유입구, LOCK 12로 2D 파일 무수정)를 일관되게 준수함. INTEGRATION_NOTE_BLD.md가 WRK/VIS/INT/CTRL 후속 소비 계약과 잔여 HUMAN_CHECK를 정리. 남은 것은 태스크 정의상 자동화 불가한 HUMAN_CHECK(스크린샷 시각 판정)뿐이며 캡처 도구+1차 자료 2장이 준비되어 완료조건 충족. (참고: 본 리뷰어는 이미지 입력 미지원으로 스크린샷 자체 육안 판독은 불가하나, 이는 인간/GPT-Web이 수행할 명시적 HUMAN_CHECK 항목.)
 
 - 자동검증:
 
@@ -821,7 +823,9 @@
 
 ### TASK-3D-WRK-001-2 Lumberjack / Miner State Machine Wiring
 
-- 상태: REVIEW
+- 상태: DONE
+- 피드백: 이전 피드백에서 지적된 핵심 문제를 모두 해결했으며, headless 실행을 직접 재검증했다.
+- 피드백: `tests/task3dwrk0012_test.gd`가 autoload 싱글톤 `VillageResources`를 전역 식별자로 직접 참조해(L240,253,276,289,313-314,330-331,362,373) 표준 headless 실행(`--headless --path . -s res://tests/task3dwrk0012_test.gd`)에서 "Identifier not found: VillageResources" 컴파일 오류로 로드되지 않는다. `-s` 스탠드얼론 모드에서는 autoload 전역 식별자가 등록되지 않으며, 기존 관례(`task3dres0013_test.gd:124`의 `root.get_node_or_null("VillageResources")`)와 달라 테스트가 전혀 실행되지 않는다(결과적으로 `task3dwrk0012_test_run.txt` 부재가 이를 방증). 완료조건(Lumberjack/Miner full loop, 2명 동시 작업, claim 충돌 없음)이 실행 검증되지 않았다. 수정: 테스트 내 `VillageResources` 전역 참조를 멤버 변수로 `root.get_node_or_null("VillageResources")`를 한 번 받아 사용하도록 변경(기존 컨벤션 준수) 후 headless 재실행해 전부 PASS 확인. 참고(비차단): L383이 `_lj2.carried_amount <= _lumberjack.carry_capacity`로 `_lj2` 용량 검사에 `_lumberjack` 용량을 쓰는 것은 동일 기본값이라 기능상 문제없으나 `_lj2.carry_capacity`로 정정 권장.
 - 피드백: 리뷰어 프로바이더 무응답: 알 수 없는 오류
 - 피드백: 리뷰어 프로바이더 무응답: 알 수 없는 오류
 - 피드백: 리뷰어 프로바이더 무응답: 알 수 없는 오류
@@ -877,7 +881,8 @@
 
 ### TASK-3D-WRK-001-3 Worker Navigation Stress Regression
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: stress regression 재실행 재현 PASS(81 assertions). 6개 시나리오 요구와 6개 검증 기준(obstacle 침입 0, stall 0, census 4/2/2, freed ref 0, wood 항등식 + stone 상한, claim leak 0)을 실제 per-frame 감시와 최종 audit으로 전부 충족. production/기존 테스트 무수정(migration rule 5), INTEGRATION_NOTE 작성 완료. 지적할 결함 없음.
 
 - 시나리오:
 
@@ -997,7 +1002,10 @@
 
 ### TASK-3D-CMB-001-3 Combat / Death Ledger Regression
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 피드백: 이전 리뷰 3개 지적 모두 확인·해소됨. ① INTEGRATION_NOTE_CMB.md assertion 수가 86→85로 정정됐고 실제 로그(task3dcmb0013_test_run.txt, fix_rerun1.txt) 모두 85 PASS / 0 FAIL로 일치 확인. ② production 무수정 주장이 001-2 FIX(`_has_nav_dest` 센티널 교체) 귀속으로 명확화되어 노트 헤더와 AI_TASK_QUEUE.md(TASK-3D-CMB-001-2)에 소급 문서화됨. ③ 부정확했던 task3dcmb0013_prior_regress.txt가 삭제(Test-Path False 확인)되고 선행 회귀가 task3dcmb0013_prior_0011_rerun.txt(73 PASS)/task3dcmb0013_prior_0012_rerun.txt(77 PASS)로 분리 재실행되어 노트 참조 경로도 갱신됨. 테스트 코드·production 코드 무변경이어서 추가 회귀 위험 없음.
+- 피드백: 구현물(테스트/시나리오 재생)은 기능적으로 정상이며 실제 재실행에서 85개 assertion 전부 PASS, 선행 회귀도 PASS 확인. 그러나 ①완료조건인 `INTEGRATION_NOTE_CMB.md`의 assertion 수가 "86"으로 기록됐으나 실제 실행 로그(`task3dcmb0013_test_run.txt`/`fix_rerun1.txt`)는 85개로 불일치, ②노트와 요약의 "production 무수정" 주장이 사실과 다름 — `git status`상 `scripts/mercenary_actor_3d.gd`·`scripts/enemy_actor_3d.gd`에 미커밋 production 변경(`_has_nav_dest` 센티널)이 존재하며 이는 001-2 FIX로 소급 문서화됐으나, 001-3 테스트의 RETREAT/lethal 결정성 시나리오가 이 수정에 의존하므로 "기존 파일 무수정"이라는 단정은 오해 소지 있음, ③`task3dcmb0013_prior_regress.txt`는 실제로 task3dcmb0012 재실행 로그로 이름이 부정확. 문서/기록 정확성 수정(assertion 수 85로 정정, production 변경 귀속 명확화, prior_regress 파일명 정정 또는 명시) 후 재검토 필요.
+- 피드백: 구현물(roster/actor/GameTime)은 정상이나, 작성된 회귀 테스트 `tests/task3dcmb0013_test.gd`가 ①`GameTime._elapsed` 오염으로 2x/1x 2개, ②치명타 대상이 탱크에 임의 선택되어 lethal 관련 4개, 총 6개에서 결정적 FAIL. 두 원인 모두 테스트 시나리오/기준 문제이며, 완료조건인 CMB-001-3 전용 `INTEGRATION_NOTE`도 미작성. 위 3개 수정 항목 후 재실행으로 PASS 확인 필요.
 - 피드백: 구현자 프로바이더 무응답: 알 수 없는 오류 - 다음 사이클 재시도
 - 피드백: 구현자 프로바이더 무응답: 알 수 없는 오류 - 다음 사이클 재시도
 - 피드백: 구현자 프로바이더 무응답: 알 수 없는 오류 - 다음 사이클 재시도
@@ -1134,7 +1142,8 @@
 
 ### TASK-3D-VIS-001-2 Visual Catalog / Scale Convention
 
-- 상태: REVIEW
+- 상태: DONE
+- 피드백: 최소 18개 카테고리 전부 role로 등록·role별 variation 2~5(무변형 팩 2종은 문서화+팩 실물 확인된 예외), SCALE_CONVENTION이 WorldCoords3D/실측 AABB와 정합, 조회 API 안전 실패·예비분 유지까지 테스트가 고정하고 3개 테스트를 독립 재실행해 모두 PASS 확인. 비차단 사항(pile_cluster per-part scale의 API 비노출, CATEGORY_TOOLS/role 불일치)은 VIS-002에서 처리할 사항으로 보고만 남김.
 - 피드백: 리뷰어 프로바이더 무응답: 알 수 없는 오류
 - 피드백: 리뷰어 프로바이더 무응답: 알 수 없는 오류
 - 피드백: 리뷰어 프로바이더 무응답: 알 수 없는 오류
@@ -1207,7 +1216,8 @@
 
 ### TASK-3D-VIS-001-3 Environment / Lighting Prototype
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 요구사항(환경/라이트/그림자/ambient/DAY-NIGHT/postfx 예산) 전부 코드로 구현·고정, 기존 계약/스타일 일관, 엣지 케이스 안전, 55 assertions + 회귀 5종 실제 실행 PASS 재확인, DAY/NIGHT 스크린샷 2장 렌더 오류 0건(픽셀 수치로 look 검증: DAY 밝음/블룸 없음, NIGHT 어둡지만 판독 유지). 남은 것은 HUMAN_CHECK 4항목뿐이며 스크린샷 2장이 판단 자료. 자동검증/코드 문제 없음.
 
 - 요구사항:
 
@@ -1238,7 +1248,8 @@
 
 ### TASK-3D-VIS-001-4 Character / Outfit / Animation Prototype
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 태스크 요구사항(공용 base/worker×2/mercenary variant, 공용 65본 skeleton/animation 호환, idle/walk/work/attack/hit/death 재생, hand_r BoneAttachment3D tool attach, AnimationTree 미도입, yaw 방향전환 무재생성)을 모두 충족. reviewer가 `tests/task3dvis0014_test.gd`를 headless로 직접 재실행하여 130 assertions PASS / FAIL·ERROR·WARNING 0건을 재현했고, 회귀 4종(smoke/vis0011/0012/0013) rerun 로그도 PASS 확인. 캡처 로그 ERROR/WARNING 0. 코드는 기존 VisualAssetCatalog3D 설계 및 INTEGRATION_NOTE 계약과 일관되고, variant 교체 시 이중 빌드 방지·deferred tool detach·loop 정책 duplicate 사본 캐시 등 엣지 케이스도 적절히 처리되어 수정할 문제가 없음.
 
 - 요구사항:
 
@@ -1263,7 +1274,8 @@
 
 ### TASK-3D-VIS-001-5 Visual Village Composition Prototype
 
-- 상태: QUEUED
+- 상태: FIX
+- 피드백: TASK-3D-VIS-001-5가 실질적으로 구현되지 않았습니다. AI_TASK_QUEUE.md 상태는 QUEUED(1119-1121)이고, 작업 트리에 VIS-001-5 관련 구현이 전혀 없습니다 — 마을 구성 scene(`village_composition_3d.tscn` 등), 조립 스크립트, 캡처 도구(예: `tools/capture_village_composition_3d.gd`), 회귀 테스트(`tests/task3dvis0015_test.gd`), 그리고 완료조건 산출물(overview/zoom-in/NIGHT 스크린샷)이 모두 부재합니다. `test_results/world_visual_*.png`는 이전 2D TASK-MAP-002에서 커밋된 tracked 파일이라 3D VIS-001-5 산출물이 아닙니다. `INTEGRATION_NOTE_VIS.md`도 -001-1~-001-4까지만 문서화하고, line 93에서 world3d `GroundVisual` placeholder를 "VIS-001-5가 교체 대상"으로 남겨둔 상태입니다. 즉 review 대상 구현물 자체가 없으므로, 먼저 (1) Village/Lumberyard/Quarry/Tree cluster/Rock cluster/Main path/props/주민-Worker-Mercenary visual로 구성된 3D 마을 scene, (2) Camera Pan/Zoom 테스트, (3) DAY/NIGHT 라이팅 연동, (4) overview·zoom-in·NIGHT 캡처, (5) visual blockers 기록, (6) INTEGRATION_NOTE 갱신을 실제로 구현·수행해야 합니다. task_context.md의 REVIEW 상태 표기는 실제 코드 상태와 불일치하므로, 구현 완료 후 다시 리뷰해야 합니다.
 
 - 설명: 실제 기능 연결 전 동일 에셋 스택만으로 "게임처럼 보이는" 작은 마을 화면을 만든다.
 
