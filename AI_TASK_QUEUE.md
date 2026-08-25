@@ -569,7 +569,8 @@
 
 ### TASK-3D-RES-001-3 Resource Regression
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 자동검증 8항목이 task3dres0013(23 assertions)에서 전부 커버되며 reviewer 직접 headless 재실행으로 PASS 재현, 2D 회귀 3종(task0063/0064/0071)도 직접 실행해 PASS 확인, INTEGRATION_NOTE 완비, 2D 자원 파일 무수정(LOCK 12) 확인. 지적 2건은 모두 비차단 기록 수준.
 
 - 자동검증:
 
