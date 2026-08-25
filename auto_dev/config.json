@@ -14,6 +14,16 @@
     "TASK-3D-BLD-001": "D:\\game-wt\\building",
     "TASK-3D-WRK-001": "D:\\game-wt\\worker",
     "TASK-3D-CMB-001": "D:\\game-wt\\combat",
-    "TASK-3D-VIS-001": "D:\\game-wt\\visual"
+    "TASK-3D-VIS-001": "D:\\game-wt\\visual",
+    "TASK-3D-VIS-002": "D:\\game-wt\\visual2",
+    "TASK-017": "D:\\game-wt\\f-ghost",
+    "TASK-018": "D:\\game-wt\\f-food",
+    "TASK-019": "D:\\game-wt\\f-farm",
+    "TASK-020": "D:\\game-wt\\f-cooking",
+    "TASK-021": "D:\\game-wt\\f-potion",
+    "TASK-022": "D:\\game-wt\\f-inn",
+    "TASK-023": "D:\\game-wt\\f-morale",
+    "TASK-024": "D:\\game-wt\\f-threat",
+    "TASK-025": "D:\\game-wt\\f-portal"
   }
 }
