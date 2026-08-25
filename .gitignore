@@ -12,8 +12,12 @@ Desktop.ini
 
 # auto_dev runtime artifacts
 auto_dev/state.json
+auto_dev/state_*.json
 auto_dev/logs/
 auto_dev/scheduler_stdout.log
+auto_dev/.queue_lock
+auto_dev/task_context.md
+auto_dev/__pycache__/
 
 # Godot editor scratch
 *.tmp

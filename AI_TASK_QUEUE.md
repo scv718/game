@@ -628,7 +628,7 @@
 
 ### TASK-3D-BLD-001-1 Building3D Base / Existing Building Scenes
 
-- 상태: QUEUED
+- 상태: REVIEW
 
 - 요구사항:
 
@@ -759,7 +759,7 @@
 
 ### TASK-3D-WRK-001-1 WorkerActor3D / Movement
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 
 - 요구사항:
 
@@ -876,7 +876,7 @@
 
 ### TASK-3D-CMB-001-1 Mercenary / Enemy Actor3D
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 
 - 요구사항:
 
@@ -987,7 +987,7 @@
 
 ### TASK-3D-VIS-001-1 Asset Acquire / License / Import
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 
 - 대상:
 

@@ -9,11 +9,14 @@ import re
 import subprocess
 import sys
 import time
+import msvcrt
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
 STATE_PATH = os.path.join(BASE_DIR, "state.json")
+QUEUE_LOCK_PATH = os.path.join(BASE_DIR, ".queue_lock")
 PROMPT_DIR = os.path.join(BASE_DIR, "prompts")
+GROUP_ID = None  # --group 지정 시 해당 그룹 서브트리만 처리 (병렬 레인)
 
 if sys.stdout:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -41,7 +44,37 @@ def log(msg):
 
 def log_path():
     os.makedirs(os.path.join(BASE_DIR, cfg("log_dir")), exist_ok=True)
-    return os.path.join(BASE_DIR, cfg("log_dir"), datetime.datetime.now().strftime("%Y%m%d") + ".log")
+    suffix = f"_{GROUP_ID}" if GROUP_ID else ""
+    return os.path.join(BASE_DIR, cfg("log_dir"), datetime.datetime.now().strftime("%Y%m%d") + suffix + ".log")
+
+
+def state_path():
+    if GROUP_ID:
+        return os.path.join(BASE_DIR, f"state_{GROUP_ID}.json")
+    return STATE_PATH
+
+
+class queue_lock:
+    """큐 파일 동시 수정 방지 (여러 supervisor 레인이 같은 AI_TASK_QUEUE.md 공유)."""
+
+    def __enter__(self):
+        self.f = open(QUEUE_LOCK_PATH, "a+")
+        for _ in range(600):
+            try:
+                msvcrt.locking(self.f.fileno(), msvcrt.LK_LOCK, 1)
+                break
+            except OSError:
+                time.sleep(1)
+        return self
+
+    def __exit__(self, *exc):
+        try:
+            self.f.seek(0)
+            msvcrt.locking(self.f.fileno(), msvcrt.LK_UNLCK, 1)
+        except OSError:
+            pass
+        self.f.close()
+        return False
 
 
 def cfg(key):
@@ -63,8 +96,8 @@ def pid_alive(pid):
 
 def acquire_lock():
     state = {"running": False, "pid": None}
-    if os.path.exists(STATE_PATH):
-        with open(STATE_PATH, encoding="utf-8") as f:
+    if os.path.exists(state_path()):
+        with open(state_path(), encoding="utf-8") as f:
             state = json.load(f)
     if state.get("running") and pid_alive(state.get("pid")):
         log(f"이전 실행(pid={state.get('pid')})이 아직 진행 중 - 이번 사이클 건너뜀")
@@ -72,14 +105,14 @@ def acquire_lock():
     state["running"] = True
     state["pid"] = os.getpid()
     state["started"] = datetime.datetime.now().isoformat()
-    with open(STATE_PATH, "w", encoding="utf-8") as f:
+    with open(state_path(), "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
     return True
 
 
 def release_lock():
     state = {"running": False, "pid": None, "ended": datetime.datetime.now().isoformat()}
-    with open(STATE_PATH, "w", encoding="utf-8") as f:
+    with open(state_path(), "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
 
 
@@ -153,7 +186,12 @@ def parse_queue():
 
 
 def update_queue(tasks, path, task_id, status, feedback=None):
-    """지정 태스크의 상태/피드백 줄을 파일에서 직접 갱신 (사람 편집 보존)."""
+    """지정 태스크의 상태/피드백 줄을 파일에서 직접 갱신 (사람 편집 보존, 레인 간 동시 쓰기 방지)."""
+    with queue_lock():
+        _update_queue_locked(tasks, path, task_id, status, feedback)
+
+
+def _update_queue_locked(tasks, path, task_id, status, feedback=None):
     with open(path, encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -388,6 +426,8 @@ def main():
     parser = argparse.ArgumentParser(description="AI Dev Supervisor")
     parser.add_argument("--status", action="store_true", help="현재 큐 상태 출력")
     parser.add_argument("--task", type=str, default=None, help="특정 태스크 ID 강제 실행")
+    parser.add_argument("--group", type=str, default=None,
+                        help="그룹(##) ID 지정 시 해당 서브트리만 처리 - 병렬 레인용")
     parser.add_argument("--config", type=str, default=None, help="대체 config.json 경로")
     args = parser.parse_args()
 
@@ -395,7 +435,28 @@ def main():
         with open(args.config, encoding="utf-8") as f:
             CONFIG = json.load(f)
 
+    if args.group:
+        global GROUP_ID
+        GROUP_ID = args.group
+
     tasks, queue_path = parse_queue()
+
+    if GROUP_ID:
+        root = next((t for t in tasks if t["id"] == GROUP_ID), None)
+        if root is None:
+            print(f"그룹 {GROUP_ID} 없음")
+            sys.exit(1)
+        keep = {GROUP_ID}
+        changed = True
+        while changed:
+            changed = False
+            for t in tasks:
+                parent = t.get("parent")
+                pid = parent["id"] if isinstance(parent, dict) else None
+                if pid in keep and t["id"] not in keep:
+                    keep.add(t["id"])
+                    changed = True
+        tasks = [t for t in tasks if t["id"] in keep]
 
     if args.status:
         print_status(tasks)
