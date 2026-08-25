@@ -1,0 +1,153 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: master source/license record exists
+PASS: all 7 packs preserve their own license text (7 found)
+PASS: every preserved pack license declares CC0
+PASS: availability table covers 'Medieval Village MegaKit'
+PASS: availability table covers 'Stylized Nature MegaKit'
+PASS: availability table covers 'Fantasy Props MegaKit'
+PASS: availability table covers 'Universal Base Characters'
+PASS: availability table covers 'Modular Character Outfits'
+PASS: availability table covers 'Universal Animation Library'
+PASS: catalog exposes exactly the curated subset (84 keys)
+PASS: category 'trees' has at least one candidate
+PASS: category 'rocks' has at least one candidate
+PASS: category 'vegetation' has at least one candidate
+PASS: category 'building' has at least one candidate
+PASS: category 'props' has at least one candidate
+PASS: category 'tools' has at least one candidate
+PASS: category 'human' has at least one candidate
+PASS: category 'outfit' has at least one candidate
+PASS: category 'animation' has at least one candidate
+PASS: every catalog entry resolves to an imported GLTF/GLB file
+PASS: unknown keys report has_key=false
+PASS: unknown keys resolve to an empty path instead of a bogus res:// url
+Godot_v4.7.1-stable_win64_console.exe : ERROR: VisualAssetCatalog3D: unknown key 'nonexistent/key'
+위치 줄:1 문자:164
++ ... nsole.exe"; & $g --headless --path "D:\game-wt\visual" --script res:/ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: VisualAs...onexistent/key':String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] load_model (res://scripts/visual_asset_catalog_3d.gd:424)
+       [1] _catalog_phase (res://tests/task3dvis0011_test.gd:164)
+       [2] _process (res://tests/task3dvis0011_test.gd:77)
+PASS: unknown keys fail load without crashing
+PASS: model imports and instantiates with mesh geometry: tree/common_1
+PASS: model imports and instantiates with mesh geometry: tree/common_2
+PASS: model imports and instantiates with mesh geometry: tree/common_3
+PASS: model imports and instantiates with mesh geometry: tree/common_4
+PASS: model imports and instantiates with mesh geometry: tree/common_5
+PASS: model imports and instantiates with mesh geometry: tree/pine_1
+PASS: model imports and instantiates with mesh geometry: tree/pine_2
+PASS: model imports and instantiates with mesh geometry: tree/dead_1
+PASS: model imports and instantiates with mesh geometry: tree/dead_2
+PASS: model imports and instantiates with mesh geometry: rock/medium_1
+PASS: model imports and instantiates with mesh geometry: rock/medium_2
+PASS: model imports and instantiates with mesh geometry: rock/medium_3
+PASS: model imports and instantiates with mesh geometry: veg/grass_common_short
+PASS: model imports and instantiates with mesh geometry: veg/grass_common_tall
+PASS: model imports and instantiates with mesh geometry: veg/grass_wispy_tall
+PASS: model imports and instantiates with mesh geometry: veg/bush_common
+PASS: model imports and instantiates with mesh geometry: veg/bush_flowers
+PASS: model imports and instantiates with mesh geometry: veg/flower_group_3
+PASS: model imports and instantiates with mesh geometry: veg/flower_group_4
+PASS: model imports and instantiates with mesh geometry: veg/mushroom
+PASS: model imports and instantiates with mesh geometry: bld/wall_plaster_straight
+PASS: model imports and instantiates with mesh geometry: bld/wall_plaster_woodgrid
+PASS: model imports and instantiates with mesh geometry: bld/wall_brick_straight
+PASS: model imports and instantiates with mesh geometry: bld/wall_plaster_window_wide
+PASS: model imports and instantiates with mesh geometry: bld/wall_brick_window_wide
+PASS: model imports and instantiates with mesh geometry: bld/wall_plaster_door_flat
+PASS: model imports and instantiates with mesh geometry: bld/wall_brick_door_flat
+PASS: model imports and instantiates with mesh geometry: bld/door_1_flat
+PASS: model imports and instantiates with mesh geometry: bld/window_wide_flat
+PASS: model imports and instantiates with mesh geometry: bld/shutters_wide_open
+PASS: model imports and instantiates with mesh geometry: bld/roof_roundtiles_6x6
+PASS: model imports and instantiates with mesh geometry: bld/roof_wooden_2x1
+PASS: model imports and instantiates with mesh geometry: bld/overhang_roof_plaster
+PASS: model imports and instantiates with mesh geometry: bld/floor_wood_light
+PASS: model imports and instantiates with mesh geometry: bld/floor_brick
+PASS: model imports and instantiates with mesh geometry: bld/stairs_exterior_straight
+PASS: model imports and instantiates with mesh geometry: bld/fence_wooden_single
+PASS: model imports and instantiates with mesh geometry: bld/chimney
+PASS: model imports and instantiates with mesh geometry: bld/vine_1
+PASS: model imports and instantiates with mesh geometry: bld/wagon
+PASS: model imports and instantiates with mesh geometry: prop/barrel
+PASS: model imports and instantiates with mesh geometry: prop/crate_wooden
+PASS: model imports and instantiates with mesh geometry: prop/chest_wood
+PASS: model imports and instantiates with mesh geometry: prop/stall_cart_empty
+PASS: model imports and instantiates with mesh geometry: prop/stall_empty
+PASS: model imports and instantiates with mesh geometry: prop/farmcrate_apple
+PASS: model imports and instantiates with mesh geometry: prop/farmcrate_carrot
+PASS: model imports and instantiates with mesh geometry: prop/farmcrate_empty
+PASS: model imports and instantiates with mesh geometry: prop/coin_pile
+PASS: model imports and instantiates with mesh geometry: prop/lantern_wall
+PASS: model imports and instantiates with mesh geometry: prop/torch_metal
+PASS: model imports and instantiates with mesh geometry: prop/rope_1
+PASS: model imports and instantiates with mesh geometry: prop/bag
+PASS: model imports and instantiates with mesh geometry: prop/potion_1
+PASS: model imports and instantiates with mesh geometry: tool/axe_bronze
+PASS: model imports and instantiates with mesh geometry: tool/pickaxe_bronze
+PASS: model imports and instantiates with mesh geometry: tool/sword_bronze
+PASS: model imports and instantiates with mesh geometry: tool/anvil
+PASS: model imports and instantiates with mesh geometry: tool/chopping_log
+PASS: model imports and instantiates with mesh geometry: tool/workbench
+PASS: model imports and instantiates with mesh geometry: tool/whetstone
+PASS: model imports and instantiates with mesh geometry: human/male_base
+PASS: model imports and instantiates with mesh geometry: human/female_base
+PASS: model imports and instantiates with mesh geometry: human/hair_simple_parted
+PASS: model imports and instantiates with mesh geometry: outfit/male_peasant_full
+PASS: model imports and instantiates with mesh geometry: outfit/female_peasant_full
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_full
+PASS: model imports and instantiates with mesh geometry: outfit/male_peasant_arms
+PASS: model imports and instantiates with mesh geometry: outfit/male_peasant_body
+PASS: model imports and instantiates with mesh geometry: outfit/male_peasant_feet
+PASS: model imports and instantiates with mesh geometry: outfit/male_peasant_legs
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_arms
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_body
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_feet_boots
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_legs
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_head_hood
+PASS: model imports and instantiates with mesh geometry: outfit/male_ranger_acc_pauldron
+PASS: model imports and instantiates with mesh geometry: outfit/female_peasant_arms
+PASS: model imports and instantiates with mesh geometry: outfit/female_peasant_body
+PASS: model imports and instantiates with mesh geometry: outfit/female_peasant_feet
+PASS: model imports and instantiates with mesh geometry: outfit/female_peasant_legs
+PASS: model imports and instantiates with mesh geometry: anim/ual1_standard
+PASS: model imports and instantiates with mesh geometry: anim/ual2_standard
+PASS: model imports and instantiates with mesh geometry: anim/mannequin_female
+PASS: no surface is missing its material
+PASS: all materials are engine materials (no foreign types)
+PASS: untextured surfaces carry intentional colors (glass/mannequin), none are blank white
+PASS: anim/ual1_standard ships the full shared library (43 animations)
+PASS: anim/ual1_standard exposes its signature animations ["Idle", "Death01", "Hit_Chest", "Fixing_Kneeling"]
+PASS: anim/ual2_standard ships the full shared library (43 animations)
+PASS: anim/ual2_standard exposes its signature animations ["Farm_Harvest", "Farm_PlantSeed", "Chest_Open", "Hit_Knockback"]
+PASS: human/male_base carries a rigged skeleton (65 bones)
+PASS: human/female_base carries a rigged skeleton (65 bones)
+PASS: outfit/male_peasant_body carries a rigged skeleton (65 bones)
+PASS: anim/mannequin_female carries a rigged skeleton (65 bones)
+PASS: bld/wall_plaster_straight keeps the kit's 2m modular width (2.00)
+PASS: bld/wall_brick_straight keeps the kit's 2m modular width (2.00)
+PASS: bld/wall_plaster_door_flat keeps the kit's 2m modular width (2.00)
+PASS: bld/floor_wood_light lies flat on the XZ plane at 2x2 units
+PASS: bld/floor_wood_light origin sits on the ground plane (Y-up export)
+PASS: bld/floor_brick lies flat on the XZ plane at 2x2 units
+PASS: bld/floor_brick origin sits on the ground plane (Y-up export)
+PASS: human/male_base keeps realistic human height (1.82)
+PASS: human/female_base keeps realistic human height (1.78)
+PASS: anim/mannequin_female keeps realistic human height (1.81)
+PASS: tree/common_1 is authored with a ground-level origin (min y -0.24)
+PASS: rock/medium_1 is authored with a ground-level origin (min y -0.27)
+PASS: veg/bush_common is authored with a ground-level origin (min y -0.23)
+PASS: prop/barrel is authored with a ground-level origin (min y 0.00)
+PASS: tool/anvil is authored with a ground-level origin (min y 0.00)
+PASS: bld/chimney is authored with a ground-level origin (min y 0.00)
+PASS: bld/vine_1 hangs below its origin by design (eaves decoration)
+PASS: every catalog model has a finite non-degenerate volume
+PASS: original pack sources under _source/ stay invisible to the runtime
+PASS: only the curated models/ copy is runtime-visible
+TASK3DVIS0011_RESULT=PASS

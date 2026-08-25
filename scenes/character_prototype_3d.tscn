@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/character_rig_3d.gd" id="1_charrig"]
+
+[node name="CharacterPrototype3D" type="Node3D"]
+
+[node name="BaseMale" type="Node3D" parent="."]
+script = ExtResource("1_charrig")
+body_key = "human/male_base"
+
+[node name="WorkerPeasantMale" type="Node3D" parent="."]
+position = Vector3(1.8, 0, 0)
+script = ExtResource("1_charrig")
+body_key = "outfit/male_peasant_full"
+tool_key = "tool/axe_bronze"
+initial_action = "work"
+
+[node name="WorkerPeasantFemale" type="Node3D" parent="."]
+position = Vector3(3.6, 0, 0)
+script = ExtResource("1_charrig")
+body_key = "outfit/female_peasant_full"
+initial_action = "walk"
+
+[node name="MercenaryRanger" type="Node3D" parent="."]
+position = Vector3(5.4, 0, 0)
+script = ExtResource("1_charrig")
+body_key = "outfit/male_ranger_full"
+tool_key = "tool/sword_bronze"
+initial_action = "combat"

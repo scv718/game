@@ -1,0 +1,58 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world root loads
+PASS: camera controller loads
+PASS: environment/lighting scene loads
+PASS: GameTime autoload is present
+PASS: environment script loads
+PASS: environment joins dedicated environment_3d group
+PASS: environment owns a WorldEnvironment child
+PASS: WorldEnvironment carries an Environment resource
+PASS: environment owns a DirectionalLight3D sun/moon light
+PASS: background uses cheap solid color (no sky/post pipeline cost)
+PASS: ambient is directly color-controlled for readability tuning
+PASS: ambient contributes base readability energy
+PASS: _ready applied the current phase look immediately (DAY default)
+PASS: glow/bloom is disabled (post-processing budget)
+PASS: depth fog is disabled
+PASS: volumetric fog is disabled
+PASS: SSAO is disabled
+PASS: SSIL is disabled
+PASS: SDFGI is disabled
+PASS: color adjustment stage is disabled
+PASS: LINEAR tonemap preserves the stylized low-poly palette
+PASS: fresh run starts in DAY phase
+PASS: DAY sun energy matches the recorded default look
+PASS: DAY sun color matches
+PASS: DAY sun direction matches the recorded oblique key-light angle
+PASS: DAY background matches the bright village backdrop
+PASS: environment subscribes GameTime.phase_changed (same policy contract as camera)
+PASS: re-applying current phase is idempotent
+PASS: NIGHT drops the key light to moonlight level (0.35 < 0.57)
+PASS: NIGHT key light shifts cool blue
+PASS: DAY key light stays warm/neutral
+PASS: NIGHT ambient tint changes with the phase
+PASS: NIGHT background darkens with the phase
+PASS: shadows stay enabled at NIGHT (silhouette readability)
+PASS: unknown phase value is ignored without mutating the look
+PASS: DAY restore brings back sun energy
+PASS: DAY restore brings back sun color
+PASS: DAY restore brings back sun direction
+PASS: DAY restore brings back ambient tint
+PASS: DAY restore brings back ambient energy
+PASS: DAY restore brings back background
+PASS: is_night reports false while GameTime is in DAY
+PASS: DAY ground reflectance stays bright but not blown out (0.72 in [0.45, 0.95])
+PASS: NIGHT ground keeps a readable floor under the danger mood (0.17 in [0.06, 0.30])
+PASS: NIGHT reads clearly darker than DAY (mood shift, ratio 0.24)
+PASS: NIGHT mid-tone units stay readable against the dark ground (0.16 > 0.10)
+PASS: directional shadow is always on (readability feature)
+PASS: single-split orthogonal shadow matches the orthographic top-down camera
+PASS: shadow distance covers zoomed-out overview (220)
+PASS: camera stays current after environment enters the tree
+PASS: foundation ground body is untouched by the environment layer
+PASS: environment resource is the one serving the shared World3D
+PASS: repeated DAY/NIGHT flips settle back on the DAY look
+PASS: exactly one WorldEnvironment serves this viewport (1)
+PASS: freeing the environment leaves no dangling subscription
+TASK3DVIS0013_RESULT=PASS

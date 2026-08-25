@@ -1060,7 +1060,8 @@
 
 ### TASK-3D-VIS-001-3 Environment / Lighting Prototype
 
-- 상태: QUEUED
+- 상태: REVIEW
+- 구현 기록: `scenes/environment_3d.tscn` + `scripts/environment_lighting_3d.gd`(EnvironmentLighting3D) 신규 추가. WorldEnvironment + DirectionalLight3D(shadow 상시 on) + DAY/NIGHT 프리셋(GameTime.phase_changed 구독), postfx 예산 코드화(glow/fog/ssao 등 전부 off + LINEAR tonemap). world3d.tscn/world_root_3d.gd 무수정, add_child wiring은 INT-001 인계(`auto_dev/INTEGRATION_NOTE_VIS.md`). 테스트: `tests/task3dvis0013_test.gd` 55 assertions PASS + 회귀 5종(smoke/0013 camera/res0013/vis0011/vis0012) PASS. 스크린샷: `test_results/environment_3d_day.png`, `environment_3d_night.png`(캡처 로그 ERROR/WARNING 0건). 남은 것: HUMAN_CHECK 4항목.
 
 - 요구사항:
 
@@ -1091,7 +1092,8 @@
 
 ### TASK-3D-VIS-001-4 Character / Outfit / Animation Prototype
 
-- 상태: QUEUED
+- 상태: REVIEW
+- 구현 기록: `scripts/character_rig_3d.gd`(CharacterRig3D: body_key 교체식 variant + UAL 공용 애니메이션 play_action + hand_r BoneAttachment3D tool attach) + `scenes/character_prototype_3d.tscn`(base male / worker peasant male+도끼 / worker peasant female / mercenary ranger+검) 신규. catalog에 `attachment_scale_hint_for_key()` 역방향 조회 1 API 추가(데이터 무수정). 공용 호환 실측: base/outfit/UAL 7 skeleton 전원 65본 집합 일치 — retarget 불필요. AnimationTree 미도입. 테스트: `tests/task3dvis0014_test.gd` 130 assertions PASS + 회귀 4종(smoke/vis0011/vis0012/vis0013) PASS. 스크린샷: `test_results/character_prototype_day.png`, `character_prototype_night.png`(캡처 로그 ERROR/WARNING 0건). 상세: `auto_dev/VIS_CHARACTER_ANIM_REPORT.md`. 남은 것: HUMAN_CHECK 2항목(grip 미세 조정은 VIS-002 이관).
 
 - 요구사항:
 
@@ -1116,7 +1118,8 @@
 
 ### TASK-3D-VIS-001-5 Visual Village Composition Prototype
 
-- 상태: QUEUED
+- 상태: REVIEW
+- 구현 기록: `scripts/village_composition_3d.gd`(VillageComposition3D: 4 zone RECT 밀도 분리 + main path 7 corridor + 가옥 5채 조립 + lumberyard/quarry 정체성 props + 수목 26/암반 10 + CharacterRig3D 6기) + `scenes/village_composition_3d.tscn` 신규. 지면 톤은 placeholder GroundVisual 런타임 override를 `apply_ground_tone()` 소유 API로 정식화(world3d.tscn 무수정). Camera Pan/Zoom은 task3dvis0015 CAMERA_PAN/ZOOM phase(경계 clamp + ortho size 수렴)로, DAY/NIGHT는 environment_3d 레이어 연동으로 검증. 테스트: `tests/task3dvis0015_test.gd` 51 assertions PASS + 회귀 8종(smoke/0012/0013/res0013/vis0011~0014) PASS. 스크린샷: `test_results/village_composition_overview.png`, `village_composition_worker_zoom.png`, `village_composition_night.png`(캡처 로그 ERROR/WARNING 0건). visual blockers 7건: `auto_dev/VIS_VILLAGE_COMPOSITION_REPORT.md` §3. 상세: `auto_dev/VIS_VILLAGE_COMPOSITION_REPORT.md`, `auto_dev/INTEGRATION_NOTE_VIS.md`. 남은 것: HUMAN_CHECK 6항목.
 
 - 설명: 실제 기능 연결 전 동일 에셋 스택만으로 "게임처럼 보이는" 작은 마을 화면을 만든다.
 

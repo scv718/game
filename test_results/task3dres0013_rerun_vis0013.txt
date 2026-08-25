@@ -1,0 +1,26 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world loads
+PASS: VillageResources autoload available to the 3D runtime
+PASS: lumberjack worker claims the tree in 3D
+PASS: duplicate claim from a second worker stays rejected (claim policy)
+PASS: other workers see the active claim
+PASS: tree fully depletes across the gather loop
+PASS: depleted tree refuses further interaction
+PASS: VillageResources reflects every gathered wood unit (5)
+PASS: regrowth policy restores max_amount
+PASS: claim release lets the loop restart later
+PASS: released tree can be reclaimed after regrowth
+PASS: post-regrowth gather adds new wood through the same contract
+PASS: quarry binds onto the free deposit
+PASS: occupied deposit reports its bound quarry (source state)
+PASS: second quarry cannot bind onto an occupied deposit
+PASS: deposit frees up when the quarry releases it
+PASS: VillageResources keeps reflecting produced stone units
+PASS: doomed tree claimed before free
+PASS: freed tree leaves no orphan instance behind
+PASS: freed resource still requested its final navigation rebake
+PASS: stone deposit on the click ray never blocks the interactable behind it
+PASS: right-click deselect still works over resources
+PASS: resource scenes contain only 3D runtime nodes (no 2D actor dependency)
+TASK3DRES0013_RESULT=PASS

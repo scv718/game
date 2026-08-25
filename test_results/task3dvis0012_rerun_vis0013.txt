@@ -1,0 +1,218 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: minimum category 'House / Village Building' is cataloged
+PASS: minimum category 'Wall / Gate' is cataloged
+PASS: minimum category 'Lumberyard visual candidates' is cataloged
+PASS: minimum category 'Quarry visual candidates' is cataloged
+PASS: minimum category 'Tavern / Inn / Keep visual candidates' is cataloged
+PASS: minimum category 'Tree variants' is cataloged
+PASS: minimum category 'Rock variants' is cataloged
+PASS: minimum category 'Grass / Bush / Flower' is cataloged
+PASS: minimum category 'Crate / Barrel / Cart' is cataloged
+PASS: minimum category 'Log / Wood pile' is cataloged
+PASS: minimum category 'Stone pile' is cataloged
+PASS: minimum category 'Axe / Pickaxe' is cataloged
+PASS: minimum category 'Market / Work props' is cataloged
+PASS: minimum category 'Base Human' is cataloged
+PASS: minimum category 'Worker outfit' is cataloged
+PASS: minimum category 'Mercenary outfit' is cataloged
+PASS: minimum category 'Weapons' is cataloged
+PASS: role 'tree' has 2~5 variations (5)
+PASS: role 'tree' carries a human label
+PASS: candidate 'tree/common_1' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/CommonTree_1.gltf)
+PASS: candidate 'tree/common_3' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/CommonTree_3.gltf)
+PASS: candidate 'tree/pine_1' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Pine_1.gltf)
+PASS: candidate 'tree/pine_2' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Pine_2.gltf)
+PASS: candidate 'tree/dead_1' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/DeadTree_1.gltf)
+PASS: role 'tree' variation ids are unique
+PASS: role 'rock' has 2~5 variations (3)
+PASS: role 'rock' carries a human label
+PASS: candidate 'rock/medium_1' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_1.gltf)
+PASS: candidate 'rock/medium_2' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_2.gltf)
+PASS: candidate 'rock/medium_3' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_3.gltf)
+PASS: role 'rock' variation ids are unique
+PASS: role 'vegetation' has 2~5 variations (5)
+PASS: role 'vegetation' carries a human label
+PASS: candidate 'veg/grass_common_short' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Grass_Common_Short.gltf)
+PASS: candidate 'veg/grass_common_tall' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Grass_Common_Tall.gltf)
+PASS: candidate 'veg/bush_common' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Bush_Common.gltf)
+PASS: candidate 'veg/bush_flowers' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Bush_Common_Flowers.gltf)
+PASS: candidate 'veg/flower_group_4' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Flower_4_Group.gltf)
+PASS: role 'vegetation' variation ids are unique
+PASS: role 'house_building' has 2~5 variations (2)
+PASS: role 'house_building' carries a human label
+PASS: candidate 'bld/floor_wood_light' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Floor_WoodLight.gltf)
+PASS: candidate 'bld/wall_plaster_straight' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Straight.gltf)
+PASS: candidate 'bld/wall_plaster_window_wide' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Window_Wide_Flat.gltf)
+PASS: candidate 'bld/wall_plaster_door_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Door_Flat.gltf)
+PASS: candidate 'bld/roof_wooden_2x1' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Roof_Wooden_2x1.gltf)
+PASS: candidate 'bld/floor_brick' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Floor_Brick.gltf)
+PASS: candidate 'bld/wall_brick_straight' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Straight.gltf)
+PASS: candidate 'bld/wall_brick_window_wide' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Window_Wide_Flat.gltf)
+PASS: candidate 'bld/wall_brick_door_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Door_Flat.gltf)
+PASS: candidate 'bld/roof_wooden_2x1' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Roof_Wooden_2x1.gltf)
+PASS: role 'house_building' variation ids are unique
+PASS: role 'wall_segment' has 2~5 variations (3)
+PASS: role 'wall_segment' carries a human label
+PASS: candidate 'bld/wall_plaster_straight' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Straight.gltf)
+PASS: candidate 'bld/wall_brick_straight' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Straight.gltf)
+PASS: candidate 'bld/fence_wooden_single' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Prop_WoodenFence_Single.gltf)
+PASS: role 'wall_segment' variation ids are unique
+PASS: role 'gate' has 2~5 variations (2)
+PASS: role 'gate' carries a human label
+PASS: candidate 'bld/wall_plaster_door_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Door_Flat.gltf)
+PASS: candidate 'bld/door_1_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Door_1_Flat.gltf)
+PASS: candidate 'bld/wall_brick_door_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Door_Flat.gltf)
+PASS: candidate 'bld/door_1_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Door_1_Flat.gltf)
+PASS: role 'gate' variation ids are unique
+PASS: role 'workplace_lumberyard' has 2~5 variations (3)
+PASS: role 'workplace_lumberyard' carries a human label
+PASS: candidate 'tool/chopping_log' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Anvil_Log.gltf)
+PASS: candidate 'tool/axe_bronze' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Axe_Bronze.gltf)
+PASS: candidate 'prop/crate_wooden' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Crate_Wooden.gltf)
+PASS: candidate 'prop/barrel' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Barrel.gltf)
+PASS: candidate 'bld/wagon' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Prop_Wagon.gltf)
+PASS: candidate 'prop/crate_wooden' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Crate_Wooden.gltf)
+PASS: role 'workplace_lumberyard' variation ids are unique
+PASS: role 'workplace_quarry' has 2~5 variations (2)
+PASS: role 'workplace_quarry' carries a human label
+PASS: candidate 'rock/medium_1' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_1.gltf)
+PASS: candidate 'rock/medium_3' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_3.gltf)
+PASS: candidate 'tool/pickaxe_bronze' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Pickaxe_Bronze.gltf)
+PASS: candidate 'prop/crate_wooden' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Crate_Wooden.gltf)
+PASS: role 'workplace_quarry' variation ids are unique
+PASS: role 'tavern_inn_keep' has 2~5 variations (3)
+PASS: role 'tavern_inn_keep' carries a human label
+PASS: candidate 'bld/floor_wood_light' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Floor_WoodLight.gltf)
+PASS: candidate 'bld/wall_plaster_woodgrid' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_WoodGrid.gltf)
+PASS: candidate 'bld/wall_plaster_window_wide' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Window_Wide_Flat.gltf)
+PASS: candidate 'bld/wall_plaster_door_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_Plaster_Door_Flat.gltf)
+PASS: candidate 'bld/roof_roundtiles_6x6' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Roof_RoundTiles_6x6.gltf)
+PASS: candidate 'bld/chimney' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Prop_Chimney.gltf)
+PASS: candidate 'prop/lantern_wall' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Lantern_Wall.gltf)
+PASS: candidate 'bld/floor_brick' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Floor_Brick.gltf)
+PASS: candidate 'bld/wall_brick_window_wide' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Window_Wide_Flat.gltf)
+PASS: candidate 'bld/wall_brick_door_flat' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Door_Flat.gltf)
+PASS: candidate 'bld/roof_roundtiles_6x6' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Roof_RoundTiles_6x6.gltf)
+PASS: candidate 'bld/chimney' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Prop_Chimney.gltf)
+PASS: candidate 'bld/shutters_wide_open' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/WindowShutters_Wide_Flat_Open.gltf)
+PASS: candidate 'bld/wagon' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Prop_Wagon.gltf)
+PASS: candidate 'bld/floor_brick' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Floor_Brick.gltf)
+PASS: candidate 'bld/wall_brick_straight' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Straight.gltf)
+PASS: candidate 'bld/wall_brick_window_wide' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Wall_UnevenBrick_Window_Wide_Flat.gltf)
+PASS: candidate 'bld/stairs_exterior_straight' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Stairs_Exterior_Straight.gltf)
+PASS: candidate 'bld/roof_roundtiles_6x6' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Roof_RoundTiles_6x6.gltf)
+PASS: candidate 'prop/torch_metal' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Torch_Metal.gltf)
+PASS: role 'tavern_inn_keep' variation ids are unique
+PASS: role 'container_cart' has 2~5 variations (3)
+PASS: role 'container_cart' carries a human label
+PASS: candidate 'prop/barrel' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Barrel.gltf)
+PASS: candidate 'prop/crate_wooden' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Crate_Wooden.gltf)
+PASS: candidate 'bld/wagon' resolves to an imported file (res://assets/third_party/quaternius/models/medieval-village-megakit/Prop_Wagon.gltf)
+PASS: role 'container_cart' variation ids are unique
+PASS: role 'log_pile' has 1~5 variations (1)
+PASS: role 'log_pile' carries a human label
+PASS: candidate 'tool/chopping_log' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Anvil_Log.gltf)
+PASS: role 'log_pile' variation ids are unique
+PASS: role 'stone_pile' has 2~5 variations (2)
+PASS: role 'stone_pile' carries a human label
+PASS: candidate 'rock/medium_2' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_2.gltf)
+PASS: candidate 'rock/medium_2' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_2.gltf)
+PASS: candidate 'rock/medium_1' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_1.gltf)
+PASS: candidate 'rock/medium_3' resolves to an imported file (res://assets/third_party/quaternius/models/stylized-nature-megakit/Rock_Medium_3.gltf)
+PASS: role 'stone_pile' variation ids are unique
+PASS: role 'tool_gather' has 2~5 variations (2)
+PASS: role 'tool_gather' carries a human label
+PASS: candidate 'tool/axe_bronze' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Axe_Bronze.gltf)
+PASS: candidate 'tool/pickaxe_bronze' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Pickaxe_Bronze.gltf)
+PASS: role 'tool_gather' variation ids are unique
+PASS: role 'market_props' has 2~5 variations (5)
+PASS: role 'market_props' carries a human label
+PASS: candidate 'prop/stall_empty' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Stall_Empty.gltf)
+PASS: candidate 'prop/stall_cart_empty' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Stall_Cart_Empty.gltf)
+PASS: candidate 'prop/farmcrate_apple' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/FarmCrate_Apple.gltf)
+PASS: candidate 'prop/farmcrate_carrot' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/FarmCrate_Carrot.gltf)
+PASS: candidate 'prop/coin_pile' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Coin_Pile.gltf)
+PASS: role 'market_props' variation ids are unique
+PASS: role 'human_base' has 2~5 variations (2)
+PASS: role 'human_base' carries a human label
+PASS: candidate 'human/male_base' resolves to an imported file (res://assets/third_party/quaternius/models/universal-base-characters/Superhero_Male_FullBody.gltf)
+PASS: candidate 'human/female_base' resolves to an imported file (res://assets/third_party/quaternius/models/universal-base-characters/Superhero_Female_FullBody.gltf)
+PASS: role 'human_base' variation ids are unique
+PASS: role 'outfit_worker' has 2~5 variations (3)
+PASS: role 'outfit_worker' carries a human label
+PASS: candidate 'outfit/male_peasant_full' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Peasant.gltf)
+PASS: candidate 'outfit/female_peasant_full' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Female_Peasant.gltf)
+PASS: candidate 'outfit/male_peasant_body' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Peasant_Body.gltf)
+PASS: candidate 'outfit/male_peasant_arms' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Peasant_Arms.gltf)
+PASS: candidate 'outfit/male_peasant_legs' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Peasant_Legs.gltf)
+PASS: candidate 'outfit/male_peasant_feet' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Peasant_Feet.gltf)
+PASS: role 'outfit_worker' variation ids are unique
+PASS: role 'outfit_mercenary' has 2~5 variations (2)
+PASS: role 'outfit_mercenary' carries a human label
+PASS: candidate 'outfit/male_ranger_full' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger.gltf)
+PASS: candidate 'outfit/male_ranger_body' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger_Body.gltf)
+PASS: candidate 'outfit/male_ranger_arms' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger_Arms.gltf)
+PASS: candidate 'outfit/male_ranger_legs' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger_Legs.gltf)
+PASS: candidate 'outfit/male_ranger_feet_boots' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger_Feet_Boots.gltf)
+PASS: candidate 'outfit/male_ranger_head_hood' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger_Head_Hood.gltf)
+PASS: candidate 'outfit/male_ranger_acc_pauldron' resolves to an imported file (res://assets/third_party/quaternius/models/modular-character-outfits-fantasy/Male_Ranger_Acc_Pauldron.gltf)
+PASS: role 'outfit_mercenary' variation ids are unique
+PASS: role 'weapon' has 1~5 variations (1)
+PASS: role 'weapon' carries a human label
+PASS: candidate 'tool/sword_bronze' resolves to an imported file (res://assets/third_party/quaternius/models/fantasy-props-megakit/Sword_Bronze.gltf)
+PASS: role 'weapon' variation ids are unique
+PASS: every registered role exposes at least one candidate key
+PASS: unknown role reports has_role=false
+PASS: roles() mirrors SELECTIONS
+PASS: unknown role yields no variations
+PASS: unknown variation yields no parts
+PASS: unknown role yields no candidate keys
+PASS: unknown variation yields scale_hint 0 sentinel
+PASS: recorded tree scale_hint is readable
+PASS: missing scale_hint defaults to native 1.0
+PASS: unknown animation action yields no candidates
+PASS: composition variations contribute their parts to candidate keys
+PASS: selection layer leaves reserved keys unused (58 of 84)
+PASS: bld/wall_plaster_straight matches the recorded 2m wall module width (2.00)
+PASS: bld/wall_brick_straight matches the recorded 2m wall module width (2.00)
+PASS: human/male_base stays inside the recorded humanoid height band (1.82)
+PASS: human/female_base stays inside the recorded humanoid height band (1.78)
+PASS: tree/common_1 native height fits the recorded band (7.26)
+PASS: tree/common_1 scale_hint sits inside the recorded slot band (0.55)
+PASS: tree/common_1 hinted height reads at village scale (4.00)
+PASS: tree/common_3 native height fits the recorded band (9.43)
+PASS: tree/common_3 scale_hint sits inside the recorded slot band (0.55)
+PASS: tree/common_3 hinted height reads at village scale (5.18)
+PASS: tree/pine_1 native height fits the recorded band (7.32)
+PASS: tree/pine_1 scale_hint sits inside the recorded slot band (0.50)
+PASS: tree/pine_1 hinted height reads at village scale (3.66)
+PASS: tree/pine_2 native height fits the recorded band (7.38)
+PASS: tree/pine_2 scale_hint sits inside the recorded slot band (0.50)
+PASS: tree/pine_2 hinted height reads at village scale (3.69)
+PASS: tree/dead_1 native height fits the recorded band (9.50)
+PASS: tree/dead_1 scale_hint sits inside the recorded slot band (0.45)
+PASS: tree/dead_1 hinted height reads at village scale (4.27)
+PASS: tool/chopping_log is authored with a ground-level origin (min y 0.00)
+PASS: prop/barrel is authored with a ground-level origin (min y 0.00)
+PASS: rock/medium_1 is authored with a ground-level origin (min y -0.27)
+PASS: scale convention records the foundation px_to_unit
+PASS: scale convention records the grid cell size
+PASS: scale convention records the ground origin lock
+PASS: scale convention pins uniform-only scaling
+PASS: scale convention pins visual/footprint separation
+PASS: animation map covers the 'idle' action
+PASS: animation map covers the 'walk' action
+PASS: animation map covers the 'work' action
+PASS: animation map covers the 'combat' action
+PASS: animation map covers the 'hit' action
+PASS: animation map covers the 'death' action
+PASS: 'idle' primary animation plays: anim/ual1_standard/Idle
+PASS: 'walk' primary animation plays: anim/ual1_standard/Walk
+PASS: 'work' primary animation plays: anim/ual2_standard/TreeChopping
+PASS: 'combat' primary animation plays: anim/ual1_standard/Sword_Attack
+PASS: 'hit' primary animation plays: anim/ual1_standard/Hit_Chest
+PASS: 'death' primary animation plays: anim/ual1_standard/Death01
+PASS: every mapped animation exists inside its library GLB
+PASS: work action maps lumberjack and farm motions
+TASK3DVIS0012_RESULT=PASS

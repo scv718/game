@@ -5,6 +5,11 @@
 # Tiny Swords (로컬 전용, 재배포 금지 라이선스 - 커밋 금지)
 assets/tiny_swords/
 
+# Quaternius 원본 zip/추출본 (CC0라 재배포 가능하지만 저장소 경량화를 위해
+# 커밋하지 않는다. license 문서와 models/ curated 본만 커밋한다.
+# tools/download_quaternius_packs.ps1으로 언제든 재구축 가능)
+assets/third_party/quaternius/_source/
+
 # OS
 Thumbs.db
 .DS_Store
