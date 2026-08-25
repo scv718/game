@@ -759,7 +759,8 @@
 
 ### TASK-3D-WRK-001-1 WorkerActor3D / Movement
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 근거: 요구사항 8항목·완료조건 4항목을 `scripts/worker_actor_3d.gd` + `tests/task3dwrk0011_test.gd`(47 assertions headless PASS)로 충족. Foundation Navigation convention(configure_agent/judge_path_status/path_follow_velocity_xz 단일 사용), XZ 지면 이동(Y drift/tilt 0 검증), 이동 방향 yaw-only facing, Y 포함 좌표의 지면 flatten 해석, unreachable target BLOCKED/STALLED bounded 종료, tracked target 중도 이동 실시간 경로 갱신 추종(2D 매 frame 재지정 계약 동등), freed tracked target TARGET_LOST + freed 참조 수용 거부(Godot 4 freed==null 규약 대응) 확인. 기존 2D worker 파일 무수정(LOCK 12), task3d0015 재실행 PASS.
 
 - 요구사항:
 
