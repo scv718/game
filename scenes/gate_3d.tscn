@@ -1,0 +1,42 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/gate_3d.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/gate_interactable_3d.gd" id="2_interact"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_foot"]
+size = Vector3(6, 2, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gate"]
+albedo_color = Color(0.42, 0.33, 0.24, 1)
+roughness = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+material = SubResource("StandardMaterial3D_gate")
+size = Vector3(6, 1.75, 2)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_interact"]
+radius = 6.0
+
+[node name="Gate3D" type="StaticBody3D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_foot")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+mesh = SubResource("BoxMesh_body")
+
+[node name="Interact" type="Area3D" parent="."]
+collision_layer = 256
+collision_mask = 0
+script = ExtResource("2_interact")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interact"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape3D_interact")

@@ -670,7 +670,7 @@
 
 ### TASK-3D-BLD-001-3 Wall / Gate 3D
 
-- 상태: QUEUED
+- 상태: REVIEW
 
 - 요구사항:
 
