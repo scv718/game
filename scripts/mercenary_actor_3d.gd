@@ -81,7 +81,11 @@ var _unreachable_target: Node = null
 var _unreachable_cooldown := 0.0
 var _hit_flash_left := 0.0
 ## nav agent에 마지막으로 설정한 목적지. 바뀔 때만 대입 + 즉시 path 갱신한다.
+## "미설정" 판정은 _has_nav_dest로 한다. 세계 원점(safe rally)도 유효한 목적지이므로
+## Vector3.ZERO를 미설정 센티널로 쓰면 첫 이동 명령이 무시되어 RETREAT가 영구
+## 정지한다(001-2 리뷰 버그).
 var _nav_dest := Vector3.ZERO
+var _has_nav_dest := false
 
 ## TASK-014-6 사망 처리에서 재사용(2D 계약 동일).
 signal died(mercenary: Node)
@@ -270,6 +274,7 @@ func _move_towards(dest: Vector3, delta: float) -> bool:
 ## 새 목적지 시작. target_position 설정 직후 get_next_path_position으로 path를
 ## 즉시 갱신해 첫 frame의 stale finished 상태로 BLOCKED 오판하는 것을 막는다.
 func _begin_move(dest: Vector3) -> bool:
+	_has_nav_dest = true
 	_nav_dest = dest
 	_stuck_timer = 0.0
 	_last_move_pos = global_position
@@ -279,7 +284,7 @@ func _begin_move(dest: Vector3) -> bool:
 
 
 func _nav_dest_is(dest: Vector3) -> bool:
-	return _nav_dest == dest
+	return _has_nav_dest and _nav_dest == dest
 
 
 ## Enemy 공격 등으로부터 HP를 감소시킨다. 0 이하가 되면 사망 처리한다.

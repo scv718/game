@@ -60,6 +60,9 @@ var _target: Node = null
 var _gate_target: Node = null
 var _attack_cd := 0.0
 var _nav_dest := Vector3.ZERO
+## _nav_dest가 실제로 설정된 적이 있는지. 세계 원점도 유효한 목적지일 수 있으므로
+## Vector3.ZERO를 미설정 센티널로 쓸 수 없다(mercenary_actor_3d와 동일 규약).
+var _has_nav_dest := false
 var _hit_flash_left := 0.0
 
 @onready var _nav_agent: NavigationAgent3D = $NavigationAgent3D
@@ -193,7 +196,7 @@ func _tick_move(delta: float) -> void:
 	if not _move_towards(dest, delta):
 		# BLOCKED/stuck: 남은 waypoint가 있으면 다음 목표로 bounded skip하고,
 		# 최종 목표에 막힌 것이면 영구 재시도 없이 HOLD로 종료한다.
-		if _waypoints.size() > 0 and _nav_dest == _waypoints[0]:
+		if _waypoints.size() > 0 and _has_nav_dest and _nav_dest == _waypoints[0]:
 			_waypoints.pop_front()
 			return
 		velocity = Vector3.ZERO
@@ -202,7 +205,8 @@ func _tick_move(delta: float) -> void:
 
 ## 공통 지면 이동 step. 도달 시 true, 경로 소진(BLOCKED)/stuck 포기 시 false.
 func _move_towards(dest: Vector3, delta: float) -> bool:
-	if _nav_dest != dest:
+	if not _has_nav_dest or _nav_dest != dest:
+		_has_nav_dest = true
 		_nav_dest = dest
 		_stuck_timer = 0.0
 		_last_move_pos = global_position

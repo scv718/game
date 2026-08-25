@@ -174,3 +174,76 @@
 - 선행 서브태스크 회귀 재확인: `tests/task3dcmb0011_test.gd` PASS.
 - 남은 것: CMB-001-3(전체 시나리오 regression + 최종 INTEGRATION_NOTE 갱신),
   INT(Main Scene에 3D tactical runtime wiring).
+
+---
+
+# TASK-3D-CMB-001-3 INTEGRATION NOTE (Combat / Death Ledger Regression)
+
+> CMB-001 레인의 최종 회귀 서브태스크. 이 서브태스크 자체가 새로 추가/수정한
+> production 코드는 없고, 큐 시나리오 14단계(용병 배치 → NIGHT → 조우 → 자동전투 →
+> Focus → Regroup → Retreat → Gate Open/Close → Pause → 2x → lethal death →
+> Death Ledger 확인 → DAY → 다음 NIGHT 반복)를 3D Runtime Actor 위에서 전부 재생하는
+> 회귀 테스트만 추가했다.
+>
+> production 변경 귀속 명시: 작업 트리에는 001-2 FIX 사이클에서 만든 미커밋 production
+> 변경이 있다(`scripts/mercenary_actor_3d.gd` / `scripts/enemy_actor_3d.gd`의
+> `_nav_dest := Vector3.ZERO` 미설정 센티널을 `_has_nav_dest` 플래그로 교체).
+> 본 001-3 회귀의 RETREAT 관찰 / re-defense 복귀 / lethal 배치 타이밍은 이 수정에
+> 의존하므로, "기존 파일 무수정"은 이 서브태스크 기준일 뿐이며 현재 작업 트리는
+> 001-2 FIX 변경을 포함한다(소급 문서화는 AI_TASK_QUEUE.md TASK-3D-CMB-001-2 참고).
+
+## 신규 파일
+
+| 파일 | 역할 |
+|------|------|
+| `tests/task3dcmb0013_test.gd` | 전체 시나리오 회귀 테스트(85 assertions headless PASS) |
+
+## 검증 매핑 (큐 "검증" 항목 → 테스트 근거)
+
+1. **Player combat 없음**: 자동전투/focus/regroup/lethal 관찰 루프 전체에서 모든 살아
+   있는 enemy의 `_target`이 mercenaries_3d 소속(null 또는 gate 제외)임을 순회 단정하고,
+   player 모형 노드가 전투 그룹에 끼지 않고 이동/해방되지 않음을 확인.
+2. **duplicate death record 없음**: ledger 전체 source_uid 스캔으로 중복 0 + 개별
+   kill(bait/m_south)별 record 수 == 1 + "관측된 died signal 총횟수 == ledger 증가량"
+   대응으로 누락/과다 기록까지 동시 차단.
+3. **cleanup record 없음**: DAY despawn, 수동 queue_free(fixture/probe), final free()
+   정리 각 단계 직후 ledger 크기 불변을 4회 확인.
+4. **freed reference 없음**: 사망 즉시 roster `_actors` erase(died bind), focus target
+   자동 해제, DAY 후 actor/encounter reference freed, 반복 NIGHT fresh actor 보장.
+5. **Gate/nav stale state 없음**: CLOSED 성문 교전(GATE_ATTACK + 실제 take_damage 누적)
+   중 GATE_OPEN 명령 한 번으로 bounded 시간 내 상태 탈출 + 성문 선 통과(경로 재개).
+   영구 gate lock 없음.
+6. **command deadlock 없음**: Pause 중 FOCUS 토글 응답, TIME 배율 체인 적용, 반복
+   NIGHT의 fresh actor에게 REGROUP 재응답. 모든 관찰 루프는 budget bounded.
+
+## 회귀 테스트 결정성 규약 (후속 테스트 작성 시 재발 방지 지침)
+
+- **encounter walker는 core HOLD로 kill이 안 될 수 있다**: 이동 encounter는 chase
+  leash(CHASE_RETURN_DISTANCE) 밖 village core에 도달하면 HOLD로 종료한다(기존 설계
+  동작). 확정 kill 검증은 rally 근처 고정 fixture로 하고, ledger 정합성은 died signal
+  카운트 대응으로 닫는다. 참고: Enemy FSM에는 추격 로직이 없다(근접 시 정지 교전만).
+- **전역 REGROUP/RETREAT 명령은 모든 생존 용병을 움직인다**: lethal 검증 대상 용병도
+  RETREAT를 따라 safe rally로 이간진다. actor 공개 계약
+  `set_defense_zone(zone, rally)`으로 해당 용병만 자기 진지에 복귀시킨 뒤 1:1 교전을
+  성립시켰다(우회 없이 공개 API만 사용).
+- **-s 기동 frame이 GameTime._elapsed를 오염한다**: autoload는 테스트가 auto_advance를
+  끄기 전 frame부터 혼자 시간을 누적한다(실측 11 frame ≈ 0.18s). 따라서 elapsed 판정은
+  절대값이 아니라 상대 증분(delta)으로 하고, `_initialize()`에서 guarded
+  `set_auto_advance(false)`로 오염 원천을 조기 차단한다.
+- **autoload 미등록 컴파일 단계 규약은 001-2와 동일**: roster/UI 계열 정적 참조 금지,
+  런타임 load() + duck-typing만 사용(파일 헤더 주석 참고).
+- **RETREAT/re-defense/lethal 시나리오는 001-2 FIX(`_has_nav_dest`)에 의존한다**:
+  센티널 방식(`_nav_dest == Vector3.ZERO` 미설정 취급)으로 되돌리면 safe rally가
+  세계 원점인 RETREAT 목적지 설정이 무시되어 본 회귀의 RETREAT 도착/lethal 배치
+  타이밍이 FAIL로 바뀐다. 이 의존은 001-2 구현 기록에 소급 문서화되어 있다.
+
+## 실행 결과
+
+- `tests/task3dcmb0013_test.gd` — 85 assertions 전부 PASS(headless), 연속 재실행 PASS.
+- 실행 로그: `test_results/task3dcmb0013_test_run.txt`, 재실행:
+  `test_results/task3dcmb0013_fix_rerun1.txt`.
+- 선행 서브태스크 회귀 재확인(각각 별도 로그로 분리):
+  - `tests/task3dcmb0011_test.gd` PASS → `test_results/task3dcmb0013_prior_0011_rerun.txt`
+  - `tests/task3dcmb0012_test.gd` PASS → `test_results/task3dcmb0013_prior_0012_rerun.txt`
+- 남은 것: INT(Main Scene에 3D tactical runtime wiring). CMB-001 레인의 기능 범위는
+  여기서 완결.
