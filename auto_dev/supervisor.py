@@ -17,6 +17,7 @@ STATE_PATH = os.path.join(BASE_DIR, "state.json")
 QUEUE_LOCK_PATH = os.path.join(BASE_DIR, ".queue_lock")
 PROMPT_DIR = os.path.join(BASE_DIR, "prompts")
 GROUP_ID = None  # --group 지정 시 해당 그룹 서브트리만 처리 (병렬 레인)
+WORKTREE_DIR = None  # --group 에 매핑된 git worktree (에이전트 작업 디렉터리)
 
 if sys.stdout:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -232,11 +233,25 @@ def _update_queue_locked(tasks, path, task_id, status, feedback=None):
         f.writelines(out)
 
 
+def write_result(task, verdict, reason):
+    """레인별 결과 보고 (auto_dev/runs/<GROUP>/RESULT.md) - Integration Agent 가 읽음."""
+    if not GROUP_ID:
+        return
+    runs_dir = os.path.join(BASE_DIR, "runs", GROUP_ID)
+    os.makedirs(runs_dir, exist_ok=True)
+    with open(os.path.join(runs_dir, "RESULT.md"), "a", encoding="utf-8") as f:
+        f.write(f"## {task['id']} {task['title']}\n\n"
+                f"- 판정: {verdict}\n- 사유: {(reason or '')[:600]}\n"
+                f"- 브랜치/워크트리: {(WORKTREE_DIR or cfg('project_dir'))}\n"
+                f"- 완료 시각: {datetime.datetime.now().isoformat()}\n\n")
+
+
 def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
     exe = cfg("opencode_exe")
+    agent_dir = WORKTREE_DIR or cfg("project_dir")
     args = [exe, "run", prompt, "--model", model, "--auto", "--format", "json",
             "--variant", "max",
-            "--dir", cfg("project_dir")]
+            "--dir", agent_dir]
     args += extra_args or []
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
@@ -442,6 +457,11 @@ def main():
     tasks, queue_path = parse_queue()
 
     if GROUP_ID:
+        wt_map = cfg("worktrees") if "worktrees" in CONFIG else {}
+        if GROUP_ID in wt_map:
+            global WORKTREE_DIR
+            WORKTREE_DIR = wt_map[GROUP_ID]
+            log(f"레인 워크트리: {WORKTREE_DIR}")
         root = next((t for t in tasks if t["id"] == GROUP_ID), None)
         if root is None:
             print(f"그룹 {GROUP_ID} 없음")
@@ -528,11 +548,13 @@ def main():
 
             if verdict == "LGTM":
                 update_queue(tasks, queue_path, task["id"], "DONE", feedback=reason)
+                write_result(task, verdict, reason)
                 log(f"[{task['id']}] DONE")
                 return
 
             if verdict == "NEEDS_DESIGN":
                 update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN", feedback=reason)
+                write_result(task, verdict, reason)
                 log(f"[{task['id']}] NEEDS_DESIGN - 자동화 정지, 사람 개입 대기")
                 return
 

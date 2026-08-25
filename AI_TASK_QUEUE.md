@@ -1,4 +1,4 @@
-# AI Task Queue
+﻿# AI Task Queue
 
 > 기존 2D Top-down 프로젝트를 **Stylized Top-down 3D**로 전환하는 실행 큐.
 >
@@ -628,7 +628,8 @@
 
 ### TASK-3D-BLD-001-1 Building3D Base / Existing Building Scenes
 
-- 상태: REVIEW
+- 상태: DONE
+- 피드백: 요구사항 7건·완료조건 3건 전부 실제 코드에서 확인되었고, 신규 회귀 30 assertions를 reviewer가 직접 headless 재실행하여 PASS 재현. smoke 및 Foundation 회귀도 통과. LOCK 12/운영 규칙/기존 2D identity 계약 완전 준수. 지적 사항은 전부 비차단 환경·기록 수준.
 
 - 요구사항:
 
@@ -648,7 +649,8 @@
 
 ### TASK-3D-BLD-001-2 BuildingPlacement XZ Grid
 
-- 상태: QUEUED
+- 상태: REVIEW
+- 피드백: [재검토] 리뷰어 판정 미출력 - 구현 완료(task3dbld0012_test.gd 존재), 리뷰 재실행
 
 - 요구사항:
 
@@ -759,7 +761,8 @@
 
 ### TASK-3D-WRK-001-1 WorkerActor3D / Movement
 
-- 상태: IMPLEMENT
+- 상태: REVIEW
+- 피드백: [재검토] 리뷰어 판정 미출력 - 구현 완료(task3dwrk0011_test.gd 존재), 리뷰 재실행
 
 - 요구사항:
 
@@ -876,7 +879,8 @@
 
 ### TASK-3D-CMB-001-1 Mercenary / Enemy Actor3D
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 피드백: 7개 요구사항·4개 완료조건을 실제 코드에서 전부 확인했고, 신규 테스트 73 assertions와 Foundation 회귀(task3d0015)를 reviewer가 직접 headless 재실행하여 PASS 재현함. git diff 범위가 보고와 정확히 일치하며 2D 파일 무수정 LOCK 준수. 지적 2건(.uid 커밋 포함, 테스트의 private 접근)은 모두 비차단 수준.
 
 - 요구사항:
 
@@ -897,7 +901,8 @@
 
 ### TASK-3D-CMB-001-2 Tactical Command World3D Wiring
 
-- 상태: QUEUED
+- 상태: REVIEW
+- 피드백: [재검토] 중복 _enter(GATE_CMD) 제거 완료(테스트 수정), assertion 수 문서 77로 갱신 - 리뷰 재실행
 
 - 요구사항:
 
@@ -987,7 +992,8 @@
 
 ### TASK-3D-VIS-001-1 Asset Acquire / License / Import
 
-- 상태: IMPLEMENT
+- 상태: REVIEW
+- 피드백: [재검토] 리뷰어 판정 미출력 - 구현 완료(task3dvis0011_test.gd 존재), 리뷰 재실행
 
 - 대상:
 

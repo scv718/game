@@ -7,5 +7,11 @@
   "max_fix_rounds": 3,
   "implementer_timeout_sec": 7200,
   "reviewer_timeout_sec": 3600,
-  "log_dir": "logs"
+  "log_dir": "logs",
+  "worktrees": {
+    "TASK-3D-BLD-001": "D:\\game-wt\\building",
+    "TASK-3D-WRK-001": "D:\\game-wt\\worker",
+    "TASK-3D-CMB-001": "D:\\game-wt\\combat",
+    "TASK-3D-VIS-001": "D:\\game-wt\\visual"
+  }
 }
