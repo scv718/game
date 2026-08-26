@@ -1,0 +1,53 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: shared autoloads are available to the vertical slice runtime
+PASS: GameTime Phase enum resolves through runtime load
+PASS: game boots into the 3D Main World (scenario 1-2)
+PASS: WorldContent3D composes the 3D world gameplay content
+PASS: 3D world holds the same 60 trees as the 2D reference layout
+PASS: every composed tree registers as a 3D resource node
+PASS: StoneDeposit3D sits at the WorldMap stone zone position
+PASS: MapLayout3D is wired under the world root
+PASS: MapLayout3D satisfies the roster/spawner lookup contract
+PASS: MapLayout3D clearing center matches the shared settlement center
+PASS: no workplace exists before the player builds one
+PASS: all five core buildings exist exactly once (keep/tavern/inn/grocery/equipment)
+PASS: Keep is a direct world-root child so spawner/retreat resolve the village core
+PASS: encounter spawner resolves the west spawn candidate through MapLayout3D
+PASS: west defense rally resolves to the rally space center
+PASS: initial navigation bake covers the composed world (no stale startup nav)
+PASS: WASD-equivalent pan moves the camera pivot on the ground plane only
+PASS: pan clamps against the shared world bounds
+PASS: camera pivots back to the village center
+PASS: mouse wheel zooms in (scenario 4)
+PASS: zoom clamps at the configured maximum
+PASS: zoom clamps at the configured minimum
+PASS: camera keeps a fixed oblique basis while panning (rotation path ?놁쓬)
+PASS: clicking the Tavern selects its interactable (scenario 5)
+PASS: Tavern interaction opens the existing TavernRecruitmentUI (scenario 6)
+PASS: clicking the Inn selects its interactable
+PASS: Inn interaction opens the existing InnRosterUI
+PASS: open modal UI blocks world clicks (no UI click-through)
+PASS: closing the modal restores world click handling
+PASS: B enters build mode (scenario 11)
+PASS: single-unit buildings exit build mode after placement
+PASS: one Lumberyard3D placed via the input path (scenario 7)
+PASS: 3D workplace serves the legacy inn-UI lookup group (dual registration)
+PASS: lumberyard cost deducts Wood exactly once (40 -> 30)
+PASS: Quarry3D placed onto the Stone Deposit
+PASS: quarry serves the legacy inn-UI lookup group (dual registration)
+PASS: quarry binds the deposit anchor on placement
+PASS: quarry placement exits build mode
+PASS: Tavern UI hiring registers both workers in the shared WorkerRoster
+PASS: hired workers stay roster data only (no world actor yet)
+PASS: unassigned residents never become world actors (design rule)
+PASS: Inn UI assigns each worker to its matching facility
+PASS: assignment spawns exactly one Worker Actor per assigned resident
+PASS: spawned actors are the 3D lumberjack/miner pair
+PASS: no legacy 2D worker actors leak into the 3D runtime
+PASS: Lumberjack deposits gathered Wood into the stockpile (auto production)
+PASS: Miner produces Stone at the bound deposit (auto production)
+PASS: a far sparse-forest tree is picked for the depletion check
+PASS: gathering drains the tree's full yield
+PASS: depleted tree switches to the stump state
+PASS: stump state swaps canopy/trunk visuals for the stump visual

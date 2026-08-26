@@ -3,6 +3,7 @@
 
 import argparse
 import datetime
+import glob
 import json
 import os
 import re
@@ -237,8 +238,109 @@ def _update_queue_locked(tasks, path, task_id, status, feedback=None):
         f.writelines(out)
 
 
+GATE_TEMP_RE = re.compile(r"^(_probe|_debug|_diag|tmp_|temp_|test_tmp)", re.IGNORECASE)
+DANGER_RE = re.compile(r"^(auto_dev/|\.git|credential|.*\.key$|\.gitattributes$)", re.IGNORECASE)
+
+
+def _run_cmd(cmd, cwd=None, timeout=900):
+    try:
+        r = subprocess.run(cmd, cwd=cwd, capture_output=True, encoding="utf-8",
+                           errors="replace", timeout=timeout)
+        return r.returncode, (r.stdout or ""), (r.stderr or "")
+    except Exception as e:
+        return -1, "", str(e)
+
+
+def find_task_test_file(task, root):
+    """태스크 ID에서 관례상 테스트 파일 추정 (task3dint0012_test.gd 등)."""
+    tid = task["id"].replace("-", "").lower()
+    candidates = glob.glob(os.path.join(root, "tests", f"*{tid}*_test.gd"))
+    if not candidates:
+        return None
+    return max(candidates, key=os.path.getmtime)
+
+
+def run_headless_test(godot_exe, root, script_path, timeout=900):
+    rc, out, err = _run_cmd([godot_exe, "--headless", "--path", root,
+                             "--script", script_path], timeout=timeout)
+    text = out or ""
+    if "RESULT=FAIL" in text:
+        return False, text[-600:]
+    if "RESULT=PASS" not in text:
+        return False, ("PASS 마커 없음 (실행 실패 추정)\n" + (text or err)[-500:])
+    return True, ""
+
+
+def verification_gate(task):
+    """LLM 리뷰 대체 결정적 게이트. 반환: (통과 여부, 문제 목록)."""
+    root = WORKTREE_DIR or cfg("project_dir")
+    ver = CONFIG.get("verification", {})
+    problems = []
+
+    rc, st, _ = _run_cmd(["git", "-C", root, "status", "--porcelain"], timeout=60)
+    lines = [l for l in (st or "").splitlines() if l.strip()]
+    if not lines:
+        return False, ["변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성"]
+
+    # 위험 파일 변경 → FAIL (자동 되돌림 없이 사람 확인 대상으로)
+    for l in lines:
+        path = l[3:].strip().strip('"').replace("\\", "/")
+        if DANGER_RE.match(path):
+            problems.append(f"위험 파일 변경(FAIL): {path}")
+
+    # 임시/debug 파일 (신규 생성된 것)
+    for l in lines:
+        if l.startswith("??"):
+            name = os.path.basename(l[3:].strip().strip('"'))
+            if GATE_TEMP_RE.match(name):
+                problems.append(f"임시/debug 파일 잔존: {name}")
+
+    # 테스트 삭제 / SUSPICIOUS_TEST_CHANGE
+    if ver.get("suspicious_test_change", True):
+        for l in lines:
+            x, y, path = l[0], l[1], l[3:].strip().strip('"').replace("\\", "/")
+            if not path.startswith("tests/"):
+                continue
+            if x == "D" or y == "D":
+                problems.append(f"SUSPICIOUS_TEST_CHANGE: 테스트 파일 삭제 {path}")
+                continue
+            if x in ("M", "A") or y == "M":
+                try:
+                    _, old, _ = _run_cmd(["git", "-C", root, "show", f"HEAD:{path}"], timeout=60)
+                    with open(os.path.join(root, path), encoding="utf-8", errors="replace") as f:
+                        new = f.read()
+                    oc, nc = old.count("_check("), new.count("_check(")
+                    if nc < oc:
+                        problems.append(f"SUSPICIOUS_TEST_CHANGE: {path} assertion {oc}→{nc} 감소")
+                except Exception as e:
+                    problems.append(f"테스트 diff 검사 실패: {path} ({e})")
+
+    # 태스크 자체 테스트
+    if ver.get("task_test", True):
+        tf = find_task_test_file(task, root)
+        godot = CONFIG.get("godot_exe")
+        if not godot:
+            problems.append("config에 godot_exe 미설정 - 게이트 테스트 불가")
+        elif tf is None:
+            problems.append(f"태스크 테스트 파일을 찾지 못함 (tests/*{task['id'].replace('-', '').lower()}*_test.gd)")
+        else:
+            ok, tailtxt = run_headless_test(godot, root, tf)
+            if not ok:
+                problems.append(f"태스크 테스트 FAIL: {os.path.basename(tf)}\n{tailtxt}")
+
+    # 회귀(smoke)
+    if ver.get("regression", True):
+        smoke = os.path.join(root, "tests", "smoke_test.gd")
+        godot = CONFIG.get("godot_exe")
+        if godot and os.path.exists(smoke):
+            ok, tailtxt = run_headless_test(godot, root, smoke)
+            if not ok:
+                problems.append(f"회귀(smoke) FAIL\n{tailtxt}")
+
+    return len(problems) == 0, problems
+
+
 def write_result(task, verdict, reason):
-    """레인별 결과 보고 (auto_dev/runs/<GROUP>/RESULT.md) - Integration Agent 가 읽음."""
     if not GROUP_ID:
         return
     runs_dir = os.path.join(BASE_DIR, "runs", GROUP_ID)
@@ -597,7 +699,10 @@ def main():
             return
         session_id = None
         summary = ""
-        if task["status"] in ("REVIEW", "REVIEW_PARSE_ERROR"):
+        skip_review = bool(CONFIG.get("skip_review"))
+        if skip_review and task["status"] in ("REVIEW", "REVIEW_PARSE_ERROR"):
+            log(f"[{task['id']}] {task['status']} 상태 재개 - 리뷰 스킵 모드이므로 게이트로 바로 진행")
+        elif task["status"] in ("REVIEW", "REVIEW_PARSE_ERROR"):
             log(f"[{task['id']}] {task['status']} 상태에서 재개 (구현 완료분 그대로 리뷰)")
         else:
             update_queue(tasks, queue_path, task["id"], "IMPLEMENT")
@@ -619,6 +724,43 @@ def main():
                 return
             log(f"[{task['id']}] 구현 완료 (session={session_id})")
             log(f"[{task['id']}] 구현 요약: {summary[:300]}")
+
+        if skip_review:
+            max_rounds = cfg("max_fix_rounds")
+            for attempt in range(1, max_rounds + 1):
+                log(f"[{task['id']}] 검증 게이트 {attempt}/{max_rounds} 실행")
+                ok, problems = verification_gate(task)
+                if ok:
+                    fb = "auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과"
+                    update_queue(tasks, queue_path, task["id"], "DONE", feedback=fb)
+                    write_result(task, "DONE", fb + " | review_status=SKIPPED verification=PASS")
+                    log(f"[{task['id']}] DONE (게이트 통과, 리뷰 스킵)")
+                    return
+                log(f"[{task['id']}] 게이트 실패: {'; '.join(p[:120] for p in problems[:4])}")
+                if attempt < max_rounds:
+                    feedback = "자동 검증 게이트 실패 - 아래 항목을 수정하세요:\n- " + "\n- ".join(problems[:10])
+                    update_queue(tasks, queue_path, task["id"], "FIX",
+                                 feedback=f"게이트 실패 ({attempt}/{max_rounds}): {'; '.join(p[:100] for p in problems[:4])}")
+                    session_id, summary, err = run_implementer(task, session_id=session_id,
+                                                               review_feedback=feedback)
+                    if err:
+                        if err.startswith("실행 시간 초과"):
+                            update_queue(tasks, queue_path, task["id"], "FIX",
+                                         feedback=f"게이트 수정 중 시간 초과: {err}")
+                        elif err == "알 수 없는 오류":
+                            update_queue(tasks, queue_path, task["id"], "FIX",
+                                         feedback=f"수정 중 프로바이더 무응답 - 다음 사이클 재시도")
+                        else:
+                            update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                         feedback=f"게이트 수정 실행 오류: {err[:300]}")
+                        return
+                else:
+                    update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
+                                 feedback=f"검증 게이트 {max_rounds}회 실패 - 수동 확인 필요: "
+                                          + "; ".join(p[:150] for p in problems[:5]))
+                    write_result(task, "NEEDS_DESIGN", "auto-gate 반복 실패 (review=SKIPPED 모드)")
+                    return
+            return
 
         verdict = None
         reason = ""

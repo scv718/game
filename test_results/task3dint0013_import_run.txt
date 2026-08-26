@@ -1,0 +1,22 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started ?꾨줈?앺듃 珥덇린??(5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | ?뚯씪 援ъ“ ?ㅼ틪 以?..[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | ?꾩뿭 ?대옒???대쫫??遺덈윭?ㅻ뒗 以?..[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | GDExtensions 寃利?以?..[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | ?ㅽ넗濡쒕뱶 ?ㅽ겕由쏀듃瑜?留뚮뱶??以?..[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | ?뚮윭洹몄씤??珥덇린??以?..[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | ?뚯씪 ?ㅼ틪 ?쒖옉 以?..[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started ?꾩뿭 ?대옒?ㅻ? ?깅줉?섎뒗 以?.. (3 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started ?몄쭛湲곕? 遺덈윭?ㅻ뒗 以?(5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | ?몄쭛湲??덉씠?꾩썐??遺덈윭?ㅻ뒗 以?..[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | ?낆쓣 遺덈윭?ㅻ뒗 以?..[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m

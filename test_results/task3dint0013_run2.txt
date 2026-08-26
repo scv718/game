@@ -1,0 +1,13 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+Godot_v4.7.1-stable_win64_console.exe : SCRIPT ERROR: Parse Error: Cannot infer the type of "script_path" variable beca
+use the value doesn't have a set type.
+위치 줄:1 문자:1
++ & "C:\Users\skfnx\AppData\Local\Godot\4.7.1\Godot_v4.7.1-stable_win64 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (SCRIPT ERROR: P...ave a set type.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:392)
+ERROR: Failed to load script "res://tests/task3dint0013_test.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

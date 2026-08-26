@@ -1,0 +1,80 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world loads
+PASS: GameTime/DeathLedger autoloads available to the 3D tactical runtime
+PASS: Foundation CameraController3D is part of the tactical runtime
+PASS: TacticalCommandUI3D scene instantiates
+PASS: tactical UI stays in the Control layer (never a 3D node)
+PASS: 3D tactical UI keeps its own scene identity
+PASS: 3D roster script attaches and joins mercenary_roster_3d group
+PASS: focus pick radius preserves legacy 32px scaled by PX_TO_UNIT
+PASS: 3D wiring reuses the legacy TacticalCommandUI.Command codes unchanged
+PASS: UI command_issued is wired to the 3D roster (guarded single connect)
+PASS: tactical UI stays hidden during DAY
+PASS: camera starts in DAY management mode
+PASS: DAY zoom target follows the foundation day policy
+PASS: north zone mercenary hired
+PASS: west zone mercenary hired
+PASS: roster holds both living hires
+PASS: phase advanced to NIGHT
+PASS: camera switches to the NIGHT tactical policy
+PASS: NIGHT zoom target applies the tactical overview policy
+PASS: phase switch applies no camera rotation (fixed oblique basis)
+PASS: camera pivot stays height-locked on the ground plane
+PASS: tactical command UI becomes visible on NIGHT
+PASS: NIGHT start spawns both assigned mercenaries and the encounter
+PASS: north mercenary spawns at the defense zone rally in world XZ
+PASS: west mercenary spawns at the defense zone rally in world XZ
+PASS: every defense zone rally resolves to the WorldMap rally space center in XZ
+PASS: retreat safe rally is the settlement clearing center on the ground plane
+PASS: encounter spawn point preserves the logical spawn candidate in world XZ
+PASS: encounter route keeps only inward main-road waypoints in world XZ
+PASS: FOCUS_TARGET command toggles focus mode on
+PASS: ray-based ground point picks the nearest living enemy under the click
+PASS: selected enemy becomes the roster focus target
+PASS: focus target propagates to every spawned mercenary actor
+PASS: clicking empty ground picks nothing and keeps the mode armed
+PASS: empty pick leaves an existing focus target untouched
+PASS: focused mercenary prioritizes the focus target over closer zone combat
+PASS: closer zone enemy stays ignored while the focus target lives
+PASS: cancelling focus mode releases the focus target
+PASS: actors drop the focus target when the mode is cancelled
+PASS: REGROUP command drives both actors into the REGROUP state
+PASS: REGROUP observation: actors reach their commanded goal without teleporting
+PASS: RETREAT command drives both actors into the RETREAT state
+PASS: RETREAT aims at the settlement safe rally in world XZ
+PASS: arming focus during RETREAT never interrupts the retreat
+PASS: retreating mercenaries do not attack the newly armed focus target
+PASS: mercenaries complete the retreat at the safe rally and hold
+PASS: retreated mercenaries hold position instead of resuming the hunt
+PASS: DEFENSE_ZONE command updates every living mercenary's zone data
+PASS: zone command re-anchors both actors to the new XZ rally
+PASS: zone change never teleports actors
+PASS: zone command pulls retreated mercenaries back into defense AI
+PASS: after the zone command the armed focus target is engaged by defense AI
+PASS: tactical UI lists installed gates_3d entries
+PASS: GATE_OPEN command opens the world gate through the 3D contract
+PASS: GATE_CLOSE command closes the world gate again
+PASS: BREACHED gate ignores close commands (no auto recovery)
+PASS: TIME_PAUSE command sets the tactical pause scale
+PASS: TIME_2X command doubles the tactical time scale
+PASS: TIME_1X command restores the tactical time scale
+PASS: phase returned to DAY
+PASS: DAY return despawns every spawned mercenary actor
+PASS: DAY return despawns the whole encounter
+PASS: despawned actor references are freed (no stale roster references)
+PASS: DAY return clears the focus mode/target transient state
+PASS: tactical UI hides again on DAY return
+PASS: DAY return restores the 1x time scale
+PASS: camera policy returns to the DAY zoom target
+PASS: full cycle applied no camera rotation
+PASS: cleanup/despawn around DAY return creates no death records
+PASS: test-controlled enemies leave no residue in enemies_3d
+PASS: next NIGHT begins
+PASS: repeated NIGHT spawns fresh actors (no duplicate id reuse)
+PASS: repeated NIGHT spawns exactly the living roster
+PASS: repeated NIGHT spawns a fresh encounter after DAY despawn
+PASS: no orphan mercenaries remain
+PASS: no orphan enemies remain
+PASS: mock gate leaves no residue
+TASK3DCMB0012_RESULT=PASS

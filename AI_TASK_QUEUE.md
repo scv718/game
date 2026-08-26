@@ -1461,7 +1461,8 @@
 
 ### TASK-3D-INT-001-1 Main Scene Wiring / Shared Config
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 피드백: 요구사항(main scene 3D 연결, shared config 유지, duplicate input owner/Camera/NavigationRegion 제거, missing resource 없음) 및 완료조건(Main 부팅/parser·import 오류 0, duplicate 없음) 전부 실제 코드와 실행 로그로 확인. 기존 Foundation 스크립트 무수정(LOCK 12) 준수, 신규 hud_3d/main_3d 스타일 일관, 엣지 케이스(양방향 connect 순서, NIGHT 재진입 중복, despawn orphan, ledger 무기록)까지 회귀로 고정됨.
 
 - 요구사항:
 
@@ -1480,7 +1481,9 @@
 
 ### TASK-3D-INT-001-2 Existing Gameplay Vertical Slice 3D
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: 22단계 vertical slice가 실제 Runtime 회귀(98 assertions 연속 2회)로 검증되고, 전 회귀 스위트 + 부팅 + overlay probe가 전부 통과. Workplace3D 도입으로 2D 계층과 동일 구조를 유지했고 2D 소유 파일은 무수정. 버그/누락/엣지 케이스 없음(비차단 소관찰 2건은 문서화·fallback으로 이미 처리됨).
+- 피드백: 22단계 시나리오 전체를 main_3d.tscn 실제 Runtime 위에서 재생하는 회귀 테스트(tests/task3dint0012_test.gd, 98 assertions)가 연속 2회 전부 PASS. 신규 파일: world_content_3d.gd(Tree 60 + Deposit 조립), world_map_layout_3d.gd(MapLayout3D), workplace_3d.gd(2D Workplace 계약의 3D판), mercenary_hire_sync_3d.gd, main_3d.tscn에 핵심 건물 5종/MapLayout/Content wiring, world_map_overlay 3D camera rect. BLD 소유 lumberyard/quarry/placement은 Workplace3D 도입만(2D 계층 동일), 기존 2D 파일 무수정. 상세는 auto_dev/INTEGRATION_NOTE_INT.md.
 
 - 시나리오:
 
@@ -1526,7 +1529,8 @@
 
 ### TASK-3D-INT-001-3 2D Runtime Dependency Cleanup
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
+- 피드백: 구현이 수행되지 않음. 구현 요약이 조사 도중 잘렸고(로그상 마지막 메시지가 "핵심 파일들을 살펴보겠습니다:"로 종료), 작업 윈도우 동안 scenes/scripts/tests/ui 변경이 0건이며 삭제 파일도 없음. 구체적 수정 항목:
 
 - 설명: 3D Main World가 정상 동작한 뒤 Runtime에서 더 이상 사용하지 않는 2D 전용 경로를 안전하게 정리한다.
 

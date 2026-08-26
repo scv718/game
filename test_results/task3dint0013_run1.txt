@@ -1,0 +1,40 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+Godot_v4.7.1-stable_win64_console.exe : SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+위치 줄:1 문자:1
++ & "C:\Users\skfnx\AppData\Local\Godot\4.7.1\Godot_v4.7.1-stable_win64 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (SCRIPT ERROR: P...d in base self.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:249)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "text" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:249)
+SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:275)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "text" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:275)
+SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:288)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "text" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:288)
+SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:322)
+SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:338)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "text" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:338)
+SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:351)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "text" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:351)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "trimmed" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:354)
+SCRIPT ERROR: Parse Error: Function "_read_text()" not found in base self.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:375)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "text" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:375)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "script_path" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/task3dint0013_test.gd:392)
+ERROR: Failed to load script "res://tests/task3dint0013_test.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

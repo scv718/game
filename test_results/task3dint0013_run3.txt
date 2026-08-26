@@ -1,0 +1,118 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: Main Runtime entry stays on the 3D path (res://scenes/main_3d.tscn)
+PASS: closure resource exists: res://scenes/main_3d.tscn
+PASS: closure resource exists: res://scenes/world3d.tscn
+PASS: closure resource exists: res://scripts/navigation_manager_3d.gd
+PASS: closure resource exists: res://scenes/environment_3d.tscn
+PASS: closure resource exists: res://scenes/camera_controller_3d.tscn
+PASS: closure resource exists: res://scripts/world_selection_3d.gd
+PASS: closure resource exists: res://scripts/building_placement_3d.gd
+PASS: closure resource exists: res://scripts/mercenary_roster_3d.gd
+PASS: closure resource exists: res://scripts/first_encounter_spawner_3d.gd
+PASS: closure resource exists: res://ui/hud_3d.tscn
+PASS: closure resource exists: res://ui/world_map_overlay.tscn
+PASS: closure resource exists: res://scripts/world_map_layout_3d.gd
+PASS: closure resource exists: res://scenes/core_building_3d.tscn
+PASS: closure resource exists: res://scripts/world_content_3d.gd
+PASS: closure resource exists: res://scripts/mercenary_hire_sync_3d.gd
+PASS: closure resource exists: res://scripts/world_root_3d.gd
+PASS: closure resource exists: res://scripts/environment_lighting_3d.gd
+PASS: closure resource exists: res://scripts/camera_controller_3d.gd
+PASS: closure resource exists: res://scenes/lumberyard_3d.tscn
+PASS: closure resource exists: res://scenes/quarry_3d.tscn
+PASS: closure resource exists: res://scenes/wall_3d.tscn
+PASS: closure resource exists: res://scenes/gate_3d.tscn
+PASS: closure resource exists: res://scripts/hud.gd
+PASS: closure resource exists: res://ui/tavern_recruitment_ui.tscn
+PASS: closure resource exists: res://ui/inn_roster_ui.tscn
+PASS: closure resource exists: res://ui/tactical_command_ui_3d.tscn
+PASS: closure resource exists: res://ui/death_ledger_view.tscn
+PASS: closure resource exists: res://scripts/world_map_overlay.gd
+PASS: closure resource exists: res://scripts/core_building_3d.gd
+PASS: closure resource exists: res://scripts/core_building_interactable_3d.gd
+PASS: closure resource exists: res://scenes/tree_3d.tscn
+PASS: closure resource exists: res://scenes/stone_deposit_3d.tscn
+PASS: closure resource exists: res://scripts/lumberyard_3d.gd
+PASS: closure resource exists: res://scripts/lumberyard_interactable_3d.gd
+PASS: closure resource exists: res://scripts/quarry_3d.gd
+PASS: closure resource exists: res://scripts/quarry_interactable_3d.gd
+PASS: closure resource exists: res://scripts/wall_3d.gd
+PASS: closure resource exists: res://scripts/gate_3d.gd
+PASS: closure resource exists: res://scripts/gate_interactable_3d.gd
+PASS: closure resource exists: res://scripts/tavern_recruitment_ui.gd
+PASS: closure resource exists: res://scripts/inn_roster_ui.gd
+PASS: closure resource exists: res://scripts/tactical_command_ui_3d.gd
+PASS: closure resource exists: res://scripts/death_ledger_view.gd
+PASS: closure resource exists: res://scripts/tree_3d.gd
+PASS: closure resource exists: res://scripts/stone_deposit_3d.gd
+PASS: closure resource exists: res://scenes/lumberjack_3d.tscn
+PASS: closure resource exists: res://scenes/miner_3d.tscn
+PASS: closure resource exists: res://scripts/lumberjack_3d.gd
+PASS: closure resource exists: res://scripts/miner_3d.gd
+PASS: project.godot exposes autoload section
+PASS: autoload 'VillageResources' points at an existing script (res://scripts/village_resources.gd)
+PASS: autoload 'GameTime' points at an existing script (res://scripts/game_time.gd)
+PASS: autoload 'WorkerRoster' points at an existing script (res://scripts/worker_roster.gd)
+PASS: autoload 'MercenaryRoster' points at an existing script (res://scripts/mercenary_roster.gd)
+PASS: autoload 'FirstEncounterSpawner' points at an existing script (res://scripts/first_encounter_spawner.gd)
+PASS: autoload 'DeathLedger' points at an existing script (res://scripts/death_ledger.gd)
+PASS: autoload 'ExplorationManager' points at an existing script (res://scripts/exploration_manager.gd)
+PASS: shared autoload 'MercenaryRoster' keeps its documented script (res://scripts/mercenary_roster.gd)
+PASS: shared autoload 'FirstEncounterSpawner' keeps its documented script (res://scripts/first_encounter_spawner.gd)
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/main.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/main.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/main.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/world.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/world.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/world.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/tree.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/tree.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/tree.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/lumberyard.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/lumberyard.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/lumberyard.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/lumberjack.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/lumberjack.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/lumberjack.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/stone_deposit.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/stone_deposit.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/stone_deposit.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/quarry.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/quarry.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/quarry.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/miner.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/miner.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/miner.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/decoration.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/decoration.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/decoration.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/core_building.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/core_building.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/core_building.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/wall.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/wall.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/wall.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/gate.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/gate.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/gate.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/mercenary.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/mercenary.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/mercenary.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/enemy.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/enemy.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/enemy.tscn
+PASS: LOCK 12 reference fixture stays on disk: res://scenes/camera_controller.tscn
+PASS: retained 2D scene is outside the Main Runtime 3D closure: res://scenes/camera_controller.tscn
+PASS: no 3D closure file references 2D scene path: res://scenes/camera_controller.tscn
+PASS: closure contains no 2D-only node type / extends (0 violations)
+PASS: no orphan *.gd.uid sidecars remain
+PASS: 3D main runtime boots standalone from its own closure
+PASS: live runtime tree contains zero Node2D-derived nodes
+PASS: CharacterBody2D absent from core Runtime
+PASS: Area2D absent from core Runtime
+PASS: NavigationAgent2D absent from core Runtime
+PASS: Camera2D absent from core Runtime
+PASS: TileMapLayer absent from core Runtime
+PASS: exactly one Camera3D serves the 3D runtime
+TASK3DINT0013_RESULT=PASS

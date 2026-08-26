@@ -276,8 +276,13 @@ func _contract() -> void:
 	var lum_script: GDScript = load("res://scripts/lumberyard_3d.gd")
 	var qua_script: GDScript = load("res://scripts/quarry_3d.gd")
 	var bld_base: GDScript = load("res://scripts/building_3d.gd")
-	_check(lum_script.get_base_script() == bld_base, "Lumberyard3D extends Building3D")
-	_check(qua_script.get_base_script() == bld_base, "Quarry3D extends Building3D")
+	# TASK-3D-INT-001-2: 2D 계층(Lumberyard/Quarry -> Workplace -> Building)과 동일하게
+	# Workplace3D 중간 계층이 도입되었다. Building3D 직계 단정 대신 상속 경로 전체를 단정한다.
+	var wp_base: GDScript = load("res://scripts/workplace_3d.gd")
+	_check(lum_script.get_base_script() == wp_base and wp_base.get_base_script() == bld_base,
+		"Lumberyard3D extends Workplace3D extends Building3D (legacy 2D hierarchy)")
+	_check(qua_script.get_base_script() == wp_base,
+		"Quarry3D extends Workplace3D extends Building3D (legacy 2D hierarchy)")
 	var wall_script: GDScript = load("res://scripts/wall_3d.gd")
 	var gate_script: GDScript = load("res://scripts/gate_3d.gd")
 	_check(wall_script.get_instance_base_type() == "StaticBody3D",

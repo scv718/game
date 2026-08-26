@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bveesu3581sud"
-path="res://.godot/imported/T_WoodTrim_BaseColor.png-3bcdde6e88d6b91fc260bad5e9359803.ctex"
+uid="uid://bivu7om5k2gqc"
+path="res://.godot/imported/buildings_3d_preview.png-695e204a40b47283c826ca7b04a85c0f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/third_party/quaternius/models/medieval-village-megakit/T_WoodTrim_BaseColor.png"
-dest_files=["res://.godot/imported/T_WoodTrim_BaseColor.png-3bcdde6e88d6b91fc260bad5e9359803.ctex"]
+source_file="res://test_results/buildings_3d_preview.png"
+dest_files=["res://.godot/imported/buildings_3d_preview.png-695e204a40b47283c826ca7b04a85c0f.ctex"]
 
 [params]
 

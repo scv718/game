@@ -221,7 +221,11 @@ func map_to_world(map_pos: Vector2) -> Vector2:
 func _resolve_world_map() -> void:
 	if _world_map != null and is_instance_valid(_world_map):
 		return
+	# 2D Main World(/root/Main/World)와 3D Main World(/root/Main3D/World3D)를
+	# 모두 지원한다(TASK-3D-INT-001-2). 어느 쪽도 없으면 landmark 없이 안전하게 동작.
 	var world := get_node_or_null("/root/Main/World")
+	if world == null:
+		world = get_node_or_null("/root/Main3D/World3D")
 	if world == null:
 		return
 	_world_map = world.get_node_or_null("MapLayout")
@@ -233,12 +237,19 @@ func _resolve_camera() -> void:
 	var ctrls := get_tree().get_nodes_in_group("camera_controller")
 	if ctrls.size() > 0:
 		_camera_controller = ctrls[0]
+		return
+	# 3D runtime은 camera_controller_3d 그룹의 CameraController3D를 사용한다.
+	ctrls = get_tree().get_nodes_in_group("camera_controller_3d")
+	if ctrls.size() > 0:
+		_camera_controller = ctrls[0]
 
 
 func _get_camera_viewport_rect() -> Rect2:
 	_resolve_camera()
 	if _camera_controller == null:
 		return Rect2()
+	if _camera_controller.has_method("ground_point_from_screen"):
+		return _get_camera_ground_rect_3d()
 	var cam: Camera2D = _camera_controller.get_camera()
 	if cam == null:
 		return Rect2()
@@ -249,6 +260,28 @@ func _get_camera_viewport_rect() -> Rect2:
 	var half_size := (viewport_size / zoom) * 0.5
 	var cam_pos := cam.global_position
 	return Rect2(cam_pos - half_size, half_size * 2.0)
+
+
+## TASK-3D-INT-001-2: 3D 카메라의 화면 4모서리 광선을 지면(Y=0)과 교차시켜
+## 가시 지면 영역을 logical 좌표계 Rect2로 반환한다(2D viewport rect와 동일 소비).
+## 광선이 지면과 교차하지 않으면 빈 Rect2(그리기 생략).
+func _get_camera_ground_rect_3d() -> Rect2:
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var min_point := Vector2.INF
+	var max_point := -Vector2.INF
+	for corner in [
+		Vector2.ZERO,
+		Vector2(viewport_size.x, 0.0),
+		Vector2(0.0, viewport_size.y),
+		viewport_size,
+	]:
+		var ground: Vector3 = _camera_controller.ground_point_from_screen(corner)
+		if not ground.is_finite():
+			return Rect2()
+		var logical := WorldCoords3D.to_logical(ground)
+		min_point = min_point.min(logical)
+		max_point = max_point.max(logical)
+	return Rect2(min_point, max_point - min_point)
 
 
 func _draw() -> void:

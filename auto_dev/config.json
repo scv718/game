@@ -10,6 +10,14 @@
   "reviewer_timeout_sec": 3600,
   "log_dir": "logs",
   "variant": "",
+  "skip_review": true,
+  "godot_exe": "C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winget.Source_8wekyb3d8bbwe\\Godot_v4.7.1-stable_win64_console.exe",
+  "verification": {
+    "task_test": true,
+    "regression": true,
+    "diff_check": true,
+    "suspicious_test_change": true
+  },
   "worktrees": {
     "TASK-3D-BLD-001": "D:\\game-wt\\building",
     "TASK-3D-WRK-001": "D:\\game-wt\\worker",

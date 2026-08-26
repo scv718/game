@@ -93,7 +93,7 @@ func _ready() -> void:
 	add_to_group("building_placement")
 	add_to_group("building_placement_3d")
 	var sample: Node3D = LUMBERYARD_SCENE.instantiate()
-	_work_radius_units = sample.work_radius_px * WorldCoords3D.PX_TO_UNIT
+	_work_radius_units = sample.work_radius * WorldCoords3D.PX_TO_UNIT
 	sample.free()
 
 
