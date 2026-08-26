@@ -1461,7 +1461,7 @@
 
 ### TASK-3D-INT-001-1 Main Scene Wiring / Shared Config
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 
 - 요구사항:
 
