@@ -239,7 +239,7 @@ def _update_queue_locked(tasks, path, task_id, status, feedback=None):
 
 
 GATE_TEMP_RE = re.compile(r"^(_probe|_debug|_diag|tmp_|temp_|test_tmp)", re.IGNORECASE)
-DANGER_RE = re.compile(r"^(auto_dev/|\.git|credential|.*\.key$|\.gitattributes$)", re.IGNORECASE)
+DANGER_RE = re.compile(r"^(auto_dev/(?!INTEGRATION_NOTE|runs/)|\.git|credential|.*\.key$|\.gitattributes$)", re.IGNORECASE)
 
 
 def _run_cmd(cmd, cwd=None, timeout=900):
