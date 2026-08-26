@@ -1,0 +1,86 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: building placement 3D loads
+PASS: VillageResources autoload available to the 3D runtime
+PASS: Wall/Gate 3D remain static world colliders
+PASS: Gate3D keeps the legacy public state API surface
+PASS: Gate3D keeps the legacy public signals
+PASS: a new gate starts CLOSED like in 2D
+PASS: gate spawns with the legacy prototype max_hp (200)
+PASS: gate defaults to the horizontal N/S corridor footprint
+PASS: gate exposes an Interactable3D volume on the INTERACTABLE layer
+PASS: gate Interact uses the GateInteractable3D contract
+PASS: Wall3D exposes refresh_visual for the placement neighbor hook
+PASS: setup(dir) maps all 4 corridor directions to matching footprints
+PASS: corridor directions keep the Foundation XZ world axes (N=-Z, E=+X)
+PASS: three wall segments placed through the legacy entry point
+PASS: placed walls found at aimed cells
+PASS: adjacent pair gains an eastward link on the left wall
+PASS: adjacent pair gains a westward link on the right wall
+PASS: link extends to the gap midpoint with the full footprint width
+PASS: link is a real 3D visual (extruded height)
+PASS: unlinked directions stay bare
+PASS: an isolated segment grows no links
+PASS: collision footprint stays the legacy 16x16px despite visual links
+PASS: refresh_visual is idempotent for a lone segment
+PASS: clicked wall segment is removed
+PASS: surviving wall drops its link after the neighbor is removed
+PASS: north corridor gate placed through the legacy entry point
+PASS: gate reference captured
+PASS: freshly built gate starts CLOSED
+PASS: corridor direction resolved from world XZ (north)
+PASS: CLOSED gate has its passage collision active (shape present)
+PASS: CLOSED gate blocks a physics probe (test_move)
+PASS: CLOSED gate: nav path detours around the footprint
+PASS: placement reached the Foundation debounced nav rebake
+PASS: set_open emits exactly one gate_state_changed
+PASS: gate reports OPEN after set_open(true)
+PASS: OPEN gate removes its passage collision shape (Foundation convention)
+PASS: OPEN visual state shows the legacy translucent color
+PASS: OPEN gate lets a physics probe through
+PASS: OPEN gate: nav path crosses the footprint
+PASS: state transition reached the Foundation debounced nav rebake
+PASS: prompt reflects the current state
+PASS: Interact toggle flips OPEN back to CLOSED with one signal
+PASS: prompt refreshes after the state change
+PASS: toggle 1 emits exactly one gate_state_changed
+PASS: toggle 1 lands in the requested state
+PASS: toggle 1 keeps collision presence synced to is_open
+PASS: toggle 1 nav passage stays synced to the state
+PASS: toggle 2 emits exactly one gate_state_changed
+PASS: toggle 2 lands in the requested state
+PASS: toggle 2 keeps collision presence synced to is_open
+PASS: toggle 2 nav passage stays synced to the state
+PASS: toggle 3 emits exactly one gate_state_changed
+PASS: toggle 3 lands in the requested state
+PASS: toggle 3 keeps collision presence synced to is_open
+PASS: toggle 3 nav passage stays synced to the state
+PASS: toggle 4 emits exactly one gate_state_changed
+PASS: toggle 4 lands in the requested state
+PASS: toggle 4 keeps collision presence synced to is_open
+PASS: toggle 4 nav passage stays synced to the state
+PASS: toggle 5 emits exactly one gate_state_changed
+PASS: toggle 5 lands in the requested state
+PASS: toggle 5 keeps collision presence synced to is_open
+PASS: toggle 5 nav passage stays synced to the state
+PASS: attacking an OPEN gate is a no-op (legacy rule)
+PASS: gate re-closed before breach checks
+PASS: CLOSED again restores the passage shape
+PASS: damage reduces hp only while CLOSED
+PASS: partial damage emits no state signal
+PASS: non-positive damage is ignored (legacy guard)
+PASS: hp depletion transitions to BREACHED
+PASS: breached signal emitted exactly once
+PASS: breaching emits exactly one gate_state_changed
+PASS: BREACHED counts as open passage
+PASS: BREACHED removes the passage collision shape
+PASS: BREACHED visual state shows the legacy color
+PASS: BREACHED gate ignores close attempts (no auto-recovery)
+PASS: post-breach close attempts emit no extra signals
+PASS: BREACHED state persists across frames (no auto-recovery)
+PASS: BREACHED passage stays physically open
+PASS: BREACHED passage lets a physics probe through
+PASS: BREACHED passage stays nav-passable
+PASS: wall/gate scenes contain only 3D runtime nodes (no 2D dependency)
+TASK3DBLD0013_RESULT=PASS

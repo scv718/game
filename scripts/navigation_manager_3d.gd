@@ -18,6 +18,23 @@ class_name NavigationManager3D
 ## - region 할당 후 실제 map 반영은 다음 physics sync 때 일어나므로,
 ##   rebuild 직후 path query는 최소 1 physics frame 대기 후 수행한다.
 ## - group "navigation_3d"는 NavigationPolicy3D.request_rebuild_debounced 유입구다.
+##
+## TASK-3D-INT-002-2 성능 병목 최소 개선(측정 기록: tests/task3dint0022_test.gd
+## 헤더와 test_results/task3dint0022_perf_report.txt):
+##   - 실측 결과 이 월드(±192 unit, nav cell 0.125)의 동기 bake 1회가 약 3.9초로,
+##     Tree 고갈/regrow마다 debounced rebake가 메인 스레드를 수 초간 막아
+##     게임플레이가 명백히 불가능한 수준이었다. cell 해상도는 Foundation LOCK
+##     (표면 정렬 요건)이라 완화할 수 없으므로, 런타임 churn 경로의 raster bake만
+##     워커 스레드로 옮기는 것이 최소 개선이다.
+##   - rebuild_navigation()은 동기 계약을 그대로 유지한다(테스트/초기 bake가
+##     결정적 map 신선도를 요구). rebuild_navigation_async()는 parse를 동기으로
+##     스냅샷한 뒤 bake만 비동기로 수행하고, 완료 콜백에서 region에 할당한다.
+##   - rebuild_navigation_debounced() 유입구(트리 depletion/regrow, gate 상태,
+##     placement 등 runtime churn)는 async 경로를 사용한다. 즉 debounce 경로의
+##     nav 갱신은 eventually-consistent가 된다(지연 상한 = bake 소요 시간).
+##     동기 경로와의 순서 보호를 위해 발행 단위 generation을 부여하고, 콜백 시점에
+##     최신 발행이 아니면 폐기한다(오래된 스냅샷이 새 map을 덮어쓰지 않음).
+##   - nav_rebuild_count는 "발행된 rebake 수" 의미로 두 계약 모두 발행 시 증가한다.
 
 signal navigation_baked
 
@@ -30,6 +47,18 @@ const DEBOUNCE_INTERVAL := 0.1
 const REACHABLE_END_TOLERANCE_UNITS := 0.5
 
 var nav_rebuild_count := 0
+
+## 마지막으로 발행된 rebake 세대. 완료 순서가 뒤바킨 비동기 결과가 최신 map을
+## 덮어쓰지 않도록 하는 단조 카운터다(동기/비동기 발행 모두 증가).
+var _bake_generation := 0
+
+## 비동기 bake 진행 중 플래그. bake가 워커 스레드에서 수 초~수백 ms 걸리는 동안
+## 요청이 몰려도 대기 열이 쌓이지 않도록 동시 발행을 1건으로 제한한다
+## (TASK-3D-INT-002-2: 완료 시 region 재할당 비용이 커서 대기열 전부가
+## 프레임 히치로 연속 착지하는 것을 구조적으로 방지).
+var _async_bake_active := false
+## 진행 중인 bake가 있어 발행을 건너뛴 경우 완료 후 1회 재발행 플래그.
+var _async_bake_respin := false
 
 var _region: NavigationRegion3D = null
 var _parse_root_override: Node = null
@@ -77,6 +106,7 @@ func is_target_reachable(from: Vector3, to: Vector3) -> bool:
 
 ## 기존 world.gd.rebuild_navigation_debounced와 동일 규약.
 ## 연속 요청을 DEBOUNCE_INTERVAL 안에서 1회 rebake로 coalesce한다.
+## flush는 비동기 bake 경로를 사용한다(위 병목 개선 참고).
 func rebuild_navigation_debounced() -> void:
 	if not is_inside_tree():
 		return
@@ -92,7 +122,7 @@ func _flush_nav_rebuild() -> void:
 	if not is_inside_tree() or not _rebuild_pending:
 		return
 	_rebuild_pending = false
-	rebuild_navigation()
+	rebuild_navigation_async()
 
 
 ## 동기 parse + bake + region 할당. 성공 시 counter 증가 + navigation_baked emit.
@@ -100,6 +130,55 @@ func rebuild_navigation() -> void:
 	var root_node := _resolve_parse_root()
 	if root_node == null or not root_node.is_inside_tree():
 		return
+	var nav_mesh := _make_nav_mesh()
+	var source_geometry := NavigationMeshSourceGeometryData3D.new()
+	NavigationServer3D.parse_source_geometry_data(nav_mesh, source_geometry, root_node)
+	_bake_generation += 1
+	nav_rebuild_count += 1
+	NavigationServer3D.bake_from_source_geometry_data(nav_mesh, source_geometry)
+	_region.navigation_mesh = nav_mesh
+	navigation_baked.emit()
+
+
+## 런타임 churn용 비동기 rebuild. parse는 동기로 최신 정적 collider 스냅샷을 만들고,
+## 비용이 큰 raster bake만 워커 스레드에서 수행한다(메인 프레임 비차단).
+## counter는 발행 시 증가하고, 완료 콜백에서 region 할당 + navigation_baked emit.
+## 완료 시점에 세대가 최신이 아니면(그 사이 더 새로운 발행) 결과를 폐기한다.
+## bake 진행 중 재요청은 큐에 쌓지 않고 완료 후 최신 상태로 1회 재발행한다
+## (연속 착지 히치 방지 - eventually-consistent 유지).
+func rebuild_navigation_async() -> void:
+	if not is_inside_tree():
+		return
+	if _async_bake_active:
+		_async_bake_respin = true
+		return
+	var root_node := _resolve_parse_root()
+	if root_node == null or not root_node.is_inside_tree():
+		return
+	var nav_mesh := _make_nav_mesh()
+	var source_geometry := NavigationMeshSourceGeometryData3D.new()
+	NavigationServer3D.parse_source_geometry_data(nav_mesh, source_geometry, root_node)
+	_bake_generation += 1
+	nav_rebuild_count += 1
+	_async_bake_active = true
+	NavigationServer3D.bake_from_source_geometry_data_async(
+		nav_mesh, source_geometry, _on_async_bake_finished.bind(
+			nav_mesh, _bake_generation))
+
+
+func _on_async_bake_finished(nav_mesh: NavigationMesh, generation: int) -> void:
+	_async_bake_active = false
+	if generation == _bake_generation and is_inside_tree() \
+			and _region != null and is_instance_valid(_region):
+		_region.navigation_mesh = nav_mesh
+		navigation_baked.emit()
+	if _async_bake_respin:
+		_async_bake_respin = false
+		rebuild_navigation_async()
+
+
+## NavigationMesh 공통 설정(policy 단일 소스 소비). 동기/비동기 경로 공유.
+func _make_nav_mesh() -> NavigationMesh:
 	var nav_mesh := NavigationMesh.new()
 	nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	nav_mesh.geometry_collision_mask = NavigationPolicy3D.BAKE_MASK
@@ -107,12 +186,7 @@ func rebuild_navigation() -> void:
 	nav_mesh.agent_height = NavigationPolicy3D.ACTOR_HEIGHT_UNITS
 	nav_mesh.cell_size = NavigationPolicy3D.NAV_CELL_SIZE_UNITS
 	nav_mesh.cell_height = NavigationPolicy3D.NAV_CELL_HEIGHT_UNITS
-	var source_geometry := NavigationMeshSourceGeometryData3D.new()
-	NavigationServer3D.parse_source_geometry_data(nav_mesh, source_geometry, root_node)
-	NavigationServer3D.bake_from_source_geometry_data(nav_mesh, source_geometry)
-	_region.navigation_mesh = nav_mesh
-	nav_rebuild_count += 1
-	navigation_baked.emit()
+	return nav_mesh
 
 
 ## bake 대상 subtree. 명시 지정 > parent(World Root에 붙였을 때 기본) > self.

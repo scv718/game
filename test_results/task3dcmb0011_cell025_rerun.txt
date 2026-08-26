@@ -1,0 +1,76 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world loads
+PASS: GameTime/DeathLedger autoloads available to the 3D combat runtime
+PASS: Mercenary3D root is a CharacterBody3D (no 2D actor)
+PASS: Mercenary3D keeps its scene name
+PASS: Mercenary3D sits on its own actor layer (64)
+PASS: Mercenary3D mask = MASK_ACTOR_SOLID (actors never collide with actors)
+PASS: Mercenary3D uses floating motion (ground XZ, no gravity)
+PASS: Mercenary3D scene contains only 3D runtime nodes
+PASS: Mercenary3D owns a NavigationAgent3D child
+PASS: Mercenary3D separates the visual into a Visual child
+PASS: Enemy3D root is a CharacterBody3D (no 2D actor)
+PASS: Enemy3D keeps its scene name
+PASS: Enemy3D sits on its own actor layer (128)
+PASS: Enemy3D mask = MASK_ACTOR_SOLID (actors never collide with actors)
+PASS: Enemy3D uses floating motion (ground XZ, no gravity)
+PASS: Enemy3D scene contains only 3D runtime nodes
+PASS: Enemy3D owns a NavigationAgent3D child
+PASS: Enemy3D separates the visual into a Visual child
+PASS: mercenary attack range preserves legacy 26px scaled by PX_TO_UNIT
+PASS: chase return limit preserves legacy 180px ratio
+PASS: reach distance preserves legacy 12px ratio
+PASS: gate attack trigger preserves legacy 40px ratio
+PASS: enemy prototype move speed stays in world units (90px scaled)
+PASS: mercenary joins mercenaries_3d group
+PASS: enemy joins enemies_3d group
+PASS: mercenary initializes hp from merc_data
+PASS: enemy initializes hp from prototype stats
+PASS: actor nav agent is tuned by the shared NavigationPolicy3D convention
+PASS: mercenaries and enemies exchange damage through auto combat
+PASS: attack visual hooks fire on both sides
+PASS: hit hooks fire on both sides
+PASS: both fighters stay alive mid-engagement
+PASS: fighters close to legacy attack range before swinging (3.12 unit)
+PASS: combat movement stays height-locked on the ground plane
+PASS: combat positions stay finite
+PASS: mercenary visual faces the fight (facing yaw applied)
+PASS: groupless player mock never takes damage (no player attack path)
+PASS: enemy lethal death emits died exactly once
+PASS: dead enemy is freed from the world
+PASS: dead enemy leaves the enemies_3d group (stale target source removed)
+PASS: surviving mercenary keeps fighting state
+PASS: lethal enemy death is recorded in the Death Ledger
+PASS: same real death produces exactly one ledger record (no duplicates)
+PASS: ledger record kind is ENEMY
+PASS: 3D death position is stored in the Vector2 logical schema
+PASS: death position carries the logical map coordinate of the fall
+PASS: lethal damage kills the mercenary through take_damage
+PASS: mercenary lethal death emits died exactly once
+PASS: dead mercenary leaves the mercenaries_3d group
+PASS: roster data reflects the death (alive=false, no respawn)
+PASS: dead mercenary is freed from the world
+PASS: lethal mercenary death is recorded in the Death Ledger
+PASS: mercenary death produces exactly one ledger record
+PASS: ledger record kind is MERCENARY
+PASS: ledger snapshot keeps the fallen identity
+PASS: despawn-only cleanup created no death records
+PASS: only the real lethal mercenary death grew the ledger
+PASS: sealed-pen chase ends without penetrating the pen
+PASS: unreachable target releases the chase into IDLE (bounded, no permanent lock)
+PASS: penned enemy stays untouched behind the wall
+PASS: blocked chase stops near the press point instead of drifting (11.25 unit)
+PASS: focus-free chase leaves focus cleared
+PASS: blocked chase leaves no NaN/drift
+PASS: raider targets the nearest closed gate through the gates_3d contract
+PASS: raider chips the closed gate on its attack interval (8 damage)
+PASS: opened gate lets the raider resume its route (no re-assault)
+PASS: OPEN gate is never a valid assault target
+PASS: gate target clears when passage opens
+PASS: no further gate damage lands after opening
+PASS: no orphan mercenaries remain after cleanup
+PASS: no orphan enemies remain after cleanup
+PASS: mock gate leaves no residue in gates_3d
+PASS: ledger holds no duplicate source_uid across the battle
+TASK3DCMB0011_RESULT=PASS

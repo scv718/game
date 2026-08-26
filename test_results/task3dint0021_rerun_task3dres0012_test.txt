@@ -1,0 +1,18 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: all tree meshes live under the dedicated Visual child (logic-free)
+PASS: stone deposit keeps its rock mesh inside a Visual child too
+PASS: trunk collision uses a simple cylinder, not a mesh polygon
+PASS: stone block collision uses a simple sphere, not a mesh polygon
+PASS: no resource collision is a baked trimesh (gameplay-first shapes)
+PASS: tree canopy reads green from the top-down camera
+PASS: stone deposit reads neutral gray (distinct resource silhouette)
+PASS: canopy and rock stay distinguishable at zoom-out brightness levels
+PASS: identical placement produces identical variation (deterministic seed)
+PASS: different placements produce different variation (anti copy-paste forest)
+PASS: variation stays inside the exported limited range
+PASS: trunk footprint keeps its gameplay size under any visual variation
+PASS: interaction volume footprint is likewise variation-independent
+PASS: depletion swaps the Visual child to its stump representation
+PASS: regrowth restores the mature representation in the same Visual slot
+TASK3DRES0012_RESULT=PASS

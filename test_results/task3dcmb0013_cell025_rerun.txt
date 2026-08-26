@@ -1,0 +1,88 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world loads
+PASS: GameTime/DeathLedger autoloads available to the regression run
+PASS: Foundation CameraController3D is part of the runtime
+PASS: tactical UI stays in the Control layer
+PASS: 3D roster joins mercenary_roster_3d group
+PASS: UI command_issued is wired to the 3D roster
+PASS: tactical UI stays hidden during DAY
+PASS: north zone mercenary hired
+PASS: west zone mercenary hired
+PASS: south zone mercenary hired
+PASS: roster holds all living hires before deployment
+PASS: phase advanced to NIGHT
+PASS: first night keeps day number 1
+PASS: NIGHT start spawns all assigned mercenaries and the encounter
+PASS: north mercenary spawns at the defense zone rally in world XZ
+PASS: west mercenary spawns at the defense zone rally in world XZ
+PASS: south mercenary spawns at the defense zone rally in world XZ
+PASS: defense zone auto-combat engages the nearest zone enemy without commands
+PASS: auto-combat picks exactly one target while unfocused
+PASS: player mock never joins a combat group
+PASS: FOCUS_TARGET command toggles focus mode on
+PASS: the farther enemy becomes the roster focus target on demand
+PASS: both mercenaries switch to the focused enemy over zone combat
+PASS: closer zone enemy stays ignored while the focus target lives
+PASS: REGROUP command drives both actors into the REGROUP state
+PASS: regrouped mercenaries resume defense AI and kill the focus target
+PASS: lethal focus kill produces exactly one ENEMY ledger record (no duplicates)
+PASS: bait record kind is ENEMY
+PASS: bait death phase is NIGHT
+PASS: bait record stores a nonzero logical death position
+PASS: roster auto-releases the focus transient state when the target dies
+PASS: actors drop the cleared focus reference (no stale focus)
+PASS: RETREAT command drives both actors into the RETREAT state
+PASS: RETREAT aims at the settlement safe rally in world XZ
+PASS: retreated mercenaries hold at the safe rally instead of resuming the hunt
+PASS: zone re-defense command pulls the retreated mercenary back to his post
+PASS: closed gate inside detection range draws GATE_ATTACK from the route runner
+PASS: gate attack state references the live gate (no stale gate target)
+PASS: GATE_OPEN command opens the world gate through the 3D contract
+PASS: opening the gate releases the enemy from GATE_ATTACK and resumes its nav route
+PASS: manual probe cleanup leaves no enemy residue
+PASS: manual queue_free cleanup created no death records
+PASS: GATE_CLOSE command closes the world gate again after recovery
+PASS: TIME_PAUSE command sets the tactical pause scale
+PASS: tactical commands still respond while paused (no command deadlock)
+PASS: paused clock freezes the night phase
+PASS: TIME_2X command doubles the tactical time scale
+PASS: 2x scale advances night elapsed time at double rate
+PASS: TIME_1X command restores the tactical time scale
+PASS: lethal enemy damage kills the mortal mercenary
+PASS: fallen mercenary data flips alive off
+PASS: fallen mercenary actor reference is erased from the roster immediately
+PASS: surviving killer keeps a valid reference (no freed residue)
+PASS: ledger growth equals observed lethal deaths exactly (2)
+PASS: mercenary lethal death is recorded exactly once
+PASS: fallen mercenary record kind is MERCENARY
+PASS: ledger snapshot keeps the fallen identity
+PASS: mercenary death phase is NIGHT
+PASS: mercenary record stores a nonzero logical death position
+PASS: ledger holds no duplicate source_uid across the battle
+PASS: has_record_for_source finds the recorded kill
+PASS: phase returned to DAY
+PASS: DAY return despawns every spawned mercenary actor
+PASS: DAY return despawns the whole encounter
+PASS: despawned references are freed (no stale runtime references)
+PASS: DAY return clears the focus mode/target transient state
+PASS: tactical UI hides again on DAY return
+PASS: DAY return restores the 1x time scale
+PASS: camera policy returns to the DAY zoom target
+PASS: full cycle applied no camera rotation
+PASS: cleanup/despawn around DAY return creates no death records
+PASS: fixture cleanup leaves no residue in enemies_3d
+PASS: manual fixture cleanup creates no death records either
+PASS: next NIGHT begins on repeat cycle
+PASS: repeat night advances the day number
+PASS: repeated NIGHT spawns fresh actors (no duplicate id reuse)
+PASS: repeated NIGHT spawns exactly the living roster
+PASS: fallen mercenary is not respawned on the next night
+PASS: repeated NIGHT spawns a fresh encounter after DAY despawn
+PASS: tactical UI reappears on the repeat night
+PASS: commands still drive fresh actors after the full cycle (no deadlock)
+PASS: no orphan mercenaries remain
+PASS: no orphan enemies remain
+PASS: mock gate leaves no residue
+PASS: final cleanup still adds no death records
+TASK3DCMB0013_RESULT=PASS

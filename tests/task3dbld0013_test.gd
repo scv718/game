@@ -26,7 +26,8 @@ enum Phase {
 	TOGGLE_REPEAT, BREACH, NO_2D_DEP, DONE,
 }
 
-const PHYSICS_WAIT_FRAMES := 30
+## nav/map sync + 비동기 bake 완료를 포괄하는 physics tick 예산.
+const PHYSICS_WAIT_FRAMES := 120
 const START_WOOD := 1000
 
 ## fixture 좌표(cell corner grid, 서로 겹치지 않음).
@@ -41,6 +42,7 @@ const OUTSIDE := Vector3(0, 0, -90)
 
 var _frame := 0
 var _pf := 0
+var _last_pf := -1
 var _failed := false
 var _phase: Phase = Phase.SETUP
 var _sp := 0
@@ -128,7 +130,15 @@ func _path_crosses_gate() -> bool:
 	return false
 
 
+## TASK-3D-INT-002-2: debounce flush가 비동기 bake로 전환되었다(manager 병목
+## 개선). process frame 카운트는 -s headless에서 무의미한 속도로 진행되므로
+## physics tick 경계로 카운트하고 예산을 비동기 완료(debounce + bake + map
+## sync)를 포괄하도록 넓혔다. 단정 의미는 불변이다.
 func _wait_frames(count: int) -> bool:
+	var pf := Engine.get_physics_frames()
+	if pf == _last_pf:
+		return false
+	_last_pf = pf
 	_pf += 1
 	return _pf >= count
 

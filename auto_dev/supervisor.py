@@ -20,6 +20,7 @@ PROMPT_DIR = os.path.join(BASE_DIR, "prompts")
 GROUP_ID = None  # --group 지정 시 해당 그룹 서브트리만 처리 (병렬 레인)
 WORKTREE_DIR = None  # --group 에 매핑된 git worktree (에이전트 작업 디렉터리)
 FALLBACK_STATE_PATH = os.path.join(BASE_DIR, "fallback_state.json")
+IMPL_FALLBACK_STATE_PATH = os.path.join(BASE_DIR, "impl_fallback_state.json")
 QUOTA_RE = re.compile(r"insufficient|quota|balance|credit|usage limit|limit reached|exhausted|402|429",
                       re.IGNORECASE)
 
@@ -369,6 +370,25 @@ def mark_reviewer_fallback(reason):
         json.dump({"fallback": True, "reason": reason[:200],
                    "when": datetime.datetime.now().isoformat()}, f, ensure_ascii=False, indent=2)
     log(f"리뷰어 유료 할당량 소진 감지 - 폴백 모델로 전환: {reason[:100]}")
+
+
+def implementer_model():
+    """구현자 모델. 'Model not found'(무료 모델 종료 등) 시 유료 폴백으로 전환."""
+    if os.path.exists(IMPL_FALLBACK_STATE_PATH):
+        try:
+            with open(IMPL_FALLBACK_STATE_PATH, encoding="utf-8") as f:
+                if json.load(f).get("fallback"):
+                    return cfg("implementer_fallback_model")
+        except (OSError, json.JSONDecodeError):
+            pass
+    return cfg("implementer_model")
+
+
+def mark_implementer_fallback(reason):
+    with open(IMPL_FALLBACK_STATE_PATH, "w", encoding="utf-8") as f:
+        json.dump({"fallback": True, "reason": reason[:200],
+                   "when": datetime.datetime.now().isoformat()}, f, ensure_ascii=False, indent=2)
+    log(f"구현자 모델 문제 감지 - 유료 폴백 전환: {reason[:100]}")
 
 
 def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):

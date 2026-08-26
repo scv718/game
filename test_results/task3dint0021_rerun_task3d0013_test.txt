@@ -1,0 +1,45 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: camera controller 3D loads
+PASS: controller joins dedicated camera_controller_3d group
+PASS: controller owns a Camera3D child
+PASS: projection is orthographic (Top-down Direction LOCK 4)
+PASS: Camera3D is current in this viewport
+PASS: initial zoom target follows DAY policy
+PASS: fixed oblique pitch/yaw applied exactly (-55/0 deg)
+PASS: camera looks down from above the ground plane
+PASS: oblique view keeps north(-Z) toward screen top (direction semantics)
+PASS: no input path mutates camera rotation (rotation lock)
+PASS: bounds accessor uses WorldCoords3D single source
+PASS: pan_camera clamps pivot to max world corner (+192, +192)
+PASS: pan_camera clamps pivot to min world corner (-192, -192) and pins Y to ground
+PASS: in-bounds offset moves pivot freely without extra drift
+PASS: WASD move_right pans east (+X), moved 42.00 unit / 30 ticks
+PASS: east pan does not drift on Z axis
+PASS: WASD move_up pans north (-Z, direction semantics preserved), -42.00 unit
+PASS: single wheel up raises zoom target by wheel step
+PASS: repeated zoom-in clamps at max_zoom (2.0)
+PASS: repeated zoom-out clamps at min_zoom (0.4)
+PASS: zoom 1.0 maps to viewport height in world units (2D zoom parity formula)
+PASS: NIGHT zoom 0.5 doubles visible height (overview command view)
+PASS: higher zoom always means smaller orthographic size
+PASS: orthographic size converges to derived target (rel err 0.000001)
+PASS: screen -> ground plane round trip restores world point (10.0, 0.0, -20.0)
+PASS: ground hit lies on Y = GROUND_Y plane
+PASS: screen_to_world_ray provides origin/direction for selection consumers
+PASS: ray direction is normalized
+PASS: screen ray points downward into the ground
+PASS: corner screen point resolves to a finite ground coordinate (safe empty-ground click)
+PASS: raycast_from_screen hits probe body through screen point
+PASS: empty area raycast returns no collider (safe miss)
+PASS: ground layer raycast reaches world ground (mouse -> world path usable)
+PASS: wheel over full-screen STOP control does not leak into zoom (UI click-through blocked)
+PASS: same wheel input without UI still adjusts zoom (control group)
+PASS: open modal overlay gates WASD pan
+PASS: open modal overlay gates wheel zoom
+PASS: controller subscribes GameTime.phase_changed (policy reuse contract)
+PASS: NIGHT phase switches tactical overview zoom (night_zoom)
+PASS: DAY phase restores day_zoom
+PASS: camera rotation unchanged across entire run (no rotation input exists)
+TASK3D0013_RESULT=PASS

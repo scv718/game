@@ -1,0 +1,48 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: camera controller 3D loads
+PASS: world selection 3D loads
+PASS: selection joins dedicated world_selection_3d group
+PASS: exposes selection_changed signal for parallel domain tasks
+PASS: initial selection is empty
+PASS: Interactable3D contract extends Area3D
+PASS: base exposes default interaction prompt export
+PASS: base can_interact defaults to true
+PASS: base is_selectable defaults to true
+PASS: base interact returns null by default
+PASS: selection probes the dedicated INTERACTABLE layer only
+PASS: selection ray length constant is positive
+PASS: left click selects exactly the ray-hit interactable (physics registered)
+PASS: selection runs the existing interact() API once
+PASS: interact receives the selection node as interactor
+PASS: selection_changed emitted once with the selected target
+PASS: other interactables are untouched (single-target pick)
+PASS: right click clears the selection
+PASS: clearing emits selection_changed with null
+PASS: deselect does not call interact again
+PASS: select_at_screen_position API returns the picked target
+PASS: ESC clears the selection without consuming the modal close path
+PASS: select/deselect signal pairs stay balanced across input paths
+PASS: empty ground/sky corner click selects nothing
+PASS: probe re-selected after empty clicks
+PASS: screen center resolves to empty world ground (safe miss surface)
+PASS: missed click keeps the current selection unchanged (2D parity rule)
+PASS: clicking decoration visual never steals or clears selection
+PASS: RESOURCE layer body is structurally excluded from the selection probe
+PASS: is_selectable()==false target is skipped by the selection contract
+PASS: skipped target never receives interact()
+PASS: left click over full-screen STOP control never reaches world selection (no leak)
+PASS: same click without UI still selects (control group)
+PASS: open modal UI groups block world clicks entirely (UI leak-free contract)
+PASS: gated clicks left no selection behind
+PASS: active build mode blocks world selection (placement ghost priority preserved)
+PASS: gated select call is a safe no-op
+PASS: world selection resumes when build mode deactivates
+PASS: test setup reached NIGHT phase
+PASS: NIGHT phase blocks managed world selection (tactical UI owns night input)
+PASS: NIGHT click is a safe no-op even over a valid target
+PASS: test setup returned to DAY phase
+PASS: DAY phase restores world selection
+PASS: missing camera controller makes selection a safe no-op (no crash)
+TASK3D0014_RESULT=PASS

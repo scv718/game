@@ -1,0 +1,83 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: shared GameTime/DeathLedger autoloads are available to the 3D main runtime
+PASS: project main scene points to the 3D path (res://scenes/main_3d.tscn)
+PASS: wired resource exists: res://scenes/main_3d.tscn
+PASS: wired resource exists: res://scenes/world3d.tscn
+PASS: wired resource exists: res://scenes/environment_3d.tscn
+PASS: wired resource exists: res://scenes/camera_controller_3d.tscn
+PASS: wired resource exists: res://scripts/world_selection_3d.gd
+PASS: wired resource exists: res://scripts/building_placement_3d.gd
+PASS: wired resource exists: res://scripts/mercenary_roster_3d.gd
+PASS: wired resource exists: res://scripts/first_encounter_spawner_3d.gd
+PASS: wired resource exists: res://scripts/navigation_manager_3d.gd
+PASS: wired resource exists: res://ui/hud_3d.tscn
+PASS: wired resource exists: res://ui/world_map_overlay.tscn
+PASS: main 3D scene loads without parser/import errors
+PASS: InputMap keeps required action 'move_up'
+PASS: InputMap keeps required action 'move_down'
+PASS: InputMap keeps required action 'move_left'
+PASS: InputMap keeps required action 'move_right'
+PASS: InputMap keeps required action 'interact'
+PASS: InputMap keeps required action 'build'
+PASS: InputMap keeps required action 'death_ledger'
+PASS: InputMap keeps required action 'world_map'
+PASS: autoload 'VillageResources' stays registered
+PASS: autoload 'GameTime' stays registered
+PASS: autoload 'WorkerRoster' stays registered
+PASS: autoload 'MercenaryRoster' stays registered
+PASS: autoload 'FirstEncounterSpawner' stays registered
+PASS: autoload 'DeathLedger' stays registered
+PASS: autoload 'ExplorationManager' stays registered
+PASS: main 3D scene instantiates with its World3D root
+PASS: MercenaryRoster3D is wired into the main scene
+PASS: FirstEncounterSpawner3D is wired into the main scene
+PASS: TacticalCommandUI3D stays in the Control layer inside the HUD
+PASS: NavigationManager3D is wired under the World3D root
+PASS: Foundation CameraController3D is wired
+PASS: tactical UI command path is connected to the 3D roster exactly once
+PASS: HUD prompt hook target (legacy world_selection group) resolves to WorldSelection3D
+PASS: BuildingPlacement3D serves both legacy and 3D lookup groups
+PASS: exactly the manager-owned NavigationRegion3D is inside the tree
+PASS: navigation baked at least once on startup
+PASS: nav map cell resolution matches the NavigationPolicy3D single source
+PASS: Environment3D layer is added on top of the 3D main world
+PASS: exactly one Camera3D exists in the 3D runtime
+PASS: no 2D camera/Node2D runtime nodes leak into the 3D main path
+PASS: exactly one NavigationRegion3D exists
+PASS: exactly one WorldEnvironment exists
+PASS: exactly one DirectionalLight3D exists
+PASS: the viewport current camera is the single CameraController3D camera
+PASS: no legacy 2D world group owner is active
+PASS: no legacy 2D camera controller group owner is active
+PASS: no legacy 2D tactical command UI (duplicate input owner) is active
+PASS: group 'world3d' has exactly one owner
+PASS: group 'camera_controller_3d' has exactly one owner
+PASS: group 'world_selection' has exactly one owner
+PASS: group 'world_selection_3d' has exactly one owner
+PASS: group 'building_placement' has exactly one owner
+PASS: group 'building_placement_3d' has exactly one owner
+PASS: group 'mercenary_roster_3d' has exactly one owner
+PASS: group 'recruitment_ui' has exactly one owner
+PASS: group 'inn_roster_ui' has exactly one owner
+PASS: group 'death_ledger_view' has exactly one owner
+PASS: group 'world_map_overlay' has exactly one owner
+PASS: phase advanced to NIGHT
+PASS: tactical command UI is visible at NIGHT
+PASS: NIGHT encounter spawns 3 EnemyActor3D
+PASS: spawned enemies live under the World3D root
+PASS: no mercenaries are spawned without hires
+PASS: legacy 2D combat autoloads stay inert (no 2D actors)
+PASS: 2D MercenaryRoster autoload spawned nothing in the 3D main runtime
+PASS: 2D FirstEncounterSpawner autoload spawned nothing in the 3D main runtime
+PASS: encounter spawn creates no death records
+PASS: idle advance keeps the NIGHT phase without re-entry
+PASS: idle NIGHT does not duplicate encounter spawning
+PASS: phase returned to DAY
+PASS: day number advanced exactly once
+PASS: tactical command UI hides at DAY
+PASS: DAY cleanup despawns every encounter enemy
+PASS: despawned enemy nodes leave no orphan under the world root
+PASS: DAY cleanup creates no death records (cleanup/despawn 무기록)
+PASS: tactical time scale is restored to 1x at DAY
+TASK3DINT0011_RESULT=PASS

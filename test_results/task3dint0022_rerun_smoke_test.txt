@@ -1,0 +1,18 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: main.tscn loads
+PASS: no runtime player Actor
+PASS: lumberjack present
+PASS: lumberjack has gather anim
+PASS: gather has 6 frames
+PASS: lumberjack script has is_gathering
+PASS: gather frame region ~95px wide ([P: (56.0, 60.0), S: (95.0, 76.0)])
+PASS: trees present (60)
+PASS: tree canopy texture big ((res://scenes/tree.tscn::AtlasTexture_tree):<AtlasTexture#-9223372001706506748>)
+PASS: stump texture present
+PASS: floor has grass tiles (16384)
+PASS: floor uses 16x16 grass tile texture
+PASS: floor tile renders tile data
+PASS: lumberyard scene loads
+PASS: lumberyard house texture big ((res://scenes/lumberyard.tscn::AtlasTexture_house):<AtlasTexture#-9223371991455627710>)
+SMOKE_RESULT=PASS

@@ -1,0 +1,84 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: stone deposit anchor accepts the quarry occupancy
+PASS: worker actors resolve the 3D FSM scripts
+PASS: stress gate starts OPEN (no passage shape)
+PASS: pen resource starts mature and unclaimed
+PASS: GameTime starts at day 1 for deterministic cycling
+PASS: 2 lumberjacks + 2 miners all assigned to start the stress run
+PASS: open-gate production run completed (900 ticks)
+PASS: lumberjacks extract wood through the gate corridor (10 consumed)
+PASS: miners produced stone
+PASS: RUN_OPEN: wood identity holds deposited(0)+carried(10)==consumed(10)
+PASS: CLOSED recreates the passage shape (nav obstacle)
+PASS: gate close triggered a debounced nav rebake
+PASS: GATE_CLOSE: wood identity holds deposited(10)+carried(0)==consumed(10)
+PASS: no worker crossed the closed gate or walls while sealed
+PASS: OPEN removes the passage shape again (repeat toggle safe)
+PASS: GATE_REOPEN: wood identity holds deposited(10)+carried(0)==consumed(10)
+PASS: DAY/NIGHT kept cycling during obstacle stress (71 transitions)
+PASS: freed in-flight target tree while claimed (consumed 0)
+PASS: no worker kept a freed reference after in-flight target free
+PASS: LJ1 target reference is null or live (never stale)
+PASS: LJ1 stayed in a valid FSM state after target loss (GATHER)
+PASS: LJ2 target reference is null or live (never stale)
+PASS: LJ2 stayed in a valid FSM state after target loss (RETURN)
+PASS: POST_FREE: wood identity holds deposited(10)+carried(9)==consumed(19)
+PASS: round 1 settle: all workers reach unassigned idle within limit
+PASS: round 1 settle: LJ1 stops cleanly with zero velocity
+PASS: round 1 settle: LJ1 holds no tree target after release
+PASS: round 1 settle: LJ2 stops cleanly with zero velocity
+PASS: round 1 settle: LJ2 holds no tree target after release
+PASS: round 1 settle: MN1 stops cleanly with zero velocity
+PASS: round 1 settle: MN2 stops cleanly with zero velocity
+PASS: round 1 settle: no claim leak after full release (0 leaked)
+PASS: round 1 settle: wood identity holds deposited(19)+carried(0)==consumed(19)
+PASS: round 1: re-assigned all workers
+PASS: round 2 settle: all workers reach unassigned idle within limit
+PASS: round 2 settle: LJ1 stops cleanly with zero velocity
+PASS: round 2 settle: LJ1 holds no tree target after release
+PASS: round 2 settle: LJ2 stops cleanly with zero velocity
+PASS: round 2 settle: LJ2 holds no tree target after release
+PASS: round 2 settle: MN1 stops cleanly with zero velocity
+PASS: round 2 settle: MN2 stops cleanly with zero velocity
+PASS: round 2 settle: no claim leak after full release (0 leaked)
+PASS: round 2 settle: wood identity holds deposited(19)+carried(0)==consumed(19)
+PASS: round 2: re-assigned all workers
+PASS: round 3 settle: all workers reach unassigned idle within limit
+PASS: round 3 settle: LJ1 stops cleanly with zero velocity
+PASS: round 3 settle: LJ1 holds no tree target after release
+PASS: round 3 settle: LJ2 stops cleanly with zero velocity
+PASS: round 3 settle: LJ2 holds no tree target after release
+PASS: round 3 settle: MN1 stops cleanly with zero velocity
+PASS: round 3 settle: MN2 stops cleanly with zero velocity
+PASS: round 3 settle: no claim leak after full release (0 leaked)
+PASS: round 3 settle: wood identity holds deposited(26)+carried(0)==consumed(26)
+PASS: round 3: re-assigned all workers
+PASS: final release settles every worker within limit
+PASS: final group census holds 4 workers / 2 lumberjacks / 2 miners (no duplicates)
+PASS: world subtree holds exactly 4 uniquely named worker actors
+PASS: LJ1 tracked_target fully cleared
+PASS: LJ1 workplace reference cleared
+PASS: LJ1 carry emptied by final-deposit rule
+PASS: LJ2 tracked_target fully cleared
+PASS: LJ2 workplace reference cleared
+PASS: LJ2 carry emptied by final-deposit rule
+PASS: MN1 tracked_target fully cleared
+PASS: MN1 workplace reference cleared
+PASS: MN2 tracked_target fully cleared
+PASS: MN2 workplace reference cleared
+PASS: no freed reference violations across the whole run (0)
+PASS: workplaces survive the whole stress run
+PASS: no claim leak on any surviving tree (0)
+PASS: no mid-run claim-consistency violations (0)
+PASS: stress run produced wood overall (26)
+PASS: stress run produced stone overall (87)
+PASS: AUDIT: wood identity holds deposited(26)+carried(0)==consumed(26)
+PASS: stone gain 87 stays within mining-time bound 97 (no duplication)
+PASS: consumed wood never exceeds total tree capacity (no double-gather)
+PASS: DAY/NIGHT cycled repeatedly during stress (179 transitions)
+PASS: day number advanced across night cycles (day 90)
+PASS: no permanent MOVE stall detected (0 violations)
+PASS: no obstacle penetration detected (0 violations)
+PASS: dynamic obstacles triggered repeated nav rebuilds (5 >= 2+3)
+TASK3DWRK0013_RESULT=PASS

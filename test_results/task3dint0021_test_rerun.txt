@@ -1,0 +1,125 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: shared autoloads are available to the final regression runtime
+PASS: GameTime Phase enum resolves through runtime load
+PASS: project main scene boots into the live 3D Main World
+PASS: project entry stays on the 3D main scene path (main scene smoke)
+PASS: exactly one Camera3D drives the runtime view
+PASS: live runtime holds no 2D Actor/Camera/Collision/Nav nodes (0)
+PASS: WorldContent3D composes the gameplay content deterministically
+PASS: composed world holds exactly 60 registered tree resource nodes
+PASS: StoneDeposit sits at the shared stone zone position
+PASS: all five core buildings exist exactly once
+PASS: Keep stays a direct world-root child for spawner/rally resolution
+PASS: camera/selection/placement/UI/navigation services are all wired
+PASS: initial navigation bake covers the composed world
+PASS: WASD-equivalent pan moves the pivot on the ground plane only
+PASS: pan clamps against the shared world bounds
+PASS: camera pivots back to the village center
+PASS: mouse wheel zooms in
+PASS: zoom clamps at the configured maximum
+PASS: zoom clamps at the configured minimum
+PASS: camera keeps a fixed oblique basis while panning (no rotation path)
+PASS: mouse ray selects the Tavern interactable through the live camera
+PASS: selection state tracks the pick
+PASS: right click clears the selection (contextual cancel)
+PASS: empty ground/decoration clicks stay a safe no-op
+PASS: Tavern interaction opens the existing recruitment UI
+PASS: Inn interaction opens the existing InnRosterUI
+PASS: open modal UI blocks world clicks (no UI click-through)
+PASS: closing the modal restores world click handling
+PASS: B enters build mode with KEY_1 selected type
+PASS: single-unit buildings exit build mode after placement
+PASS: one Lumberyard placed via the input path
+PASS: placement snaps the building to the logical grid cell center
+PASS: lumberyard cost deducts Wood exactly once (60 -> 50)
+PASS: KEY_2 + B re-enters build mode for the quarry
+PASS: Quarry placed onto the Stone Deposit snap
+PASS: quarry binds the deposit anchor on placement
+PASS: quarry placement exits build mode
+PASS: build mode re-enters for walls
+PASS: two wall segments place in continuous build mode
+PASS: each wall segment deducts its Wood cost once
+PASS: gate placed inside the north gate corridor
+PASS: gate direction resolves from the corridor centerline snap
+PASS: newly placed gate starts CLOSED
+PASS: gate placement deducts its Wood cost once
+PASS: ESC exits the continuous build mode
+PASS: a deterministic far forest tree is picked for the claim check
+PASS: first claimant acquires an unclaimed tree
+PASS: a second worker sees the tree as claimed by someone else
+PASS: duplicate claim on a claimed tree is rejected
+PASS: release clears the claim without leaving stale ownership
+PASS: gathering drains the tree's full yield
+PASS: depleted tree switches to the stump state
+PASS: stump state swaps canopy/trunk visuals for the stump visual
+PASS: stump regrows into a mature tree after regrow_time
+PASS: depletion/regrowth keep navigation rebaked (no stale obstacle state)
+PASS: Tavern UI hires two lumberjacks and two miners into the shared roster
+PASS: hired workers stay roster data only before assignment
+PASS: unassigned residents never become world actors (design rule)
+PASS: Inn UI assigns both workers of each job to its matching facility
+PASS: assignment spawns exactly one Worker Actor per assigned resident
+PASS: two 3D lumberjacks and two 3D miners are live (Worker/Miner 2+)
+PASS: no legacy 2D worker actors leak into the 3D runtime
+PASS: both lumberjacks deposit gathered Wood into the stockpile (+10)
+PASS: both miners produce Stone at the bound deposit
+PASS: each workplace fills both of its slots (capacity 2)
+PASS: Miner3D reached the steady MINE state
+PASS: @CharacterBody3D@309 reached the steady MINE state
+PASS: Lumberjack3D works at the lumberyard workplace
+PASS: @CharacterBody3D@224 works at the lumberyard workplace
+PASS: probe crosses the village behind the static Keep building (ARRIVED)
+PASS: detour route reaches the target behind the obstacle
+PASS: route keeps clearance around the building footprint (min 3.00)
+PASS: sealed-pen target stops via BLOCKED/STALLED bounded judgment (status 1)
+PASS: stopped probe holds idle state with zero velocity
+PASS: probe never entered the sealed pen interior (min 10.63)
+PASS: unreachable attempt leaves no NaN/drift in position
+PASS: navigation manager survived the probe bakes and restored open nav
+PASS: Tavern UI hires the mercenary into the shared roster
+PASS: hire sync bridges the recruit into MercenaryRoster3D
+PASS: Inn UI assigns the mercenary to the west defense zone
+PASS: phase advances DAY -> NIGHT
+PASS: tactical command UI shows at NIGHT
+PASS: NIGHT encounter spawns raiders from the west
+PASS: zone-assigned mercenary deploys as a single 3D actor
+PASS: deployment itself records nothing in the Death Ledger
+PASS: Pause command freezes tactical time scale
+PASS: 2x command doubles tactical time scale
+PASS: 1x command restores tactical time scale
+PASS: gate starts the night CLOSED
+PASS: GATE_OPEN command opens the passage
+PASS: GATE_CLOSE command closes the passage again
+PASS: enemies hold before engagement
+PASS: focus target command designates the priority enemy
+PASS: mercenary actor is live when engagement starts
+PASS: auto combat produces at least one lethal death
+PASS: Death Ledger holds no duplicate records
+PASS: phase returns to DAY
+PASS: tactical UI hides at DAY
+PASS: DAY cleanup despawns every combat actor
+PASS: despawned combat actors leave no orphan under the world
+PASS: DAY despawn writes no extra death records
+PASS: time scale restored to 1x at DAY
+PASS: focus transient state clears at DAY
+PASS: second cycle reaches NIGHT (repeated cycle)
+PASS: second encounter spawns exactly 3 fresh raiders (no duplicates)
+PASS: only living mercenaries redeploy (dead hires stay dead)
+PASS: killed mercenary leaves no actor and no freed reference behind
+PASS: idle re-entry does not duplicate the encounter
+PASS: repeated cycle returns to DAY on day 3
+PASS: second cleanup leaves no enemies behind
+PASS: group 'workers_3d' holds 4 unique actors (no duplicates)
+PASS: group 'lumberjacks_3d' holds 2 unique actors (no duplicates)
+PASS: group 'miners_3d' holds 2 unique actors (no duplicates)
+PASS: group 'resource_nodes_3d' holds 60 unique actors (no duplicates)
+PASS: group 'walls_3d' holds 2 unique actors (no duplicates)
+PASS: group 'gates_3d' holds 1 unique actors (no duplicates)
+PASS: group 'core_buildings_3d' holds 5 unique actors (no duplicates)
+PASS: every rostered worker keeps a live actor and workplace reference
+PASS: workplace slot references stay valid after repeated cycles
+PASS: despawns leave no stale combat actor reference in the night roster
+PASS: navigation manager stays live with a growing rebuild ledger (no stale navigation)
+PASS: gate survives cycles in a consistent CLOSED state
+TASK3DINT0021_RESULT=PASS

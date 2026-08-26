@@ -1,0 +1,36 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: Lumberjack3D extends WorkerActor3D
+PASS: Miner3D extends WorkerActor3D
+PASS: concrete FSM classes resolve
+PASS: lumberjack assigned to lumberyard
+PASS: lumberjack starts in IDLE after assign (legacy semantics)
+PASS: workplace work_radius (px) is honored for search radius
+PASS: lumberjack full loop deposited wood (10 gained)
+PASS: lumberjack carry emptied after deposit
+PASS: work_anim_started(chop) hook fired during gather
+PASS: work_anim_stopped(chop) hook fired when leaving gather
+PASS: carry_prop_changed(attached=true) hook fired while carrying
+PASS: lumberjack stays in a valid state (no stuck)
+PASS: lumberjack unassigned after loop
+PASS: miner assigned to quarry
+PASS: miner starts in MOVE_TO_WORK after assign (legacy semantics)
+PASS: miner full loop produced stone (11 gained)
+PASS: miner stays in a valid state (no stuck)
+PASS: work_anim_started(mine) hook fired during mine
+PASS: miner unassigned after loop
+PASS: miner returns to IDLE on unassign (legacy semantics)
+PASS: 2 lumberjacks + 2 miners all assigned simultaneously
+PASS: 2 lumberjacks produced wood (25 total)
+PASS: 2 miners produced stone (34 total)
+PASS: at least one lumberjack in GATHER concurrently
+PASS: at least one miner in MINE concurrently
+PASS: MN unassigned cleanly
+PASS: MN2 unassigned cleanly
+PASS: LJ unassigned cleanly
+PASS: LJ2 unassigned cleanly
+PASS: two lumberjacks still produce wood with a single tree
+PASS: no duplicate claim of the same tree by two workers
+PASS: carry never exceeds capacity (no double-gather per worker)
+PASS: both lumberjacks unassigned after claim-conflict run
+TASK3DWRK0012_RESULT=PASS

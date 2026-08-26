@@ -1,0 +1,86 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: camera controller 3D loads
+PASS: building placement 3D loads
+PASS: world selection 3D loads
+PASS: VillageResources autoload available to the 3D runtime
+PASS: test runs in DAY phase
+PASS: clicking the tavern selects its Interactable3D volume
+PASS: tavern click opens the legacy recruitment_ui (UI interaction)
+PASS: empty ground click is a safe no-op that keeps the selection
+PASS: right-click clears the building selection
+PASS: B key activates build mode
+PASS: mode_changed signal reports activation
+PASS: one lumberyard exists after the placement click
+PASS: placed lumberyard occupies exactly the aimed grid cell center
+PASS: cost is deducted exactly once for a valid placement
+PASS: placement feedback keeps the legacy message
+PASS: build mode exits after a single-place building succeeds
+PASS: panned camera still targets the exact aimed grid cell
+PASS: mouse wheel zooms out during the placement workflow
+PASS: zoomed camera still targets the exact aimed grid cell
+PASS: a stale pre-pan screen pixel maps through the live camera ray to its new cell
+PASS: a stale screen pixel no longer targets the pre-pan cell
+PASS: cost ledger stays exact across pan/zoom placements
+PASS: build mode re-activates for invalid checks
+PASS: overlapping an existing building places nothing
+PASS: overlap feedback keeps the legacy message
+PASS: invalid placement never deducts cost
+PASS: overlapping a tree trunk block places nothing (resource overlap)
+PASS: tree overlap does not deduct cost
+PASS: out-of-bounds footprint places nothing (ground bounds validation)
+PASS: bounds rejection keeps the legacy feedback
+PASS: funds drained to below cost
+PASS: insufficient funds places nothing
+PASS: insufficient funds keeps the legacy feedback
+PASS: failed affordability never touches resources
+PASS: funds restored to the regression ledger baseline
+PASS: build mode active for wall/gate checks
+PASS: first wall segment placed on the corner grid
+PASS: wall feedback keeps the legacy message
+PASS: build mode stays active after a wall (연속 배치 정책 유지)
+PASS: edge-touching adjacent wall is allowed (인접 허용)
+PASS: positive-area wall overlap is rejected
+PASS: wall overlap keeps the legacy feedback
+PASS: rejected wall does not deduct cost
+PASS: world selection is gated while build mode owns clicks
+PASS: click during build mode does not change the selection
+PASS: gate outside every corridor is rejected (corridor 밖 invalid)
+PASS: gate rejection keeps the legacy feedback
+PASS: rejected gate does not deduct cost
+PASS: gate inside the north corridor places
+PASS: gate snaps to the road centerline corner (x=0 고정)
+PASS: north gate crosses the road horizontally (3D X 축)
+PASS: gate feedback keeps the legacy message
+PASS: east corridor gate places too
+PASS: east gate snaps to the z=0 centerline
+PASS: east gate crosses the road vertically (3D Z 축)
+PASS: north gate reference captured for collision probes
+PASS: building body blocks actors as a static BUILDING layer collider
+PASS: selection probe hits the Interact area, not the building body (2D convention)
+PASS: CLOSED gate blocks a physics probe (test_move)
+PASS: CLOSED gate: nav path detours around the footprint
+PASS: set_open(true) opens the placed gate
+PASS: OPEN gate removes its passage collision shape (Foundation convention)
+PASS: OPEN visual state shows the legacy translucent color
+PASS: OPEN gate lets a physics probe through
+PASS: OPEN gate: nav path crosses the footprint
+PASS: gate prompt reflects the OPEN state before the toggle
+PASS: Interact toggle closes the gate through the legacy UI contract
+PASS: gate prompt refreshes after the state change
+PASS: re-closed gate restores its passage collision shape
+PASS: re-closed gate blocks the physics probe again
+PASS: R toggles remove mode with the legacy feedback
+PASS: clicked wall segment is removed
+PASS: wall removal refunds the full legacy cost
+PASS: refund amount matches the paid cost exactly
+PASS: clicked gate is removed
+PASS: gate removal refunds its own cost
+PASS: empty ground remove click is a safe no-op
+PASS: remove mode toggles off with the legacy feedback
+PASS: B key exits build mode after the remove-mode regression
+PASS: cost/refund regression ledger matches VillageResources exactly
+PASS: placements/removals reach the Foundation debounced nav rebake
+PASS: surviving world contents match the regression scenario
+TASK3DBLD0014_RESULT=PASS

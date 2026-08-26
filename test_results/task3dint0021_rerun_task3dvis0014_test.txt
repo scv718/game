@@ -1,0 +1,133 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world root loads
+PASS: environment layer loads
+PASS: character prototype scene loads
+PASS: prototype holds exactly 4 character rigs (4)
+PASS: base + 2 worker variants + mercenary are all present
+PASS: rig 'BaseMale' carries the shared 65-bone rig
+PASS: rig 'BaseMale' has visible skinned meshes
+PASS: rig 'BaseMale' has no broken rig/skin binding
+PASS: rig 'BaseMale' installs the shared action set (16 clips)
+PASS: rig 'BaseMale' stands in the recorded humanoid height band 1.82 in [1.50, 2.10]
+PASS: rig 'WorkerPeasantMale' carries the shared 65-bone rig
+PASS: rig 'WorkerPeasantMale' has visible skinned meshes
+PASS: rig 'WorkerPeasantMale' has no broken rig/skin binding
+PASS: rig 'WorkerPeasantMale' installs the shared action set (16 clips)
+PASS: rig 'WorkerPeasantMale' stands in the recorded humanoid height band 1.56 in [1.50, 2.10]
+PASS: rig 'WorkerPeasantFemale' carries the shared 65-bone rig
+PASS: rig 'WorkerPeasantFemale' has visible skinned meshes
+PASS: rig 'WorkerPeasantFemale' has no broken rig/skin binding
+PASS: rig 'WorkerPeasantFemale' installs the shared action set (16 clips)
+PASS: rig 'WorkerPeasantFemale' stands in the recorded humanoid height band 1.53 in [1.50, 2.10]
+PASS: rig 'MercenaryRanger' carries the shared 65-bone rig
+PASS: rig 'MercenaryRanger' has visible skinned meshes
+PASS: rig 'MercenaryRanger' has no broken rig/skin binding
+PASS: rig 'MercenaryRanger' installs the shared action set (16 clips)
+PASS: rig 'MercenaryRanger' stands in the recorded humanoid height band 1.87 in [1.50, 2.10]
+PASS: rig 'BaseMale' stays unarmed by default
+PASS: rig 'WorkerPeasantFemale' stays unarmed by default
+PASS: rig 'WorkerPeasantMale' exposes a BoneAttachment3D tool point
+PASS: tool attachment lives on the shared skeleton ('WorkerPeasantMale')
+PASS: tool attachment targets a valid hand bone ('WorkerPeasantMale')
+PASS: attached tool model carries renderable meshes ('WorkerPeasantMale')
+PASS: tool uses the catalog hand-attach scale hint 0.85 ('WorkerPeasantMale')
+PASS: rig 'MercenaryRanger' exposes a BoneAttachment3D tool point
+PASS: tool attachment lives on the shared skeleton ('MercenaryRanger')
+PASS: tool attachment targets a valid hand bone ('MercenaryRanger')
+PASS: attached tool model carries renderable meshes ('MercenaryRanger')
+PASS: tool uses the catalog hand-attach scale hint 0.85 ('MercenaryRanger')
+PASS: detach_tool clears the attachment reference immediately
+PASS: re-attach after detach works
+PASS: action 'idle' has at least one shared animation candidate
+PASS: candidate anim/ual1_standard/Idle references an animation catalog entry
+PASS: candidate anim/ual1_standard/Idle_Torch references an animation catalog entry
+PASS: action 'walk' has at least one shared animation candidate
+PASS: candidate anim/ual1_standard/Walk references an animation catalog entry
+PASS: candidate anim/ual2_standard/Walk_Carry references an animation catalog entry
+PASS: candidate anim/ual1_standard/Jog_Fwd references an animation catalog entry
+PASS: action 'work' has at least one shared animation candidate
+PASS: candidate anim/ual2_standard/TreeChopping references an animation catalog entry
+PASS: candidate anim/ual2_standard/Farm_Harvest references an animation catalog entry
+PASS: candidate anim/ual2_standard/Farm_Watering references an animation catalog entry
+PASS: candidate anim/ual1_standard/Fixing_Kneeling references an animation catalog entry
+PASS: action 'combat' has at least one shared animation candidate
+PASS: candidate anim/ual1_standard/Sword_Attack references an animation catalog entry
+PASS: candidate anim/ual2_standard/Melee_Hook references an animation catalog entry
+PASS: candidate anim/ual2_standard/Sword_Regular_A references an animation catalog entry
+PASS: action 'hit' has at least one shared animation candidate
+PASS: candidate anim/ual1_standard/Hit_Chest references an animation catalog entry
+PASS: candidate anim/ual1_standard/Hit_Head references an animation catalog entry
+PASS: candidate anim/ual2_standard/Hit_Knockback references an animation catalog entry
+PASS: action 'death' has at least one shared animation candidate
+PASS: candidate anim/ual1_standard/Death01 references an animation catalog entry
+PASS: animation library 'anim/ual1_standard' exposes an AnimationPlayer
+PASS: UAL library 'anim/ual1_standard' really contains 'Idle'
+PASS: UAL library 'anim/ual1_standard' really contains 'Idle_Torch'
+PASS: UAL library 'anim/ual1_standard' really contains 'Walk'
+PASS: UAL library 'anim/ual1_standard' really contains 'Jog_Fwd'
+PASS: UAL library 'anim/ual1_standard' really contains 'Fixing_Kneeling'
+PASS: UAL library 'anim/ual1_standard' really contains 'Sword_Attack'
+PASS: UAL library 'anim/ual1_standard' really contains 'Hit_Chest'
+PASS: UAL library 'anim/ual1_standard' really contains 'Hit_Head'
+PASS: UAL library 'anim/ual1_standard' really contains 'Death01'
+PASS: animation library 'anim/ual2_standard' exposes an AnimationPlayer
+PASS: UAL library 'anim/ual2_standard' really contains 'Walk_Carry'
+PASS: UAL library 'anim/ual2_standard' really contains 'TreeChopping'
+PASS: UAL library 'anim/ual2_standard' really contains 'Farm_Harvest'
+PASS: UAL library 'anim/ual2_standard' really contains 'Farm_Watering'
+PASS: UAL library 'anim/ual2_standard' really contains 'Melee_Hook'
+PASS: UAL library 'anim/ual2_standard' really contains 'Sword_Regular_A'
+PASS: UAL library 'anim/ual2_standard' really contains 'Hit_Knockback'
+PASS: rig 'WorkerPeasantMale' bone set matches the base rig exactly (65 bones)
+PASS: rig 'WorkerPeasantMale' exposes the exact same shared action mapping
+PASS: rig 'WorkerPeasantFemale' bone set matches the base rig exactly (65 bones)
+PASS: rig 'WorkerPeasantFemale' exposes the exact same shared action mapping
+PASS: rig 'MercenaryRanger' bone set matches the base rig exactly (65 bones)
+PASS: rig 'MercenaryRanger' exposes the exact same shared action mapping
+PASS: play_action('idle') accepted on the base rig
+PASS: current_action reports 'idle'
+PASS: AnimationPlayer switched to the installed 'idle' clip
+PASS: animation 'idle' actually drives the skeleton (delta 0.260)
+PASS: play_action('walk') accepted on the base rig
+PASS: current_action reports 'walk'
+PASS: AnimationPlayer switched to the installed 'walk' clip
+PASS: animation 'walk' actually drives the skeleton (delta 0.117)
+PASS: play_action('work') accepted on the base rig
+PASS: current_action reports 'work'
+PASS: AnimationPlayer switched to the installed 'work' clip
+PASS: animation 'work' actually drives the skeleton (delta 2.589)
+PASS: play_action('combat') accepted on the base rig
+PASS: current_action reports 'combat'
+PASS: AnimationPlayer switched to the installed 'combat' clip
+PASS: animation 'combat' actually drives the skeleton (delta 22.529)
+PASS: play_action('hit') accepted on the base rig
+PASS: current_action reports 'hit'
+PASS: AnimationPlayer switched to the installed 'hit' clip
+PASS: animation 'hit' actually drives the skeleton (delta 20.903)
+PASS: play_action('death') accepted on the base rig
+PASS: current_action reports 'death'
+PASS: AnimationPlayer switched to the installed 'death' clip
+PASS: animation 'death' actually drives the skeleton (delta 7.117)
+PASS: worker/mercenary rig 'BaseMale' accepts the shared walk action
+PASS: worker/mercenary rig 'WorkerPeasantMale' accepts the shared walk action
+PASS: worker/mercenary rig 'WorkerPeasantFemale' accepts the shared walk action
+PASS: worker/mercenary rig 'MercenaryRanger' accepts the shared walk action
+PASS: rig 'BaseMale' is genuinely walking on the shared clip
+PASS: rig 'BaseMale' walks independently of the others (delta 7.594)
+PASS: rig 'WorkerPeasantMale' is genuinely walking on the shared clip
+PASS: rig 'WorkerPeasantMale' walks independently of the others (delta 6.070)
+PASS: rig 'WorkerPeasantFemale' is genuinely walking on the shared clip
+PASS: rig 'WorkerPeasantFemale' walks independently of the others (delta 1.540)
+PASS: rig 'MercenaryRanger' is genuinely walking on the shared clip
+PASS: rig 'MercenaryRanger' walks independently of the others (delta 3.900)
+PASS: yaw rotation did not recreate the visual body instance
+PASS: the same skinned mesh serves every direction (no sprite regeneration)
+PASS: no sprite/CanvasItem exists anywhere in the 3D rig
+PASS: walk playback continues through the direction change (no restart)
+PASS: facing yaw is stored as a plain rotation
+PASS: dynamically built rig builds its skeleton
+PASS: dynamically built rig installs the shared actions
+PASS: dynamically built rig accepts the shared walk
+PASS: freeing a mid-play rig leaves no dangling actor
+TASK3DVIS0014_RESULT=PASS

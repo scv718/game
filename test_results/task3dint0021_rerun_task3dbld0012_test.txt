@@ -1,0 +1,127 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: camera controller 3D loads
+PASS: building placement 3D loads
+PASS: world selection 3D loads
+PASS: VillageResources autoload available to the 3D runtime
+PASS: test runs in DAY phase
+PASS: BuildingPlacement3D is a Node3D controller
+PASS: controller joins the legacy building_placement group (HUD/Selection3D contract)
+PASS: controller joins the dimension-explicit building_placement_3d group
+PASS: controller exposes the legacy mode_changed signal
+PASS: controller exposes the legacy feedback signal
+PASS: controller exposes the legacy building_type_changed signal
+PASS: build mode starts inactive
+PASS: BUILD_COSTS keeps the legacy 2D economy values
+PASS: gameplay footprint constants keep the legacy 2D logical px values
+PASS: deposit snap radius is the legacy 48px converted to units
+PASS: overlap validation uses the Foundation MASK_PLACEMENT_BLOCKERS single source
+PASS: Lumberyard3D extends Workplace3D extends Building3D (legacy 2D hierarchy)
+PASS: Quarry3D extends Workplace3D extends Building3D (legacy 2D hierarchy)
+PASS: Wall3D is a static world collider
+PASS: Gate3D is a static world collider
+PASS: Lumberyard3D body sits on the BUILDING layer as a manual blocker
+PASS: Lumberyard3D gameplay footprint is the legacy 32x32px (4x4 unit)
+PASS: Lumberyard3D visual mesh size is decoupled from the gameplay footprint
+PASS: Lumberyard3D exposes a selectable Interactable3D volume
+PASS: Lumberyard3D keeps the legacy workplace prompt format
+PASS: Quarry3D keeps the legacy workplace marker identity
+PASS: Quarry3D keeps the legacy workplace prompt format
+PASS: Wall3D body sits on the WALL layer as a manual blocker
+PASS: Gate3D body sits on the GATE layer as a manual blocker
+PASS: Gate3D defaults to the horizontal N/S corridor footprint
+PASS: Gate3D setup(east) swaps to the vertical footprint collision
+PASS: Gate3D setup re-applies an independent per-instance shape
+PASS: snap maps points into their logical grid cell centers (building)
+PASS: snap stays stable on negative coordinates
+PASS: wall/gate corner snap preserves Y per the Foundation util contract
+PASS: gate direction resolves the north corridor from world XZ
+PASS: gate direction resolves the east corridor from world XZ
+PASS: outside every corridor resolves to no direction
+PASS: gate half-extents keep the legacy horizontal/vertical px sizes
+PASS: clicking the tavern still selects it while build mode is off
+PASS: legacy tavern UI open contract still works in the 3D runtime
+PASS: B key activates build mode
+PASS: mode_changed signal reports activation
+PASS: one lumberyard exists after the click
+PASS: placed lumberyard occupies exactly the aimed grid cell center
+PASS: cost is deducted exactly once for a valid placement
+PASS: feedback keeps the legacy message
+PASS: build mode exits after a single-place building succeeds
+PASS: ghost is cleaned up after exit
+PASS: panned camera still targets the exact aimed grid cell
+PASS: each valid placement deducts its own single cost under pan
+PASS: mouse wheel zooms out during the placement workflow
+PASS: zoomed camera still targets the exact aimed grid cell
+PASS: a pre-pan screen pixel maps through the live camera ray to its new cell
+PASS: a stale screen pixel no longer targets the pre-pan cell
+PASS: cost ledger stays exact across pan/zoom placements
+PASS: ghost appears while build mode is active
+PASS: ghost follows the mouse ground point snapped to the cell center
+PASS: lumberyard ghost box mirrors the gameplay footprint, not the visual mesh
+PASS: valid ghost shows green
+PASS: ghost material is transparent (3D material 표시)
+PASS: work radius ring uses the legacy 192px radius converted to units
+PASS: invalid overlap ghost shows red before any cost is paid
+PASS: wall ghost box switches to the legacy 16x16px footprint
+PASS: gate ghost snaps to the corridor centerline corner
+PASS: gate ghost box switches to the horizontal corridor footprint
+PASS: remove mode ghost shows red regardless of validity
+PASS: remove mode keeps the legacy feedback message
+PASS: ghost is freed when build mode deactivates via B
+PASS: build mode re-activates for validation checks
+PASS: overlapping an existing building places nothing
+PASS: overlap feedback keeps the legacy message
+PASS: invalid placement never deducts cost
+PASS: overlapping a tree trunk block places nothing (resource overlap)
+PASS: tree overlap does not deduct cost
+PASS: out-of-bounds footprint places nothing (ground bounds validation)
+PASS: bounds rejection keeps the legacy feedback
+PASS: funds drained to below cost
+PASS: insufficient funds places nothing
+PASS: insufficient funds keeps the legacy feedback
+PASS: failed affordability never touches resources
+PASS: funds restored to the regression ledger baseline
+PASS: quarry is placed from the deposit click
+PASS: quarry sits at the deposit anchor, not the raw click point
+PASS: quarry binds the deposit (occupy contract)
+PASS: deposit reports occupied after binding
+PASS: quarry cost deducted once
+PASS: quarry feedback keeps the legacy message
+PASS: occupied deposit rejects a second quarry
+PASS: occupied deposit keeps the legacy feedback
+PASS: rejected quarry does not deduct cost
+PASS: no nearby deposit places nothing
+PASS: missing deposit keeps the legacy feedback
+PASS: first wall segment placed on the corner grid
+PASS: wall feedback keeps the legacy message
+PASS: build mode stays active after a wall (연속 배치 정책 유지)
+PASS: edge-touching adjacent wall is allowed (인접 허용)
+PASS: positive-area wall overlap is rejected
+PASS: wall overlap keeps the legacy feedback
+PASS: rejected wall does not deduct cost
+PASS: world selection is gated while build mode owns clicks
+PASS: click during build mode does not change the selection
+PASS: gate outside every corridor is rejected (corridor 밖 invalid)
+PASS: rejected gate does not deduct cost
+PASS: gate inside the north corridor places
+PASS: gate snaps to the road centerline corner (x=0 고정)
+PASS: north gate crosses the road horizontally (3D X 축)
+PASS: gate feedback keeps the legacy message
+PASS: east corridor gate places too
+PASS: east gate snaps to the z=0 centerline
+PASS: east gate crosses the road vertically (3D Z 축)
+PASS: R toggles remove mode with the legacy feedback
+PASS: clicked wall segment is removed
+PASS: wall removal refunds the full legacy cost
+PASS: refund amount matches the paid cost exactly
+PASS: clicked gate is removed
+PASS: gate removal refunds its own cost
+PASS: empty ground remove click is a safe no-op
+PASS: remove mode toggles off with the legacy feedback
+PASS: B key exits build mode after remove-mode regression
+PASS: cost/refund regression ledger matches VillageResources exactly
+PASS: placements/removals reach the Foundation debounced nav rebake
+PASS: surviving world contents match the regression scenario
+TASK3DBLD0012_RESULT=PASS

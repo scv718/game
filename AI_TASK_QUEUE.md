@@ -1344,7 +1344,10 @@
 
 ### TASK-3D-VIS-002-1 Resource / Building Visual Wiring
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
+- 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 
 - 요구사항:
 
@@ -1362,7 +1365,9 @@
 
 ### TASK-3D-VIS-002-2 Worker / Combat Animation Wiring
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (1/3): 임시/debug 파일 잔존: _probe_rig_facing.gd; 임시/debug 파일 잔존: _probe_walk.gd
 
 - 요구사항:
 
@@ -1383,7 +1388,8 @@
 
 ### TASK-3D-VIS-002-3 Roof / Occlusion / Selection Readability
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
+- 피드백: 구현 실행 오류: UnknownError []  Model not found: opencode-go/ox-alpha-free.
 
 - 설명: 고정 사선 Top-down 3D에서 건물/지붕이 유닛과 선택 대상을 과도하게 가리는 문제를 최소 정책으로 처리한다.
 
@@ -1529,7 +1535,9 @@
 
 ### TASK-3D-INT-001-3 2D Runtime Dependency Cleanup
 
-- 상태: IMPLEMENT
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/INTEGRATION_NOTE_INT.md; 위험 파일 변경(FAIL): auto_dev/migration_map_2d_to_3d.md
 - 피드백: 구현이 수행되지 않음. 구현 요약이 조사 도중 잘렸고(로그상 마지막 메시지가 "핵심 파일들을 살펴보겠습니다:"로 종료), 작업 윈도우 동안 scenes/scripts/tests/ui 변경이 0건이며 삭제 파일도 없음. 구체적 수정 항목:
 
 - 설명: 3D Main World가 정상 동작한 뒤 Runtime에서 더 이상 사용하지 않는 2D 전용 경로를 안전하게 정리한다.
@@ -1567,7 +1575,9 @@
 
 ### TASK-3D-INT-002-1 Automated Regression
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/runs/TASK-3D-INT-001/RESULT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task3dint0021*_test.gd)
 
 - 검증:
 
@@ -1600,7 +1610,10 @@
 
 ### TASK-3D-INT-002-2 Basic Performance / Stress
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/supervisor.py; 위험 파일 변경(FAIL): auto_dev/runs/TASK-3D-INT-002/
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/INTEGRATION_NOTE_INT.md; 위험 파일 변경(FAIL): auto_dev/runs/TASK-3D-INT-002/
 
 - 설명: 3D 전환으로 기본 프로토타입이 명백하게 사용 불가능한 수준으로 느려지지 않는지 확인한다.
 
@@ -1630,7 +1643,31 @@
 
 ### TASK-3D-INT-002-3 Visual Acceptance
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task3dint0023_test.gd
+ resolution >= 1024x576
+PASS: capture run log records exactly 7 
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task3dint0023_test.gd
+ resolution >= 1024x576
+PASS: capture run log records exactly 7 
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task3dint0023_test.gd
+ resolution >= 1024x576
+PASS: capture run log records exactly 7 
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 수정 실행 오류: APIError []  Error from provider (Console Go): Upstream request failed: Endpoint is unavailable.
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task3dint0023_test.gd
+ resolution >= 1024x576
+PASS: capture run log records exactly 7 
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/INT_VISUAL_ACCEPTANCE_REPORT.md
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task3dint0023*_test.gd)
 
 - 필수 Screenshot:
 
@@ -1672,7 +1709,10 @@
 
 ## CHECKPOINT-3D-MIGRATION Top-down 3D Migration 검증 지점
 
-- 상태: QUEUED
+<!-- supervisor 큐 파서는 TASK id 규약 밖 섹션(## CHECKPOINT-*)의 '- 상태:'/'- 피드백:' 줄을
+     직전 리프 태스크로 잘못 귀속한다(TASK-3D-INT-002-3 무한 재실행 원인). 오귀속 방지를 위해
+     이 섹션의 상태 줄은 '-' 대신 '*' 불릿을 사용한다. -->
+* 상태: QUEUED
 
 - 설명: Top-down 3D Migration 전체가 완료되었는지 확인하는 **중간 체크포인트**다. 이 지점은 전체 Queue 종료가 아니다.
 
@@ -2946,7 +2986,9 @@
 
 ## OVERNIGHT-STOP-FEATURES Final 종료 경계
 
-- 상태: QUEUED
+<!-- CHECKPOINT-3D-MIGRATION 헤더 주석과 동일 사유: TASK id 규약 밖 섹션의 상태 줄은
+     '*' 불릿을 사용한다(직전 리프 태스크 오귀속 방지). -->
+* 상태: QUEUED
 
 - 설명: 3D Migration + 안전하게 확정 가능한 후속 Feature Queue를 모두 처리한 뒤 자동화를 종료한다.
 

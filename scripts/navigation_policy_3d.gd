@@ -98,12 +98,20 @@ const ACTOR_RADIUS_UNITS := ACTOR_RADIUS_PX * WorldCoords3D.PX_TO_UNIT
 ## 논리 grid cell 1칸(16px) = 2 unit 높이. nav clearance 기본값.
 const ACTOR_HEIGHT_UNITS := 2.0
 
-## NavMesh raster 해상도: 1 nav cell = 1 논리 px(PX_TO_UNIT).
-## 기본값(cell 0.25)보다 촘촘해 2 unit 폭 Wall/Gate carve가 정확하고,
-## walkable 표면이 지면(Y=GROUND_Y)에 cell 1개 이내로 붙는다. 표면이
-## path_desired_distance(0.5) 이상 뜨면 agent의 waypoint 전진 판정이
-## 수직 거리 때문에 실패해 이동 고착이 발생하므로 이 해상도가 요구된다.
-const NAV_CELL_SIZE_UNITS := WorldCoords3D.PX_TO_UNIT
+## NavMesh raster 해상도(단일 소스):
+## - NAV_CELL_HEIGHT_UNITS = 1 논리 px(0.125): 세계 표면이 ground Y에서 cell 1개
+##   이내로 붙어야 agent의 waypoint 전진 판정이 성립한다(ACTOR Origin LOCK의
+##   하드 요건). 이 값은 절대 완화하지 않는다.
+## - NAV_CELL_SIZE_UNITS = 4 논리 px(0.5 unit, TASK-3D-INT-002-2 조정):
+##   실측 결과 1px cell은 ±192 월드에서 bake 1회 약 4.2초로 런타임 사용 불가
+##   등급 병목이었다(parse 4.6ms vs bake 4203ms). 측정 기록:
+##   tests/task3dint0022_test.gd 헤더와 test_results/task3dint0022_perf_report.txt.
+##   bake/map-sync 비용은 cell 수에 비례하므로 수평
+##   해상도만 4px(=기존 PARSE_AGENT_RADIUS 8px의 절반 그리드)로 완화해 약 16배
+##   절감한다. 장애물 carve 경계의 양자화 오차는 cell/2(0.25 unit) 이내이며,
+##   agent_radius(1.0) erosion이 이를 흡수한다. 회귀 전수(0015/wrk/bld/cmb/res/
+##   int)로 우회/pen/gate/placement 동작 등가를 검증했다.
+const NAV_CELL_SIZE_UNITS := WorldCoords3D.PX_TO_UNIT * 4.0
 const NAV_CELL_HEIGHT_UNITS := WorldCoords3D.PX_TO_UNIT
 
 ## 기존 lumberjack.tscn/miner.tscn NavigationAgent2D 튜닝(4px)의 unit 환산값.

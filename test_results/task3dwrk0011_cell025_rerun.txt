@@ -1,0 +1,50 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: worker owns a NavigationAgent3D child
+PASS: agent tuning comes from NavigationPolicy3D.configure_agent single source
+PASS: avoidance stays off (foundation convention)
+PASS: worker body uses WORKER collision layer bit
+PASS: worker mask = static solid set (actors never collide with actors)
+PASS: floating motion mode (top-down XZ movement, no gravity)
+PASS: Actor Origin LOCK: origin on ground, collision volume offset above
+PASS: spawned worker origin sits at ground Y
+PASS: worker joins workers_3d group
+PASS: move speed preserves legacy lumberjack/miner 90px/s ratio
+PASS: Visual child slot exists for VIS-domain replacement
+PASS: Y-laden target position is interpreted as ground XZ coordinate (flatten)
+PASS: move command activates movement state
+PASS: cancel_move finishes the attempt exactly once with CANCELED
+PASS: canceled worker stops with zero velocity
+PASS: freed target reference is rejected instead of being tracked
+PASS: rejected stale command leaves worker safely idle
+PASS: test worker completes 3D ground path move with ARRIVED (1179 frames)
+PASS: arrival within reach tolerance of the ground target
+PASS: no Y height drift during ground movement (max 0.0000)
+PASS: no tilt during movement (pitch/roll stay zero)
+PASS: visual faces travel direction after diagonal move (yaw-only rotation)
+PASS: path leaves no NaN in position
+PASS: worker reaches target behind the static wall (1059 frames)
+PASS: route went around the wall (max lateral deviation 9.49 unit)
+PASS: detour route also stayed locked on ground plane
+PASS: unreachable target stops via BLOCKED/STALLED bounded judgment
+PASS: stopped worker holds idle state with zero velocity
+PASS: stopped near press point instead of drifting (9.19 unit from start)
+PASS: stall path leaves no NaN/drift in position
+PASS: moving tracked target starts a follow move
+PASS: chase is still en route when target relocates (47.3 unit away)
+PASS: relocated target chase ends with ARRIVED (1320 frames)
+PASS: live tracking follows mid-move relocation to the new position (0.43 unit from new spot)
+PASS: relocation chase also stayed locked on ground plane
+PASS: live tracked target starts a follow move
+PASS: tracked target distance measured on XZ plane
+PASS: tracked-target move makes real progress before free (50.8/60.0 unit)
+PASS: freed tracked target finishes the move as TARGET_LOST
+PASS: TARGET_LOST leaves worker cleanly stopped (no stale reference kept)
+PASS: tracked_target reference is cleared after loss
+PASS: tracked move stayed on the ground plane too
+PASS: re-command during move supersedes silently (single finish contract)
+PASS: superseded attempts emit nothing; cancel yields exactly one CANCELED
+PASS: cancel leaves staller idle with zero velocity
+PASS: worker freed mid-move is fully removed from the tree
+PASS: scene keeps running after mid-move free (no crash/orphan error)
+TASK3DWRK0011_RESULT=PASS

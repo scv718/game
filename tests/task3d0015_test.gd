@@ -12,6 +12,14 @@ extends SceneTree
 ##   6. unreachable target이 부분 경로 소진(BLOCKED) 판정으로 bounded 정지
 ##     (stuck guard는 2차 안전망. 영구 stall 없음).
 ##   7. Runtime 변경 후 debounced rebake coalesce(world.gd 동등 API).
+##
+## TASK-3D-INT-002-2 계약 갱신 사유(요구사항 변경 — 운영 규칙 25):
+##   debounce flush가 비동기 bake로 전환되었다(manager 병목 개선: 동기 bake 실측
+##   약 3.9초를 워커 스레드로 이관). 단정 의미는 그대로 유지하고 완료 대기만
+##   physics tick 폴링 + wall deadline으로 넓혔다:
+##     - "exactly once" (counter/signals) / "traversable after rebake" 불변.
+##     - 전역 timeout guard도 process frame 수 → wall ms 기준으로 교체했다
+##       (-s headless는 process loop가 제한 없이 빨라 frame 수 예산이 무의미하다).
 
 enum Phase {
 	SETUP, POLICY, AGENT_CONFIG, PROBE_SETUP, PRE_BAKE, BAKE_SYNC, REACHABILITY,
@@ -24,6 +32,11 @@ const PHYSICS_WAIT_FRAMES := 30
 const NAV_SYNC_FRAMES := 10
 const MOVE_FRAME_LIMIT := 1500
 const STALL_OBSERVE_FRAMES := 240
+## 비동기 flush 완료 대기 예산(physics tick). 동기 시대의 고정 30 frame 창을
+## "완료 폴링"으로 넓힌 것 외에 의미 변화는 없다.
+const ASYNC_BAKE_POLL_TICKS := 1200
+## 전역 종료 가드(wall ms).
+const TEST_WALL_BUDGET_MS := 300000
 
 ## PolicyProbe가 공통 policy만으로 세 카테고리(Worker/Mercenary/Enemy)를 모두
 ## 수행함을 보이기 위한 test agent. 이동 루프는 enemy_actor/lumberjack의
@@ -111,6 +124,12 @@ var _gate_count_before := 0
 var _gate_signals_before := 0
 var _debounce_count_before := 0
 var _debounce_signals_before := 0
+## 비동기 완료 폴링 시작 physics frame(-1 = 대기 중 아님).
+var _poll_start_pf := -1
+## gate rebake 완료 signal을 처음 관측한 physics frame(region 할당이 map에
+## 반영되는 다음 physics sync를 기다리기 위함).
+var _gate_signal_pf := -1
+var _start_msec := 0
 
 const MOVER_START := Vector3(-50, 0, 15)
 const MOVER_TARGET := Vector3(50, 0, -15)
@@ -132,6 +151,15 @@ func _check(cond: bool, msg: String) -> void:
 
 func _enter(p: Phase) -> void:
 	_phase = p
+	_poll_start_pf = -1
+
+
+## 비동기 bake 완료 폴링 예산(physics tick 기준).
+func _async_poll_exhausted() -> bool:
+	var now := Engine.get_physics_frames()
+	if _poll_start_pf < 0:
+		_poll_start_pf = now
+	return int(now - _poll_start_pf) >= ASYNC_BAKE_POLL_TICKS
 
 
 func _finish() -> void:
@@ -180,7 +208,7 @@ func _process(_delta: float) -> bool:
 		Phase.DONE:
 			_finish()
 			return true
-	if _frame > 6000:
+	if Time.get_ticks_msec() - _start_msec > TEST_WALL_BUDGET_MS:
 		print("TASK3D0015_RESULT=TIMEOUT phase=%s" % str(_phase))
 		quit()
 		return true
@@ -188,6 +216,7 @@ func _process(_delta: float) -> bool:
 
 
 func _initialize() -> void:
+	_start_msec = Time.get_ticks_msec()
 	var world_scene: Node = (load("res://scenes/world3d.tscn") as PackedScene).instantiate()
 	world_scene.name = "World3DRoot"
 	root.add_child(world_scene)
@@ -426,13 +455,24 @@ func _gate_toggle() -> void:
 		"gate body itself remains; only passage shape presence encodes state")
 	_gate_count_before = count_before
 	_gate_signals_before = signals_before
+	_gate_signal_pf = -1
 	_wait = 0
 	_enter(Phase.GATE_SYNC)
 
 
 func _gate_sync() -> void:
-	_wait += 1
-	if _wait <= 30:
+	# debounce flush는 이제 비동기 bake다. counter는 발행 시, signal은 완료 시
+	# 기록되므로 "signal 1회 도달"까지 폴링하고, region 할당이 map에 반영되는
+	# physics sync 최소 3 tick을 추가 양보한 뒤 단정한다(의미 불변).
+	if _bake_signals < _gate_signals_before + 1:
+		if _async_poll_exhausted():
+			_check(false, "passage removal triggered exactly one debounced rebake "
+				+ "(async bake did not finish in budget)")
+			_enter(Phase.DEBOUNCE_ARM)
+		return
+	if _gate_signal_pf < 0:
+		_gate_signal_pf = Engine.get_physics_frames()
+	if int(Engine.get_physics_frames() - _gate_signal_pf) < 3:
 		return
 	var count_after: int = _nav.nav_rebuild_count
 	_check(count_after == _gate_count_before + 1,
@@ -455,8 +495,11 @@ func _debounce_arm() -> void:
 
 
 func _debounce_check() -> void:
-	_wait += 1
-	if _wait <= 30:
+	if _bake_signals < _debounce_signals_before + 1:
+		if _async_poll_exhausted():
+			_check(false, "rapid placement requests coalesce into a single "
+				+ "debounced rebake (async bake did not finish in budget)")
+			_finish()
 		return
 	_check(_nav.nav_rebuild_count == _debounce_count_before + 1,
 		"rapid placement requests coalesce into a single debounced rebake")

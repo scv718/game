@@ -1,0 +1,101 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: shared autoloads are available to the vertical slice runtime
+PASS: GameTime Phase enum resolves through runtime load
+PASS: game boots into the 3D Main World (scenario 1-2)
+PASS: WorldContent3D composes the 3D world gameplay content
+PASS: 3D world holds the same 60 trees as the 2D reference layout
+PASS: every composed tree registers as a 3D resource node
+PASS: StoneDeposit3D sits at the WorldMap stone zone position
+PASS: MapLayout3D is wired under the world root
+PASS: MapLayout3D satisfies the roster/spawner lookup contract
+PASS: MapLayout3D clearing center matches the shared settlement center
+PASS: no workplace exists before the player builds one
+PASS: all five core buildings exist exactly once (keep/tavern/inn/grocery/equipment)
+PASS: Keep is a direct world-root child so spawner/retreat resolve the village core
+PASS: encounter spawner resolves the west spawn candidate through MapLayout3D
+PASS: west defense rally resolves to the rally space center
+PASS: initial navigation bake covers the composed world (no stale startup nav)
+PASS: WASD-equivalent pan moves the camera pivot on the ground plane only
+PASS: pan clamps against the shared world bounds
+PASS: camera pivots back to the village center
+PASS: mouse wheel zooms in (scenario 4)
+PASS: zoom clamps at the configured maximum
+PASS: zoom clamps at the configured minimum
+PASS: camera keeps a fixed oblique basis while panning (rotation path ?놁쓬)
+PASS: clicking the Tavern selects its interactable (scenario 5)
+PASS: Tavern interaction opens the existing TavernRecruitmentUI (scenario 6)
+PASS: clicking the Inn selects its interactable
+PASS: Inn interaction opens the existing InnRosterUI
+PASS: open modal UI blocks world clicks (no UI click-through)
+PASS: closing the modal restores world click handling
+PASS: B enters build mode (scenario 11)
+PASS: single-unit buildings exit build mode after placement
+PASS: one Lumberyard3D placed via the input path (scenario 7)
+PASS: 3D workplace serves the legacy inn-UI lookup group (dual registration)
+PASS: lumberyard cost deducts Wood exactly once (40 -> 30)
+PASS: Quarry3D placed onto the Stone Deposit
+PASS: quarry serves the legacy inn-UI lookup group (dual registration)
+PASS: quarry binds the deposit anchor on placement
+PASS: quarry placement exits build mode
+PASS: Tavern UI hiring registers both workers in the shared WorkerRoster
+PASS: hired workers stay roster data only (no world actor yet)
+PASS: unassigned residents never become world actors (design rule)
+PASS: Inn UI assigns each worker to its matching facility
+PASS: assignment spawns exactly one Worker Actor per assigned resident
+PASS: spawned actors are the 3D lumberjack/miner pair
+PASS: no legacy 2D worker actors leak into the 3D runtime
+PASS: Lumberjack deposits gathered Wood into the stockpile (auto production)
+PASS: Miner produces Stone at the bound deposit (auto production)
+PASS: a far sparse-forest tree is picked for the depletion check
+PASS: gathering drains the tree's full yield
+PASS: depleted tree switches to the stump state
+PASS: stump state swaps canopy/trunk visuals for the stump visual
+PASS: stump regrows into a mature tree after regrow_time
+PASS: depletion/regrowth keep navigation rebaked (no stale nav)
+PASS: build mode re-enters for walls
+PASS: two wall segments placed in continuous build mode (scenario 12)
+PASS: each wall segment deducts its Wood cost once
+PASS: gate placed inside the north gate corridor
+PASS: gate direction resolves from the corridor (centerline snap)
+PASS: newly placed gate starts CLOSED
+PASS: wall/gate keep continuous build mode (TASK-013-1 policy)
+PASS: gate placement deducts its Wood cost once
+PASS: ESC exits the continuous build mode after the gate
+PASS: Tavern UI hires the mercenary into the shared roster
+PASS: hire sync bridges the recruit into MercenaryRoster3D (same data object)
+PASS: Inn UI assigns the mercenary to the west defense zone
+PASS: phase advanced to NIGHT (scenario 14)
+PASS: tactical command UI shows at NIGHT (scenario 15)
+PASS: NIGHT encounter spawns raiders from the west
+PASS: zone-assigned mercenary deploys as a single 3D actor
+PASS: deployment itself records nothing in the Death Ledger
+PASS: Pause command freezes tactical time scale
+PASS: 2x command doubles tactical time scale
+PASS: 1x command restores tactical time scale
+PASS: gate starts the night CLOSED
+PASS: GATE_OPEN command opens the passage (scenario 18)
+PASS: GATE_CLOSE command closes the passage again
+PASS: enemies hold before engagement
+PASS: focus target command designates the priority enemy (scenario 17)
+PASS: mercenary actor is live when engagement starts (freed reference ?놁쓬)
+PASS: auto combat produces at least one lethal death (scenario 19)
+PASS: Death Ledger holds no duplicate records (scenario 20)
+PASS: phase returned to DAY (scenario 21)
+PASS: tactical UI hides at DAY
+PASS: DAY cleanup despawns every combat actor
+PASS: despawned combat actors leave no orphan under the world
+PASS: DAY despawn writes no extra death records
+PASS: time scale restored to 1x at DAY
+PASS: focus transient state clears at DAY
+PASS: second cycle reaches NIGHT (scenario 22)
+PASS: second encounter spawns exactly 3 fresh raiders (no duplicates)
+PASS: only living mercenaries redeploy (dead hires stay dead)
+PASS: killed mercenary leaves no actor and no freed reference behind
+PASS: idle re-entry does not duplicate the encounter
+PASS: second cycle returns to DAY
+PASS: second cleanup leaves no enemies behind
+PASS: civilian worker actors persist across cycles (no respawn churn)
+PASS: second cycle cleanup adds no death records
+PASS: navigation manager survived repeated cycles (service intact)
+TASK3DINT0012_RESULT=PASS

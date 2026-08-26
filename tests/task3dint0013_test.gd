@@ -8,14 +8,15 @@ extends SceneTree
 ##      UI Control/CanvasLayer는 정상 2D UI 계약이므로 허용된다(큐 요구사항).
 ##   2. orphan reference 없음: closure와 project.godot autoload가 참조하는 모든
 ##      res:// 경로가 실제로 존재한다. 또한 프로젝트 루트에 스크립트 본체가 없는
-##      고아 *.uid sidecar가 없다.
+##      고아 *.uid sidecar가 없고, runtime 디렉터리(scenes/scripts/ui)와
+##      project.godot의 res:// .gd/.tscn/.tres 참조 중 대상이 없는 것도 없다.
 ##   3. 2D Resource/Worker/Building/Combat Scene은 Runtime 미사용 확인:
 ##      LOCK 12에 따라 reference/test fixture로 보존되는 기존 2D scene 목록이
 ##      여전히 로드 가능하면서도 3D closure 어디에도 등장하지 않는다.
 ##   4. CharacterBody2D / NavigationAgent2D / Area2D 등 2D 물리/내비/카메라
 ##      노드는 실제 Runtime 트리에 0개다(Node2D 파생 전체 포함).
 ##
-## 공유 config 결정(INT-001-1 문서 + INTEGRATION_NOTE_INT §INT-001-3):
+## 공유 config 결정(INT-001-1 문서 + AUDIT_2D_RUNTIME_CLEANUP.md):
 ##   - MercenaryRoster autoload는 주점/여관 UI의 데이터 소스이자
 ##     mercenary_hire_sync_3d bridge의 source라서 유지한다.
 ##   - FirstEncounterSpawner autoload는 "world"(2D) 그룹 lookup guard로
@@ -199,6 +200,11 @@ func _scan() -> void:
 
 	# 고아 *.uid sidecar: 스크립트 본체 없는 .uid가 프로젝트 어디에도 없어야 한다.
 	_check(not _has_orphan_uid_sidecars(), "no orphan *.gd.uid sidecars remain")
+
+	# runtime 영역(scenes/scripts/ui + project.godot)의 res:// 참조 대상 존재 검사.
+	# (tests/tools는 negative assertion·capture 출력 경로 등 의도적 예외가 있어 제외)
+	_check(not _has_dangling_runtime_refs(),
+		"no dangling res:// .gd/.tscn/.tres references in scenes/scripts/ui/project.godot")
 
 	_enter(Phase.INSTANCE_WAIT)
 
@@ -393,6 +399,45 @@ func _closure_references(closure: Dictionary, target_path: String) -> bool:
 			continue
 		var text := _read_text(path)
 		if text.contains(target_path):
+			return true
+	return false
+
+
+## runtime 디렉터리(scenes/scripts/ui)와 project.godot의 res:// 참조 중
+## 존재하지 않는 .gd/.tscn/.tres 대상이 하나라도 있으면 true.
+## tests/(제거 확인용 negative assertion)와 tools/(capture 출력 경로)는 제외한다.
+func _has_dangling_runtime_refs() -> bool:
+	var targets := ["res://scenes", "res://scripts", "res://ui"]
+	var re_ref := RegEx.create_from_string(
+		"res://[A-Za-z0-9_\\-\\./]+\\.(gd|tscn|tres)")
+	var checked := {}
+	for dir_path in targets:
+		var dir := DirAccess.open(dir_path)
+		if dir == null:
+			continue
+		for file_name in dir.get_files():
+			if not (file_name.ends_with(".gd") or file_name.ends_with(".tscn")) \
+					or file_name.ends_with(".uid"):
+				continue
+			var path: String = dir_path.path_join(file_name)
+			var text := _read_text(path)
+			if text.is_empty():
+				continue
+			for m in re_ref.search_all(text):
+				var ref: String = m.get_string(0)
+				if checked.has(ref):
+					continue
+				checked[ref] = true
+				if not FileAccess.file_exists(ref):
+					print("FAIL: dangling runtime reference %s in %s" % [ref, path])
+					return true
+	for m in re_ref.search_all(_read_text("res://project.godot")):
+		var ref: String = m.get_string(0)
+		if checked.has(ref):
+			continue
+		checked[ref] = true
+		if not FileAccess.file_exists(ref):
+			print("FAIL: dangling reference %s in project.godot" % ref)
 			return true
 	return false
 

@@ -1,0 +1,42 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: shared autoloads are available to the acceptance runtime
+PASS: capture tool exposes its SHOTS screenshot contract
+PASS: the accepted runtime boots with camera/selection/placement/UI wired
+PASS: exactly one Camera3D drives the accepted view
+PASS: accepted runtime holds no 2D Actor/Camera/Collision/Nav nodes
+PASS: composed world holds the deterministic 60 tree resources
+PASS: all five core buildings exist exactly once
+PASS: lumberyard places through the live input path
+PASS: placement snaps to the logical grid cell center
+PASS: lumberyard cost deducts Wood exactly once (60 -> 50)
+PASS: quarry places onto the stone deposit
+PASS: quarry cost deducts Wood exactly once (50 -> 40)
+PASS: assignment spawns one Worker Actor per assigned resident
+PASS: lumberjack and miner actors are live for the accepted economy loop
+PASS: lumberjack deposits gathered Wood into the stockpile
+PASS: miner produces Stone at the bound deposit
+PASS: phase advances to NIGHT
+PASS: tactical command UI shows at NIGHT
+PASS: NIGHT encounter spawns raiders in the accepted runtime
+PASS: phase returns to DAY
+PASS: tactical UI hides at DAY
+PASS: DAY cleanup despawns every combat actor
+PASS: despawned combat actors leave no orphan
+PASS: time scale restored to 1x at DAY
+PASS: worker actors stay unique (no duplicates)
+PASS: roster keeps live actor references (no freed)
+PASS: capture contract holds exactly the 7 required screenshots
+PASS: screenshot keys cover every required acceptance cut
+PASS: all 7 required screenshots exist on disk
+PASS: screenshots carry real rendered resolution >= 1024x576
+PASS: capture run log records exactly 7 saved screenshots
+PASS: capture run finished with the COMPLETE marker
+PASS: capture run log is free of ERROR/WARNING (visual blocker gate)
+PASS: acceptance report records all 9 HUMAN_CHECK items verbatim
+PASS: every HUMAN_CHECK item stays deferred to the user (no AI pass marking)
+PASS: acceptance report states the no-AI-pass rule explicitly
+PASS: report indexes every required screenshot file
+PASS: container automated regression (task3dint0021) recorded PASS
+PASS: main scene smoke regression recorded PASS
+TASK3DINT0023_RESULT=PASS

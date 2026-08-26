@@ -1,0 +1,55 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: 3D world root loads
+PASS: camera controller loads
+PASS: environment/lighting layer loads
+PASS: village composition scene loads
+PASS: village composition joins its dedicated group
+PASS: ground tone override applies to the placeholder GroundVisual
+PASS: GroundVisual carries the stylized grass albedo at runtime
+PASS: zone root 'village' exists
+PASS: zone root 'forest' exists
+PASS: zone root 'lumberyard' exists
+PASS: zone root 'quarry' exists
+PASS: village keeps multiple houses (5 >= 4)
+PASS: every village placement renders a real mesh (broken imports: 0)
+PASS: forest placements render real meshes (broken imports: 0)
+PASS: main path network builds enough strips (7)
+PASS: character lineup container exists
+PASS: zones 'village' and 'forest' do not overlap (density separation)
+PASS: zones 'village' and 'lumberyard' do not overlap (density separation)
+PASS: zones 'village' and 'quarry' do not overlap (density separation)
+PASS: zones 'forest' and 'lumberyard' do not overlap (density separation)
+PASS: zones 'forest' and 'quarry' do not overlap (density separation)
+PASS: zones 'lumberyard' and 'quarry' do not overlap (density separation)
+PASS: village keeps accent trees (2)
+PASS: forest density clearly exceeds village greenery (24 vs 2)
+PASS: quarry reads as a rock cluster (9 >= 5)
+PASS: lumberyard identity reads via stump station + log piles (4 logs)
+PASS: all placements stay inside world bounds (0 stray)
+PASS: tree variation stays limited (4 variants)
+PASS: trees use the recorded top-down scale band (violations: 0)
+PASS: houses repeat a limited palette (2 floors)
+PASS: path network defines the main corridors (7)
+PASS: path strips stay flush with the ground (walkable read)
+PASS: path strips never cast shadows onto units
+PASS: no solid decoration blocks a gameplay corridor ([])
+PASS: lineup covers villagers/workers/mercenary (6)
+PASS: role 'worker_lumberjack' is present
+PASS: role 'worker_miner' is present
+PASS: role 'mercenary_guard' is present
+PASS: role 'villager_male' is present
+PASS: role 'carrier_worker' is present
+PASS: axe/pickaxe/sword attach to the shared hand bone (3)
+PASS: character rigs carry the shared humanoid skeleton
+PASS: foundation camera stays current over the village
+PASS: pan clamps at the world boundary and stays grounded ((192.0, 0.0, -192.0))
+PASS: opposite pan clamp holds as well ((192.0, 0.0, 192.0))
+PASS: zoom-in converges toward the target ortho size (4.88 -> 4.04, target 4.00)
+PASS: ortho size settles on the zoom policy value
+PASS: NIGHT lighting takes over the populated village
+PASS: DAY lighting restores cleanly after the night check
+PASS: freed village composition leaves no live instance
+PASS: foundation world survives the village cleanup
+PASS: camera survives the village cleanup
+TASK3DVIS0015_RESULT=PASS

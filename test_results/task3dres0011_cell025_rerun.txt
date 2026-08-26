@@ -1,0 +1,54 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: empty 3D world loads
+PASS: camera controller 3D loads
+PASS: world selection 3D loads
+PASS: ResourceNode3D extends the Foundation Interactable3D contract
+PASS: ResourceNode3D contract is an Area3D hit volume holder
+PASS: resource nodes stay worker-only via the is_selectable hook
+PASS: gather amounts keep legacy defaults (wood 5x1)
+PASS: fresh node with amount left can be gathered
+PASS: first worker claims an unclaimed node
+PASS: duplicate claim by a second worker is rejected
+PASS: claimed node reports other workers via is_claimed_by_other
+PASS: release by a different worker does not clear the claim
+PASS: release by the claiming worker clears the claim
+PASS: node can be reclaimed after release
+PASS: Tree3D joins the worker-facing resource_nodes_3d group
+PASS: tree prompt keeps the legacy gather prompt
+PASS: StoneDeposit3D joins the dedicated stone_deposits_3d group
+PASS: tree exposes a solid TrunkBlock volume on the RESOURCE layer
+PASS: tree root Area3D carries a probeable interaction volume on RESOURCE layer
+PASS: stone deposit exposes its Block volume on the RESOURCE layer
+PASS: stone deposit stays out of area probes (pure static block + anchor)
+PASS: decoration visuals are structurally invisible to resource probes
+PASS: mature trunk uses a simple gameplay shape (r=0.75 unit = legacy 6px)
+PASS: clicking a tree never selects or gathers it from the mouse (worker-only policy)
+PASS: clicking a stone deposit is also a safe selection no-op
+PASS: no mouse interaction leaked gather amounts out of the tree
+PASS: the forced-occlusion scene really puts a tree volume on the click ray
+PASS: a tree standing on the click ray never blocks the interactable behind it
+PASS: occluded-scene click still runs exactly the target interact()
+PASS: gather 1 returns 1 wood via legacy dict contract
+PASS: gather 2 returns 1 wood via legacy dict contract
+PASS: gather 3 returns 1 wood via legacy dict contract
+PASS: gather 4 returns 1 wood via legacy dict contract
+PASS: gather 5 returns 1 wood via legacy dict contract
+PASS: current_amount reaches 0 after 5 gathers
+PASS: depleted tree enters STUMP state immediately
+PASS: stump state shows only the stump visual
+PASS: stump collision shrinks with the visual (visual/collision consistency)
+PASS: stump cannot be gathered further
+PASS: interact on a stump returns empty dict
+PASS: stump collision change requested a debounced navigation rebake
+PASS: tree regrows to MATURE after regrow_time
+PASS: regrowth restores the full gather amount
+PASS: regrown tree restores mature visuals
+PASS: regrown trunk collision restores the mature footprint
+PASS: regrowth also refreshed the navigation obstacle state
+PASS: extra tree claimed before removal
+PASS: leaving the tree clears its claim immediately (no stale claim)
+PASS: removed tree instance is fully freed (no orphan nodes)
+PASS: freed resource still requested its final navigation rebake
+PASS: fake claimer cleaned up (test-side stale reference check)
+TASK3DRES0011_RESULT=PASS
