@@ -1274,7 +1274,8 @@
 
 ### TASK-3D-VIS-001-5 Visual Village Composition Prototype
 
-- 상태: FIX
+- 상태: DONE
+- 피드백: 태스크 요구 전 항목(마을 scene/조립/캡처/회귀 테스트/blocker 기록/INTEGRATION_NOTE)이 실제 코드·실행 결과로 검증됨. REVIEW 상태는 이제 코드와 일치하며, 남은 것은 완료조건대로 HUMAN_CHECK 6항목(스크린샷 3컷 판단)뿐. 비차단 지적: assertion 수 기재가 51로 되어 있으나 실제 로그는 52 PASS로, 관련 문서 3곳의 수치 정정이 후속 커밋 시 필요함.
 - 피드백: TASK-3D-VIS-001-5가 실질적으로 구현되지 않았습니다. AI_TASK_QUEUE.md 상태는 QUEUED(1119-1121)이고, 작업 트리에 VIS-001-5 관련 구현이 전혀 없습니다 — 마을 구성 scene(`village_composition_3d.tscn` 등), 조립 스크립트, 캡처 도구(예: `tools/capture_village_composition_3d.gd`), 회귀 테스트(`tests/task3dvis0015_test.gd`), 그리고 완료조건 산출물(overview/zoom-in/NIGHT 스크린샷)이 모두 부재합니다. `test_results/world_visual_*.png`는 이전 2D TASK-MAP-002에서 커밋된 tracked 파일이라 3D VIS-001-5 산출물이 아닙니다. `INTEGRATION_NOTE_VIS.md`도 -001-1~-001-4까지만 문서화하고, line 93에서 world3d `GroundVisual` placeholder를 "VIS-001-5가 교체 대상"으로 남겨둔 상태입니다. 즉 review 대상 구현물 자체가 없으므로, 먼저 (1) Village/Lumberyard/Quarry/Tree cluster/Rock cluster/Main path/props/주민-Worker-Mercenary visual로 구성된 3D 마을 scene, (2) Camera Pan/Zoom 테스트, (3) DAY/NIGHT 라이팅 연동, (4) overview·zoom-in·NIGHT 캡처, (5) visual blockers 기록, (6) INTEGRATION_NOTE 갱신을 실제로 구현·수행해야 합니다. task_context.md의 REVIEW 상태 표기는 실제 코드 상태와 불일치하므로, 구현 완료 후 다시 리뷰해야 합니다.
 
 - 설명: 실제 기능 연결 전 동일 에셋 스택만으로 "게임처럼 보이는" 작은 마을 화면을 만든다.

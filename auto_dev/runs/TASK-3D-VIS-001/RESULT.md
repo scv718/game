@@ -26,3 +26,10 @@
 - 브랜치/워크트리: D:\game-wt\visual
 - 완료 시각: 2026-08-26T00:27:44.323995
 
+## TASK-3D-VIS-001-5 TASK-3D-VIS-001-5 Visual Village Composition Prototype
+
+- 판정: LGTM
+- 사유: 태스크 요구 전 항목(마을 scene/조립/캡처/회귀 테스트/blocker 기록/INTEGRATION_NOTE)이 실제 코드·실행 결과로 검증됨. REVIEW 상태는 이제 코드와 일치하며, 남은 것은 완료조건대로 HUMAN_CHECK 6항목(스크린샷 3컷 판단)뿐. 비차단 지적: assertion 수 기재가 51로 되어 있으나 실제 로그는 52 PASS로, 관련 문서 3곳의 수치 정정이 후속 커밋 시 필요함.
+- 브랜치/워크트리: D:\game-wt\visual
+- 완료 시각: 2026-08-26T01:31:26.347301
+
