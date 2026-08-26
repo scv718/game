@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment_lighting_3d.gd" id="1_envlight"]
+
+[sub_resource type="Environment" id="EnvironmentVis"]
+
+[node name="Environment3D" type="Node3D"]
+script = ExtResource("1_envlight")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("EnvironmentVis")
+
+[node name="SunLight" type="DirectionalLight3D" parent="."]
+shadow_enabled = true

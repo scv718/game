@@ -1,0 +1,9 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+anim/ual1_standard | count=43
+  A_TPose,Crouch_Fwd,Crouch_Idle,Dance,Death01,Driving,Fixing_Kneeling,Hit_Chest,Hit_Head,Idle,Idle_Talking,Idle_Torch,Interact,Jog_Fwd,Jump,Jump_Land,Jump_Start,PickUp_Table,Pistol_Aim_Down,Pistol_Aim_Neutral,Pistol_Aim_Up,Pistol_Idle,Pistol_Reload,Pistol_Shoot,Punch_Cross,Punch_Jab,Push,Roll,Sitting_Enter,Sitting_Exit,Sitting_Idle,Sitting_Talking,Spell_Simple_Enter,Spell_Simple_Exit,Spell_Simple_Idle,Spell_Simple_Shoot,Sprint,Swim_Fwd,Swim_Idle,Sword_Attack,Sword_Idle,Walk,Walk_Formal
+anim/ual2_standard | count=43
+  A_TPose,Chest_Open,ClimbUp_1m,Consume,Farm_Harvest,Farm_PlantSeed,Farm_Watering,Hit_Knockback,Idle_FoldArms,Idle_Lantern,Idle_No,Idle_Rail,Idle_Rail_Call,Idle_Shield,Idle_Shield_Break,Idle_TalkingPhone,LayToIdle,Melee_Hook,Melee_Hook_Rec,NinjaJump_Idle,NinjaJump_Land,NinjaJump_Start,OverhandThrow,Shield_Dash,Shield_OneShot,Slide,Slide_Exit,Slide_Start,Sword_Block,Sword_Dash,Sword_Heavy_Combo,Sword_Regular_A,Sword_Regular_A_Rec,Sword_Regular_B,Sword_Regular_B_Rec,Sword_Regular_C,Sword_Regular_Combo,TreeChopping,Walk_Carry,Yes,Zombie_Idle,Zombie_Scratch,Zombie_Walk_Fwd
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+anvil_log meshes=1 aabb_pos=(-0.411918, 0.001432, -0.34692) size=(0.929287, 1.073378, 0.821393)
