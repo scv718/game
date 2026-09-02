@@ -37,6 +37,22 @@ STATUS_RE = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
 FEEDBACK_RE = re.compile(r"^-\s*피드백\s*[:：]\s*(.*?)\s*$")
 HEADING_RE = re.compile(r"^(#{2,3})\s+(.+?)\s*$")
 VERDICT_RE = re.compile(r"판정\s*[:：]\s*(?:\*\*|\*)?\s*(LGTM|FIX|NEEDS_DESIGN)", re.IGNORECASE)
+
+INFRA_ERR_RE = re.compile(
+    r"Model not found|UnknownError|Unexpected server error|no such model|"
+    r"ECONNREFUSED|ECONNRESET|ENOTFOUND|ETIMEDOUT|PROTOCOL_ERROR|"
+    r"connection|connect|timeout|ollama|provider|no such host|"
+    r"unauthorized|invalid api|401|403|429|rate.?limit|"
+    r"spawn\s|ENOENT|load failed", re.IGNORECASE)
+
+def is_infra_error(err):
+    """모델/프로바이더/네트워크 등 인프라 오류는 설계 충돌(NEEDS_DESIGN)이 아니다.
+    상태를 유지하고 다음 사이클에서 재시도해야 한다."""
+    if not err:
+        return False
+    if err in ("알 수 없는 오류", "빈 응답"):
+        return True
+    return bool(INFRA_ERR_RE.search(err))
 REASON_RE = re.compile(r"사유\s*[:：]\s*(.+)", re.IGNORECASE)
 SUMMARY_RE = re.compile(r"구현\s*요약\s*[:：]\s*(.+)", re.IGNORECASE)
 
@@ -140,6 +156,10 @@ def parse_queue():
             level = len(m.group(1))
             tid = m.group(2).strip().split()[0] if m.group(2).strip() else ""
             if not TASK_ID_RE.match(tid):
+                # 비-태스크 헤딩(예: ## PHASE-STOP-...)은 태스크 섹션 경계다.
+                # 스킵만 하면 이후 행들이 이전 태스크로 흘러들어 상태를 덮어쓴다.
+                current = None
+                stack = []
                 continue
             if level == 3:
                 parent = stack[-1][1] if stack else None
@@ -735,9 +755,9 @@ def main():
                                  feedback=f"이전 시도 시간 초과: {err}")
                 else:
                     log(f"[{task['id']}] 구현 실패: {err}")
-                    if err == "알 수 없는 오류":
+                    if err == "알 수 없는 오류" or is_infra_error(err):
                         update_queue(tasks, queue_path, task["id"], "IMPLEMENT",
-                                     feedback=f"구현자 프로바이더 무응답: {err} - 다음 사이클 재시도")
+                                     feedback=f"구현자 인프라 오류 재시도: {err[:120]} - 다음 사이클 재시도")
                     else:
                         update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                      feedback=f"구현 실행 오류: {err[:300]}")
@@ -767,9 +787,9 @@ def main():
                         if err.startswith("실행 시간 초과"):
                             update_queue(tasks, queue_path, task["id"], "FIX",
                                          feedback=f"게이트 수정 중 시간 초과: {err}")
-                        elif err == "알 수 없는 오류":
+                        elif err == "알 수 없는 오류" or is_infra_error(err):
                             update_queue(tasks, queue_path, task["id"], "FIX",
-                                         feedback=f"수정 중 프로바이더 무응답 - 다음 사이클 재시도")
+                                         feedback=f"수정 중 인프라 오류 재시도: {err[:120]} - 다음 사이클 재시도")
                         else:
                             update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                          feedback=f"게이트 수정 실행 오류: {err[:300]}")
@@ -790,10 +810,10 @@ def main():
 
             text, err = run_reviewer(task, summary)
             if err:
-                if err == "알 수 없는 오류":
-                    log(f"[{task['id']}] 리뷰어 무응답(provider) - REVIEW 유지, 다음 사이클 재시도")
+                if err == "알 수 없는 오류" or is_infra_error(err):
+                    log(f"[{task['id']}] 리뷰어 무응답/infra 오류 - REVIEW 유지, 다음 사이클 재시도")
                     update_queue(tasks, queue_path, task["id"], "REVIEW",
-                                 feedback=f"리뷰어 프로바이더 무응답: {err}")
+                                 feedback=f"리뷰어 인프라 오류 재시도: {err[:120]}")
                     return
                 log(f"[{task['id']}] 리뷰어 실행 오류: {err}")
                 update_queue(tasks, queue_path, task["id"], "REVIEW",
@@ -849,9 +869,9 @@ def main():
                                      feedback=f"재구현 시간 초과: {err}\n리뷰 피드백: {reason[:300]}")
                     else:
                         log(f"[{task['id']}] 재구현 실패: {err}")
-                        if err == "알 수 없는 오류":
+                        if err == "알 수 없는 오류" or is_infra_error(err):
                             update_queue(tasks, queue_path, task["id"], "FIX",
-                                         feedback=f"재구현 프로바이더 무응답: {err} - 다음 사이클 재시도")
+                                         feedback=f"재구현 인프라 오류 재시도: {err[:120]} - 다음 사이클 재시도")
                         else:
                             update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                          feedback=f"재구현 실행 오류: {err[:300]}")
