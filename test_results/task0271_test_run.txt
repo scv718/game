@@ -1,0 +1,88 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: DungeonManager autoload registered
+PASS: main.tscn loads
+PASS: data-driven definition 'ne_ruins' registered
+PASS: exactly one prototype dungeon definition registered
+PASS: region_id linked to NE dungeon region
+PASS: display_name set
+PASS: tier defaults to 1
+PASS: encounter_ids data-driven
+PASS: reward_table_id referenced
+PASS: one_shot hook default false
+PASS: threat_reward hook set (2)
+PASS: definition starts DISCOVERED
+PASS: metadata party min carried
+PASS: data-driven reward table 'ne_ruins_clear' registered
+PASS: exactly one prototype reward table registered
+PASS: reward table has 2 entries
+PASS: entry[0] type/id/amount readable
+PASS: DungeonDefinition is pure RefCounted data
+PASS: dungeon_id retained
+PASS: default state name 'DISCOVERED'
+PASS: invalid state enum rejected
+PASS: state unchanged after rejected set
+PASS: empty encounter_id rejected
+PASS: duplicate encounter_id rejected
+PASS: set_encounter_ids stores a copy (external mutation isolated)
+PASS: get_encounter_ids returns a copy (internal state protected)
+PASS: set_metadata stores a copy
+PASS: get_metadata returns a copy (internal state protected)
+PASS: valid entry accepted
+PASS: missing amount defaults to 0
+PASS: entry without type rejected
+PASS: entry without id rejected
+PASS: non-dictionary entry rejected
+PASS: set_entries stores a copy (external mutation isolated)
+PASS: DungeonDefinition snapshot is pure save-safe
+PASS: DungeonDefinition snapshot round-trip restores fields
+PASS: to_snapshot returns an independent copy
+PASS: DungeonRewardTable snapshot is pure save-safe
+PASS: DungeonRewardTable snapshot round-trip restores fields
+PASS: no instance before create
+PASS: create_dungeon instantiates from definition
+PASS: duplicate create_dungeon rejected
+PASS: create_dungeon for unknown id rejected
+PASS: get_dungeon returns instance
+PASS: instance starts DISCOVERED
+PASS: instance completion_count starts 0
+PASS: instance carries encounter_ids from definition
+PASS: instance carries reward_table_id
+PASS: get_dungeons returns instance list
+PASS: instance is active before terminal state
+PASS: get_dungeon_state returns DISCOVERED
+PASS: get_threat_reward returns instance hook
+PASS: reward table resolved through instance reward_table_id
+PASS: unknown dungeon state is -1
+PASS: unknown dungeon completion_count is 0
+PASS: DISCOVERED -> IN_PROGRESS rejected
+PASS: DISCOVERED -> CLEARED rejected
+PASS: invalid state rejected at manager level
+PASS: DISCOVERED -> READY accepted
+PASS: instance state is READY
+PASS: READY -> READY rejected
+PASS: READY -> CLEARED rejected
+PASS: READY -> IN_PROGRESS accepted
+PASS: IN_PROGRESS -> IN_PROGRESS rejected
+PASS: IN_PROGRESS -> CLEARED accepted
+PASS: instance state is CLEARED
+PASS: completion_count incremented exactly once on clear
+PASS: CLEARED -> CLEARED rejected
+PASS: repeated complete does not duplicate completion_count
+PASS: CLEARED instance no longer active
+PASS: CLEARED -> READY re-entry accepted
+PASS: re-entry READY -> IN_PROGRESS accepted
+PASS: IN_PROGRESS -> FAILED accepted
+PASS: instance state is FAILED
+PASS: FAILED -> FAILED rejected
+PASS: FAILED -> READY re-entry accepted
+PASS: second re-entry READY -> IN_PROGRESS accepted
+PASS: second clear accepted
+PASS: second clear increments completion_count again
+PASS: reward table still resolved after repeated runs
+PASS: data-driven definition template unchanged by instance transitions
+PASS: TASK-012 world floor intact (>=128x128 cells)
+PASS: 5 core buildings intact
+PASS: no runtime player Actor
+PASS: ExplorationManager/NE dungeon region preserved
+TASK0271_RESULT=PASS

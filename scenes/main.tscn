@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world.tscn" id="1_world"]
 [ext_resource type="PackedScene" path="res://ui/hud.tscn" id="3_hud"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/camera_controller.tscn" id="5_camera"]
 [ext_resource type="Script" path="res://scripts/world_selection.gd" id="6_selection"]
 [ext_resource type="PackedScene" path="res://ui/world_map_overlay.tscn" id="7_worldmap"]
+[ext_resource type="PackedScene" path="res://ui/dungeon_preparation_ui.tscn" id="8_dungeon_prep"]
 
 [node name="Main" type="Node2D"]
 
@@ -22,3 +23,5 @@ script = ExtResource("6_selection")
 script = ExtResource("4_placement")
 
 [node name="WorldMapOverlay" parent="." instance=ExtResource("7_worldmap")]
+
+[node name="DungeonPreparationUI" parent="." instance=ExtResource("8_dungeon_prep")]

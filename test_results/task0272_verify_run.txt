@@ -1,0 +1,87 @@
+﻿Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: DungeonPreparationManager autoload registered
+PASS: DungeonManager autoload registered
+PASS: MercenaryRoster autoload registered
+PASS: main.tscn loads
+PASS: preparation UI starts hidden
+PASS: UI handles no-dungeon state
+PASS: dungeon instance created
+PASS: dungeon metadata party min 2
+PASS: dungeon metadata party max 4
+PASS: dungeon metadata risk 3
+PASS: roster add merc_A
+PASS: roster add merc_B
+PASS: roster add merc_C
+PASS: roster add merc_D
+PASS: roster add merc_dead
+PASS: DungeonPreparation is pure RefCounted data
+PASS: dungeon_id retained
+PASS: duplicate member rejected
+PASS: empty member id rejected
+PASS: member added
+PASS: member removed
+PASS: removing missing member rejected
+PASS: set_member_ids stores a copy
+PASS: get_member_ids returns a copy
+PASS: food slot hook set
+PASS: food slot empty allowed (no mandatory rule)
+PASS: potion slots copy-protected
+PASS: empty potion slots allowed
+PASS: equipment summary hook set
+PASS: empty equipment summary allowed
+PASS: DungeonPreparation snapshot is pure save-safe
+PASS: DungeonPreparation snapshot round-trip restores fields
+PASS: empty party invalid with clear reason
+PASS: empty party cannot depart
+PASS: party below min rejected with clear reason
+PASS: valid 2-member party passes
+PASS: empty Food/Potion/Equipment does not block (design has no mandatory rule)
+PASS: dead member rejected with clear reason
+PASS: member not in roster rejected with clear reason
+PASS: member on expedition/active run rejected with clear reason
+PASS: duplicate member rejected with clear reason
+PASS: party above max rejected with clear reason
+PASS: IN_PROGRESS dungeon not preparable
+PASS: CLEARED dungeon not preparable
+PASS: READY dungeon with valid party can depart
+PASS: create_preparation ok
+PASS: duplicate preparation rejected
+PASS: preparation queryable
+PASS: add_member merc_A ok
+PASS: duplicate add_member rejected
+PASS: dead member add rejected with reason
+PASS: manager validate invalid for 1-member party
+PASS: invalid party depart blocked
+PASS: state unchanged after blocked depart
+PASS: add_member merc_B ok
+PASS: manager validate valid for 2-member party
+PASS: valid party departs
+PASS: dungeon state IN_PROGRESS after depart
+PASS: departed members marked unavailable
+PASS: departed member add rejected as unavailable
+PASS: duplicate depart blocked during run
+PASS: members available again after run ends (CLEARED)
+PASS: clear_preparation ok
+PASS: re-create preparation for re-entry
+PASS: re-entry add member A
+PASS: re-entry add member C
+PASS: re-entry valid party departs
+PASS: re-entry dungeon IN_PROGRESS
+PASS: preparation UI opens for dungeon
+PASS: dungeon risk displayed
+PASS: expected reward displayed (public values)
+PASS: depart disabled for invalid (too small) party
+PASS: invalid party reason clearly displayed in UI
+PASS: food slot starts empty (optional)
+PASS: food slot set via UI hook
+PASS: depart enabled once party valid
+PASS: UI status shows VALID
+PASS: UI depart transitions dungeon to IN_PROGRESS
+PASS: UI shows DEPARTED after departure
+PASS: TASK-027-1 reward table preserved
+PASS: TASK-027-1 definition preserved
+PASS: TASK-012 world floor intact (>=128x128 cells)
+PASS: 5 core buildings intact
+PASS: no runtime player Actor
+TASK0272_RESULT=PASS
