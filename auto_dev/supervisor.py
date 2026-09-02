@@ -634,6 +634,48 @@ def bump_parse_attempts(task):
     return n
 
 
+def design_resolution_path(task):
+    runs_dir = os.path.join(BASE_DIR, "runs", GROUP_ID) if GROUP_ID else os.path.join(BASE_DIR, "runs", "_default")
+    os.makedirs(runs_dir, exist_ok=True)
+    return os.path.join(runs_dir, f"design_resolution_{task['id']}.md")
+
+
+def maybe_design_resolve(task, tasks, queue_path, reason):
+    """설계 갈등(NEEDS_DESIGN) 시 1회만 Thinker(qwen3.6)로 해결안을 만들어 자동 재시작.
+
+    - 해결안 문서가 이미 존재하면 자동 재시도를 멈추고 사람 개입으로 넘긴다(반복 루프 방지).
+    - Thinker가 해결안을 산출하면 태스크를 QUEUED로 재큐 → 다음 사이클에서
+      qwen3-coder:30b 구현자가 해결안을 참고해 재실행한다.
+    - 실패하면 False → 호출부가 그대로 NEEDS_DESIGN으로 기록한다."""
+    model = cfg("design_thinker_model")
+    if not model:
+        return False
+    rpath = design_resolution_path(task)
+    if os.path.exists(rpath):
+        log(f"[{task['id']}] 설계 해결 시도 기록 존재 - 자동 재시도 중단, 사람 개입 대기")
+        return False
+    prompt = load_prompt("thinker.md")
+    prompt += "\n\n" + format_task_context(task)
+    prompt += f"\n\n[실패/설계 갈등 사유]\n{str(reason)[:1500]}"
+    extra = ["--file", build_task_file(task, queue_path)]
+    sid, text, err = run_opencode_retry(prompt, model, extra, cfg("thinker_timeout_sec"),
+                                        task_id=task["id"])
+    if err:
+        log(f"[{task['id']}] 설계 Thinker 오류 - NEEDS_DESIGN 유지(사람 개입): {err[:200]}")
+        return False
+    content = (text or "").strip()
+    if not content:
+        log(f"[{task['id']}] 설계 Thinker 빈 응답 - NEEDS_DESIGN 유지")
+        return False
+    with open(rpath, "w", encoding="utf-8") as f:
+        f.write(content)
+    rel = os.path.relpath(rpath, BASE_DIR)
+    update_queue(tasks, queue_path, task["id"], "QUEUED",
+                 feedback=f"설계 해결안 자동 생성됨 ({rel} 참고): {str(reason)[:200]}")
+    log(f"[{task['id']}] 설계 해결안 생성 -> QUEUED 재큐 ({model})")
+    return True
+
+
 def reset_parse_attempts(task):
     p = parse_attempts_path(task)
     if os.path.exists(p):
@@ -759,6 +801,8 @@ def main():
                         update_queue(tasks, queue_path, task["id"], "IMPLEMENT",
                                      feedback=f"구현자 인프라 오류 재시도: {err[:120]} - 다음 사이클 재시도")
                     else:
+                        if maybe_design_resolve(task, tasks, queue_path, f"구현 실행 오류: {err}"):
+                            return
                         update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                      feedback=f"구현 실행 오류: {err[:300]}")
                 return
@@ -791,10 +835,14 @@ def main():
                             update_queue(tasks, queue_path, task["id"], "FIX",
                                          feedback=f"수정 중 인프라 오류 재시도: {err[:120]} - 다음 사이클 재시도")
                         else:
+                            if maybe_design_resolve(task, tasks, queue_path, f"게이트 수정 실행 오류: {err}"):
+                                return
                             update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                          feedback=f"게이트 수정 실행 오류: {err[:300]}")
                         return
                 else:
+                    if maybe_design_resolve(task, tasks, queue_path, "검증 게이트 반복 실패: " + "; ".join(p[:150] for p in problems[:5])):
+                        return
                     update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                  feedback=f"검증 게이트 {max_rounds}회 실패 - 수동 확인 필요: "
                                           + "; ".join(p[:150] for p in problems[:5]))
@@ -836,6 +884,8 @@ def main():
                 n = bump_parse_attempts(task)
                 if n >= 3:
                     log(f"[{task['id']}] 판정 파싱 3회 이상 실패 - 수동 개입 필요")
+                    if maybe_design_resolve(task, tasks, queue_path, f"리뷰 판정 파싱 {n}회 실패"):
+                        return
                     update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                  feedback=f"리뷰어가 판정 형식을 3회 이상 미준수 - 직접 확인 필요 (시도 {n}회)")
                     return
@@ -853,6 +903,8 @@ def main():
                 return
 
             if verdict == "NEEDS_DESIGN":
+                if maybe_design_resolve(task, tasks, queue_path, f"리뷰(NEEDS_DESIGN): {reason}"):
+                    return
                 update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN", feedback=reason)
                 write_result(task, verdict, reason)
                 log(f"[{task['id']}] NEEDS_DESIGN - 자동화 정지, 사람 개입 대기")
@@ -873,11 +925,15 @@ def main():
                             update_queue(tasks, queue_path, task["id"], "FIX",
                                          feedback=f"재구현 인프라 오류 재시도: {err[:120]} - 다음 사이클 재시도")
                         else:
+                            if maybe_design_resolve(task, tasks, queue_path, f"재구현 실행 오류: {err}"):
+                                return
                             update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                                          feedback=f"재구현 실행 오류: {err[:300]}")
                     return
                 log(f"[{task['id']}] 재구현 완료: {summary[:200]}")
             else:
+                if maybe_design_resolve(task, tasks, queue_path, f"FIX {cfg('max_fix_rounds')}회 초과: {reason}"):
+                    return
                 update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
                              feedback=f"FIX {cfg('max_fix_rounds')}회 초과 - 자동화 정지: {reason[:300]}")
                 log(f"[{task['id']}] FIX {cfg('max_fix_rounds')}회 초과 - NEEDS_DESIGN")
