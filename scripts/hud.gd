@@ -15,6 +15,10 @@ extends CanvasLayer
 @onready var _compat_food_label: Label = $FoodLabel
 @onready var _compat_meal_label: Label = $MealLabel
 @onready var _compat_daytime_label: Label = $DayTimeLabel
+@onready var threat_label: Label = %ThreatLabel
+@onready var threat_direction_label: Label = %ThreatDirectionLabel
+@onready var threat_gauge: ProgressBar = %ThreatGauge
+@onready var wave_label: Label = %WaveLabel
 
 var _feedback_timer: SceneTreeTimer = null
 var _current_workplace: Node = null
@@ -32,6 +36,8 @@ const BUILD_TYPE_HINTS := {
 ## raw ingredient 소비는 호박색(비효율 소비 안내)으로 구분한다.
 const SHORTAGE_WARN_COLOR := Color(1.0, 0.42, 0.35)
 const RAW_WARN_COLOR := Color(1.0, 0.72, 0.3)
+const THREAT_ALERT_COLOR := Color(0.96, 0.42, 0.36, 1.0)
+const THREAT_NORMAL_COLOR := Color(0.78, 0.82, 0.85, 1.0)
 
 
 func _ready() -> void:
@@ -52,6 +58,10 @@ func _ready() -> void:
 			_update_food_warning(pc.get_last_tick())
 	GameTime.phase_changed.connect(_on_phase_changed)
 	_refresh_daytime()
+	ThreatSystem.threat_changed.connect(_on_threat_changed)
+	WaveManager.schedule_changed.connect(_on_wave_schedule_changed)
+	WaveManager.wave_triggered.connect(_on_wave_triggered)
+	_refresh_threat()
 	_schedule_daytime_refresh()
 	_on_interactable_changed(null)
 	var placement: Node = get_tree().get_first_node_in_group("building_placement")
@@ -141,6 +151,7 @@ func _update_food_warning(result: Dictionary) -> void:
 
 func _on_phase_changed(_phase: int, _day_number: int) -> void:
 	_refresh_daytime()
+	_refresh_threat()
 
 
 func _schedule_daytime_refresh() -> void:
@@ -152,6 +163,7 @@ func _on_daytime_refresh_timeout() -> void:
 	if not is_inside_tree():
 		return
 	_refresh_daytime()
+	_refresh_threat()
 	_schedule_daytime_refresh()
 
 
@@ -163,6 +175,46 @@ func _refresh_daytime() -> void:
 	]
 	_compat_daytime_label.text = daytime_label.text
 	day_progress_bar.value = GameTime.get_phase_progress() * 100.0
+
+
+func _on_threat_changed(_current: float, _max_threat: float) -> void:
+	_refresh_threat()
+
+
+func _on_wave_schedule_changed(_nights_until_wave: int, _wave_index: int) -> void:
+	_refresh_threat()
+
+
+func _on_wave_triggered(_wave_index: int, _night_number: int) -> void:
+	_refresh_threat()
+
+
+func _refresh_threat() -> void:
+	var ratio: float = ThreatSystem.get_ratio()
+	threat_gauge.max_value = 100.0
+	threat_gauge.value = ratio * 100.0
+	threat_label.text = "Threat %d%%" % int(ratio * 100.0)
+	var growing := ThreatSystem.is_auto_growing() and GameTime.get_time_scale() > 0.0
+	threat_direction_label.text = "!" if ratio >= 1.0 else ("▲" if growing else "")
+	var nights: int = WaveManager.get_nights_until_wave()
+	var forced := ratio >= WaveManager.wave_threshold_ratio
+	if GameTime.get_phase() == GameTime.Phase.NIGHT and WaveManager.is_wave_night():
+		wave_label.text = "WAVE NOW"
+		_set_wave_alert(true)
+	elif forced or nights <= 0:
+		wave_label.text = "WAVE NEXT NIGHT"
+		_set_wave_alert(true)
+	elif nights == 1:
+		wave_label.text = "Wave in 1 night"
+		_set_wave_alert(false)
+	else:
+		wave_label.text = "Wave in %d nights" % nights
+		_set_wave_alert(false)
+
+
+func _set_wave_alert(alert: bool) -> void:
+	wave_label.add_theme_color_override("font_color",
+		THREAT_ALERT_COLOR if alert else THREAT_NORMAL_COLOR)
 
 
 func _on_interactable_changed(interactable: Node) -> void:

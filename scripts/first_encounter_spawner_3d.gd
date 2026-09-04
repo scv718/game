@@ -46,11 +46,23 @@ func _ready() -> void:
 
 
 ## NIGHT 시작 시 spawn, DAY 복귀 시 despawn.
+## TASK-024-2: WaveManager가 이번 NIGHT을 wave night로 결정했을 때만 spawn한다.
+## WaveManager가 없거나(독립 테스트 등) wave night이 아니면 spawn하지 않는다.
 func _on_phase_changed(phase: int, _day_number: int) -> void:
 	if phase == GameTime.Phase.NIGHT:
-		spawn_encounter()
+		if _is_wave_night():
+			spawn_encounter()
 	else:
 		despawn_encounter()
+
+
+## TASK-024-2: WaveManager.is_wave_night() 조회. WaveManager가 없으면 기존처럼 매 NIGHT
+## spawn하도록 true로 유지한다(레거시/독립 테스트 호환).
+func _is_wave_night() -> bool:
+	var wave_mgr := get_tree().root.get_node_or_null("WaveManager")
+	if wave_mgr == null or not wave_mgr.has_method("is_wave_night"):
+		return true
+	return wave_mgr.is_wave_night()
 
 
 func set_direction(value: String) -> void:
@@ -204,3 +216,4 @@ func _spawn_offset(i: int) -> Vector3:
 	var row := i / 3
 	return Vector3(
 		col * WorldCoords3D.GRID_CELL_UNITS, 0.0, row * WorldCoords3D.GRID_CELL_UNITS)
+

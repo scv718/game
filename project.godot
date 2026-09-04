@@ -26,6 +26,8 @@ PopulationConsumption="*res://scripts/population_consumption.gd"
 FirstEncounterSpawner="*res://scripts/first_encounter_spawner.gd"
 DeathLedger="*res://scripts/death_ledger.gd"
 ExplorationManager="*res://scripts/exploration_manager.gd"
+ThreatSystem="*res://scripts/threat_system.gd"
+WaveManager="*res://scripts/wave_manager.gd"
 
 [display]
 

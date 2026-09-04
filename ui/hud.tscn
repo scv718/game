@@ -142,6 +142,38 @@ theme_override_font_sizes/font_size = 15
 text = "Meal: 0"
 
 [node name="DayTimeLabel" type="Label" parent="."]
+[node name="ThreatLabel" type="Label" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 14.0
+offset_top = 137.0
+offset_right = 148.0
+offset_bottom = 157.0
+text = "Threat 0%"
+
+[node name="ThreatDirectionLabel" type="Label" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 148.0
+offset_top = 137.0
+offset_right = 198.0
+offset_bottom = 157.0
+
+[node name="ThreatGauge" type="ProgressBar" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 14.0
+offset_top = 159.0
+offset_right = 198.0
+offset_bottom = 169.0
+show_percentage = false
+
+[node name="WaveLabel" type="Label" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 14.0
+offset_top = 171.0
+offset_right = 198.0
+offset_bottom = 191.0
+text = "Wave in 0 nights"
+
+[node name="DayTimeLabel" type="Label" parent="."]
 visible = false
 text = "DAY 1  0%"
 
