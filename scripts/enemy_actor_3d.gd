@@ -142,7 +142,9 @@ func _record_death() -> void:
 	record.max_hp = max_hp
 	record.attack_damage = attack_damage
 	record.attack_interval = attack_interval
-	record.move_speed = move_speed
+	# DeathRecord 스키마는 logical px/s를 보관한다(2D enemy와 ghost death 동일).
+	# actor 내부 move_speed는 world units이므로 역변환해 저장한다.
+	record.move_speed = move_speed / WorldCoords3D.PX_TO_UNIT
 	record.death_day = _current_death_day()
 	record.death_phase = _current_death_phase()
 	record.death_position = WorldCoords3D.to_logical(global_position)
