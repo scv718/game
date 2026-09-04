@@ -158,6 +158,11 @@ commit.
 - TASK-025 supersedes the TASK-017-only GhostReturn queue with DeathLedger as
   authoritative candidate owner. GhostSpawnMix consumes the existing wave
   budget and the TASK-024 WaveManager remains the sole NIGHT trigger owner.
+- The original TASK-017 tests directly imported the superseded
+  GhostReturnCandidate/GhostReturn owner and became invalid after TASK-025.
+  They were reconstructed against the current DeathLedger/GhostSpawnMix
+  contract. Post-Portal results are 0171-0174 exit 0 / PASS; 0173 emits only
+  a bounded scene-teardown leak warning.
 - TASK-026-3 was updated to provision the already-canonical Inn capacity for its
   ten independent mercenary fixtures. The production Expedition owner was not
   changed.
