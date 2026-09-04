@@ -90,6 +90,12 @@ var _has_nav_dest := false
 ## TASK-014-6 사망 처리에서 재사용(2D 계약 동일).
 signal died(mercenary: Node)
 
+## TASK-021-3: 이번 전투(밤)에서 Potion을 이미 소비했는지. alive Actor는 밤마다
+## spawn되므로 이 flag는 전투 단위로 자연 리셋되어 동일 조건에서 multi-consume을
+## 방지한다. pause/2x 무관하게 상태(trigger/HP)만으로 결정해 deterministic.
+var _potion_consumed := false
+var _potion_service = null
+
 @onready var _nav_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var _visual: Node3D = $Visual
 @onready var _body_mesh: MeshInstance3D = $Visual/BodyVisual
@@ -112,6 +118,7 @@ func _physics_process(delta: float) -> void:
 	if not alive or state == MercState.DEAD:
 		velocity = Vector3.ZERO
 		return
+	_tick_auto_potion()
 	_attack_cd = maxf(0.0, _attack_cd - delta)
 	_unreachable_cooldown = maxf(0.0, _unreachable_cooldown - delta)
 	_tick_hit_flash(delta)
@@ -360,6 +367,26 @@ func _in_attack_range() -> bool:
 		return false
 	return WorldCoords3D.distance_xz(global_position, _target.global_position) \
 		<= ATTACK_RANGE
+
+
+## TASK-021-3: 전투 중 살아 있는 상태에서 Potion 자동 소비를 시도한다(2D 계약 동일).
+## 조건(HP_BELOW_RATIO)을 만족하면 1회 소비하고 현재 HP에 effect를 적용한 뒤
+## _potion_consumed를 true로 두어 동일 조건에서 multi-consume을 방지한다.
+## dead이면 _physics_process가 이 호출에 도달하지 않고, service도 alive false를
+## 거부한다. VillageResources autoload는 NodePath로 런타임 조회한다(2D 패턴 동일).
+func _tick_auto_potion() -> void:
+	if _potion_consumed or merc_data == null:
+		return
+	if _potion_service == null:
+		var service_script: GDScript = load("res://scripts/mercenary_potion_service.gd") as GDScript
+		if service_script == null:
+			return
+		var res: Node = get_node_or_null("/root/VillageResources")
+		_potion_service = service_script.new(res)
+	var result: Dictionary = _potion_service.auto_consume(merc_data, current_hp, _potion_consumed)
+	if result.get("ok") == true:
+		current_hp = int(result.get("new_hp", current_hp))
+		_potion_consumed = true
 
 
 func _target_invalid() -> bool:
