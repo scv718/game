@@ -67,6 +67,15 @@ const PATH_ALBEDO := Color(0.55, 0.46, 0.34)
 const PLAZA_ALBEDO := Color(0.61, 0.52, 0.38)
 const PATH_STRIP_Y := 0.05
 
+## Subtle district ground bands make the production layout legible from the
+## overview camera without introducing collision or navigation surfaces.
+const ZONE_GROUND_TONES := {
+	"village": Color(0.48, 0.64, 0.38),
+	"forest": Color(0.34, 0.53, 0.30),
+	"lumberyard": Color(0.49, 0.54, 0.31),
+	"quarry": Color(0.50, 0.56, 0.40),
+}
+
 ## -- 제한적 variation 팔레트(태스크 원칙). 이 범위 밖 모델을 추가하지 않는다.
 ## house palette: catalog house_building 조합(floor/wall/window/door 교체).
 const HOUSE_PLASTER := {
@@ -109,6 +118,7 @@ func _ready() -> void:
 		root.name = "Zone_%s" % zone.to_pascal_case()
 		add_child(root)
 		_zone_roots[zone] = root
+	_build_zone_ground()
 	var paths_root := Node3D.new()
 	paths_root.name = "Paths"
 	add_child(paths_root)
@@ -201,6 +211,47 @@ func _build_paths(root: Node3D) -> void:
 		material.roughness = 1.0
 		instance.material_override = material
 		root.add_child(instance)
+	# Short branches turn the south road into an intentional agriculture / trade
+	# frontage while keeping the central plaza and work corridors open.
+	_spawn_path(root, "Path_Farm_West", Vector3(-1, PATH_STRIP_Y, 9),
+		Vector3(-13, PATH_STRIP_Y, 13), 1.5)
+	_spawn_path(root, "Path_Farm_East", Vector3(1, PATH_STRIP_Y, 9),
+		Vector3(13, PATH_STRIP_Y, 13), 1.5)
+
+
+func _build_zone_ground() -> void:
+	for zone in ZONE_RECTS:
+		var rect: Rect2 = ZONE_RECTS[zone]
+		var mesh := PlaneMesh.new()
+		mesh.size = rect.size
+		var instance := MeshInstance3D.new()
+		instance.name = "DistrictGround_%s" % zone.to_pascal_case()
+		instance.mesh = mesh
+		instance.position = Vector3(rect.get_center().x, 0.01, rect.get_center().y)
+		instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var material := StandardMaterial3D.new()
+		material.albedo_color = ZONE_GROUND_TONES[zone]
+		material.roughness = 1.0
+		instance.material_override = material
+		_zone_roots[zone].add_child(instance)
+
+
+func _spawn_path(root: Node3D, path_name: String, from: Vector3, to: Vector3,
+		width: float) -> void:
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(width, 0.04, from.distance_to(to))
+	var instance := MeshInstance3D.new()
+	instance.name = path_name
+	instance.mesh = mesh
+	instance.position = (from + to) * 0.5
+	instance.position.y = PATH_STRIP_Y
+	instance.look_at_from_position(instance.position, to, Vector3.UP)
+	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := StandardMaterial3D.new()
+	material.albedo_color = PATH_ALBEDO
+	material.roughness = 1.0
+	instance.material_override = material
+	root.add_child(instance)
 
 
 ## -- VILLAGE: 저밀도 생활 공간. 집 5채 + 생활 props. 수목은 포인트 2그루만.
@@ -243,6 +294,32 @@ func _build_village(root: Node3D) -> void:
 	for i in 2:
 		_spawn("bld/fence_wooden_single", "village", "prop",
 			Vector3(-8.4 + i * 2.1, 0, 7.7), 0.0)
+	_build_farm_plot(root)
+
+
+func _build_farm_plot(root: Node3D) -> void:
+	# A compact south-facing crop yard: visually distinct from the market and
+	# connected directly to the south road, but intentionally light on props.
+	var plot := Node3D.new()
+	plot.name = "AgriculturePlot"
+	root.add_child(plot)
+	for row in range(3):
+		var bed := MeshInstance3D.new()
+		bed.name = "CropBed_%d" % row
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(6.0, 0.08, 0.65)
+		bed.mesh = mesh
+		bed.position = Vector3(7.0, 0.08, 11.8 + row * 1.15)
+		var soil := StandardMaterial3D.new()
+		soil.albedo_color = Color(0.32, 0.24, 0.16)
+		soil.roughness = 1.0
+		bed.material_override = soil
+		plot.add_child(bed)
+	for pos in [Vector3(4.0, 0, 10.8), Vector3(10.0, 0, 10.8),
+			Vector3(4.0, 0, 14.1), Vector3(10.0, 0, 14.1)]:
+		_spawn("bld/fence_wooden_single", "village", "farm_fence", pos, 90.0)
+	_spawn("prop/farmcrate_carrot", "village", "farm_prop", Vector3(4.8, 0, 12.0))
+	_spawn("prop/farmcrate_apple", "village", "farm_prop", Vector3(9.2, 0, 12.8))
 
 
 ## house_size_m: 4 또는 6(m). 문은 로컬 남쪽(+Z) 벽에 있고 yaw_deg로 방향을 돌린다.

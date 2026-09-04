@@ -22,7 +22,6 @@ class_name WorldContent3D
 
 const TREE_SCENE := preload("res://scenes/tree_3d.tscn")
 const STONE_DEPOSIT_SCENE := preload("res://scenes/stone_deposit_3d.tscn")
-const VISUAL_DRESSING_SCRIPT := preload("res://scripts/visual_dressing_3d.gd")
 const VILLAGE_COMPOSITION_SCRIPT := preload("res://scripts/village_composition_3d.gd")
 
 var _spawned := false
@@ -42,7 +41,6 @@ func _ready() -> void:
 	_spawn_starter_trees()
 	_spawn_forest_clusters()
 	_spawn_stone_deposit()
-	_spawn_visual_dressing()
 
 
 func get_tree_count() -> int:
@@ -86,7 +84,3 @@ func _spawn_tree(logical: Vector2) -> void:
 	add_child(tree)
 
 
-func _spawn_visual_dressing() -> void:
-	# VisualDressing3D class_name, instantiate via preloaded script
-	var dressing := VISUAL_DRESSING_SCRIPT.new() as Node3D
-	add_child(dressing)
