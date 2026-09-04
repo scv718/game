@@ -68,16 +68,13 @@ const PLAZA_ALBEDO := Color(0.61, 0.52, 0.38)
 const PATH_STRIP_Y := 0.05
 const HOUSE_VISUAL_SCALE := 0.72
 
-## Loafbrr Castle Wall Kit: visual-only frontier fortification candidates.
-## The packed scenes contain their own optional StaticBody3D; instances are
-## stripped to GeometryInstance3D children below so gameplay/navigation owners
-## remain exclusively owned by the existing world systems.
-const LOAFBRR_WALL_SCENE := preload(
-	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_wall.tscn")
-const LOAFBRR_GATE_SCENE := preload(
-	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_arch.tscn")
-const LOAFBRR_FLANK_SCENE := preload(
-	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_slits.tscn")
+## Loafbrr raw GLTF visual-only fortification. The authored .tscn wrappers are
+## intentionally not used here: raw meshes are extracted from the imported
+## CastleWallsKit GLTF at runtime and remain outside gameplay/navigation owners.
+const LOAFBRR_RAW_GLTF := preload(
+	"res://assets/LoafbrrAssets/CastleWallKit/gltf/CastleWallsKit.gltf")
+const CORNER_TOWER_SCENE := preload(
+	"res://scenes/visual/fortification/corner_tower_3d.tscn")
 
 ## -- 제한적 variation 팔레트(태스크 원칙). 이 범위 밖 모델을 추가하지 않는다.
 ## house palette: catalog house_building 조합(floor/wall/window/door 교체).
@@ -435,19 +432,22 @@ func _build_frontier_dressing() -> void:
 		Color(0.35, 0.31, 0.24))
 	_spawn_ground_patch("CorruptedGround", Vector3(-88, 0, 0), 20.0, 0.78,
 		Color(0.20, 0.18, 0.19))
-	# Courtine wall geometry is a 6m module (local X = 6m). After the 90-degree
-	# turn, each root advances 6m along Z; roots are offset by -3m because the
-	# authored mesh occupies local X=-6..0. The opening is therefore integrated
-	# into one continuous sequence rather than floating between wall pieces.
-	for z in [-21.0, -15.0, 9.0, 15.0]:
-		_spawn_fortification_scene(LOAFBRR_WALL_SCENE,
-				Vector3(-30, 0, z), 90.0, 1.0, "LoafbrrWall_%d" % int(z))
-	_spawn_fortification_scene(LOAFBRR_FLANK_SCENE, Vector3(-30, 0, -9),
-		90.0, 1.0, "LoafbrrGateFlankSouth")
-	_spawn_fortification_scene(LOAFBRR_GATE_SCENE, Vector3(-30, 0, -3),
-		90.0, 1.0, "LoafbrrMainGateOpening")
-	_spawn_fortification_scene(LOAFBRR_FLANK_SCENE, Vector3(-30, 0, 3),
-		90.0, 1.0, "LoafbrrGateFlankNorth")
+	# Raw GLTF modules are authored on a 6m grid. This continuous frontage uses
+	# an integrated arch opening and leaves a deliberately generous inner staging
+	# area before the village center.
+	for item in [
+		{"node": "Courtine_Wall", "z": -21.0, "name": "RawLoafbrrWall_SouthWest"},
+		{"node": "Courtine_Wall", "z": -15.0, "name": "RawLoafbrrWall_South"},
+		{"node": "Courtine_Wall", "z": -9.0, "name": "RawLoafbrrWall_GateFlankSouth"},
+		{"node": "Courtine_Door_Arch", "z": -3.0, "name": "RawLoafbrrGate_Arch"},
+		{"node": "Courtine_Wall", "z": 3.0, "name": "RawLoafbrrWall_GateFlankNorth"},
+		{"node": "Courtine_Wall", "z": 9.0, "name": "RawLoafbrrWall_North"},
+		{"node": "Courtine_Wall", "z": 15.0, "name": "RawLoafbrrWall_NorthEast"},
+	]:
+		_spawn_raw_fortification(item["node"], Vector3(-30, 0, item["z"]),
+			90.0, item["name"])
+	_spawn_corner_tower(Vector3(-30, 0, -25), "RawCornerTower_South")
+	_spawn_corner_tower(Vector3(-30, 0, 19), "RawCornerTower_North")
 	for z in [-18, -10, 10, 18]:
 		_spawn_frontier_model("bld/fence_wooden_single", Vector3(-48, 0, z),
 			90.0, 0.9)
@@ -495,24 +495,38 @@ func _spawn_frontier_model(key: String, pos: Vector3, yaw_deg: float,
 	add_child(model)
 
 
-func _spawn_fortification_scene(scene: PackedScene, pos: Vector3,
-		yaw_deg: float, uniform_scale: float, node_name: String) -> Node3D:
-	if scene == null:
-		push_error("VillageComposition3D: Loafbrr fortification scene is null")
+func _spawn_raw_fortification(source_node_name: String, pos: Vector3,
+		yaw_deg: float, node_name: String) -> Node3D:
+	var source_root := LOAFBRR_RAW_GLTF.instantiate()
+	var source := source_root.get_node_or_null(source_node_name) as MeshInstance3D
+	if source == null:
+		push_error("VillageComposition3D: raw GLTF node missing '%s'" % source_node_name)
+		source_root.free()
 		return null
-	var model := scene.instantiate() as Node3D
-	if model == null:
-		push_error("VillageComposition3D: Loafbrr fortification root is not Node3D")
-		return null
+	var model := source.duplicate() as MeshInstance3D
 	model.name = node_name
 	model.position = WorldCoords3D.flatten(pos)
 	model.rotation.y = deg_to_rad(yaw_deg)
-	model.scale = Vector3.ONE * uniform_scale
-	model.set_meta("asset_source", "Loafbrr Castle Wall Kit")
+	model.scale = Vector3.ONE
+	model.set_meta("asset_source", "Loafbrr Castle Wall Kit raw GLTF")
+	model.set_meta("source_node", source_node_name)
 	model.set_meta("zone", "frontier")
 	model.set_meta("kind", "visual_fortification")
-	_make_fortification_materials_visible(model)
-	_strip_fortification_colliders(model)
+	add_child(model)
+	source_root.free()
+	return model
+
+
+func _spawn_corner_tower(pos: Vector3, node_name: String) -> Node3D:
+	var model := CORNER_TOWER_SCENE.instantiate() as Node3D
+	model.name = node_name
+	model.position = WorldCoords3D.flatten(pos)
+	model.rotation.y = deg_to_rad(90.0)
+	model.scale = Vector3.ONE * 0.35
+	model.set_meta("asset_source", "Towers-n-Castles raw GLB")
+	model.set_meta("source_node", "WallCornerTower")
+	model.set_meta("zone", "frontier")
+	model.set_meta("kind", "visual_fortification")
 	add_child(model)
 	return model
 
