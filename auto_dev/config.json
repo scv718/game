@@ -18,7 +18,7 @@
     "verification":  {
                          "task_test":  true,
                          "regression":  true,
-                         "regression_timeout":  600,
+                         "regression_timeout":  300,
                          "diff_check":  true,
                          "suspicious_test_change":  true
                      },

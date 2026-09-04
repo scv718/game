@@ -298,18 +298,54 @@ _IMPL_FAILURE_MARKERS = (
     "회귀(baseline 3D) FAIL",
 )
 
+_INFRA_FAILURE_MARKERS = (
+    "TIMEOUT",
+    "시간 초과",
+    "godot_exe",
+    "git",
+    "bootstrap",
+    "import",
+    "infra",
+    "provider",
+    "model",
+    "tool",
+    "Command '",
+    "exit code",
+    "Process failed",
+)
+
+DESIGN_KEYWORDS = (
+    "design ambiguity",
+    "설계 모호",
+    "설계 갈등",
+    "NEEDS_DESIGN",
+)
+
 
 def classify_gate_failure(problems, max_rounds):
     """검증 게이트 반복 실패 원인 분류.
 
-    - deterministic 구현 실패(구현자가 코드/필수 테스트를 만들지 않음 등)이면
-      ImplementationFailure 로 분류 → NEEDS_DESIGN 으로 승격하지 않는다.
-      설계 모호성은 아니므로 사람 개입(설계 resolve) 전에 구현 수정이 우선이다.
-    - 그 외(명시적 설계 갈등)만 설계 해결 대기(NeedsDesign)로 분류한다.
+    목표: NEEDS_DESIGN은 오직 실제 game-design ambiguity일 때만 사용한다.
+    자동화가 작업을 완료하지 못한 경우는 NeedsDesign으로 승격하지 않는다.
+
+    분류 체계:
+    - ImplementationFailure: 구현자가 코드/필수 테스트를 만들지 않음 등 deterministic 구현 실패.
+    - InfraFailure: timeout, Godot/git/bootstrap 오류, provider/model/tool 장애 등 인프라 문제.
+    - NeedsDesign: 명시적 design ambiguity가 확인된 경우에만.
+    - NonDesignFailure: 분류 불가능한 unknown gate failure (기본값, NeedsDesign 아님).
     """
-    if any(m in p for p in problems for m in _IMPL_FAILURE_MARKERS):
+    text_blob = " ".join(problems).lower()
+
+    if any(m in text_blob for m in _IMPL_FAILURE_MARKERS):
         return "ImplementationFailure"
-    return "NeedsDesign"
+
+    if any(m.lower() in text_blob for m in _INFRA_FAILURE_MARKERS):
+        return "InfraFailure"
+
+    if any(kw.lower() in text_blob for kw in DESIGN_KEYWORDS):
+        return "NeedsDesign"
+
+    return "NonDesignFailure"
 
 
 def run_headless_test(godot_exe, root, script_path, timeout=900):
