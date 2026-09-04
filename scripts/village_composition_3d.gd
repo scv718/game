@@ -131,6 +131,7 @@ func _ready() -> void:
 	_build_lumberyard(_zone_roots["lumberyard"])
 	_build_quarry(_zone_roots["quarry"])
 	_build_characters(chars_root)
+	_build_landmark_dressing()
 	_build_frontier_dressing()
 
 
@@ -330,6 +331,63 @@ func _build_village(root: Node3D) -> void:
 		_spawn("bld/fence_wooden_single", "village", "prop",
 			Vector3(-8.4 + i * 2.1, 0, 7.7), 0.0)
 	_build_farm_plot(root)
+
+
+func _build_landmark_dressing() -> void:
+	# Functional clusters sit beside the existing gameplay-owned core buildings.
+	# They are intentionally offset from corridors and carry no collision/nav data.
+	# Keep forecourt: stone landmark reads first, with restrained torches already
+	# placed by _build_village.
+	_spawn("bld/stairs_exterior_straight", "village", "keep_forecourt",
+		Vector3(0, 0, 3.9), 0.0, 0.72)
+
+	# Tavern: barrels, outdoor table substitute and a warm lantern silhouette.
+	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-17.2, 0, -5.2),
+		18.0, 0.82)
+	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-16.0, 0, -5.7),
+		-12.0, 0.72)
+	_spawn("prop/stall_cart_empty", "village", "tavern_cluster",
+		Vector3(-17.0, 0, -1.0), 90.0, 0.72)
+	_spawn("prop/lantern_wall", "village", "tavern_cluster",
+		Vector3(-11.7, 0, -4.8), 180.0, 0.8)
+
+	# Inn: wagon and travel goods establish lodging/travel identity.
+	_spawn("bld/wagon", "village", "inn_cluster", Vector3(17.2, 0, -5.2),
+		-18.0, 0.72)
+	_spawn("prop/bag", "village", "inn_cluster", Vector3(16.0, 0, -1.2),
+		22.0, 0.8)
+	_spawn("prop/chest_wood", "village", "inn_cluster",
+		Vector3(18.2, 0, -1.0), -15.0, 0.72)
+
+	# Blacksmith/equipment side: anvil, chopping log, fuel and forge light.
+	_spawn("tool/anvil", "village", "blacksmith_cluster",
+		Vector3(16.7, 0, 11.0), 12.0, 0.72)
+	_spawn("tool/chopping_log", "village", "blacksmith_cluster",
+		Vector3(18.5, 0, 11.8), -20.0, 0.7)
+	_spawn("prop/crate_wooden", "village", "blacksmith_cluster",
+		Vector3(17.5, 0, 14.8), 18.0, 0.72)
+	_spawn("prop/torch_metal", "village", "blacksmith_cluster",
+		Vector3(11.5, 0, 12.0), 0.0, 0.82)
+
+	# Grocery/market: staggered stalls and food crates, kept south-west of the
+	# east road so the main route remains open.
+	_spawn("prop/stall_empty", "village", "market_cluster",
+		Vector3(-17.5, 0, 13.6), -8.0, 0.76)
+	_spawn("prop/farmcrate_carrot", "village", "market_cluster",
+		Vector3(-15.8, 0, 14.8), 15.0, 0.7)
+	_spawn("prop/farmcrate_apple", "village", "market_cluster",
+		Vector3(-19.0, 0, 14.6), -22.0, 0.72)
+	_spawn("prop/bag", "village", "market_cluster", Vector3(-18.2, 0, 11.5),
+		-15.0, 0.76)
+
+	# Small storage yard below the plaza: materials identify it without adding a
+	# new storage gameplay owner.
+	_spawn("prop/crate_wooden", "village", "storage_cluster",
+		Vector3(-6.6, 0, 14.6), 9.0, 0.78)
+	_spawn("prop/crate_wooden", "village", "storage_cluster",
+		Vector3(-5.3, 0, 15.2), -18.0, 0.68)
+	_spawn("prop/barrel", "village", "storage_cluster", Vector3(-7.8, 0, 15.4),
+		28.0, 0.72)
 
 
 func _build_farm_plot(root: Node3D) -> void:
