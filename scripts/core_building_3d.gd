@@ -48,7 +48,7 @@ const FLAG_COLOR := Color(0.9, 0.82, 0.5)
 
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
 const CUTESKULL_BUILDINGS := {
-	"keep": ["Castle_Entrance", "Castle_Tower_3", "Castle_Tower_4"],
+	"keep": ["Castle_Entrance", "Castle_Wall", "Castle_Tower_1", "Castle_Tower_2"],
 	"tavern": ["House_3_1"],
 	"inn": ["House_4_1"],
 	"grocery": ["House_5_2"],
@@ -175,10 +175,31 @@ func _replace_with_cuteskull(root: Node3D) -> bool:
 			continue
 		var model := source.duplicate() as Node3D
 		model.name = "Cuteskull_%s" % source_name
-		model.position = Vector3.ZERO if placed == 0 else Vector3(-3.2 if placed == 1 else 3.2, 0.0, 0.0)
-		model.rotation = Vector3.ZERO
-		model.scale = Vector3.ONE * (0.11 if core_type == "keep" else 0.14)
+		var local_yaw := 0.0
+		if core_type == "keep":
+			if source_name == "Castle_Entrance":
+				model.position = Vector3(0.0, 0.0, 1.6)
+			elif source_name == "Castle_Wall":
+				model.position = Vector3(-2.8, 0.0, -2.6)
+				local_yaw = 90.0
+			elif source_name == "Castle_Tower_1":
+				model.position = Vector3(-2.8, 0.0, -5.0)
+			else:
+				model.position = Vector3(2.8, 0.0, 0.2)
+		else:
+			model.position = Vector3.ZERO
+		var model_scale := 0.13
+		if source_name == "Castle_Tower_1":
+			model_scale = 0.072
+		elif source_name == "Castle_Tower_2":
+			model_scale = 0.085
+		elif source_name == "Castle_Wall":
+			model_scale = 0.09
+		elif core_type != "keep":
+			model_scale = 0.13
+		model.scale = Vector3.ONE * model_scale
 		_normalize_cuteskull_model(model)
+		_orient_cuteskull_model(model, local_yaw)
 		model.set_meta("asset_source", "Cuteskull city16.fbx")
 		model.set_meta("source_node", source_name)
 		model.set_meta("kind", "core_building_visual")
@@ -192,9 +213,18 @@ func _normalize_cuteskull_model(model: Node) -> void:
 	for child in model.get_children():
 		if child is MeshInstance3D and (child as MeshInstance3D).mesh:
 			var aabb := (child as MeshInstance3D).mesh.get_aabb()
+			# Source FBX is Z-up: center its XY footprint and put its minimum Z
+			# on the source ground before applying the Y-up parent rotation.
 			child.position = Vector3(-aabb.position.x - aabb.size.x * 0.5,
-				-aabb.position.y, -aabb.position.z - aabb.size.z * 0.5)
+				-aabb.position.y - aabb.size.y * 0.5, -aabb.position.z)
 			return
+
+
+func _orient_cuteskull_model(model: Node3D, yaw_deg: float) -> void:
+	var authored_scale := model.scale
+	model.basis = Basis(Vector3.UP, deg_to_rad(yaw_deg)) \
+		* Basis(Vector3.RIGHT, deg_to_rad(-90.0))
+	model.scale = authored_scale
 
 
 func _assemble_modular_room(root: Node3D, parts: Dictionary) -> void:

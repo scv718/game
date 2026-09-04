@@ -29,13 +29,13 @@ func _process(_delta: float) -> bool:
 		_aim(Vector3(-24, 0, 2), 82.0)
 	if frame == 32:
 		_save("real_village_overview.png")
-		_aim(Vector3(0, 0, 1), 26.0)
+		_aim(Vector3(5, 0, -2), 28.0)
 	if frame == 40:
 		_save("real_village_keep_plaza.png")
 		_aim(Vector3(-30, 0, 0), 34.0)
 	if frame == 48:
 		_save("real_village_gate.png")
-		_aim(Vector3(-11, 0, -12), 24.0)
+		_aim(Vector3(3, 0, -20), 28.0)
 	if frame == 56:
 		_save("real_village_residential.png")
 		_aim(Vector3(23, 0, 8), 32.0)

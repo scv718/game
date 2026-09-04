@@ -40,13 +40,13 @@ const ZONE_RECTS := {
 
 ## -- Main path corridor(XZ 평면 통행 구역). solid 배치 금지 구역이며
 ## PATH_MARGIN만큼 여유를 두고 검증한다(path_clearance 계약).
-const PATH_SPINE := Rect2(-2.25, -24, 4.5, 42)
-const PATH_EAST := Rect2(0, -2.25, 26, 4.5)
-const PATH_WEST := Rect2(-26, -2.25, 26, 4.5)
-const PATH_FOREST := Rect2(21, -27, 2, 26)
-const PATH_YARD := Rect2(21, 1, 2, 4)
-const PATH_QUARRY := Rect2(40, 1, 2, 20)
-const PATH_PLAZA := Rect2(-4.5, -4.5, 9, 9)
+const PATH_SPINE := Rect2(-30, -5.0, 20.0, 4.0)
+const PATH_EAST := Rect2(0, -4.0, 12.0, 4.0)
+const PATH_WEST := Rect2(-17, -1.0, 4.0, 5.0)
+const PATH_FOREST := Rect2(18, 5.0, 8.0, 2.0)
+const PATH_YARD := Rect2(3.0, -17.0, 1.0, 6.0)
+const PATH_QUARRY := Rect2(37, 10.0, 5.0, 2.0)
+const PATH_PLAZA := Rect2(-4.0, -6.0, 8.0, 8.0)
 
 const PATH_CORRIDORS := {
 	"spine": PATH_SPINE,
@@ -62,19 +62,12 @@ const PATH_CORRIDORS := {
 const PATH_MARGIN := 0.5
 
 ## -- 지면/path 톤. ground albedo는 task3dvis0013 가독성 밴드 검증과 같은 값.
-const GROUND_TONE_ALBEDO := Color(0.42, 0.62, 0.35)
-const PATH_ALBEDO := Color(0.55, 0.46, 0.34)
-const PLAZA_ALBEDO := Color(0.61, 0.52, 0.38)
+const GROUND_TONE_ALBEDO := Color(0.34, 0.50, 0.29)
+const PATH_ALBEDO := Color(0.40, 0.34, 0.26, 0.90)
+const PLAZA_ALBEDO := Color(0.46, 0.40, 0.32, 0.94)
 const PATH_STRIP_Y := 0.05
 const HOUSE_VISUAL_SCALE := 0.72
 
-## Loafbrr raw GLTF visual-only fortification. The authored .tscn wrappers are
-## intentionally not used here: raw meshes are extracted from the imported
-## CastleWallsKit GLTF at runtime and remain outside gameplay/navigation owners.
-const LOAFBRR_RAW_GLTF := preload(
-	"res://assets/LoafbrrAssets/CastleWallKit/gltf/CastleWallsKit.gltf")
-const CORNER_TOWER_SCENE := preload(
-	"res://scenes/visual/fortification/corner_tower_3d.tscn")
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
 
 ## -- 제한적 variation 팔레트(태스크 원칙). 이 범위 밖 모델을 추가하지 않는다.
@@ -127,8 +120,6 @@ func _ready() -> void:
 			root.position.x = 25.0
 		add_child(root)
 		_zone_roots[zone] = root
-	_build_village_clearing()
-	_build_ground_variation()
 	var paths_root := Node3D.new()
 	paths_root.name = "Paths"
 	add_child(paths_root)
@@ -157,6 +148,22 @@ func apply_ground_tone(world_root: Node) -> bool:
 			var material := StandardMaterial3D.new()
 			material.albedo_color = GROUND_TONE_ALBEDO
 			material.roughness = 1.0
+			var grass_noise := FastNoiseLite.new()
+			grass_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+			grass_noise.frequency = 0.018
+			grass_noise.fractal_octaves = 4
+			var grass_texture := NoiseTexture2D.new()
+			grass_texture.width = 512
+			grass_texture.height = 512
+			grass_texture.seamless = true
+			grass_texture.noise = grass_noise
+			var grass_ramp := Gradient.new()
+			grass_ramp.colors = PackedColorArray([
+				Color(0.62, 0.68, 0.55), Color(0.92, 0.96, 0.84),
+			])
+			grass_texture.color_ramp = grass_ramp
+			material.albedo_texture = grass_texture
+			material.uv1_scale = Vector3(4.0, 4.0, 4.0)
 			(node as MeshInstance3D).material_override = material
 			return true
 		stack.append_array(node.get_children())
@@ -212,40 +219,46 @@ func _build_paths(root: Node3D) -> void:
 	var plaza := MeshInstance3D.new()
 	plaza.name = "Path_VillagePlaza"
 	var plaza_mesh := CylinderMesh.new()
-	plaza_mesh.top_radius = 7.0
-	plaza_mesh.bottom_radius = 7.0
+	plaza_mesh.top_radius = 4.7
+	plaza_mesh.bottom_radius = 4.7
 	plaza_mesh.height = 0.035
 	plaza.mesh = plaza_mesh
-	plaza.position = Vector3(0, PATH_STRIP_Y, 1.0)
-	plaza.scale = Vector3(1.0, 1.0, 0.72)
+	plaza.position = Vector3(2, PATH_STRIP_Y, -2.0)
+	plaza.scale = Vector3(1.05, 1.0, 0.76)
 	plaza.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var plaza_material := StandardMaterial3D.new()
 	plaza_material.albedo_color = PLAZA_ALBEDO
 	plaza_material.roughness = 1.0
+	plaza_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	plaza.material_override = plaza_material
 	root.add_child(plaza)
-	_spawn_path_curve(root, "Path_Gate_Main", [Vector3(-30, 0, 0),
-		Vector3(-25, 0, 1.5), Vector3(-18, 0, 0.8), Vector3(-8, 0, 1.0)], 3.0)
-	_spawn_path_curve(root, "Path_Plaza_Keep", [Vector3(-7, 0, 1.0),
-		Vector3(-3.5, 0, 1.4), Vector3(0, 0, 2.0)], 3.2)
-	_spawn_path_curve(root, "Path_Side_West", [Vector3(-7, 0, 1.0),
-		Vector3(-10, 0, -4), Vector3(-15, 0, -8)], 2.8)
-	_spawn_path_curve(root, "Path_Side_East", [Vector3(4, 0, 2),
-		Vector3(8, 0, -2), Vector3(15, 0, -7)], 2.8)
+	_spawn_path_curve(root, "Path_Gate_Main", [Vector3(-30, 0, -3),
+		Vector3(-25, 0, -2.5), Vector3(-20, 0, -1), Vector3(-15, 0, 0.5),
+		Vector3(-9, 0, -1.2), Vector3(-4, 0, -3), Vector3(0, 0, -2)], 3.8)
+	_spawn_path_curve(root, "Path_Plaza_Keep", [Vector3(5, 0, -2),
+		Vector3(8, 0, -2.5), Vector3(11, 0, -2)], 3.2)
+	_spawn_path_curve(root, "Path_Blacksmith", [Vector3(-17, 0, -0.3),
+		Vector3(-15, 0, 4), Vector3(-12, 0, 9)], 1.9)
+	_spawn_path_curve(root, "Path_Market", [Vector3(-4, 0, -1),
+		Vector3(-4.5, 0, 3), Vector3(-5, 0, 7)], 1.8)
+	_spawn_path_curve(root, "Path_Tavern", [Vector3(-1, 0, -6),
+		Vector3(-2.5, 0, -10), Vector3(-1, 0, -14)], 1.8)
+	_spawn_path_curve(root, "Path_Inn", [Vector3(6, 0, 1),
+		Vector3(10, 0, 3), Vector3(13, 0, 6), Vector3(16, 0, 8)], 1.9)
+	_spawn_path_curve(root, "Path_Residential_North", [Vector3(1, 0, -8),
+		Vector3(3, 0, -13), Vector3(2, 0, -18), Vector3(4, 0, -22)], 1.7)
+	_spawn_path_curve(root, "Path_Residential_East", [Vector3(9, 0, 2),
+		Vector3(14, 0, 7), Vector3(20, 0, 12), Vector3(27, 0, 13)], 1.8)
+	_spawn_path_curve(root, "Path_Production", [Vector3(16, 0, 8),
+		Vector3(23, 0, 7), Vector3(30, 0, 10), Vector3(39, 0, 12)], 2.2)
 	# Secondary lanes bend around the settlement instead of exposing a debug-like
 	# rectilinear grid. They are visual-only and remain outside gameplay owners.
-	_spawn_path_curve(root, "Path_Tavern", [Vector3(-2, 0, -1),
-		Vector3(-6, 0, -3.5), Vector3(-11, 0, -6.5), Vector3(-16, 0, -9)], 1.7)
-	_spawn_path_curve(root, "Path_Inn", [Vector3(2, 0, -1),
-		Vector3(6, 0, -3.5), Vector3(11, 0, -6.5), Vector3(16, 0, -9)], 1.7)
-	_spawn_path_curve(root, "Path_Farm_West", [Vector3(-1, 0, 9),
-		Vector3(-4, 0, 10.5), Vector3(-8, 0, 12), Vector3(-13, 0, 13)], 1.4)
-	_spawn_path_curve(root, "Path_Farm_East", [Vector3(1, 0, 9),
-		Vector3(4, 0, 10.5), Vector3(8, 0, 12), Vector3(13, 0, 13)], 1.4)
-	_spawn_path_curve(root, "Path_Production", [Vector3(1, 0, 2),
-		Vector3(8, 0, 3), Vector3(15, 0, 6), Vector3(21, 0, 8)], 1.35)
-	_spawn_path_curve(root, "Path_Forest_East", [Vector3(21, 0, -1),
-		Vector3(24, 0, -7), Vector3(27, 0, -12)], 1.3)
+	_spawn_path_curve(root, "Path_Farm_West", [Vector3(23, 0, 7),
+		Vector3(27, 0, 10), Vector3(30, 0, 14)], 1.7)
+	_spawn_path_curve(root, "Path_Farm_East", [Vector3(30, 0, 10),
+		Vector3(35, 0, 9), Vector3(40, 0, 7)], 1.7)
+	_spawn_path_curve(root, "Path_Forest_East", [Vector3(23, 0, 7),
+		Vector3(26, 0, 2), Vector3(30, 0, -5), Vector3(32, 0, -12)], 1.7)
 
 
 func _build_village_clearing() -> void:
@@ -258,11 +271,11 @@ func _build_village_clearing() -> void:
 	mesh.bottom_radius = 22.0
 	mesh.height = 0.025
 	clearing.mesh = mesh
-	clearing.position = Vector3(0, 0.012, 1.0)
-	clearing.scale = Vector3(1.0, 1.0, 0.72)
+	clearing.position = Vector3(3, 0.012, 0.0)
+	clearing.scale = Vector3(1.25, 1.0, 0.86)
 	clearing.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.45, 0.59, 0.34)
+	material.albedo_color = Color(0.37, 0.48, 0.30)
 	material.roughness = 1.0
 	clearing.material_override = material
 	add_child(clearing)
@@ -273,9 +286,9 @@ func _build_ground_variation() -> void:
 	# introducing artificial district rectangles or a new terrain subsystem.
 	var patches := [
 		{"name": "WornGrass_West", "pos": Vector3(-24, 0.01, 8), "radius": 13.0,
-			"scale": Vector3(1.4, 1.0, 0.7), "color": Color("#77815a")},
+			"scale": Vector3(1.4, 1.0, 0.7), "color": Color("#5f7048")},
 		{"name": "WornGrass_East", "pos": Vector3(24, 0.01, -8), "radius": 15.0,
-			"scale": Vector3(0.8, 1.0, 1.35), "color": Color("#7b8257")},
+			"scale": Vector3(0.8, 1.0, 1.35), "color": Color("#617248")},
 		{"name": "FarmSoil_Edge", "pos": Vector3(22, 0.012, 14), "radius": 9.0,
 			"scale": Vector3(1.4, 1.0, 0.55), "color": Color("#675642")},
 		{"name": "Battlefield_Worn", "pos": Vector3(-58, 0.012, 0), "radius": 16.0,
@@ -305,12 +318,35 @@ func _spawn_path_curve(root: Node3D, path_name: String, points: Array,
 		var from: Vector3 = points[i]
 		var to: Vector3 = points[i + 1]
 		_spawn_path_segment(root, "%s_%d" % [path_name, i], from, to, width)
+	# Rounded overlaps hide the modular strip joins and read as naturally worn
+	# bends rather than an editor spline made from disconnected boards.
+	for i in range(1, points.size() - 1):
+		_spawn_path_joint(root, "%s_Joint_%d" % [path_name, i], points[i], width)
+
+
+func _spawn_path_joint(root: Node3D, joint_name: String, pos: Vector3,
+		width: float) -> void:
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = width * 0.52
+	mesh.bottom_radius = width * 0.52
+	mesh.height = 0.04
+	var instance := MeshInstance3D.new()
+	instance.name = joint_name
+	instance.mesh = mesh
+	instance.position = Vector3(pos.x, PATH_STRIP_Y, pos.z)
+	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := StandardMaterial3D.new()
+	material.albedo_color = PATH_ALBEDO
+	material.roughness = 1.0
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	instance.material_override = material
+	root.add_child(instance)
 
 
 func _spawn_path_segment(root: Node3D, path_name: String, from: Vector3,
 		to: Vector3, width: float) -> void:
 	var mesh := BoxMesh.new()
-	mesh.size = Vector3(width, 0.04, from.distance_to(to))
+	mesh.size = Vector3(width, 0.04, from.distance_to(to) + 0.85)
 	var instance := MeshInstance3D.new()
 	instance.name = path_name
 	instance.mesh = mesh
@@ -322,6 +358,7 @@ func _spawn_path_segment(root: Node3D, path_name: String, from: Vector3,
 	var material := StandardMaterial3D.new()
 	material.albedo_color = PATH_ALBEDO
 	material.roughness = 1.0
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	instance.material_override = material
 	root.add_child(instance)
 
@@ -330,19 +367,29 @@ func _spawn_path_segment(root: Node3D, path_name: String, from: Vector3,
 func _build_village(root: Node3D) -> void:
 	# Houses sit beyond the widened roads, leaving a deliberate open ring around
 	# the Keep and service buildings instead of a tight radial prefab cluster.
-	_add_cuteskull_house(root, "House_4_1", Vector3(-11, 0, -12), 78.0)
-	_add_cuteskull_house(root, "House_4_2", Vector3(-12, 0, 9), 102.0)
-	_add_cuteskull_house(root, "House_5_1", Vector3(12, 0, -12), -72.0)
-	_add_cuteskull_house(root, "House_5_2", Vector3(13, 0, 10), -108.0)
-	_add_cuteskull_house(root, "House_3_1", Vector3(-10, 0, -20), 82.0)
-	_add_cuteskull_house(root, "House_2_1", Vector3(-16, 0, 15), 118.0)
-	_add_cuteskull_house(root, "House_2_2", Vector3(17, 0, -17), -52.0)
+	# Two uneven residential clusters grew from side lanes rather than a ring.
+	_add_cuteskull_house(root, "House_4_1", Vector3(-7, 0, -21), 18.0)
+	_add_cuteskull_house(root, "House_5_1", Vector3(3, 0, -24), -12.0)
+	_add_cuteskull_house(root, "House_2_1", Vector3(12, 0, -19), 31.0)
+	_add_cuteskull_house(root, "House_2_2", Vector3(-13, 0, -24), 37.0)
+	_add_cuteskull_house(root, "House_1_1", Vector3(-2, 0, -18), -28.0)
+	_add_cuteskull_house(root, "House_4_2", Vector3(20, 0, 18), -104.0)
+	_add_cuteskull_house(root, "House_5_2", Vector3(29, 0, 15), -78.0)
+	_add_cuteskull_house(root, "House_2_3", Vector3(25, 0, 22), -61.0)
+	_spawn_cuteskull_prop("Market/Well", "VillageWell", Vector3(1.0, 0, -2.2),
+		-8.0, 0.085)
+	_spawn_cuteskull_prop("Market/Market_1_2", "MarketAwningWest",
+		Vector3(-3.0, 0, 3.8), 12.0, 0.10)
+	_spawn_cuteskull_prop("Market/Market_1_5", "MarketAwningSouth",
+		Vector3(-5.5, 0, 4.7), -21.0, 0.10)
+	_spawn_cuteskull_prop("Market/Cart", "MarketHandcart",
+		Vector3(-2.3, 0, 6.2), 38.0, 0.09)
 
 	# A restrained forecourt around the Keep creates a readable focal point
 	# without adding a new gameplay landmark or collision owner.
-	_spawn("prop/torch_metal", "village", "keep_forecourt", Vector3(-3.4, 0, -1.8))
-	_spawn("prop/torch_metal", "village", "keep_forecourt", Vector3(3.4, 0, -1.8))
-	_spawn("prop/chest_wood", "village", "keep_forecourt", Vector3(0, 0, 3.2))
+	_spawn("prop/torch_metal", "village", "keep_forecourt", Vector3(7.4, 0, -4.8))
+	_spawn("prop/torch_metal", "village", "keep_forecourt", Vector3(7.2, 0, 0.6))
+	_spawn("prop/chest_wood", "village", "keep_forecourt", Vector3(9.2, 0, 2.0))
 
 	# 광장 남서 녹지 포인트 수목(마을 내 수목 밀도 의도적 최소).
 	_spawn("tree/common_3", "village", "tree", Vector3(-6, 0, 13),
@@ -355,33 +402,62 @@ func _build_village(root: Node3D) -> void:
 		20.0, 0.48)
 	_spawn("veg/bush_common", "village", "edge_transition", Vector3(-11.5, 0, 2.5))
 	_spawn("veg/bush_common", "village", "edge_transition", Vector3(11.2, 0, 5.5))
+	# Irregular green buffers define yard edges and soften the settlement into
+	# surrounding land without outlining geometric districts.
+	for item in [
+		["tree/common_1", Vector3(-13, 0, -18), 0.56],
+		["tree/common_3", Vector3(-2, 0, -27), 0.60],
+		["tree/pine_1", Vector3(8, 0, -27), 0.55],
+		["tree/common_4", Vector3(16, 0, -23), 0.58],
+		["tree/common_1", Vector3(17, 0, 22), 0.56],
+		["tree/pine_2", Vector3(25, 0, 21), 0.59],
+		["tree/common_3", Vector3(35, 0, 17), 0.54],
+	]:
+		_spawn(item[0], "village", "settlement_buffer", item[1],
+			float(item[1].x * 7.0), item[2])
+	for pos in [
+		Vector3(-10, 0, -25), Vector3(-3, 0, -20), Vector3(8, 0, -21),
+		Vector3(15, 0, -16), Vector3(16, 0, 17), Vector3(24, 0, 14),
+		Vector3(32, 0, 20), Vector3(35, 0, 12),
+	]:
+		_spawn("veg/grass_common_short", "village", "settlement_buffer", pos,
+			float(pos.x * 11.0), 0.72)
+	# Larger authored canopy silhouettes tie the houses to the forest edge and
+	# break the empty-plane horizon at the default zoom.
+	var canopy_layout := [
+		["Tree_6", Vector3(-17, 0, -29), 0.095],
+		["Tree_3", Vector3(-5, 0, -31), 0.10],
+		["Tree_7", Vector3(9, 0, -29), 0.092],
+		["Tree_2", Vector3(18, 0, -26), 0.10],
+		["Tree_4", Vector3(14, 0, 24), 0.095],
+		["Tree_8", Vector3(22, 0, 26), 0.09],
+		["Tree_5", Vector3(32, 0, 24), 0.098],
+		["Tree_1", Vector3(39, 0, 18), 0.10],
+		["Tree_7", Vector3(39, 0, 8), 0.094],
+		["Tree_3", Vector3(36, 0, -5), 0.10],
+		["Tree_6", Vector3(34, 0, -16), 0.096],
+	]
+	for i in canopy_layout.size():
+		var item: Array = canopy_layout[i]
+		_spawn_cuteskull_prop("Environment_001/" + item[0],
+			"SettlementCanopy_%02d" % i, item[1], float(i * 31 - 70), item[2])
+	for pos in [Vector3(-22, 0, -5), Vector3(-18, 0, 3), Vector3(-8, 0, -5),
+		Vector3(7, 0, 4), Vector3(14, 0, 12), Vector3(26, 0, 9)]:
+		_spawn("rock/medium_1", "village", "roadside", pos,
+			float(pos.z * 13.0), 0.28)
 
-	# 마을 남쪽 성문 느낌 울타리(spine 양측, 통행은 막지 않는 폭).
-	for side in [-1.0, 1.0]:
-		_spawn("bld/fence_wooden_single", "village", "prop",
-			Vector3(side * 2.4, 0, 16.0), 90.0)
-		_spawn("bld/fence_wooden_single", "village", "prop",
-			Vector3(side * 2.4, 0, 18.0), 90.0)
-
-	# 동쪽 잔도 시장 행(마을 기능 정체성 props).
-	_spawn("prop/stall_empty", "village", "prop", Vector3(7, 0, 5.6),
-		0.0, 1.0, Vector2(0.95, 0.5))
-	_spawn("prop/stall_cart_empty", "village", "prop", Vector3(10.5, 0, 5.8),
-		0.0, 1.0, Vector2(1.55, 0.55))
-	_spawn("prop/farmcrate_apple", "village", "prop", Vector3(8.2, 0, 6.2))
-	_spawn("prop/farmcrate_carrot", "village", "prop", Vector3(9.1, 0, 6.4))
-	_spawn("prop/farmcrate_empty", "village", "prop", Vector3(7.4, 0, 7.0))
-	_spawn("prop/coin_pile", "village", "prop", Vector3(10.0, 0, 6.8))
-	_spawn("prop/bag", "village", "prop", Vector3(8.0, 0, 7.2))
-	_spawn("prop/barrel", "village", "prop", Vector3(6.2, 0, 6.4))
-	_spawn("prop/barrel", "village", "prop", Vector3(11.4, 0, 6.8))
-
-	# 광장 화단 + 가옥 담장.
-	_spawn("veg/flower_group_4", "village", "prop", Vector3(-2.4, 0, -2.4))
-	_spawn("veg/flower_group_4", "village", "prop", Vector3(2.4, 0, 2.4))
-	for i in 2:
-		_spawn("bld/fence_wooden_single", "village", "prop",
-			Vector3(-8.4 + i * 2.1, 0, 7.7), 0.0)
+	# Small private yards reinforce two residential clusters without filling paths.
+	for item in [
+		[Vector3(-10.0, 0, -20.0), 14.0], [Vector3(0.0, 0, -20.5), -8.0],
+		[Vector3(15.0, 0, -18.0), 32.0], [Vector3(18.0, 0, 15.0), -18.0],
+		[Vector3(27.0, 0, 11.5), 18.0],
+	]:
+		_spawn("bld/fence_wooden_single", "village", "house_yard",
+			item[0], item[1], 0.8)
+	_spawn("prop/barrel", "village", "house_yard", Vector3(-10, 0, -23), 10.0, 0.7)
+	_spawn("tool/chopping_log", "village", "house_yard", Vector3(6, 0, -22), -20.0, 0.65)
+	_spawn("prop/crate_wooden", "village", "house_yard", Vector3(23, 0, 17), 12.0, 0.68)
+	_spawn("veg/bush_common", "village", "house_yard", Vector3(32, 0, 12))
 	_build_farm_plot(root)
 
 
@@ -391,45 +467,45 @@ func _build_landmark_dressing() -> void:
 	# Keep forecourt: stone landmark reads first, with restrained torches already
 	# placed by _build_village.
 	_spawn("bld/stairs_exterior_straight", "village", "keep_forecourt",
-		Vector3(0, 0, 3.9), 0.0, 0.72)
+		Vector3(7.8, 0, -2.0), 90.0, 0.72)
 
 	# Tavern: barrels, outdoor table substitute and a warm lantern silhouette.
-	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-19.2, 0, -10.2),
+	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-4.2, 0, -14.2),
 		18.0, 0.82)
-	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-18.0, 0, -10.7),
+	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-3.0, 0, -15.0),
 		-12.0, 0.72)
 	_spawn("prop/stall_cart_empty", "village", "tavern_cluster",
-		Vector3(-19.0, 0, -6.0), 90.0, 0.72)
+		Vector3(-4.0, 0, -11.0), 18.0, 0.72)
 	_spawn("prop/lantern_wall", "village", "tavern_cluster",
-		Vector3(-15.7, 0, -9.8), 180.0, 0.8)
+		Vector3(1.6, 0, -12.8), 180.0, 0.8)
 
 	# Inn: wagon and travel goods establish lodging/travel identity.
-	_spawn("bld/wagon", "village", "inn_cluster", Vector3(19.2, 0, -10.2),
+	_spawn("bld/wagon", "village", "inn_cluster", Vector3(19.8, 0, 6.0),
 		-18.0, 0.72)
-	_spawn("prop/bag", "village", "inn_cluster", Vector3(18.0, 0, -6.0),
+	_spawn("prop/bag", "village", "inn_cluster", Vector3(18.5, 0, 10.8),
 		22.0, 0.8)
 	_spawn("prop/chest_wood", "village", "inn_cluster",
-		Vector3(20.2, 0, -6.0), -15.0, 0.72)
+		Vector3(20.5, 0, 10.0), -15.0, 0.72)
 
 	# Blacksmith/equipment side: anvil, chopping log, fuel and forge light.
 	_spawn("tool/anvil", "village", "blacksmith_cluster",
-		Vector3(16.7, 0, 11.0), 12.0, 0.72)
+		Vector3(-9.2, 0, 9.0), 12.0, 0.72)
 	_spawn("tool/chopping_log", "village", "blacksmith_cluster",
-		Vector3(18.5, 0, 11.8), -20.0, 0.7)
+		Vector3(-9.8, 0, 11.2), -20.0, 0.7)
 	_spawn("prop/crate_wooden", "village", "blacksmith_cluster",
-		Vector3(17.5, 0, 14.8), 18.0, 0.72)
+		Vector3(-14.2, 0, 12.6), 18.0, 0.72)
 	_spawn("prop/torch_metal", "village", "blacksmith_cluster",
-		Vector3(11.5, 0, 12.0), 0.0, 0.82)
+		Vector3(-15.0, 0, 7.0), 0.0, 0.82)
 
 	# Grocery/market: staggered stalls and food crates, kept south-west of the
 	# east road so the main route remains open.
 	_spawn("prop/stall_empty", "village", "market_cluster",
-		Vector3(-17.5, 0, 13.6), -8.0, 0.76)
+		Vector3(-5.5, 0, 10.8), -8.0, 0.76)
 	_spawn("prop/farmcrate_carrot", "village", "market_cluster",
-		Vector3(-15.8, 0, 14.8), 15.0, 0.7)
+		Vector3(-3.8, 0, 10.4), 15.0, 0.7)
 	_spawn("prop/farmcrate_apple", "village", "market_cluster",
-		Vector3(-19.0, 0, 14.6), -22.0, 0.72)
-	_spawn("prop/bag", "village", "market_cluster", Vector3(-18.2, 0, 11.5),
+		Vector3(-7.0, 0, 11.0), -22.0, 0.72)
+	_spawn("prop/bag", "village", "market_cluster", Vector3(-7.2, 0, 8.6),
 		-15.0, 0.76)
 
 	# Small storage yard below the plaza: materials identify it without adding a
@@ -448,23 +524,37 @@ func _build_farm_plot(root: Node3D) -> void:
 	var plot := Node3D.new()
 	plot.name = "AgriculturePlot"
 	root.add_child(plot)
-	for row in range(3):
+	for row in range(4):
 		var bed := MeshInstance3D.new()
-		bed.name = "CropBed_%d" % row
+		bed.name = "CropBed_East_%d" % row
 		var mesh := BoxMesh.new()
-		mesh.size = Vector3(6.0, 0.08, 0.65)
+		mesh.size = Vector3(5.2, 0.08, 0.58)
 		bed.mesh = mesh
-		bed.position = Vector3(7.0, 0.08, 11.8 + row * 1.15)
+		bed.position = Vector3(32.0, 0.08, 15.0 + row * 1.05)
+		bed.rotation.y = deg_to_rad(-7.0)
 		var soil := StandardMaterial3D.new()
 		soil.albedo_color = Color(0.32, 0.24, 0.16)
 		soil.roughness = 1.0
 		bed.material_override = soil
 		plot.add_child(bed)
-	for pos in [Vector3(4.0, 0, 10.8), Vector3(10.0, 0, 10.8),
-			Vector3(4.0, 0, 14.1), Vector3(10.0, 0, 14.1)]:
+	for row in range(3):
+		var bed := MeshInstance3D.new()
+		bed.name = "CropBed_West_%d" % row
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(3.8, 0.08, 0.55)
+		bed.mesh = mesh
+		bed.position = Vector3(27.0, 0.08, 16.2 + row * 1.08)
+		bed.rotation.y = deg_to_rad(11.0)
+		var soil := StandardMaterial3D.new()
+		soil.albedo_color = Color(0.29, 0.22, 0.15)
+		soil.roughness = 1.0
+		bed.material_override = soil
+		plot.add_child(bed)
+	for pos in [Vector3(27.5, 0, 14.4), Vector3(34.5, 0, 14.4),
+			Vector3(27.5, 0, 19.2), Vector3(34.5, 0, 19.2)]:
 		_spawn("bld/fence_wooden_single", "village", "farm_fence", pos, 90.0)
-	_spawn("prop/farmcrate_carrot", "village", "farm_prop", Vector3(4.8, 0, 12.0))
-	_spawn("prop/farmcrate_apple", "village", "farm_prop", Vector3(9.2, 0, 12.8))
+	_spawn("prop/farmcrate_carrot", "village", "farm_prop", Vector3(28.8, 0, 16.0))
+	_spawn("prop/farmcrate_apple", "village", "farm_prop", Vector3(33.4, 0, 17.2))
 
 
 func _build_frontier_dressing() -> void:
@@ -474,22 +564,31 @@ func _build_frontier_dressing() -> void:
 		Color(0.35, 0.31, 0.24))
 	_spawn_ground_patch("CorruptedGround", Vector3(-88, 0, 0), 20.0, 0.78,
 		Color(0.20, 0.18, 0.19))
-	# Raw GLTF modules are authored on a 6m grid. This continuous frontage uses
-	# an integrated arch opening and leaves a deliberately generous inner staging
-	# area before the village center.
+	# One coherent Cuteskull family forms the portal-facing frontier defense.
+	# Repeated authored modules are not stretched; the opening remains on the
+	# main-road axis with a 12m+ clear troop staging approach behind it.
 	for item in [
-		{"node": "Courtine_Wall", "z": -21.0, "name": "RawLoafbrrWall_SouthWest"},
-		{"node": "Courtine_Wall", "z": -15.0, "name": "RawLoafbrrWall_South"},
-		{"node": "Courtine_Wall", "z": -9.0, "name": "RawLoafbrrWall_GateFlankSouth"},
-		{"node": "Courtine_Door_Arch", "z": -3.0, "name": "RawLoafbrrGate_Arch"},
-		{"node": "Courtine_Wall", "z": 3.0, "name": "RawLoafbrrWall_GateFlankNorth"},
-		{"node": "Courtine_Wall", "z": 9.0, "name": "RawLoafbrrWall_North"},
-		{"node": "Courtine_Wall", "z": 15.0, "name": "RawLoafbrrWall_NorthEast"},
+		{"node": "Castle_Wall", "x": -31.0, "z": -19.5, "yaw": 84.0,
+			"name": "CuteskullWall_SouthWest"},
+		{"node": "Castle_Wall", "x": -30.4, "z": -14.0, "yaw": 87.0,
+			"name": "CuteskullWall_South"},
+		{"node": "Castle_Wall", "x": -30.0, "z": -8.5, "yaw": 90.0,
+			"name": "CuteskullWall_GateFlankSouth"},
+		{"node": "Castle_Entrance", "x": -30.0, "z": -3.0, "yaw": 90.0,
+			"name": "CuteskullMainGate"},
+		{"node": "Castle_Wall", "x": -29.8, "z": 2.5, "yaw": 92.0,
+			"name": "CuteskullWall_GateFlankNorth"},
+		{"node": "Castle_Wall", "x": -29.4, "z": 8.0, "yaw": 94.0,
+			"name": "CuteskullWall_North"},
+		{"node": "Castle_Wall", "x": -28.8, "z": 13.5, "yaw": 96.0,
+			"name": "CuteskullWall_NorthEast"},
 	]:
-		_spawn_raw_fortification(item["node"], Vector3(-30, 0, item["z"]),
-			90.0, item["name"])
-	_spawn_corner_tower(Vector3(-30, 0, -25), "RawCornerTower_South")
-	_spawn_corner_tower(Vector3(-30, 0, 19), "RawCornerTower_North")
+		_spawn_cuteskull_fortification(item["node"],
+			Vector3(item["x"], 0, item["z"]), item["yaw"], item["name"], 0.09)
+	_spawn_cuteskull_fortification("Castle_Tower_3", Vector3(-31.6, 0, -24.0),
+		84.0, "CuteskullTower_South", 0.068)
+	_spawn_cuteskull_fortification("Castle_Tower_4", Vector3(-28.2, 0, 18.5),
+		96.0, "CuteskullTower_North", 0.068)
 	for z in [-18, -10, 10, 18]:
 		_spawn_frontier_model("bld/fence_wooden_single", Vector3(-48, 0, z),
 			90.0, 0.9)
@@ -507,13 +606,33 @@ func _spawn_ground_patch(node_name: String, pos: Vector3, radius: float,
 		depth_scale: float, color: Color) -> void:
 	var patch := MeshInstance3D.new()
 	patch.name = node_name
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = radius
-	mesh.bottom_radius = radius
-	mesh.height = 0.025
+	var mesh := ArrayMesh.new()
+	var vertices := PackedVector3Array([Vector3.ZERO])
+	var normals := PackedVector3Array([Vector3.UP])
+	var uvs := PackedVector2Array([Vector2(0.5, 0.5)])
+	var indices := PackedInt32Array()
+	var edge_shape := [0.88, 1.04, 0.92, 1.10, 0.84, 1.02, 0.91,
+		1.08, 0.86, 0.99, 0.90, 1.06, 0.87, 1.01]
+	for i in edge_shape.size():
+		var angle := TAU * float(i) / float(edge_shape.size())
+		var edge_radius: float = radius * edge_shape[i]
+		vertices.append(Vector3(cos(angle) * edge_radius, 0,
+			sin(angle) * edge_radius * depth_scale))
+		normals.append(Vector3.UP)
+		uvs.append(Vector2(cos(angle), sin(angle)) * 0.5 + Vector2(0.5, 0.5))
+	for i in edge_shape.size():
+		indices.append(0)
+		indices.append(i + 1)
+		indices.append((i + 1) % edge_shape.size() + 1)
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_INDEX] = indices
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	patch.mesh = mesh
 	patch.position = Vector3(pos.x, 0.012, pos.z)
-	patch.scale = Vector3(1.0, 1.0, depth_scale)
 	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
@@ -537,39 +656,27 @@ func _spawn_frontier_model(key: String, pos: Vector3, yaw_deg: float,
 	add_child(model)
 
 
-func _spawn_raw_fortification(source_node_name: String, pos: Vector3,
-		yaw_deg: float, node_name: String) -> Node3D:
-	var source_root := LOAFBRR_RAW_GLTF.instantiate()
-	var source := source_root.get_node_or_null(source_node_name) as MeshInstance3D
+func _spawn_cuteskull_fortification(source_node_name: String, pos: Vector3,
+		yaw_deg: float, node_name: String, uniform_scale: float) -> Node3D:
+	var source_root := CUTESKULL_CITY.instantiate()
+	var source := source_root.get_node_or_null(
+		"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + source_node_name) as Node3D
 	if source == null:
-		push_error("VillageComposition3D: raw GLTF node missing '%s'" % source_node_name)
+		push_error("VillageComposition3D: Cuteskull fortification node missing '%s'" % source_node_name)
 		source_root.free()
 		return null
-	var model := source.duplicate() as MeshInstance3D
+	var model := source.duplicate() as Node3D
 	model.name = node_name
 	model.position = WorldCoords3D.flatten(pos)
-	model.rotation.y = deg_to_rad(yaw_deg)
-	model.scale = Vector3.ONE
-	model.set_meta("asset_source", "Loafbrr Castle Wall Kit raw GLTF")
+	model.scale = Vector3.ONE * uniform_scale
+	_normalize_cuteskull_model(model)
+	_orient_cuteskull_model(model, yaw_deg)
+	model.set_meta("asset_source", "Cuteskull city16.fbx")
 	model.set_meta("source_node", source_node_name)
 	model.set_meta("zone", "frontier")
 	model.set_meta("kind", "visual_fortification")
 	add_child(model)
 	source_root.free()
-	return model
-
-
-func _spawn_corner_tower(pos: Vector3, node_name: String) -> Node3D:
-	var model := CORNER_TOWER_SCENE.instantiate() as Node3D
-	model.name = node_name
-	model.position = WorldCoords3D.flatten(pos)
-	model.rotation.y = deg_to_rad(90.0)
-	model.scale = Vector3.ONE * 0.35
-	model.set_meta("asset_source", "Towers-n-Castles raw GLB")
-	model.set_meta("source_node", "WallCornerTower")
-	model.set_meta("zone", "frontier")
-	model.set_meta("kind", "visual_fortification")
-	add_child(model)
 	return model
 
 
@@ -688,9 +795,9 @@ func _add_cuteskull_house(root: Node3D, source_name: String,
 	var house := source.duplicate() as Node3D
 	house.name = "Cuteskull_%s" % source_name
 	house.position = WorldCoords3D.flatten(pos)
-	house.rotation.y = deg_to_rad(yaw_deg)
-	house.scale = Vector3.ONE * 0.14
+	house.scale = Vector3.ONE * 0.13
 	_normalize_cuteskull_model(house)
+	_orient_cuteskull_model(house, yaw_deg)
 	house.set_meta("asset_source", "Cuteskull city16.fbx")
 	house.set_meta("source_node", source_name)
 	house.set_meta("catalog_key", "cuteskull/%s" % source_name)
@@ -705,13 +812,45 @@ func _add_cuteskull_house(root: Node3D, source_name: String,
 	return house
 
 
+func _spawn_cuteskull_prop(source_path: String, node_name: String,
+		pos: Vector3, yaw_deg: float, uniform_scale: float) -> Node3D:
+	var source_root := CUTESKULL_CITY.instantiate()
+	var source := source_root.get_node_or_null(
+		"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + source_path) as Node3D
+	if source == null:
+		source_root.free()
+		push_error("VillageComposition3D: Cuteskull prop missing '%s'" % source_path)
+		return null
+	var prop := source.duplicate() as Node3D
+	prop.name = node_name
+	prop.position = WorldCoords3D.flatten(pos)
+	prop.scale = Vector3.ONE * uniform_scale
+	_normalize_cuteskull_model(prop)
+	_orient_cuteskull_model(prop, yaw_deg)
+	prop.set_meta("asset_source", "Cuteskull city16.fbx")
+	prop.set_meta("source_node", source_path)
+	prop.set_meta("kind", "village_prop")
+	_zone_roots["village"].add_child(prop)
+	source_root.free()
+	return prop
+
+
 func _normalize_cuteskull_model(model: Node) -> void:
 	for child in model.get_children():
 		if child is MeshInstance3D and (child as MeshInstance3D).mesh:
 			var aabb := (child as MeshInstance3D).mesh.get_aabb()
 			child.position = Vector3(-aabb.position.x - aabb.size.x * 0.5,
-				-aabb.position.y, -aabb.position.z - aabb.size.z * 0.5)
+				-aabb.position.y - aabb.size.y * 0.5, -aabb.position.z)
 			return
+
+
+func _orient_cuteskull_model(model: Node3D, yaw_deg: float) -> void:
+	# Cuteskull's source geometry is Z-up. Convert once at the extracted visual
+	# root, then apply settlement yaw around Godot's Y-up axis.
+	var authored_scale := model.scale
+	model.basis = Basis(Vector3.UP, deg_to_rad(yaw_deg)) \
+		* Basis(Vector3.RIGHT, deg_to_rad(-90.0))
+	model.scale = authored_scale
 
 
 func _apply_house_tone(node: Node3D, brick: bool) -> void:

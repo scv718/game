@@ -66,23 +66,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.125, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.125, 0, 0)
 
 [node name="Keep" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -2)
 core_type = "keep"
 
 [node name="Tavern" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -9)
+transform = Transform3D(0.978148, 0, -0.207912, 0, 1, 0, 0.207912, 0, 0.978148, -1, 0, -14)
 core_type = "tavern"
 
 [node name="Inn" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, -9)
+transform = Transform3D(0.970296, 0, 0.241922, 0, 1, 0, -0.241922, 0, 0.970296, 16, 0, 8)
 core_type = "inn"
 
 [node name="Grocery" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, 15)
+transform = Transform3D(0.990268, 0, -0.139173, 0, 1, 0, 0.139173, 0, 0.990268, -5, 0, 7)
 core_type = "grocery"
 
 [node name="EquipmentShop" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 15)
+transform = Transform3D(0.956305, 0, 0.292372, 0, 1, 0, -0.292372, 0, 0.956305, -12, 0, 9)
 core_type = "equipment"
 
 [node name="VillageComposition3D" parent="World3D" instance=ExtResource("18_village_composition")]

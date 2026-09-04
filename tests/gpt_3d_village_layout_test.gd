@@ -49,27 +49,35 @@ func _process(_delta: float) -> bool:
 		_check(composition.get_node_or_null("Zone_Village/AgriculturePlot") != null,
 			"agriculture plot is readable as a compact south district")
 		for fortification in [
-			"RawLoafbrrWall_SouthWest", "RawLoafbrrWall_South",
-			"RawLoafbrrWall_GateFlankSouth", "RawLoafbrrGate_Arch",
-			"RawLoafbrrWall_GateFlankNorth", "RawLoafbrrWall_North",
-			"RawLoafbrrWall_NorthEast", "RawCornerTower_South", "RawCornerTower_North",
+			"CuteskullWall_SouthWest", "CuteskullWall_South",
+			"CuteskullWall_GateFlankSouth", "CuteskullMainGate",
+			"CuteskullWall_GateFlankNorth", "CuteskullWall_North",
+			"CuteskullWall_NorthEast", "CuteskullTower_South", "CuteskullTower_North",
 		]:
 			var authored := composition.get_node_or_null(fortification)
 			_check(authored != null and authored.get_meta("asset_source", "")
-					in ["Loafbrr Castle Wall Kit raw GLTF", "Towers-n-Castles raw GLB"],
-				"frontier uses raw imported visual: %s" % fortification)
-		_check(composition.get_node_or_null("RawLoafbrrGate_Arch") != null,
+					== "Cuteskull city16.fbx",
+				"frontier uses coherent Cuteskull visual: %s" % fortification)
+		_check(composition.get_node_or_null("CuteskullMainGate") != null,
 			"frontier gate remains a distinct visual landmark")
-	for item in [
-		{"name": "Keep", "pos": Vector3(0, 0, 0)},
-		{"name": "Tavern", "pos": Vector3(-16, 0, -9)},
-		{"name": "Inn", "pos": Vector3(16, 0, -9)},
-		{"name": "Grocery", "pos": Vector3(-17, 0, 15)},
-		{"name": "EquipmentShop", "pos": Vector3(17, 0, 15)},
-	]:
-		var building := world.get_node_or_null(item["name"])
-		_check(building != null and building.position.is_equal_approx(item["pos"]),
-			"%s anchors its functional district" % item["name"])
+	var buildings: Array[Node3D] = []
+	for building_name in ["Keep", "Tavern", "Inn", "Grocery", "EquipmentShop"]:
+		var building := world.get_node_or_null(building_name) as Node3D
+		_check(building != null, "%s gameplay owner remains present" % building_name)
+		if building != null:
+			buildings.append(building)
+	var keep := world.get_node_or_null("Keep") as Node3D
+	if keep != null:
+		for building in buildings:
+			if building != keep:
+				_check(keep.position.distance_to(building.position) >= 10.0,
+					"Keep has landmark clearance from %s" % building.name)
+	var gate := composition.get_node_or_null("CuteskullMainGate") as Node3D \
+		if composition != null else null
+	if gate != null:
+		for building in buildings:
+			_check(gate.position.distance_to(building.position) >= 12.0,
+				"gate staging area stays clear of %s" % building.name)
 	print("GPT_3D_VILLAGE_LAYOUT_RESULT=" + ("FAIL" if _failed else "PASS"))
 	quit(1 if _failed else 0)
 	return true
