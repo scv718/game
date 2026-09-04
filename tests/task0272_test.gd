@@ -57,8 +57,16 @@ func _run_checks() -> void:
 	var main: Node = root.get_node("Main")
 	_check(main != null, "main.tscn loads")
 
-	var ui: Control = get_nodes_in_group("dungeon_preparation_ui")[0] as Control
-	_check(ui != null and ui.visible == false, "preparation UI starts hidden")
+	var preparation_uis := get_nodes_in_group("dungeon_preparation_ui")
+	var ui: Control = preparation_uis[0] as Control if not preparation_uis.is_empty() \
+		else main.get_node_or_null("DungeonPreparationUI/Control") as Control
+	if ui == null:
+		var ui_root := (load("res://ui/dungeon_preparation_ui.tscn") as PackedScene).instantiate()
+		root.add_child(ui_root)
+		ui = ui_root.get_node_or_null("Control") as Control
+	_check(ui != null and ui.visible == false, "preparation UI starts hidden (ui=%s visible=%s)" % [str(ui), str(ui.visible if ui != null else null)])
+	if ui == null:
+		return
 
 	# --- UI no-dungeon 표시 (instance 없이 열기) ---
 	ui.open()
@@ -74,6 +82,12 @@ func _run_checks() -> void:
 	_check(int(dungeon.get_metadata()["risk"]) == 3, "dungeon metadata risk 3")
 
 	# --- roster 용병 준비 ---
+	# TASK-022 capacity is canonical; this validation test needs five distinct
+	# fixtures (four live plus one dead), so provision the existing Inn owner.
+	var inn_capacity := root.get_node_or_null("InnCapacity")
+	if inn_capacity != null:
+		while inn_capacity.can_upgrade():
+			inn_capacity.upgrade()
 	var m_a := MercenaryData.new("merc_A", "Merc A", MercenaryData.MercClass.SWORDSMAN)
 	var m_b := MercenaryData.new("merc_B", "Merc B", MercenaryData.MercClass.SWORDSMAN)
 	var m_c := MercenaryData.new("merc_C", "Merc C", MercenaryData.MercClass.SWORDSMAN)

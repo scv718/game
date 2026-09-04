@@ -185,6 +185,23 @@ suite was run after all committed production changes:
   teardown RID/ObjectDB leak warnings; no parser, missing-resource, or runtime
   script error was present in the final representative suite.
 
+The subsequent full 017-028 test pass executed all 46 retained tests with no
+timeout and all 46 result markers PASS. A separate stderr audit then caught two
+false-positive legacy behaviors that marker-only gating had hidden:
+
+- `task0272` indexed an empty scene group and aborted before setting failure;
+  it now resolves/instantiates the canonical preparation UI safely and
+  provisions TASK-022 Inn capacity for its five fixtures.
+- `task0274` could execute stale cached bytecode while reporting a compile
+  error from `tactical_command_ui.gd` direct autoload identifiers. The UI now
+  resolves the existing GameTime/MercenaryRoster owners from `/root`, without
+  changing command values or behavior.
+
+Both tests were rerun after editor bootstrap and now reach their PASS result
+without SCRIPT ERROR or parse error. Legacy TASK-015 tests still assert the old
+2D floor dimensions and exact 2D rally coordinates; those failures are
+`LEGACY_SMOKE_CONTRACT`, not a 3D tactical regression.
+
 ### Remaining blockers / baseline status
 
 - No valid TASK-027-6/7/8 implementation exists in the audited worktrees.

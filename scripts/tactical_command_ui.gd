@@ -42,11 +42,17 @@ const ZONE_ORDER := [
 
 var _defense_buttons := {}
 
+const NIGHT_PHASE := 1
+
 
 func _ready() -> void:
 	add_to_group("tactical_command_ui")
-	GameTime.phase_changed.connect(_on_phase_changed)
-	command_issued.connect(MercenaryRoster._on_tactical_command)
+	var game_time := get_node_or_null("/root/GameTime")
+	var roster := get_node_or_null("/root/MercenaryRoster")
+	if game_time != null:
+		game_time.phase_changed.connect(_on_phase_changed)
+	if roster != null and roster.has_method("_on_tactical_command"):
+		command_issued.connect(roster._on_tactical_command)
 	_build_defense_buttons()
 	_regroup_button.pressed.connect(_emit_command.bind(Command.REGROUP, 0))
 	_retreat_button.pressed.connect(_emit_command.bind(Command.RETREAT, 0))
@@ -54,7 +60,7 @@ func _ready() -> void:
 	_time_pause_button.pressed.connect(_emit_command.bind(Command.TIME_PAUSE, 0))
 	_time_1x_button.pressed.connect(_emit_command.bind(Command.TIME_1X, 0))
 	_time_2x_button.pressed.connect(_emit_command.bind(Command.TIME_2X, 0))
-	_apply_phase(GameTime.get_phase())
+	_apply_phase(game_time.get_phase() if game_time != null else 0)
 
 
 func _on_phase_changed(phase: int, _day_number: int) -> void:
@@ -63,7 +69,7 @@ func _on_phase_changed(phase: int, _day_number: int) -> void:
 
 ## NIGHT면 명령 UI를 보여주고 설치된 성문 목록을 갱신하며, DAY면 숨긴다.
 func _apply_phase(phase: int) -> void:
-	var night := (phase == GameTime.Phase.NIGHT)
+	var night := (phase == NIGHT_PHASE)
 	visible = night
 	if night:
 		_refresh_gates()
