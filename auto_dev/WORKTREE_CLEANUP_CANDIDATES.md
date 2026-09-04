@@ -1,8 +1,8 @@
 # Worktree Cleanup Candidates
 
-> Read-only audit: 2026-09-04
+> Read-only audit refreshed: 2026-09-04
 >
-> Canonical main: `7e21033697e188da8ea042dc268189fadb40a148`
+> Canonical main: `b2dde775e667a5b79857859d819325739663107d`
 >
 > No worktree was removed or modified. Unique commits are `ahead/behind`
 > relative to canonical main. Untracked production excludes `.godot`,
@@ -20,7 +20,7 @@
 | `D:\game-wt\e-demo` | `ai/e-demo` | `ba06ef9c` | no | 0/24 | 0 | TASK-052 | REVIEW_REQUIRED | Mapped future task; no removal proof. |
 | `D:\game-wt\e-dungeon` | `ai/e-dungeon` | `bd18c89b` | yes | 1/24 | 4 | TASK-027 | REVIEW_REQUIRED | Unique commit and untracked production. |
 | `D:\game-wt\e-dungeon-codex-0275` | `codex/task-027-5` | `a4d27076` | yes | 2/24 | 0 | TASK-027-5 | REVIEW_REQUIRED | Forensic branch with unique commits. |
-| `D:\game-wt\e-dungeon-next` | `ai/e-dungeon-next` | `7fb5e2a9` | yes | 0/2 | 0 | TASK-027 | KEEP_ACTIVE | Configured current Dungeon lane. |
+| `D:\game-wt\e-dungeon-next` | `ai/e-dungeon-next` | `7fb5e2a9` | yes | 0/7 | 0 | TASK-027 | KEEP_ACTIVE | Configured current Dungeon lane; dirty state is import/cache and design drift, preserve for active lane review. |
 | `D:\game-wt\e-equipment` | `ai/e-equipment` | `ba06ef9c` | yes | 0/24 | 3 | TASK-029 | REVIEW_REQUIRED | Untracked equipment candidates. |
 | `D:\game-wt\e-expedition` | `ai/e-expedition` | `ba06ef9c` | yes | 0/24 | 3 | TASK-026 | REVIEW_REQUIRED | Untracked Expedition candidates. |
 | `D:\game-wt\e-faction` | `ai/e-faction` | `ba06ef9c` | yes | 0/24 | 1 | TASK-036 | REVIEW_REQUIRED | Untracked upgrade candidate. |
@@ -52,7 +52,7 @@
 | `D:\game-wt\f-portal` | `ai/f-portal` | `ba06ef9c` | yes | 0/24 | 3 | TASK-025 | REVIEW_REQUIRED | Untracked Portal candidates. |
 | `D:\game-wt\f-potion` | `ai/f-potion` | `ba06ef9c` | yes | 0/24 | 6 | TASK-021 | REVIEW_REQUIRED | Untracked Potion candidates. |
 | `D:\game-wt\f-threat` | `ai/f-threat` | `ba06ef9c` | yes | 0/24 | 2 | TASK-024 | REVIEW_REQUIRED | Divergent Threat candidate. |
-| `D:\game-wt\integration-recovery` | `codex/integration-recovery` | `85f9d9d3` | no | 0/5 | 0 | Recovery provenance | KEEP_PRESERVATION | Salvage source for promoted baseline. |
+| `D:\game-wt\integration-recovery` | `codex/integration-recovery` | `85f9d9d3` | yes | 0/10 | 0 | Recovery provenance | KEEP_PRESERVATION | Salvage source for promoted baseline; attached audit document remains untracked and untouched. |
 | `D:\game-wt\main-pre-recovery-preserved` | `codex/preserve-main-pre-recovery-20260904` | `a6a4c24b` | no | 1/22 | 0 | Main preservation | KEEP_PRESERVATION | Explicit pre-promotion preservation. |
 | `D:\game-wt\visual` | `ai/3d-visual` | `db8c462a` | no | 0/44 | 0 | TASK-3D-VIS-001 | REMOVE_SAFE | Clean and integrated in main. |
 | `D:\game-wt\visual2` | `ai/3d-visual-002` | `6fb86189` | yes | 0/26 | 3 | TASK-3D-VIS-002 | REVIEW_REQUIRED | Dirty visual candidates. |
@@ -66,5 +66,6 @@
 - `REMOVE_SAFE`: **4** — `building`, `combat`, `visual`, `worker`
 - `REVIEW_REQUIRED`: **38**
 
+Unique commit counts above are measured against current main `b2dde775`.
 The four `REMOVE_SAFE` entries are candidates only. This pass performed no
 `git worktree remove`, filesystem deletion, reset, or clean.
