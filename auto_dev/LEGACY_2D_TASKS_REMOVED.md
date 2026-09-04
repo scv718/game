@@ -10,7 +10,7 @@
 
 **LEGACY_2D_ONLY TASK: 0건**
 
-AI_TASK_QUEUE.md의 현재 활성 TASK heading 48개를 분석한 결과, legacy 2D 전용 TASK는 존재하지 않는다.
+AI_TASK_QUEUE.md의 현재 top-level TASK heading 48개와 supervisor parser의 전체 TASK section 235개를 분석한 결과, legacy 2D 전용 TASK는 존재하지 않는다.
 
 ### 분류 기준
 
@@ -58,7 +58,7 @@ Legacy 2D-only TASK 정리는 이미 완료된 상태. 추가 정리 불필요.
 
 ## 2026-09-04 cleanup audit
 
-- 현재 queue active status: 157 (`QUEUED`, `IMPLEMENT`, `REVIEW`, `FIX`, `NEEDS_DESIGN`; 상태가 기록된 항목 기준)
+- 현재 queue active status: 132 (`QUEUED`, `IMPLEMENT`, `FIX`, `NEEDS_DESIGN`; 부모/자식 section 포함, `DONE` 제외)
 - 이 pass의 제거 TASK: 0
 - TASK-027-6/7/8 및 TASK-028-3: 보존
 - `tests/baseline_3d_health_test.gd`: active regression gate

@@ -2,7 +2,7 @@
 
 > Read-only audit refreshed: 2026-09-04
 >
-> Canonical main: `b2dde775e667a5b79857859d819325739663107d`
+> Canonical main: `69967151ebd690de3735616851c0a299d742b0a1`
 >
 > No worktree was removed or modified. Unique commits are `ahead/behind`
 > relative to canonical main. Untracked production excludes `.godot`,
@@ -66,6 +66,6 @@
 - `REMOVE_SAFE`: **4** — `building`, `combat`, `visual`, `worker`
 - `REVIEW_REQUIRED`: **38**
 
-Unique commit counts above are measured against current main `b2dde775`.
+Unique commit counts above are measured against current main `6996715`.
 The four `REMOVE_SAFE` entries are candidates only. This pass performed no
 `git worktree remove`, filesystem deletion, reset, or clean.
