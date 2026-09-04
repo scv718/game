@@ -61,6 +61,10 @@ var current_hp: int = 0
 var alive := true
 var state: MercState = MercState.IDLE
 var defense_point := Vector3.ZERO
+## TASK-023-2 Global Morale Bonus Hook 승수. MoraleBonusHook이 총 사기로부터 유도해
+## 적용한다(기본 1.0 = 보너스 없음). base stat(merc_data.attack_damage)은 절대
+## 변조하지 않고 _get_attack_damage()에서 읽을 때만 곱한다(영구 변조 금지).
+var morale_multiplier: float = 1.0
 
 signal attack_performed(target: Node)
 signal hit_taken(amount: int)
@@ -488,7 +492,19 @@ func _state_to(new_state: MercState) -> void:
 
 
 func _get_attack_damage() -> int:
-	return merc_data.attack_damage if merc_data != null else 0
+	var base := merc_data.attack_damage if merc_data != null else 0
+	# TASK-023-2: 전역 사기 보너스 승수를 base에 곱한다. base는 변조하지 않는다.
+	return roundi(float(base) * morale_multiplier)
+
+
+## TASK-023-2 MoraleBonusHook이 최신 승수를 반영할 때 호출한다. hook 없이 직접
+## 주입할 수도 있어 기본값 1.0(보너스 없음)을 유지한다.
+func set_morale_multiplier(value: float) -> void:
+	morale_multiplier = value
+
+
+func get_morale_multiplier() -> float:
+	return morale_multiplier
 
 
 func _get_attack_interval() -> float:

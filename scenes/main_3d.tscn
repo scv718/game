@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world3d.tscn" id="1_world"]
 [ext_resource type="Script" path="res://scripts/navigation_manager_3d.gd" id="2_nav"]
@@ -8,12 +8,14 @@
 [ext_resource type="Script" path="res://scripts/building_placement_3d.gd" id="6_placement"]
 [ext_resource type="Script" path="res://scripts/mercenary_roster_3d.gd" id="7_roster"]
 [ext_resource type="Script" path="res://scripts/first_encounter_spawner_3d.gd" id="8_spawner"]
+[ext_resource type="Script" path="res://scripts/ghost_spawner_3d.gd" id="8b_ghostspawner"]
 [ext_resource type="PackedScene" path="res://ui/hud_3d.tscn" id="9_hud"]
 [ext_resource type="PackedScene" path="res://ui/world_map_overlay.tscn" id="10_worldmap"]
 [ext_resource type="Script" path="res://scripts/world_map_layout_3d.gd" id="11_layout"]
 [ext_resource type="PackedScene" path="res://scenes/core_building_3d.tscn" id="12_core"]
 [ext_resource type="Script" path="res://scripts/world_content_3d.gd" id="13_content"]
 [ext_resource type="Script" path="res://scripts/mercenary_hire_sync_3d.gd" id="14_hiresync"]
+[ext_resource type="Script" path="res://scripts/morale_system_3d.gd" id="15_morale"]
 
 [node name="Main3D" type="Node3D"]
 
@@ -105,6 +107,12 @@ script = ExtResource("7_roster")
 [node name="FirstEncounterSpawner3D" type="Node" parent="."]
 script = ExtResource("8_spawner")
 
+[node name="GhostSpawner3D" type="Node" parent="."]
+script = ExtResource("8b_ghostspawner")
+
 [node name="HUD" parent="." instance=ExtResource("9_hud")]
+
+[node name="MoraleSystem3D" type="Node" parent="."]
+script = ExtResource("15_morale")
 
 [node name="WorldMapOverlay" parent="." instance=ExtResource("10_worldmap")]
