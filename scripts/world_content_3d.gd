@@ -22,6 +22,8 @@ class_name WorldContent3D
 
 const TREE_SCENE := preload("res://scenes/tree_3d.tscn")
 const STONE_DEPOSIT_SCENE := preload("res://scenes/stone_deposit_3d.tscn")
+const VISUAL_DRESSING_SCRIPT := preload("res://scripts/visual_dressing_3d.gd")
+const VILLAGE_COMPOSITION_SCRIPT := preload("res://scripts/village_composition_3d.gd")
 
 var _spawned := false
 
@@ -31,9 +33,16 @@ func _ready() -> void:
 	if _spawned:
 		return
 	_spawned = true
+	# 실제 런타임에서도 placeholder GroundVisual에 stylized 잔디 톤을 입힌다.
+	# (캡처 도구만 톤을 입혀 실제 게임이 흰 필드로 보이던 문제 해결 - VIS-001-5 계약
+	# apply_ground_tone 재사용. 이 노드의 parent가 world3d.tscn World3D 루트다.)
+	var composition: Node = VILLAGE_COMPOSITION_SCRIPT.new()
+	composition.apply_ground_tone(get_parent())
+	composition.free()
 	_spawn_starter_trees()
 	_spawn_forest_clusters()
 	_spawn_stone_deposit()
+	_spawn_visual_dressing()
 
 
 func get_tree_count() -> int:
@@ -75,3 +84,9 @@ func _spawn_tree(logical: Vector2) -> void:
 	var tree := TREE_SCENE.instantiate() as WorldTree3D
 	tree.position = WorldCoords3D.to_world_xz(logical)
 	add_child(tree)
+
+
+func _spawn_visual_dressing() -> void:
+	# VisualDressing3D class_name, instantiate via preloaded script
+	var dressing := VISUAL_DRESSING_SCRIPT.new() as Node3D
+	add_child(dressing)

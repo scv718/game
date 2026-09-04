@@ -41,6 +41,12 @@ var _variation_applied := false
 @onready var _trunk_visual: MeshInstance3D = $Visual/TrunkVisual
 @onready var _stump_visual: MeshInstance3D = $Visual/StumpVisual
 
+## Quaternius tree variants for visual replacement.
+const TREE_VARIANT_KEYS := [
+	"tree/common_1", "tree/common_3", "tree/pine_1", "tree/pine_2",
+]
+const TREE_VARIANT_SCALES := [0.55, 0.55, 0.5, 0.5]
+
 
 func _ready() -> void:
 	super()
@@ -49,6 +55,7 @@ func _ready() -> void:
 	_stump_shape.height = 0.5
 	_apply_state()
 	_apply_visual_variation()
+	_replace_with_quaternius()
 
 
 func _on_depleted() -> void:
@@ -81,6 +88,29 @@ func _apply_state() -> void:
 	_trunk_visual.visible = mature
 	_stump_visual.visible = not mature
 	_trunk_collision.shape = _mature_shape if mature else _stump_shape
+	# Quaternius model visibility follows mature state
+	if _quaternius_model != null:
+		_quaternius_model.visible = mature
+
+
+## Replace placeholder primitive meshes with Quaternius tree model.
+var _quaternius_model: Node3D = null
+
+func _replace_with_quaternius() -> void:
+	var idx := hash(global_position) % TREE_VARIANT_KEYS.size()
+	var key: String = TREE_VARIANT_KEYS[idx]
+	var scale_val: float = TREE_VARIANT_SCALES[idx]
+	var model := VisualAssetCatalog3D.instantiate_model(key)
+	if model == null:
+		return
+	_quaternius_model = model
+	# Position at canopy center (replaces canopy visual)
+	model.position = Vector3(0.0, 1.8, 0.0)
+	model.scale = Vector3.ONE * scale_val
+	# Hide placeholder meshes, keep stump for depleted state
+	_canopy_visual.visible = false
+	_trunk_visual.visible = false
+	_visual.add_child(model)
 
 
 ## 결정적 visual variation. 같은 위치면 항상 같은 결과고, gameplay footprint에는
