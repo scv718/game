@@ -21,6 +21,7 @@ VillageResources="*res://scripts/village_resources.gd"
 GameTime="*res://scripts/game_time.gd"
 WorkerRoster="*res://scripts/worker_roster.gd"
 MercenaryRoster="*res://scripts/mercenary_roster.gd"
+PopulationConsumption="*res://scripts/population_consumption.gd"
 FirstEncounterSpawner="*res://scripts/first_encounter_spawner.gd"
 DeathLedger="*res://scripts/death_ledger.gd"
 ExplorationManager="*res://scripts/exploration_manager.gd"
@@ -77,3 +78,4 @@ world_map={
 
 environment/defaults/default_clear_color=Color(0.11, 0.13, 0.12, 1)
 textures/canvas_textures/default_texture_filter=0
+

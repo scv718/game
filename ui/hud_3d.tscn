@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://ui/tavern_recruitment_ui.tscn" id="2_recruit"]
@@ -46,6 +46,18 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_warn"]
+bg_color = Color(0.13, 0.08, 0.07, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.55, 0.45, 0.42, 0.95)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [node name="HUD" type="CanvasLayer"]
 layer = 10
 script = ExtResource("1_script")
@@ -54,7 +66,7 @@ script = ExtResource("1_script")
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 230.0
-offset_bottom = 126.0
+offset_bottom = 158.0
 theme_override_styles/panel = SubResource("StyleBox_status")
 
 [node name="DayTimeLabel" type="Label" parent="StatusPanel"]
@@ -103,6 +115,22 @@ theme_override_colors/font_color = Color(0.7, 0.82, 0.78, 1)
 theme_override_font_sizes/font_size = 15
 text = "Stone: 0"
 
+[node name="Divider2" type="HSeparator" parent="StatusPanel"]
+offset_left = 14.0
+offset_top = 95.0
+offset_right = 198.0
+offset_bottom = 99.0
+
+[node name="FoodLabel" type="Label" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 14.0
+offset_top = 105.0
+offset_right = 198.0
+offset_bottom = 131.0
+theme_override_colors/font_color = Color(0.96, 0.55, 0.3, 1)
+theme_override_font_sizes/font_size = 15
+text = "Food: 0"
+
 [node name="DayTimeLabel" type="Label" parent="."]
 visible = false
 text = "DAY 1  0%"
@@ -114,6 +142,10 @@ text = "Wood: 0"
 [node name="StoneLabel" type="Label" parent="."]
 visible = false
 text = "Stone: 0"
+
+[node name="FoodLabel" type="Label" parent="."]
+visible = false
+text = "Food: 0"
 
 [node name="InteractLabel" type="Label" parent="."]
 unique_name_in_owner = true
@@ -175,6 +207,19 @@ offset_bottom = -120.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBox_prompt")
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+visible = false
+
+[node name="FoodWarningLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 166.0
+offset_right = 246.0
+offset_bottom = 192.0
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBox_warn")
 horizontal_alignment = 1
 vertical_alignment = 1
 text = ""

@@ -2,13 +2,16 @@ extends CanvasLayer
 
 @onready var wood_label: Label = %WoodLabel
 @onready var stone_label: Label = %StoneLabel
+@onready var food_label: Label = %FoodLabel
 @onready var daytime_label: Label = %DayTimeLabel
 @onready var day_progress_bar: ProgressBar = %DayProgressBar
 @onready var interact_label: Label = %InteractLabel
 @onready var build_label: Label = %BuildLabel
 @onready var feedback_label: Label = %FeedbackLabel
+@onready var food_warning_label: Label = %FoodWarningLabel
 @onready var _compat_wood_label: Label = $WoodLabel
 @onready var _compat_stone_label: Label = $StoneLabel
+@onready var _compat_food_label: Label = $FoodLabel
 @onready var _compat_daytime_label: Label = $DayTimeLabel
 
 var _feedback_timer: SceneTreeTimer = null
@@ -23,6 +26,10 @@ const BUILD_TYPE_HINTS := {
 	"wall": "Wall (16px segment) - Wood 2",
 	"gate": "Gate (48px corridor) - Wood 5",
 }
+## TASK-018-3: shortage/raw-fallback 경고 색. 부족은 선명한 빨강(명확한 경고),
+## raw ingredient 소비는 호박색(비효율 소비 안내)으로 구분한다.
+const SHORTAGE_WARN_COLOR := Color(1.0, 0.42, 0.35)
+const RAW_WARN_COLOR := Color(1.0, 0.72, 0.3)
 
 
 func _ready() -> void:
@@ -34,6 +41,13 @@ func _ready() -> void:
 	VillageResources.changed.connect(_on_resources_changed)
 	_on_resources_changed("wood", VillageResources.get_amount("wood"))
 	_on_resources_changed("stone", VillageResources.get_amount("stone"))
+	_refresh_food_label()
+	# TASK-018-3: 인구 소비 tick 결과로 Food shortage / raw fallback 경고를 갱신.
+	var pc := get_tree().root.get_node_or_null("PopulationConsumption")
+	if pc != null and pc.has_signal("consumption_tick"):
+		pc.consumption_tick.connect(_on_consumption_tick)
+		if pc.has_method("get_last_tick"):
+			_update_food_warning(pc.get_last_tick())
 	GameTime.phase_changed.connect(_on_phase_changed)
 	_refresh_daytime()
 	_schedule_daytime_refresh()
@@ -54,6 +68,48 @@ func _on_resources_changed(resource_id: String, _amount: int) -> void:
 	elif resource_id == "stone":
 		stone_label.text = "Stone: %d" % VillageResources.get_amount("stone")
 		_compat_stone_label.text = stone_label.text
+	elif VillageResources.is_food(resource_id):
+		_refresh_food_label()
+
+
+## TASK-018-3: Food 총재고(FOOD_DEFS 전체 합)를 HUD에 표시한다.
+func _food_total() -> int:
+	var total := 0
+	for food_id in VillageResources.FOOD_DEFS.keys():
+		total += VillageResources.get_food(str(food_id))
+	return total
+
+
+func _refresh_food_label() -> void:
+	food_label.text = "Food: %d" % _food_total()
+	_compat_food_label.text = food_label.text
+
+
+## TASK-018-3: 소비 tick 결과를 Food 경고 라벨에 반영한다.
+## SHORTAGE → 붉은 경고(부족량 표기), RAW_FALLBACK → 호박색(비효율 raw 소비 안내),
+## OK → 숨김. Label(mouse_filter IGNORE)이라 월드 입력을 차단하지 않는다.
+func _on_consumption_tick(result: Dictionary) -> void:
+	_update_food_warning(result)
+
+
+func _update_food_warning(result: Dictionary) -> void:
+	var pc := get_tree().root.get_node_or_null("PopulationConsumption")
+	if pc == null or result.is_empty():
+		food_warning_label.visible = false
+		return
+	var state := int(result.get("state", pc.TickState.OK))
+	if state == pc.TickState.SHORTAGE:
+		food_warning_label.text = "Food Shortage: -%d today" \
+				% int(result.get("shortage", 0))
+		food_warning_label.add_theme_color_override("font_color", SHORTAGE_WARN_COLOR)
+		food_warning_label.visible = true
+	elif state == pc.TickState.RAW_FALLBACK:
+		food_warning_label.text = "Raw ingredients eaten: %d (low efficiency)" \
+				% int(result.get("consumed_raw", 0))
+		food_warning_label.add_theme_color_override("font_color", RAW_WARN_COLOR)
+		food_warning_label.visible = true
+	else:
+		food_warning_label.visible = false
 
 
 func _on_phase_changed(_phase: int, _day_number: int) -> void:
