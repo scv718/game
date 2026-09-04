@@ -72,7 +72,11 @@ func get_core_type() -> String:
 	return core_type
 
 
+## TASK-022-2: 여관은 InnCapacity(데이터 기반 업그레이드 레벨)를 레벨 소스로 사용한다.
+## 그 외 핵심 건물은 여전히 업그레이드 미구현이므로 1을 유지한다.
 func get_level() -> int:
+	if core_type == "inn":
+		return InnCapacity.get_level()
 	return 1
 
 

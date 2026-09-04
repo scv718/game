@@ -326,10 +326,14 @@ func _find_gate_for_direction(world: Node, dir: String) -> Node:
 	return null
 
 
+## TASK-022-2: 여관 용병 보유 한도(roster capacity)를 강제한다.
+## InnCapacity의 데이터 기반 용량을 초과하면 고용을 거부한다.
 func add_mercenary(mercenary: MercenaryData) -> bool:
 	if mercenary == null or not mercenary is MercenaryData:
 		return false
 	if get_mercenary(mercenary.id) != null:
+		return false
+	if get_count() >= InnCapacity.get_mercenary_capacity():
 		return false
 	_mercenaries.append(mercenary)
 	mercenaries_changed.emit()

@@ -12,10 +12,14 @@ var _actors: Dictionary = {}
 signal workers_changed
 
 
+## TASK-022-2: 여관 주민 보유 한도(roster capacity)를 강제한다.
+## InnCapacity의 데이터 기반 용량을 초과하면 고용을 거부한다.
 func add_worker(worker: WorkerData) -> bool:
 	if worker == null or not worker is WorkerData:
 		return false
 	if get_worker(worker.id) != null:
+		return false
+	if get_count() >= InnCapacity.get_worker_capacity():
 		return false
 	_workers.append(worker)
 	workers_changed.emit()

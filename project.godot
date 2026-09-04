@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+InnCapacity="*res://scripts/inn_capacity.gd"
 VillageResources="*res://scripts/village_resources.gd"
 GameTime="*res://scripts/game_time.gd"
 WorkerRoster="*res://scripts/worker_roster.gd"
@@ -78,4 +79,3 @@ world_map={
 
 environment/defaults/default_clear_color=Color(0.11, 0.13, 0.12, 1)
 textures/canvas_textures/default_texture_filter=0
-
