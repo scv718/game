@@ -46,6 +46,15 @@ const PLACEHOLDER_COLORS := {
 const PROP_COLOR := Color(0.42, 0.34, 0.26)
 const FLAG_COLOR := Color(0.9, 0.82, 0.5)
 
+const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
+const CUTESKULL_BUILDINGS := {
+	"keep": ["Castle_Entrance", "Castle_Tower_3", "Castle_Tower_4"],
+	"tavern": ["House_3_1"],
+	"inn": ["House_4_1"],
+	"grocery": ["House_5_2"],
+	"equipment": ["House_2_2"],
+}
+
 ## Quaternius building part mapping per core_type. 각 type은 wall/roof와 모듈 수를
 ## 달리해 generic house 복제를 피한다.
 const BUILDING_PARTS := {
@@ -149,7 +158,43 @@ func _replace_with_quaternius() -> void:
 	replacement.name = "ReplacementBuildingRoot"
 	_visual.add_child(replacement)
 	_quaternius_models.append(replacement)
+	if _replace_with_cuteskull(replacement):
+		return
 	_assemble_modular_room(replacement, parts)
+
+
+func _replace_with_cuteskull(root: Node3D) -> bool:
+	var names: Array = CUTESKULL_BUILDINGS.get(core_type, [])
+	if names.is_empty():
+		return false
+	var source_root := CUTESKULL_CITY.instantiate()
+	var placed := 0
+	for source_name in names:
+		var source := source_root.get_node_or_null("88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + source_name) as Node3D
+		if source == null:
+			continue
+		var model := source.duplicate() as Node3D
+		model.name = "Cuteskull_%s" % source_name
+		model.position = Vector3.ZERO if placed == 0 else Vector3(-3.2 if placed == 1 else 3.2, 0.0, 0.0)
+		model.rotation = Vector3.ZERO
+		model.scale = Vector3.ONE * (0.11 if core_type == "keep" else 0.14)
+		_normalize_cuteskull_model(model)
+		model.set_meta("asset_source", "Cuteskull city16.fbx")
+		model.set_meta("source_node", source_name)
+		model.set_meta("kind", "core_building_visual")
+		root.add_child(model)
+		placed += 1
+	source_root.free()
+	return placed > 0
+
+
+func _normalize_cuteskull_model(model: Node) -> void:
+	for child in model.get_children():
+		if child is MeshInstance3D and (child as MeshInstance3D).mesh:
+			var aabb := (child as MeshInstance3D).mesh.get_aabb()
+			child.position = Vector3(-aabb.position.x - aabb.size.x * 0.5,
+				-aabb.position.y, -aabb.position.z - aabb.size.z * 0.5)
+			return
 
 
 func _assemble_modular_room(root: Node3D, parts: Dictionary) -> void:
