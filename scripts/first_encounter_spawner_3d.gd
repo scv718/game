@@ -102,8 +102,15 @@ func spawn_encounter() -> int:
 	var spawn_world_point := get_spawn_world_point(direction, world)
 	var waypoints := build_route_waypoints(direction, spawn_world_point, world)
 	var core := get_village_core(world)
+	# TASK-025-2: Ghosts consume the existing encounter budget. The canonical
+	# Threat/Wave gate above remains the sole NIGHT trigger owner.
+	var ghost_count := 0
+	var mix := get_tree().get_first_node_in_group("ghost_spawn_mix")
+	if mix != null and mix.has_method("spawn_ghost_mix"):
+		ghost_count = mix.spawn_ghost_mix(
+			world, spawn_world_point, waypoints, core, direction)
 	var spawned := 0
-	for i in count:
+	for i in maxi(0, count - ghost_count):
 		var enemy := scene.instantiate() as EnemyActor3D
 		if enemy == null:
 			continue
@@ -117,7 +124,7 @@ func spawn_encounter() -> int:
 		_enemies.append(enemy)
 		spawned += 1
 	_night_active = true
-	return spawned
+	return spawned + ghost_count
 
 
 ## DAY 복귀 시 spawn한 Enemy를 전부 despawn한다. queue_free 직접 호출이므로
@@ -216,4 +223,3 @@ func _spawn_offset(i: int) -> Vector3:
 	var row := i / 3
 	return Vector3(
 		col * WorldCoords3D.GRID_CELL_UNITS, 0.0, row * WorldCoords3D.GRID_CELL_UNITS)
-

@@ -7,10 +7,22 @@ extends Node
 ## DeathLedger는 Ghost를 spawn하지 않으며 Portal/Wave를 제어하지 않는다.
 ## SaveGame 시스템은 구현하지 않는다. TASK-016-4에서 source_uid 기준 중복 기록
 ## 차단과 Ghost(재귀) 사망의 신규 record 생성을 차단하는 가드를 구현한다.
+## TASK-025-1에서 entity category 기반 eligibility(ELIGIBLE_CATEGORIES)로
+## unsupported category를 안전하게 skip하도록 일반화한다.
 
 signal record_added(record_id: String)
 signal record_status_changed(record_id: String, status: int)
 signal record_resolved(record_id: String)
+
+## TASK-025-1: Ghost Return/사망 기록에 eligible한 entity category 집합.
+## entity category 기반 eligibility를 적용한다. 실제 구현된 eligible category만
+## 기록 대상이 된다. 여기에 없는 category는 사망 snapshot이라도 안전하게 skip해
+## record를 만들지 않는다. 새 category가 실제로 구현되면 여기에 추가하면 된다
+## (animal/NPC 등 미구현 category를 억지로 만들지 않음).
+const ELIGIBLE_CATEGORIES := {
+	"MERCENARY": true,
+	"ENEMY": true,
+}
 
 ## record_id -> DeathRecord. Actor reference가 아닌 snapshot 데이터만 보관한다.
 var _records: Dictionary = {}
@@ -27,8 +39,13 @@ var _next_id := 1
 ## TASK-016-4 recursive guard: is_ghost가 true인(Ghost) 사망 snapshot은 신규 record를
 ## 절대 만들지 않는다. 기존 record가 있으면 그 복사본을, 없으면 null을 반환한다.
 ## Ghost death의 기존 record RESOLVED 처리는 TASK-017에서 구현한다.
+## TASK-025-1 eligibility: entity category가 eligible set에 없으면(unsupported category)
+## 신규 record를 만들지 않고 null을 반환한다. identity snapshot / source·death context /
+## one-return invariant(duplicate+recursive guard)는 유지된다.
 func record_death(snapshot: Dictionary) -> DeathRecord:
 	var record := DeathRecord.from_snapshot(snapshot)
+	if not is_eligible_category(record.get_category()):
+		return null
 	if record.is_ghost:
 		return _find_record_copy_by_source(record.source_uid)
 	if has_record_for_source(record.source_uid):
@@ -40,6 +57,12 @@ func record_death(snapshot: Dictionary) -> DeathRecord:
 	_records[record.record_id] = record
 	record_added.emit(record.record_id)
 	return _copy_record(record)
+
+
+## TASK-025-1: 주어진 entity category가 Ghost Return/사망 기록에 eligible한지 판정한다.
+## unsupported category는 false이며 DeathLedger가 이 기록을 안전하게 skip한다.
+func is_eligible_category(category: String) -> bool:
+	return ELIGIBLE_CATEGORIES.has(category)
 
 
 ## record_id로 record 조회. 없으면 null. 내부 상태 우회 변경 방지를 위해 복사본 반환.
