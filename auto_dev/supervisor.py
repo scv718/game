@@ -291,6 +291,27 @@ def required_test_path(task):
     return os.path.join("tests", f"{task['id'].replace('-', '').lower()}_test.gd")
 
 
+_IMPL_FAILURE_MARKERS = (
+    "NO_CODE_DIFF",
+    "MISSING_REQUIRED_TEST",
+    "태스크 테스트 FAIL",
+    "회귀(baseline 3D) FAIL",
+)
+
+
+def classify_gate_failure(problems, max_rounds):
+    """검증 게이트 반복 실패 원인 분류.
+
+    - deterministic 구현 실패(구현자가 코드/필수 테스트를 만들지 않음 등)이면
+      ImplementationFailure 로 분류 → NEEDS_DESIGN 으로 승격하지 않는다.
+      설계 모호성은 아니므로 사람 개입(설계 resolve) 전에 구현 수정이 우선이다.
+    - 그 외(명시적 설계 갈등)만 설계 해결 대기(NeedsDesign)로 분류한다.
+    """
+    if any(m in p for p in problems for m in _IMPL_FAILURE_MARKERS):
+        return "ImplementationFailure"
+    return "NeedsDesign"
+
+
 def run_headless_test(godot_exe, root, script_path, timeout=900):
     rc, out, err = _run_cmd([godot_exe, "--headless", "--path", root,
                              "--script", script_path], timeout=timeout)
@@ -670,7 +691,7 @@ def verification_gate(task):
     rc, st, _ = _run_cmd(["git", "-C", root, "status", "--porcelain"], timeout=60)
     lines = [l for l in (st or "").splitlines() if l.strip()]
     if not lines:
-        return False, ["변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성"]
+        return False, ["NO_CODE_DIFF: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성"]
 
     # 위험 파일 변경 → FAIL (자동 되돌림 없이 사람 확인 대상으로)
     for l in lines:
@@ -705,27 +726,31 @@ def verification_gate(task):
                 except Exception as e:
                     problems.append(f"테스트 diff 검사 실패: {path} ({e})")
 
-    # 태스크 자체 테스트
+    # 태스크 자체 테스트 (cheap fail-first: required test 없으면 즉시 FAIL, regression 미실행)
     if ver.get("task_test", True):
+        required = required_test_path(task)
         tf = find_task_test_file(task, root)
         godot = CONFIG.get("godot_exe")
         if not godot:
             problems.append("config에 godot_exe 미설정 - 게이트 테스트 불가")
         elif tf is None:
-            problems.append(f"태스크 테스트 파일을 찾지 못함 (tests/*{task['id'].replace('-', '').lower()}*_test.gd)")
+            problems.append(f"MISSING_REQUIRED_TEST: 필수 테스트 존재 안 함 {required}")
+            # NO REQUIRED TEST: expensive baseline 회귀를 실행하지 않고 즉시 실패한다.
+            return False, problems
         else:
             ok, tailtxt = run_headless_test(godot, root, tf)
             if not ok:
                 problems.append(f"태스크 테스트 FAIL: {os.path.basename(tf)}\n{tailtxt}")
 
-    # 회귀(smoke)
+    # 회귀(baseline): canonical 3D health test. legacy smoke_test.gd 는 자동 regression gate 에서 제외.
     if ver.get("regression", True):
-        smoke = os.path.join(root, "tests", "smoke_test.gd")
+        baseline = os.path.join(root, "tests", "baseline_3d_health_test.gd")
         godot = CONFIG.get("godot_exe")
-        if godot and os.path.exists(smoke):
-            ok, tailtxt = run_headless_test(godot, root, smoke)
+        base_timeout = int(ver.get("regression_timeout", 600))
+        if godot and os.path.exists(baseline):
+            ok, tailtxt = run_headless_test(godot, root, baseline, timeout=base_timeout)
             if not ok:
-                problems.append(f"회귀(smoke) FAIL\n{tailtxt}")
+                problems.append(f"회귀(baseline 3D) FAIL\n{tailtxt}")
 
     return len(problems) == 0, problems
 
@@ -1212,6 +1237,15 @@ def main():
                                          feedback=f"게이트 수정 실행 오류: {err[:300]}")
                         return
                 else:
+                    cls = classify_gate_failure(problems, max_rounds)
+                    if cls == "ImplementationFailure":
+                        # 구현 실패 - NEEDS_DESIGN 으로 승격하지 않고 FIX 유지.
+                        # auto_lane 은 재시작하지 않고, 다음 사이클/사람 개입에서 구현 수정 우선.
+                        update_queue(tasks, queue_path, task["id"], "FIX",
+                                     feedback=f"검증 게이트 {max_rounds}회 실패 (구현 실패 분류, 수동 확인): "
+                                              + "; ".join(p[:150] for p in problems[:5]))
+                        write_result(task, "FIX", "auto-gate 반복 실패 (review=SKIPPED 모드) - 구현 실패 분류")
+                        return
                     if maybe_design_resolve(task, tasks, queue_path, "검증 게이트 반복 실패: " + "; ".join(p[:150] for p in problems[:5])):
                         return
                     update_queue(tasks, queue_path, task["id"], "NEEDS_DESIGN",
