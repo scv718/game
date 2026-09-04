@@ -49,9 +49,12 @@ class TaskState:
     attempt_id: str = ""
     failure_class: str = ""
     last_error: str = ""
+    history: list[str] = field(default_factory=list)
 
     def set(self, status: Lifecycle | str, **fields):
         self.status = status.value if isinstance(status, Lifecycle) else str(status)
+        if not self.history or self.history[-1] != self.status:
+            self.history.append(self.status)
         for key, value in fields.items():
             if not hasattr(self, key):
                 raise ValueError("unknown task state field: {}".format(key))
@@ -317,6 +320,7 @@ class LifecycleController:
                            source_worktree=worktree)
 
     def bootstrap_passed(self, task: TaskState):
+        self.record(task, Lifecycle.ENV_BOOTSTRAPPED)
         return self.record(task, Lifecycle.BASELINE_HEALTHY,
                            source_validation_result="PENDING")
 

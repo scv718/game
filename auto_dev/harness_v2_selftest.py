@@ -73,7 +73,11 @@ def main():
         controller.implementation_started(lifecycle, "attempt-lifecycle")
         controller.source_validated(lifecycle)
         controller.wait_integration(lifecycle)
-        check("lifecycle and provenance fields persist", store.get_task("LIFECYCLE").status == Lifecycle.WAIT_INTEGRATION.value)
+        persisted = store.get_task("LIFECYCLE")
+        check("lifecycle and provenance fields persist", persisted.status == Lifecycle.WAIT_INTEGRATION.value)
+        check("bootstrap and source lifecycle history persists",
+              Lifecycle.ENV_BOOTSTRAPPED.value in persisted.history
+              and Lifecycle.SOURCE_VALIDATED.value in persisted.history)
 
         a, _ = source(root, store, "A")
         check("A source commit recorded", bool(a.source_commit))
