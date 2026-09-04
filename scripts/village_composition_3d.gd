@@ -66,15 +66,7 @@ const GROUND_TONE_ALBEDO := Color(0.42, 0.62, 0.35)
 const PATH_ALBEDO := Color(0.55, 0.46, 0.34)
 const PLAZA_ALBEDO := Color(0.61, 0.52, 0.38)
 const PATH_STRIP_Y := 0.05
-
-## Subtle district ground bands make the production layout legible from the
-## overview camera without introducing collision or navigation surfaces.
-const ZONE_GROUND_TONES := {
-	"village": Color(0.48, 0.64, 0.38),
-	"forest": Color(0.34, 0.53, 0.30),
-	"lumberyard": Color(0.49, 0.54, 0.31),
-	"quarry": Color(0.50, 0.56, 0.40),
-}
+const HOUSE_VISUAL_SCALE := 0.72
 
 ## -- 제한적 variation 팔레트(태스크 원칙). 이 범위 밖 모델을 추가하지 않는다.
 ## house palette: catalog house_building 조합(floor/wall/window/door 교체).
@@ -118,7 +110,7 @@ func _ready() -> void:
 		root.name = "Zone_%s" % zone.to_pascal_case()
 		add_child(root)
 		_zone_roots[zone] = root
-	_build_zone_ground()
+	_build_village_clearing()
 	var paths_root := Node3D.new()
 	paths_root.name = "Paths"
 	add_child(paths_root)
@@ -211,33 +203,48 @@ func _build_paths(root: Node3D) -> void:
 		material.roughness = 1.0
 		instance.material_override = material
 		root.add_child(instance)
-	# Short branches turn the south road into an intentional agriculture / trade
-	# frontage while keeping the central plaza and work corridors open.
-	_spawn_path(root, "Path_Farm_West", Vector3(-1, PATH_STRIP_Y, 9),
-		Vector3(-13, PATH_STRIP_Y, 13), 1.5)
-	_spawn_path(root, "Path_Farm_East", Vector3(1, PATH_STRIP_Y, 9),
-		Vector3(13, PATH_STRIP_Y, 13), 1.5)
+	# Secondary lanes bend around the settlement instead of exposing a debug-like
+	# rectilinear grid. They are visual-only and remain outside gameplay owners.
+	_spawn_path_curve(root, "Path_Tavern", [Vector3(-1, 0, 0),
+		Vector3(-6, 0, -1.4), Vector3(-10, 0, -2.5), Vector3(-14, 0, -3)], 1.35)
+	_spawn_path_curve(root, "Path_Inn", [Vector3(1, 0, 0),
+		Vector3(6, 0, -1.2), Vector3(10, 0, -2.4), Vector3(14, 0, -3)], 1.35)
+	_spawn_path_curve(root, "Path_Farm_West", [Vector3(-1, 0, 9),
+		Vector3(-4, 0, 10.5), Vector3(-8, 0, 12), Vector3(-13, 0, 13)], 1.4)
+	_spawn_path_curve(root, "Path_Farm_East", [Vector3(1, 0, 9),
+		Vector3(4, 0, 10.5), Vector3(8, 0, 12), Vector3(13, 0, 13)], 1.4)
 
 
-func _build_zone_ground() -> void:
-	for zone in ZONE_RECTS:
-		var rect: Rect2 = ZONE_RECTS[zone]
-		var mesh := PlaneMesh.new()
-		mesh.size = rect.size
-		var instance := MeshInstance3D.new()
-		instance.name = "DistrictGround_%s" % zone.to_pascal_case()
-		instance.mesh = mesh
-		instance.position = Vector3(rect.get_center().x, 0.01, rect.get_center().y)
-		instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var material := StandardMaterial3D.new()
-		material.albedo_color = ZONE_GROUND_TONES[zone]
-		material.roughness = 1.0
-		instance.material_override = material
-		_zone_roots[zone].add_child(instance)
+func _build_village_clearing() -> void:
+	# One soft, irregular clearing gives the settlement a sense of place. It is
+	# deliberately not a per-district rectangle or debug overlay.
+	var clearing := MeshInstance3D.new()
+	clearing.name = "VillageClearing"
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 22.0
+	mesh.bottom_radius = 22.0
+	mesh.height = 0.025
+	clearing.mesh = mesh
+	clearing.position = Vector3(0, 0.012, 1.0)
+	clearing.scale = Vector3(1.0, 1.0, 0.72)
+	clearing.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(0.45, 0.59, 0.34)
+	material.roughness = 1.0
+	clearing.material_override = material
+	add_child(clearing)
 
 
-func _spawn_path(root: Node3D, path_name: String, from: Vector3, to: Vector3,
+func _spawn_path_curve(root: Node3D, path_name: String, points: Array,
 		width: float) -> void:
+	for i in range(points.size() - 1):
+		var from: Vector3 = points[i]
+		var to: Vector3 = points[i + 1]
+		_spawn_path_segment(root, "%s_%d" % [path_name, i], from, to, width)
+
+
+func _spawn_path_segment(root: Node3D, path_name: String, from: Vector3,
+		to: Vector3, width: float) -> void:
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(width, 0.04, from.distance_to(to))
 	var instance := MeshInstance3D.new()
@@ -245,6 +252,7 @@ func _spawn_path(root: Node3D, path_name: String, from: Vector3, to: Vector3,
 	instance.mesh = mesh
 	instance.position = (from + to) * 0.5
 	instance.position.y = PATH_STRIP_Y
+	instance.name = path_name
 	instance.look_at_from_position(instance.position, to, Vector3.UP)
 	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var material := StandardMaterial3D.new()
@@ -256,17 +264,31 @@ func _spawn_path(root: Node3D, path_name: String, from: Vector3, to: Vector3,
 
 ## -- VILLAGE: 저밀도 생활 공간. 집 5채 + 생활 props. 수목은 포인트 2그루만.
 func _build_village(root: Node3D) -> void:
-	_add_house(root, 4, HOUSE_PLASTER, Vector3(-7, 0, -7), 90.0, true)
-	_add_house(root, 4, HOUSE_BRICK, Vector3(-7, 0, 5), 90.0, false)
-	_add_house(root, 4, HOUSE_BRICK, Vector3(7, 0, -7), -90.0, true)
-	_add_house(root, 4, HOUSE_PLASTER, Vector3(8, 0, 8), -90.0, false)
-	_add_house(root, 6, HOUSE_PLASTER, Vector3(-6, 0, -16), 90.0, true)
+	_add_house(root, 4, HOUSE_PLASTER, Vector3(-7, 0, -8), 78.0, true)
+	_add_house(root, 4, HOUSE_BRICK, Vector3(-8, 0, 4), 102.0, false)
+	_add_house(root, 4, HOUSE_BRICK, Vector3(7, 0, -7), -72.0, true)
+	_add_house(root, 4, HOUSE_PLASTER, Vector3(8, 0, 7), -108.0, false)
+	_add_house(root, 6, HOUSE_PLASTER, Vector3(-5, 0, -16), 82.0, true)
+	_add_house(root, 4, HOUSE_PLASTER, Vector3(-9, 0, 9), 118.0, false)
+	_add_house(root, 4, HOUSE_BRICK, Vector3(10, 0, -10), -52.0, false)
+
+	# A restrained forecourt around the Keep creates a readable focal point
+	# without adding a new gameplay landmark or collision owner.
+	_spawn("prop/torch_metal", "village", "keep_forecourt", Vector3(-3.4, 0, -1.8))
+	_spawn("prop/torch_metal", "village", "keep_forecourt", Vector3(3.4, 0, -1.8))
+	_spawn("prop/chest_wood", "village", "keep_forecourt", Vector3(0, 0, 3.2))
 
 	# 광장 남서 녹지 포인트 수목(마을 내 수목 밀도 의도적 최소).
 	_spawn("tree/common_3", "village", "tree", Vector3(-6, 0, 13),
 		15.0, 0.5, Vector2(1.2, 1.2))
 	_spawn("tree/pine_2", "village", "tree", Vector3(6, 0, -13),
 		-30.0, 0.5, Vector2(1.3, 1.3))
+	_spawn("tree/common_1", "village", "edge_transition", Vector3(-12.5, 0, -11.5),
+		-15.0, 0.48)
+	_spawn("tree/common_4", "village", "edge_transition", Vector3(12.5, 0, 9.8),
+		20.0, 0.48)
+	_spawn("veg/bush_common", "village", "edge_transition", Vector3(-11.5, 0, 2.5))
+	_spawn("veg/bush_common", "village", "edge_transition", Vector3(11.2, 0, 5.5))
 
 	# 마을 남쪽 성문 느낌 울타리(spine 양측, 통행은 막지 않는 폭).
 	for side in [-1.0, 1.0]:
@@ -330,6 +352,7 @@ func _add_house(root: Node3D, house_size_m: int, palette: Dictionary,
 	root.add_child(house)
 	house.position = WorldCoords3D.flatten(pos)
 	house.rotation.y = deg_to_rad(yaw_deg)
+	house.scale = Vector3.ONE * HOUSE_VISUAL_SCALE
 	var half := float(house_size_m) * 0.5
 	var cells := int(half)
 
@@ -424,6 +447,8 @@ func _build_forest(root: Node3D) -> void:
 	# 숲 가장자리 바위 1개(전이부 읽기).
 	_spawn("rock/medium_2", "forest", "rock", Vector3(-23.6, 0, -10.5),
 		20.0, 0.8, Vector2(1.2, 1.0))
+	_spawn("veg/bush_common", "forest", "edge_transition", Vector3(-22.7, 0, -8.8))
+	_spawn("veg/grass_common_short", "forest", "edge_transition", Vector3(-21.8, 0, -7.6))
 
 
 ## -- LUMBERYARD: 벌목 작업 정체성 props(stump/log pile/wagon) + 벌목꾼 자리.
@@ -453,6 +478,8 @@ func _build_lumberyard(root: Node3D) -> void:
 	_spawn("prop/crate_wooden", "lumberyard", "prop", Vector3(-21.9, 0, 4.9),
 		-10.0)
 	_spawn("prop/barrel", "lumberyard", "prop", Vector3(-22.4, 0, 5.8))
+	_spawn("veg/bush_common", "lumberyard", "edge_transition", Vector3(-19.8, 0, 5.2))
+	_spawn("veg/grass_common_tall", "lumberyard", "edge_transition", Vector3(-20.2, 0, 13.4))
 
 
 ## -- QUARRY: 암반 아웃크롭 + 석재 더미 + 채굴 정체성 props.
@@ -484,6 +511,9 @@ func _build_quarry(root: Node3D) -> void:
 	_spawn("rock/medium_3", "quarry", "stone_pile", Vector3(25.5, 0, 14.4),
 		-60.0, 0.5, Vector2(0.85, 0.85))
 	_spawn("prop/torch_metal", "quarry", "prop", Vector3(23.9, 0, 14.8))
+	_spawn("veg/grass_common_short", "quarry", "edge_transition", Vector3(17.0, 0, 20.8))
+	_spawn("rock/medium_1", "quarry", "edge_transition", Vector3(19.0, 0, 21.0),
+		-12.0, 0.55)
 
 
 ## -- 주민/Worker/Mercenary visual(CharacterRig3D 공용 리그, action 재생만).

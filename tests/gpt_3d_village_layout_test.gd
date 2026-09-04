@@ -36,8 +36,15 @@ func _process(_delta: float) -> bool:
 			_check(composition.get_zone_root(zone) != null,
 				"district '%s' is present" % zone)
 		var paths := composition.get_node_or_null("Paths")
-		_check(paths != null and paths.get_node_or_null("Path_Farm_West") != null
-			and paths.get_node_or_null("Path_Farm_East") != null,
+		var farm_west_segments := 0
+		var farm_east_segments := 0
+		if paths != null:
+			for path_node in paths.get_children():
+				if path_node.name.begins_with("Path_Farm_West_"):
+					farm_west_segments += 1
+				if path_node.name.begins_with("Path_Farm_East_"):
+					farm_east_segments += 1
+		_check(farm_west_segments >= 2 and farm_east_segments >= 2,
 			"south agriculture branches connect to the road network")
 		_check(composition.get_node_or_null("Zone_Village/AgriculturePlot") != null,
 			"agriculture plot is readable as a compact south district")
