@@ -28,6 +28,8 @@ DeathLedger="*res://scripts/death_ledger.gd"
 ExplorationManager="*res://scripts/exploration_manager.gd"
 ThreatSystem="*res://scripts/threat_system.gd"
 WaveManager="*res://scripts/wave_manager.gd"
+DungeonManager="*res://scripts/dungeon_manager.gd"
+DungeonPreparationManager="*res://scripts/dungeon_preparation_manager.gd"
 
 [display]
 

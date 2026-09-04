@@ -1,0 +1,186 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon_preparation_ui.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.06, 0.08, 0.1, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.52, 0.45, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button"]
+bg_color = Color(0.15, 0.18, 0.22, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.6, 0.55, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="DungeonPreparationUI" type="CanvasLayer"]
+layer = 12
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="ColorRect" parent="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="TitleLabel" type="Label" parent="Control"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 8.0
+offset_bottom = 36.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.62, 1)
+theme_override_font_sizes/font_size = 18
+text = "Dungeon Preparation"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Control"]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -130.0
+offset_top = 10.0
+offset_right = -48.0
+offset_bottom = 34.0
+grow_horizontal = 0
+theme_override_styles/normal = SubResource("StyleBox_button")
+text = "Close (P)"
+
+[node name="Panel" type="PanelContainer" parent="Control"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -280.0
+offset_right = 300.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Content" type="VBoxContainer" parent="Control/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DungeonTitleLabel" type="Label" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.62, 1)
+theme_override_font_sizes/font_size = 15
+text = "Dungeon Preparation"
+
+[node name="DungeonInfoLabel" type="Label" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tier - | State: - | Encounter: -"
+
+[node name="RiskLabel" type="Label" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Risk: -"
+
+[node name="RewardLabel" type="Label" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+text = "Expected reward: -"
+
+[node name="PartyHeader" type="Label" parent="Control/Panel/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.72, 1)
+text = "Party members (required min/max from dungeon)"
+
+[node name="PartyList" type="VBoxContainer" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MemberRow" type="HBoxContainer" parent="Control/Panel/Content"]
+layout_mode = 2
+
+[node name="MemberSelector" type="OptionButton" parent="Control/Panel/Content/MemberRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddMemberButton" type="Button" parent="Control/Panel/Content/MemberRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_button")
+text = "Add"
+
+[node name="FoodLabel" type="Label" parent="Control/Panel/Content"]
+layout_mode = 2
+text = "Food/Supply slot (optional)"
+
+[node name="FoodLineEdit" type="LineEdit" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "food id (optional)"
+
+[node name="PotionLabel" type="Label" parent="Control/Panel/Content"]
+layout_mode = 2
+text = "Potion slots (optional, comma separated)"
+
+[node name="PotionLineEdit" type="LineEdit" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "potion ids (optional)"
+
+[node name="EquipmentLabel" type="Label" parent="Control/Panel/Content"]
+layout_mode = 2
+text = "Equipment summary (optional, comma separated)"
+
+[node name="EquipmentLineEdit" type="LineEdit" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "equipment summary (optional)"
+
+[node name="StatusLabel" type="Label" parent="Control/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+text = "NOT READY"
+
+[node name="DepartRow" type="HBoxContainer" parent="Control/Panel/Content"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="Control/Panel/Content/DepartRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DepartButton" type="Button" parent="Control/Panel/Content/DepartRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBox_button")
+text = "Depart"
+disabled = true
