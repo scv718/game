@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import glob
+import hashlib
 import json
 import os
 import re
@@ -19,6 +20,10 @@ QUEUE_LOCK_PATH = os.path.join(BASE_DIR, ".queue_lock")
 PROMPT_DIR = os.path.join(BASE_DIR, "prompts")
 GROUP_ID = None  # --group 지정 시 해당 그룹 서브트리만 처리 (병렬 레인)
 WORKTREE_DIR = None  # --group 에 매핑된 git worktree (에이전트 작업 디렉터리)
+# commit-gate: implementer attempt 단위 artifact(attempt_delta) 판정 + source provenance 스냅샷
+_WORKTREE_BASELINE = None  # 시도 시작 시점의 전체 파일 content-hash 스냅샷
+_LAST_ATTEMPT_DELTA = None  # 마지막 시도에서 실제 새로 생성/수정된 파일 목록 (rel path)
+_ATTEMPT_START_HEAD = None  # 시도 시작 시점의 git HEAD (agent 가 이미 commit 한 경우 대비)
 FALLBACK_STATE_PATH = os.path.join(BASE_DIR, "fallback_state.json")
 IMPL_FALLBACK_STATE_PATH = os.path.join(BASE_DIR, "impl_fallback_state.json")
 QUOTA_RE = re.compile(r"insufficient|quota|balance|credit|usage limit|limit reached|exhausted|402|429",
@@ -281,6 +286,11 @@ def find_task_test_file(task, root):
     return max(candidates, key=os.path.getmtime)
 
 
+def required_test_path(task):
+    """Supervisor가 직접 계산한 필수 테스트 파일 경로 (LLM 추론 불필요)."""
+    return os.path.join("tests", f"{task['id'].replace('-', '').lower()}_test.gd")
+
+
 def run_headless_test(godot_exe, root, script_path, timeout=900):
     rc, out, err = _run_cmd([godot_exe, "--headless", "--path", root,
                              "--script", script_path], timeout=timeout)
@@ -290,6 +300,307 @@ def run_headless_test(godot_exe, root, script_path, timeout=900):
     if "RESULT=PASS" not in text:
         return False, ("PASS 마커 없음 (실행 실패 추정)\n" + (text or err)[-500:])
     return True, ""
+
+
+# ---------------------------------------------------------------------------
+# COMMIT GATE: 성공 TASK(review=SKIPPED 게이트 PASS / LGTM) 는 반드시
+# 검증된 Git source commit 을 보유한 후에만 DONE 이 되어야 한다.
+# invariant: status==DONE -> source_commit(basis) exists
+# ---------------------------------------------------------------------------
+_COMMIT_SKIP_PARTS = ("/auto_dev/", "/.git/", "/.godot/", "/.import/", "/logs/", "/.venv/", "/cache/")
+_COMMIT_SKIP_EXT = (".md", ".tmp", ".log", ".import", ".bak", ".old", ".orig", ".mp4", ".png", ".jpg")
+
+
+def _file_hash(path):
+    try:
+        with open(path, "rb") as f:
+            return hashlib.md5(f.read()).hexdigest()
+    except OSError:
+        return None
+
+
+def _iter_worktree_files(root):
+    if not root or not os.path.isdir(root):
+        return
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in (".git", ".godot")]
+        for fn in filenames:
+            full = os.path.join(dirpath, fn)
+            try:
+                if os.path.isfile(full) and not os.path.islink(full):
+                    rel = os.path.relpath(full, root).replace("\\", "/")
+                    yield rel, full
+            except Exception:
+                continue
+
+
+def snapshot_worktree(root):
+    """시작 시 baseline: {rel path: content-hash}. 기존 dirty/untracked 도 모두 포함해 보존."""
+    snap = {}
+    for rel, full in _iter_worktree_files(root):
+        h = _file_hash(full)
+        if h is not None:
+            snap[rel] = h
+    return snap
+
+
+def changed_paths(root):
+    """git status --porcelain 기준 변경/신규 파일 목록 (rel path, 정규화)."""
+    _, st, _ = _run_cmd(["git", "-C", root, "status", "--porcelain"], timeout=60)
+    paths = []
+    for l in (st or "").splitlines():
+        l = l.rstrip()
+        if not l:
+            continue
+        path = l[3:].strip().strip('"').replace("\\", "/")
+        if path:
+            paths.append(path)
+    return paths
+
+
+def attempt_delta(root):
+    """마지막 baseline 대비 이번 attempt 에서 실제 새로 생성/수정된 파일 목록 (rel path).
+    content-hash 차이 기반이므로 기존 파일 내용 수정도 감지한다.
+    baseline 이 없으면(REVIEW 재개 등) 전체 worktree dirty(changed_paths) 로 폴백."""
+    if _WORKTREE_BASELINE is None:
+        return changed_paths(root)
+    delta = []
+    current = {}
+    for rel, full in _iter_worktree_files(root):
+        h = _file_hash(full)
+        if h is not None:
+            current[rel] = h
+    for rel, h in current.items():
+        if _WORKTREE_BASELINE.get(rel) != h:
+            delta.append(rel)
+    for rel in list(_WORKTREE_BASELINE.keys()):
+        if rel not in current:
+            delta.append(rel)
+    return delta
+
+
+def set_attempt_baseline(root):
+    """implementer 시도 시작 직전 baseline 스냅샷 + attempt 시작 HEAD 저장."""
+    global _WORKTREE_BASELINE, _ATTEMPT_START_HEAD
+    _WORKTREE_BASELINE = snapshot_worktree(root)
+    try:
+        _, head, _ = _run_cmd(["git", "-C", root, "rev-parse", "HEAD"], timeout=30)
+        _ATTEMPT_START_HEAD = (head or "").strip() or None
+    except Exception:
+        _ATTEMPT_START_HEAD = None
+
+
+def capture_attempt_delta(root):
+    """시도 종료 후 _LAST_ATTEMPT_DELTA 갱신. baseline 은 유지."""
+    global _LAST_ATTEMPT_DELTA
+    _LAST_ATTEMPT_DELTA = attempt_delta(root)
+    return _LAST_ATTEMPT_DELTA
+
+
+def _git_rev_parse(root, ref="HEAD"):
+    rc, out, _ = _run_cmd(["git", "-C", root, "rev-parse", ref], timeout=30)
+    return (out or "").strip() or None
+
+
+def _rel(root, p):
+    return os.path.relpath(p, root).replace("\\", "/")
+
+
+def _is_commitable(rel):
+    r = (rel or "").lower().replace("\\", "/")
+    if any(p in r for p in _COMMIT_SKIP_PARTS):
+        return False
+    ext = os.path.splitext(r)[1]
+    if ext in _COMMIT_SKIP_EXT:
+        return False
+    return True
+
+
+def _is_uncommitted(root, rel):
+    rc, out, _ = _run_cmd(["git", "-C", root, "status", "--porcelain", "--", rel], timeout=30)
+    return bool((out or "").strip())
+
+
+def _is_committed_clean(root, rel):
+    rc, out, _ = _run_cmd(["git", "-C", root, "ls-files", "--error-unmatch", "--", rel], timeout=30)
+    if rc != 0:
+        return False
+    rc2, out2, _ = _run_cmd(["git", "-C", root, "status", "--porcelain", "--", rel], timeout=30)
+    return (out2 or "").strip() == ""
+
+
+def _all_committed_clean(root, rels):
+    """모든 target 이 tracked 이고 working tree 에 modified/untracked 로 남은 것이 없어야 한다."""
+    if not rels:
+        return False
+    return all(_is_committed_clean(root, rel) for rel in rels)
+
+
+def _all_in_range(root, rels, start, end):
+    """모든 target 이 start..end commit range 에 실제 포함되어 있는지."""
+    if not rels:
+        return False
+    rc, out, _ = _run_cmd(["git", "-C", root, "diff", "--name-only", start, end], timeout=60)
+    changed = {l.strip() for l in (out or "").splitlines() if l.strip()}
+    return rels <= changed
+
+
+def _stage_specific(root, rels):
+    """전체 worktree stage 금지 - 명시 경로만 stage (untracked 신규 포함)."""
+    rc, out, err = _run_cmd(["git", "-C", root, "add", "--"] + rels, timeout=60)
+    return rc == 0, (err or out)
+
+
+def _cached_names(root):
+    rc, out, _ = _run_cmd(["git", "-C", root, "diff", "--cached", "--name-only"], timeout=30)
+    return {l.strip() for l in (out or "").splitlines() if l.strip()}
+
+
+def _commit_message(task):
+    title = (task.get("title") or "").strip()
+    return f"auto: {task['id']} {title} (gate PASS + source commit)"
+
+
+def _compute_commit_targets(task, root):
+    """이번 attempt_delta 중 committable 파일 + 아직 commit 안 된 required test.
+    기존 dirty/untracked(attempt delta 아님)와 unrelated 는 절대 포함하지 않는다."""
+    targets = set()
+    for rel in (_LAST_ATTEMPT_DELTA or []):
+        if not os.path.isfile(os.path.join(root, rel)):
+            continue
+        if _is_commitable(rel):
+            targets.add(rel)
+    tf = find_task_test_file(task, root)
+    if tf:
+        trel = _rel(root, tf)
+        if _is_commitable(trel) and _is_uncommitted(root, trel):
+            targets.add(trel)
+    return {t for t in targets if t}
+
+
+def ensure_source_commit(task, root):
+    """DONE 이전 commit gate. 성공 TASK invariant 강제.
+    반환: (ok, source_base_commit, source_commit, reason)
+    - source_base_commit = attempt 시작 HEAD (provenance 범위 lower bound)
+    - source_commit       = 최종 HEAD (provenance 범위 upper bound)
+    TASK 의 정확한 provenance 는 (source_base_commit, source_commit] 범위 전체이다."""
+    try:
+        required = required_test_path(task)
+        tf = find_task_test_file(task, root)
+        if tf is None:
+            return False, None, None, f"required test 존재 안 함: {required}"
+
+        cur_head = _git_rev_parse(root)
+        start_head = _ATTEMPT_START_HEAD
+
+        targets = _compute_commit_targets(task, root)
+
+        # [ADOPT] 유효한 agent/외부 commit 만 채택. 다음을 반드시 모두 만족해야 한다:
+        #   1) attempt 시작 HEAD != current HEAD (실제 advance)
+        #   2) 이번 attempt 의 committable target 전체가 working tree 에 modified/untracked 로
+        #      남아있지 않음 (= 전부 committed+clean)
+        #   3) target 전체가 attempt 시작..current HEAD commit range 에 실제 포함
+        #   4) required test 역시 committed
+        # 어느 하나라도 실패하면 adopt 하지 않고, 남은 target 만 specific stage 하여 새 commit 생성.
+        # unrelated HEAD advance 만으로는 valid source commit 으로 인정하지 않는다.
+        if (start_head and cur_head and cur_head != start_head
+                and targets
+                and _all_committed_clean(root, targets)
+                and _all_in_range(root, targets, start_head, cur_head)):
+            return True, start_head, cur_head, f"기존 source commit 채택 (agent/외부): {cur_head[:12]}"
+
+        # 이미 commit 되어 이번 attempt 의 추가 변경이 필요 없는 경우에도
+        # 검증된 source commit 은 있어야 한다 (required test 가 실제 HEAD 에 committed).
+        if not targets:
+            trel = _rel(root, tf)
+            if cur_head and _is_committed_clean(root, trel):
+                return True, start_head, cur_head, f"이미 통합된 required test 존재(추가 변경 불필요): {cur_head[:12]}"
+            return False, None, None, "commit 대상 없음 - 유효 source 변경/테스트 없음"
+
+        # whole-worktree stage 금지 - 명시 경로만 stage (untracked 신규 포함).
+        # 이미 committed 인 target 은 제외하고, 여전히 uncommitted 인 target 만 specific stage 한다.
+        to_stage = {t for t in targets if _is_uncommitted(root, t)}
+        if not to_stage:
+            return False, None, None, "commit 대상 없음 - 남은 uncommitted 대상 없음"
+        ok, serr = _stage_specific(root, sorted(to_stage))
+        if not ok:
+            return False, None, None, f"stage 실패: {serr.strip()[:200]}"
+
+        # stage 검증: 대상이 전부 staged 되고 unrelated 는 섞이지 않았는지
+        staged = _cached_names(root)
+        if to_stage != staged:
+            return False, None, None, (f"stage 검증 실패 - 의도 대상과 불일치 "
+                                       f"(대상={sorted(to_stage)[:5]}, staged={sorted(staged)[:5]})")
+
+        msg = _commit_message(task)
+        rc, com, cerr = _run_cmd(["git", "-C", root, "commit", "-m", msg], timeout=120)
+        if rc != 0:
+            return False, None, None, f"commit 실패: {((cerr or com) or '').strip()[:200]}"
+        new_head = _git_rev_parse(root)
+        if not new_head:
+            return False, None, None, "commit 후 hash 조회 실패"
+        return True, start_head, new_head, f"source commit 생성: {new_head[:12]}"
+    except Exception as e:
+        return False, None, None, f"commit gate 예외: {str(e)[:200]}"
+
+
+def _record_source_commit(task, base, commit, reason=""):
+    """TASK source provenance 를 기록한다.
+
+    계약(중요): 향후 integration 단계에서는 source_commit 단일 hash 만을 cherry-pick 해서
+    TASK 전체 integration 으로 간주하면 안 된다. agent 가 하나 이상의 partial commit 을
+    만들 수 있으므로, TASK 의 정확한 provenance 는 (source_base_commit, source_commit] 범위,
+    즉 `source_base_commit..source_commit` 범위 전체의 commit 들을 모두 포함해야 한다.
+    """
+    if not commit:
+        return
+    runs_dir = os.path.join(BASE_DIR, "runs", GROUP_ID) if GROUP_ID else os.path.join(BASE_DIR, "runs", "_default")
+    os.makedirs(runs_dir, exist_ok=True)
+    p = os.path.join(runs_dir, f"result_{task['id']}.json")
+    rng = f"{base}..{commit}" if (base and base != commit) else (commit or "")
+    data = {
+        "task": task["id"],
+        "status": "DONE",
+        "source_base_commit": base,
+        "source_commit": commit,
+        "source_provenance_range": rng,
+        "source_branch": (WORKTREE_DIR or cfg("project_dir")),
+        "source_commit_created_at": datetime.datetime.now().isoformat(),
+        "integrator_contract": (
+            "TASK 전체 integration 은 source_base_commit..source_commit 범위 전체의 commit 들을 "
+            "모두 포함해야 한다. source_commit 단일 cherry-pick 으로 TASK 전체를 integration "
+            "했다고 간주하지 말 것 (partial agent commit 이 존재할 수 있다)."
+        ),
+        "note": reason,
+    }
+    try:
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except OSError:
+        pass
+
+
+def finalize_done(task, tasks, queue_path, reason):
+    """DONE 전 commit gate. 성공 TASK 는 반드시 source commit 보유해야 DONE.
+    반환: DONE 처리했으면 True, commit 실패로 보류했으면 False."""
+    root = WORKTREE_DIR or cfg("project_dir")
+    ok, base, commit, creason = ensure_source_commit(task, root)
+    if ok and commit:
+        if not base:
+            base = _git_rev_parse(root, commit + "^") or commit
+        _record_source_commit(task, base, commit, creason)
+        fb = (reason or "") + f" | source_base={base[:12]}..source={commit[:12]}"
+        update_queue(tasks, queue_path, task["id"], "DONE", feedback=fb)
+        write_result(task, "DONE", fb + f"\n- source_base_commit: {base}\n- source_commit: {commit}\n- source_provenance_range: {base}..{commit}\n- worktree: {root}")
+        log(f"[{task['id']}] DONE (provenance {base[:12]}..{commit[:12]})")
+        return True
+    # commit 실패 → DONE 금지. implementation/test PASS 상태는 로그에 보존하고 non-success 로 남김.
+    update_queue(tasks, queue_path, task["id"], "FIX",
+                 feedback=f"PASS 후 source commit 생성 실패 (COMMIT_FAILED) - 변경 보존, 재시도 필요: {creason[:150]}")
+    write_result(task, "COMMIT_FAILED",
+                 f"implementation/test PASS 유지, provenance 생성 실패: {creason}\n- 작업 파일은 보존됨(삭제 안 함)")
+    log(f"[{task['id']}] DONE 보류: COMMIT_FAILED - {creason}")
+    return False
 
 
 def verification_gate(task):
@@ -581,8 +892,11 @@ def run_implementer(task, session_id=None, review_feedback=None):
     extra = ["--file", build_task_file(task, queue_path)]
     if session_id:
         extra += ["--session", session_id]
+    root = WORKTREE_DIR or cfg("project_dir")
+    set_attempt_baseline(root)  # commit-gate: 시도 시작 baseline + attempt 시작 HEAD 스냅샷
     sid, text, err = run_opencode_retry(prompt, cfg("implementer_model"), extra,
                                         cfg("implementer_timeout_sec"), task_id=task["id"])
+    capture_attempt_delta(root)  # commit-gate: 이번 attempt 실제 변경 파일(delta) 기록
     summary = extract_summary(text)
     if not summary:
         summary = (text or "").strip()[-800:]
@@ -816,9 +1130,7 @@ def main():
                 ok, problems = verification_gate(task)
                 if ok:
                     fb = "auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과"
-                    update_queue(tasks, queue_path, task["id"], "DONE", feedback=fb)
-                    write_result(task, "DONE", fb + " | review_status=SKIPPED verification=PASS")
-                    log(f"[{task['id']}] DONE (게이트 통과, 리뷰 스킵)")
+                    finalize_done(task, tasks, queue_path, fb)
                     return
                 log(f"[{task['id']}] 게이트 실패: {'; '.join(p[:120] for p in problems[:4])}")
                 if attempt < max_rounds:
@@ -897,9 +1209,7 @@ def main():
             log(f"[{task['id']}] 리뷰 판정: {verdict} | 사유: {reason[:300]}")
 
             if verdict == "LGTM":
-                update_queue(tasks, queue_path, task["id"], "DONE", feedback=reason)
-                write_result(task, verdict, reason)
-                log(f"[{task['id']}] DONE")
+                finalize_done(task, tasks, queue_path, reason or "LGTM")
                 return
 
             if verdict == "NEEDS_DESIGN":
