@@ -65,6 +65,11 @@ signal encounter_ended(dungeon_id: String)
 
 func _ready() -> void:
 	add_to_group("dungeon_runtime")
+	var preparation_manager := get_node_or_null("/root/DungeonPreparationManager")
+	if preparation_manager != null and preparation_manager.has_signal("run_started"):
+		var callback := Callable(self, "begin_run")
+		if not preparation_manager.run_started.is_connected(callback):
+			preparation_manager.run_started.connect(callback)
 
 
 func is_run_active() -> bool:

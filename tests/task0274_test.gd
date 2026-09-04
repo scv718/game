@@ -164,8 +164,10 @@ func _run_setup() -> void:
 	_check(_dungeon_manager.get_dungeon_state(DUNGEON_ID) \
 		== DungeonDefinition.DungeonState.IN_PROGRESS, "dungeon state IN_PROGRESS")
 
-	var started: bool = _runtime.begin_run(DUNGEON_ID)
-	_check(started, "begin_run starts a clean encounter")
+	var started: bool = _runtime.is_run_active()
+	if not started:
+		started = _runtime.begin_run(DUNGEON_ID)
+	_check(started, "dungeon departure starts a clean encounter")
 	_check(_runtime.is_run_active(), "runtime reports run active")
 	_check(_runtime.get_dungeon_id() == DUNGEON_ID, "runtime dungeon_id set")
 	_check(_runtime.get_arena() != null and is_instance_valid(_runtime.get_arena()), \

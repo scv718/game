@@ -31,6 +31,13 @@ func _run() -> void:
 		if prep_ui == null:
 			failures.append("DungeonPreparationUI/Control is not instantiated")
 		else:
+			var runtime := main.get_node_or_null("DungeonRuntime")
+			var preparation_manager := root.get_node_or_null("DungeonPreparationManager")
+			if runtime == null:
+				failures.append("DungeonRuntime is not instantiated")
+			elif preparation_manager == null \
+					or not preparation_manager.run_started.is_connected(Callable(runtime, "begin_run")):
+				failures.append("DungeonPreparationManager.run_started is not connected to DungeonRuntime.begin_run")
 			var press := InputEventKey.new()
 			press.physical_keycode = KEY_P
 			press.unicode = 112
