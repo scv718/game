@@ -406,6 +406,47 @@ def _rel(root, p):
     return os.path.relpath(p, root).replace("\\", "/")
 
 
+_WT_ALREADY_REGISTERED = re.compile(r".*worktree.*(already.*exist|exists)", re.IGNORECASE)
+
+
+def _ensure_group_worktree(main, wt):
+    """COMMIT-GATE WORKTREE INVARIANT: NEW TASK WORKTREE HEAD == CURRENT CANONICAL MAIN HEAD at task start.
+
+    - missing wt            -> create it at the current canonical main HEAD
+                              (git worktree add -b <branch> <wt> <main_head>).
+    - exists && HEAD == main -> reuse (fresh, not stale).
+    - exists && HEAD != main -> refuse and exit (preserve the stale worktree, never run on it).
+    Returns the expected worktree HEAD on success; exits non-zero on refusal."""
+    head = _git_rev_parse(main, "HEAD")
+    if not head:
+        log(f"[WT-ERR] canonical main HEAD 조회 실패 ({main}) - 워크트리 확보 중단")
+        sys.exit(1)
+    branch = "ai/" + os.path.basename(os.path.normpath(wt))
+    if not os.path.isdir(wt) or not os.path.exists(os.path.join(wt, ".git")):
+        rc, out, err = _run_cmd(["git", "-C", main, "worktree", "add", "-b", branch, wt, head], timeout=120)
+        if rc != 0:
+            if _WT_ALREADY_REGISTERED.match(err or "") or _WT_ALREADY_REGISTERED.match(out or ""):
+                pass
+            else:
+                rc2, out2, err2 = _run_cmd(["git", "-C", main, "worktree", "add", "--detach", wt, head], timeout=120)
+                if rc2 != 0:
+                    log(f"[WT-ERR] 워크트리 생성 실패 {wt}: {err} / {err2}")
+                    sys.exit(1)
+        actual = _git_rev_parse(wt, "HEAD")
+        if actual != head:
+            log(f"[WT-ERR] 생성된 워크트리 HEAD 불일치: {actual} != {head}")
+            sys.exit(1)
+        log(f"[WT] 신규 워크트리 생성: {wt} @ {head} (branch={branch})")
+        return head
+    actual = _git_rev_parse(wt, "HEAD")
+    if actual == head:
+        log(f"[WT] 워크트리 재사용(HEAD 일치): {wt} @ {head}")
+        return head
+    log(f"[WT-ERR] 기존 워크트리가 STALE: {wt} HEAD={actual}, canonical main HEAD={head}. "
+        f"재사용 금지(보존은 유지). stale 워크트리에 작업 실행 중단.")
+    sys.exit(1)
+
+
 def _is_commitable(rel):
     r = (rel or "").lower().replace("\\", "/")
     if any(p in r for p in _COMMIT_SKIP_PARTS):
@@ -1047,6 +1088,7 @@ def main():
             global WORKTREE_DIR
             WORKTREE_DIR = wt_map[GROUP_ID]
             log(f"레인 워크트리: {WORKTREE_DIR}")
+            _ensure_group_worktree(cfg("project_dir"), WORKTREE_DIR)
         root = next((t for t in tasks if t["id"] == GROUP_ID), None)
         if root is None:
             print(f"그룹 {GROUP_ID} 없음")
