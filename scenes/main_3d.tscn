@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/world_map_layout_3d.gd" id="11_layout"]
 [ext_resource type="PackedScene" path="res://scenes/core_building_3d.tscn" id="12_core"]
 [ext_resource type="Script" path="res://scripts/world_content_3d.gd" id="13_content"]
+[ext_resource type="PackedScene" path="res://scenes/village_composition_3d.tscn" id="18_village_composition"]
 [ext_resource type="Script" path="res://scripts/mercenary_hire_sync_3d.gd" id="14_hiresync"]
 [ext_resource type="Script" path="res://scripts/morale_system_3d.gd" id="15_morale"]
 [ext_resource type="PackedScene" path="res://ui/dungeon_preparation_ui.tscn" id="16_dungeon_prep"]
@@ -65,24 +66,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.125, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.125, 0, 0)
 
 [node name="Keep" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 core_type = "keep"
 
 [node name="Tavern" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.75, 0, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -3)
 core_type = "tavern"
 
 [node name="Inn" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.75, 0, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -3)
 core_type = "inn"
 
 [node name="Grocery" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.25, 0, 14.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 13)
 core_type = "grocery"
 
 [node name="EquipmentShop" parent="World3D" instance=ExtResource("12_core")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.25, 0, 14.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 13)
 core_type = "equipment"
+
+[node name="VillageComposition3D" parent="World3D" instance=ExtResource("18_village_composition")]
 
 [node name="WorldContent3D" type="Node3D" parent="World3D"]
 script = ExtResource("13_content")
