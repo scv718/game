@@ -25,6 +25,9 @@ var _is_open := false
 var _camera_controller: Node = null
 var _world_map: Node = null
 var _exploration: Node = null
+## TASK-026-4: ScoutDispatch(Expedition 기반 파견) 매니저. autoload가 아니므로
+## lazy resolve하며 없으면 기존 ExplorationManager 직결 진행 경로로 fallback한다.
+var _scout_dispatch: Node = null
 var _selected_region_id := ""
 
 
@@ -113,12 +116,28 @@ func _handle_map_click(click_pos: Vector2) -> void:
 	select_region("")
 
 
+## TASK-026-4: explore 버튼은 ScoutDispatch(UNKNOWN region에 expedition 파견) 우선,
+## 없으면 기존 ExplorationManager 자체 진행 경로로 fallback한다.
 func _on_explore_pressed() -> void:
 	if _exploration == null or _selected_region_id == "":
 		return
-	_exploration.start_exploration(_selected_region_id)
+	var scout := _resolve_scout_dispatch()
+	if scout != null and scout.has_method("dispatch_scout"):
+		scout.dispatch_scout(_selected_region_id)
+	else:
+		_exploration.start_exploration(_selected_region_id)
 	_refresh_region_panel()
 	queue_redraw()
+
+
+func _resolve_scout_dispatch() -> Node:
+	if _scout_dispatch != null and is_instance_valid(_scout_dispatch):
+		return _scout_dispatch
+	_scout_dispatch = get_node_or_null("/root/ScoutDispatchManager")
+	if _scout_dispatch == null:
+		var nodes := get_tree().get_nodes_in_group("scout_dispatch_manager")
+		_scout_dispatch = nodes[0] if nodes.size() > 0 else null
+	return _scout_dispatch
 
 
 func _on_region_state_changed(_region_id: String) -> void:
@@ -439,3 +458,4 @@ func _draw_road_line(road: Array, scale_f: float) -> void:
 	for p in road:
 		pts.append(world_to_map(p))
 	draw_polyline(pts, Color(0.35, 0.28, 0.18, 0.6), 1.0)
+
