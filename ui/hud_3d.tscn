@@ -125,11 +125,21 @@ offset_bottom = 99.0
 unique_name_in_owner = true
 offset_left = 14.0
 offset_top = 105.0
-offset_right = 198.0
+offset_right = 108.0
 offset_bottom = 131.0
 theme_override_colors/font_color = Color(0.96, 0.55, 0.3, 1)
 theme_override_font_sizes/font_size = 15
 text = "Food: 0"
+
+[node name="MealLabel" type="Label" parent="StatusPanel"]
+unique_name_in_owner = true
+offset_left = 108.0
+offset_top = 105.0
+offset_right = 198.0
+offset_bottom = 131.0
+theme_override_colors/font_color = Color(0.9, 0.76, 0.48, 1)
+theme_override_font_sizes/font_size = 15
+text = "Meal: 0"
 
 [node name="DayTimeLabel" type="Label" parent="."]
 visible = false
@@ -146,6 +156,10 @@ text = "Stone: 0"
 [node name="FoodLabel" type="Label" parent="."]
 visible = false
 text = "Food: 0"
+
+[node name="MealLabel" type="Label" parent="."]
+visible = false
+text = "Meal: 0"
 
 [node name="InteractLabel" type="Label" parent="."]
 unique_name_in_owner = true

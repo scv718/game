@@ -3,6 +3,7 @@ extends CanvasLayer
 @onready var wood_label: Label = %WoodLabel
 @onready var stone_label: Label = %StoneLabel
 @onready var food_label: Label = %FoodLabel
+@onready var meal_label: Label = %MealLabel
 @onready var daytime_label: Label = %DayTimeLabel
 @onready var day_progress_bar: ProgressBar = %DayProgressBar
 @onready var interact_label: Label = %InteractLabel
@@ -12,6 +13,7 @@ extends CanvasLayer
 @onready var _compat_wood_label: Label = $WoodLabel
 @onready var _compat_stone_label: Label = $StoneLabel
 @onready var _compat_food_label: Label = $FoodLabel
+@onready var _compat_meal_label: Label = $MealLabel
 @onready var _compat_daytime_label: Label = $DayTimeLabel
 
 var _feedback_timer: SceneTreeTimer = null
@@ -41,7 +43,7 @@ func _ready() -> void:
 	VillageResources.changed.connect(_on_resources_changed)
 	_on_resources_changed("wood", VillageResources.get_amount("wood"))
 	_on_resources_changed("stone", VillageResources.get_amount("stone"))
-	_refresh_food_label()
+	_refresh_food_labels()
 	# TASK-018-3: 인구 소비 tick 결과로 Food shortage / raw fallback 경고를 갱신.
 	var pc := get_tree().root.get_node_or_null("PopulationConsumption")
 	if pc != null and pc.has_signal("consumption_tick"):
@@ -68,8 +70,8 @@ func _on_resources_changed(resource_id: String, _amount: int) -> void:
 	elif resource_id == "stone":
 		stone_label.text = "Stone: %d" % VillageResources.get_amount("stone")
 		_compat_stone_label.text = stone_label.text
-	elif VillageResources.is_food(resource_id):
-		_refresh_food_label()
+	elif _is_food_resource(resource_id):
+		_refresh_food_labels()
 
 
 ## TASK-018-3: Food 총재고(FOOD_DEFS 전체 합)를 HUD에 표시한다.
@@ -77,12 +79,37 @@ func _food_total() -> int:
 	var total := 0
 	for food_id in VillageResources.FOOD_DEFS.keys():
 		total += VillageResources.get_food(str(food_id))
+	for raw_id in CookingRecipes.RAW_EFFICIENCY.keys():
+		total += VillageResources.get_amount(str(raw_id))
 	return total
 
 
-func _refresh_food_label() -> void:
+func _is_food_resource(resource_id: String) -> bool:
+	if VillageResources.is_food(resource_id):
+		return true
+	if CookingRecipes.get_raw_efficiency(resource_id) > 0.0:
+		return true
+	for recipe_id in CookingRecipes.get_all_recipe_ids():
+		var recipe := CookingRecipes.get_recipe(recipe_id)
+		if recipe != null and str(recipe.output) == resource_id:
+			return true
+	return false
+
+
+func _meal_total() -> int:
+	var total := 0
+	for recipe_id in CookingRecipes.get_all_recipe_ids():
+		var recipe := CookingRecipes.get_recipe(recipe_id)
+		if recipe != null:
+			total += VillageResources.get_amount(str(recipe.output))
+	return total
+
+
+func _refresh_food_labels() -> void:
 	food_label.text = "Food: %d" % _food_total()
+	meal_label.text = "Meal: %d" % _meal_total()
 	_compat_food_label.text = food_label.text
+	_compat_meal_label.text = meal_label.text
 
 
 ## TASK-018-3: 소비 tick 결과를 Food 경고 라벨에 반영한다.
