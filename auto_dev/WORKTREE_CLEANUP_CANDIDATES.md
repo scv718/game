@@ -2,7 +2,7 @@
 
 > Read-only audit refreshed: 2026-09-04
 >
-> Canonical main: `69967151ebd690de3735616851c0a299d742b0a1`
+> Canonical main: `dba0e1a94cff43a0b58ec96831f268c6e2b2fde3`
 >
 > No worktree was removed or modified. Unique commits are `ahead/behind`
 > relative to canonical main. Untracked production excludes `.godot`,
@@ -69,3 +69,18 @@
 Unique commit counts above are measured against current main `6996715`.
 The four `REMOVE_SAFE` entries are candidates only. This pass performed no
 `git worktree remove`, filesystem deletion, reset, or clean.
+
+## Final disposition at `integration-baseline-v1-final`
+
+The table above is the historical audit. The effective disposition below is
+the final, conservative disposition against `dba0e1a` and includes the
+temporary fresh-validation worktrees. No worktree is removed in this pass.
+
+- `KEEP_ACTIVE`: `e-dungeon-next`, `e-threat-next`
+- `SAFE_TO_REMOVE`: `building`, `combat`, `visual`, `worker`
+- `KEEP_PRESERVATION`: every other registered worktree, including
+  `final-salvage`, `final-salvage-fresh`, `main-fresh-health`, and
+  `final-baseline-manifest`
+
+Final inventory count: **53** worktrees, comprising **2** KEEP_ACTIVE,
+**47** KEEP_PRESERVATION, and **4** SAFE_TO_REMOVE.
