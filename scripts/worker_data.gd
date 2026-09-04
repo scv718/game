@@ -7,11 +7,12 @@ class_name WorkerData
 ## assignment 상태와 workplace 연결은 WorkerRoster가 관리한다.
 ## 영구 Save/Load는 구현하지 않으며, 향후 name/level/traits 확장만 염두에 둔다.
 
-enum Job { LUMBERJACK, MINER }
+enum Job { LUMBERJACK, MINER, FARMER }
 
 const JOB_NAMES := {
 	Job.LUMBERJACK: "LUMBERJACK",
 	Job.MINER: "MINER",
+	Job.FARMER: "FARMER",
 }
 
 var id: String = ""

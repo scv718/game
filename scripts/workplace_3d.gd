@@ -101,6 +101,13 @@ func get_worker_group() -> String:
 	return "workers_3d"
 
 
+## TASK-037-1 upgrade contract identity. Workplace는 추상 계약이며
+## Lumberyard3D/Quarry3D가 자신의 identity를 override해 contract를 활성화한다.
+## 기본값 "" -> contract 없음(업그레이드 불가).
+func get_upgrade_identity() -> String:
+	return ""
+
+
 func get_worker_label() -> String:
 	return "Worker"
 

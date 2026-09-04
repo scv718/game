@@ -1,0 +1,9 @@
+<glob>
+<path>**/GAME_DESIGN.md</path>
+</glob>
+<glob>
+<path>**/TASK-032*</path>
+</glob>
+<glob>
+<path>**/skills/**</path>
+</glob>

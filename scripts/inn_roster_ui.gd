@@ -11,11 +11,18 @@ class_name InnRosterUI
 ## slot capacity는 실제 시설의 get_slot_capacity()에서 동적으로 읽는다.
 ## 내부 assign/unassign은 WorkerRoster.assign/unassign(테스트/여관 관리 로직)을 재사용한다.
 ## 용병은 생산시설 배치 대상이 아니며, 보유/대기 상태만 최소 표시한다.
+## TASK-022-3 여관 업그레이드 UI: 레벨/용량/업그레이드 비용/불가 사유를 표시하고,
+## 업그레이드 버튼으로 InnCapacity.upgrade()를 호출한다(비용은 표시용, 경제 지출 없음).
 
 @onready var _facility_list: VBoxContainer = %FacilityList
 @onready var _worker_list: VBoxContainer = %WorkerList
 @onready var _mercenary_list: VBoxContainer = %MercenaryList
 @onready var _close_button: Button = %CloseButton
+@onready var _inn_level_label: Label = %InnLevelLabel
+@onready var _capacity_label: Label = %CapacityLabel
+@onready var _upgrade_button: Button = %UpgradeButton
+@onready var _upgrade_cost_label: Label = %UpgradeCostLabel
+@onready var _upgrade_reason_label: Label = %UpgradeReasonLabel
 
 const DEFENSE_ZONES := [
 	MercenaryData.DefenseZone.NONE,
@@ -34,7 +41,10 @@ func _ready() -> void:
 	add_to_group("inn_roster_ui")
 	WorkerRoster.workers_changed.connect(_refresh)
 	MercenaryRoster.mercenaries_changed.connect(_refresh_mercenaries)
+	InnCapacity.level_changed.connect(_on_inn_level_changed)
 	_close_button.pressed.connect(_close)
+	_upgrade_button.pressed.connect(_on_upgrade_pressed)
+	_refresh_inn_upgrade()
 	_refresh_facilities()
 	_refresh_mercenaries()
 	visible = false
@@ -205,3 +215,34 @@ func close() -> void:
 
 func _close() -> void:
 	close()
+
+
+func _on_inn_level_changed(_level: int, _worker_cap: int, _mercenary_cap: int) -> void:
+	_refresh_inn_upgrade()
+	_refresh()
+
+
+func _on_upgrade_pressed() -> void:
+	InnCapacity.upgrade()
+	_refresh_inn_upgrade()
+
+
+func _refresh_inn_upgrade() -> void:
+	if not is_instance_valid(InnCapacity):
+		return
+	if not is_instance_valid(_inn_level_label):
+		return
+	var level: int = InnCapacity.get_level()
+	var worker_cap: int = InnCapacity.get_worker_capacity()
+	var mercenary_cap: int = InnCapacity.get_mercenary_capacity()
+	_inn_level_label.text = "여관 Lv.%d" % level
+	_capacity_label.text = "Worker %d / Mercenary %d" % [worker_cap, mercenary_cap]
+	if InnCapacity.can_upgrade():
+		var cost: int = InnCapacity.get_upgrade_cost()
+		_upgrade_cost_label.text = "비용: %d" % cost
+		_upgrade_reason_label.text = ""
+		_upgrade_button.disabled = false
+	else:
+		_upgrade_cost_label.text = ""
+		_upgrade_reason_label.text = "최대 레벨"
+		_upgrade_button.disabled = true

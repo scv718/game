@@ -1,0 +1,9 @@
+<glob>
+<pattern>**/*.md</pattern>
+</glob>
+<glob>
+<pattern>tests/**/*test*</pattern>
+</glob>
+<glob>
+<pattern>**/GAME_DESIGN.md</pattern>
+</glob>

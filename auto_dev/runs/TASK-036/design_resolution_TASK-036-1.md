@@ -1,0 +1,16 @@
+<model_anthropic_gateway>
+<task_anthropic_gateway>
+<task_id>TASK-036-1</task_id>
+<file_path>GAME_DESIGN.md</file_path>
+</task_anthropic_gateway>
+<task_anthropic_gateway>
+<task_id>TASK-036-1</task_id>
+<file_path>AGENTS.md</file_path>
+</task_anthropic_gateway>
+<task_anthropic_gateway>
+<task_id>TASK-036-1</task_id>
+<file_path>src/</file_path>
+</task_anthropic_gateway>
+<directory_listing>
+D:\game-wt\e-faction
+</directory_listing>

@@ -16,8 +16,25 @@ class_name StoneDeposit3D
 var quarry: Node = null
 
 
+var _quaternius_model: Node3D = null
+
 func _ready() -> void:
 	add_to_group("stone_deposits_3d")
+	_replace_with_quaternius()
+
+
+func _replace_with_quaternius() -> void:
+	var model := VisualAssetCatalog3D.instantiate_model("rock/medium_1")
+	if model == null:
+		return
+	_quaternius_model = model
+	model.position = Vector3(0.0, 1.0, 0.0)
+	model.scale = Vector3.ONE * 0.8
+	add_child(model)
+	# Hide placeholder sphere mesh
+	var placeholder := get_node_or_null("Visual/RockVisual")
+	if placeholder != null:
+		placeholder.visible = false
 
 
 func is_occupied() -> bool:
@@ -34,8 +51,22 @@ func occupy(quarry_node: Node) -> bool:
 	if is_occupied():
 		return false
 	quarry = quarry_node
+	_update_binding_visual(true)
 	return true
 
 
 func release() -> void:
 	quarry = null
+	_update_binding_visual(false)
+
+
+func _update_binding_visual(bound: bool) -> void:
+	if _quaternius_model == null:
+		return
+	# Tint model when bound to quarry
+	if _quaternius_model.has_node("MeshInstance3D"):
+		var mesh: MeshInstance3D = _quaternius_model.get_node("MeshInstance3D")
+		if mesh.get_surface_override_material(0) != null:
+			var mat: StandardMaterial3D = mesh.get_surface_override_material(0).duplicate()
+			mat.albedo_color = Color(0.6, 0.6, 0.55) if bound else Color(0.7, 0.7, 0.68)
+			mesh.set_surface_override_material(0, mat)

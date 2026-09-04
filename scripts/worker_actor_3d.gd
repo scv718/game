@@ -101,6 +101,8 @@ func _init() -> void:
 	body_mesh.position = Vector3(0.0, NavigationPolicy3D.ACTOR_HEIGHT_UNITS * 0.5, 0.0)
 	_visual.add_child(body_mesh)
 
+var _quaternius_model: Node3D = null
+
 
 func _ready() -> void:
 	add_to_group("workers_3d")
@@ -109,6 +111,21 @@ func _ready() -> void:
 	rotation.x = 0.0
 	rotation.z = 0.0
 	global_position.y = WorldCoords3D.GROUND_Y
+	_replace_with_quaternius()
+
+
+func _replace_with_quaternius() -> void:
+	var model := VisualAssetCatalog3D.instantiate_model("human/male_base")
+	if model == null:
+		return
+	_quaternius_model = model
+	model.position = Vector3(0.0, 0.0, 0.0)
+	model.scale = Vector3.ONE * 0.45
+	_visual.add_child(model)
+	# Hide placeholder capsule
+	var placeholder := _visual.get_node_or_null("BodyMesh")
+	if placeholder != null:
+		placeholder.visible = false
 
 
 func _physics_process(delta: float) -> void:

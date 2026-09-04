@@ -15,6 +15,13 @@ class_name DeathRecord
 
 enum SourceKind { MERCENARY, ENEMY }
 
+## TASK-025-1: entity category 기반 eligibility를 위한 일반 카테고리 문자열.
+## source_kind(고정 enum)와 독립적으로, 사망한 존재가 어떤 entity category에 속하는지
+## 나타낸다. DeathLedger는 이 category를 기준으로 Ghost Return/사망 기록 eligibility를
+## 판정한다. 실제 구현된 category만 값으로 가진다(animal/NPC 등 미구현 category는
+## 억지로 만들지 않음). 비어 있으면 source_kind 이름으로 대체해 기존 호출과 호환된다.
+var category: String = ""
+
 ## 사망 시점 phase. GameTime.Phase와 동일한 값(DAY=0, NIGHT=1)을 사용하되
 ## DeathRecord가 GameTime autoload에 의존하지 않도록 자체 enum으로 가진다.
 enum DeathPhase { DAY, NIGHT }
@@ -68,6 +75,14 @@ func get_source_kind_name() -> String:
 	return SOURCE_KIND_NAMES.get(source_kind, "?")
 
 
+## TASK-025-1: 사망 source의 entity category를 반환한다. category가 명시되어 있으면
+## 그것을, 비어 있으면 source_kind 이름으로 대체한다(기존 호출/기록 호환).
+func get_category() -> String:
+	if category != "":
+		return category
+	return get_source_kind_name()
+
+
 func get_death_phase_name() -> String:
 	return DEATH_PHASE_NAMES.get(death_phase, "?")
 
@@ -108,6 +123,7 @@ func to_snapshot() -> Dictionary:
 		"record_id": record_id,
 		"source_uid": source_uid,
 		"source_kind": source_kind,
+		"category": category,
 		"is_ghost": is_ghost,
 		"display_name": display_name,
 		"class_or_type": class_or_type,
@@ -132,6 +148,7 @@ static func from_snapshot(snapshot: Dictionary) -> DeathRecord:
 	var record := DeathRecord.new(str(snapshot.get("record_id", "")))
 	record.source_uid = str(snapshot.get("source_uid", ""))
 	record.source_kind = int(snapshot.get("source_kind", SourceKind.MERCENARY))
+	record.category = str(snapshot.get("category", ""))
 	record.is_ghost = bool(snapshot.get("is_ghost", false))
 	record.display_name = str(snapshot.get("display_name", ""))
 	record.class_or_type = str(snapshot.get("class_or_type", ""))

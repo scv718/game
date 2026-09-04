@@ -31,31 +31,73 @@ offset_right = 464.0
 offset_bottom = 40.0
 text = "여관 - 인력 관리"
 
+[node name="UpgradeBox" type="VBoxContainer" parent="Panel"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 44.0
+offset_right = 464.0
+offset_bottom = 128.0
+
+[node name="InnLevelLabel" type="Label" parent="Panel/UpgradeBox"]
+unique_name_in_owner = true
+offset_right = 448.0
+offset_bottom = 22.0
+
+[node name="CapacityLabel" type="Label" parent="Panel/UpgradeBox"]
+unique_name_in_owner = true
+offset_top = 26.0
+offset_right = 448.0
+offset_bottom = 44.0
+
+[node name="UpgradeRow" type="HBoxContainer" parent="Panel/UpgradeBox"]
+offset_top = 48.0
+offset_right = 448.0
+offset_bottom = 74.0
+
+[node name="UpgradeButton" type="Button" parent="Panel/UpgradeBox/UpgradeRow"]
+unique_name_in_owner = true
+offset_right = 200.0
+offset_bottom = 26.0
+text = "업그레이드"
+
+[node name="UpgradeCostLabel" type="Label" parent="Panel/UpgradeBox/UpgradeRow"]
+unique_name_in_owner = true
+offset_left = 208.0
+offset_right = 448.0
+offset_bottom = 26.0
+
+[node name="UpgradeReasonLabel" type="Label" parent="Panel/UpgradeBox"]
+unique_name_in_owner = true
+offset_top = 54.0
+offset_right = 448.0
+offset_bottom = 72.0
+text = ""
+
 [node name="FacilityList" type="VBoxContainer" parent="Panel"]
 unique_name_in_owner = true
 offset_left = 16.0
-offset_top = 48.0
+offset_top = 132.0
 offset_right = 464.0
-offset_bottom = 108.0
+offset_bottom = 180.0
 
 [node name="WorkerList" type="VBoxContainer" parent="Panel"]
 unique_name_in_owner = true
 offset_left = 16.0
-offset_top = 116.0
+offset_top = 188.0
 offset_right = 464.0
-offset_bottom = 220.0
+offset_bottom = 288.0
 
 [node name="MercenaryList" type="VBoxContainer" parent="Panel"]
 unique_name_in_owner = true
 offset_left = 16.0
-offset_top = 228.0
+offset_top = 296.0
 offset_right = 464.0
-offset_bottom = 408.0
+offset_bottom = 452.0
 
 [node name="CloseButton" type="Button" parent="Panel"]
 unique_name_in_owner = true
 offset_left = 16.0
-offset_top = 416.0
+offset_top = 460.0
 offset_right = 464.0
-offset_bottom = 444.0
+offset_bottom = 488.0
 text = "닫기"

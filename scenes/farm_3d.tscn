@@ -1,0 +1,90 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/farm_3d.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/farm_interactable_3d.gd" id="2_interact"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(4, 3, 4)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_interact"]
+radius = 6.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+size = Vector3(3.6, 2.6, 3.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_roof"]
+size = Vector3(4.2, 1, 4.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crop_row"]
+size = Vector3(0.8, 0.35, 2.4)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_crop_seed"]
+height = 0.3
+top_radius = 0.18
+bottom_radius = 0.18
+
+[sub_resource type="BoxMesh" id="BoxMesh_fence"]
+size = Vector3(4.4, 0.4, 0.15)
+
+[node name="Farm3D" type="StaticBody3D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("BoxShape3D_body")
+
+[node name="SpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 6)
+
+[node name="DepositPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 6)
+
+[node name="WorkPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="WorkPoint2" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0, -4)
+
+[node name="Interact" type="Area3D" parent="."]
+collision_layer = 256
+collision_mask = 0
+script = ExtResource("2_interact")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interact"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("SphereShape3D_interact")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+mesh = SubResource("BoxMesh_body")
+
+[node name="RoofMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+mesh = SubResource("BoxMesh_roof")
+
+[node name="CropRows" type="Node3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
+
+[node name="CropRow1" type="MeshInstance3D" parent="Visual/CropRows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0, -1.2)
+mesh = SubResource("BoxMesh_crop_row")
+
+[node name="CropRow2" type="MeshInstance3D" parent="Visual/CropRows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.2)
+mesh = SubResource("BoxMesh_crop_row")
+
+[node name="CropRow3" type="MeshInstance3D" parent="Visual/CropRows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0, -1.2)
+mesh = SubResource("BoxMesh_crop_row")
+
+[node name="FenceNorth" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -2.2)
+mesh = SubResource("BoxMesh_fence")
+
+[node name="FenceSouth" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 2.2)
+mesh = SubResource("BoxMesh_fence")

@@ -40,16 +40,58 @@ const PLACEHOLDER_COLORS := {
 @onready var _body_mesh: MeshInstance3D = $Visual/BodyMesh
 @onready var _roof_mesh: MeshInstance3D = $Visual/RoofMesh
 @onready var _name_label: Label3D = $Visual/NameLabel
+@onready var _visual: Node3D = $Visual
+
+## TASK-022-3: 여관 레벨별 prop(장식) 변형 메쉬. 실물 visual 투입 시 VIS가
+## placeholder slot을교체하며, 이 변형은 그 위에 얹히는 prop variation일 뿐이다.
+const PROP_COLOR := Color(0.42, 0.34, 0.26)
+const FLAG_COLOR := Color(0.9, 0.82, 0.5)
+
+## Quaternius building part mapping per core_type.
+const BUILDING_PARTS := {
+	"keep": {
+		"wall": "bld/wall_brick_straight",
+		"roof": "bld/roof_roundtiles_6x6",
+		"scale": 1.0,
+	},
+	"tavern": {
+		"wall": "bld/wall_plaster_woodgrid",
+		"roof": "bld/roof_roundtiles_6x6",
+		"scale": 1.0,
+	},
+	"inn": {
+		"wall": "bld/wall_brick_window_wide",
+		"roof": "bld/roof_roundtiles_6x6",
+		"scale": 1.0,
+	},
+	"grocery": {
+		"wall": "bld/wall_plaster_straight",
+		"roof": "bld/roof_wooden_2x1",
+		"scale": 0.9,
+	},
+	"equipment": {
+		"wall": "bld/wall_brick_straight",
+		"roof": "bld/roof_wooden_2x1",
+		"scale": 0.9,
+	},
+}
+
+var _quaternius_models: Array = []
+
+## 업그레이드 레벨 변화를 visual에 반영하기 위한 레벨 시그널 연결.
+var _props_root: Node3D = null
 
 
 func _ready() -> void:
 	super._ready()
 	add_to_group("core_buildings_3d")
+	if core_type == "inn" and InnCapacity != null:
+		InnCapacity.level_changed.connect(_on_inn_level_changed)
 	_apply_config()
 
 
 ## 기존 _apply_config(Sprite2D texture/scale/offset)의 3D판. Visual slot 하위
-## placeholder 표현만 건드리며 logic/collision에는 손대지 않는다.
+## placeholder 표현만 건드리며logic/collision에는 손대지 않는다.
 func _apply_config() -> void:
 	var color: Color = PLACEHOLDER_COLORS.get(core_type, PLACEHOLDER_COLORS["tavern"])
 	var body_material := StandardMaterial3D.new()
@@ -61,13 +103,55 @@ func _apply_config() -> void:
 	roof_material.roughness = 1.0
 	_roof_mesh.material_override = roof_material
 	_name_label.text = get_building_label()
+	_replace_with_quaternius()
+	if core_type == "inn" and InnCapacity != null:
+		_update_inn_visual(InnCapacity.get_level())
+
+
+## Replace placeholder BoxMesh with Quaternius building parts.
+func _replace_with_quaternius() -> void:
+	# Clear previous models
+	for m in _quaternius_models:
+		if is_instance_valid(m):
+			m.queue_free()
+	_quaternius_models.clear()
+	var parts: Dictionary = BUILDING_PARTS.get(core_type, {})
+	if parts.is_empty():
+		return
+	# Hide placeholder meshes
+	_body_mesh.visible = false
+	_roof_mesh.visible = false
+	# Wall model (main body)
+	var wall_key: String = parts.get("wall", "")
+	if not wall_key.is_empty():
+		var wall_model := VisualAssetCatalog3D.instantiate_model(wall_key)
+		if wall_model != null:
+			var s: float = parts.get("scale", 1.0)
+			wall_model.scale = Vector3(s, s, s)
+			wall_model.position = Vector3(0.0, 1.5, 0.0)
+			_visual.add_child(wall_model)
+			_quaternius_models.append(wall_model)
+	# Roof model
+	var roof_key: String = parts.get("roof", "")
+	if not roof_key.is_empty():
+		var roof_model := VisualAssetCatalog3D.instantiate_model(roof_key)
+		if roof_model != null:
+			var s: float = parts.get("scale", 1.0)
+			roof_model.scale = Vector3(s, s, s)
+			roof_model.position = Vector3(0.0, 3.9, 0.0)
+			_visual.add_child(roof_model)
+			_quaternius_models.append(roof_model)
 
 
 func get_core_type() -> String:
 	return core_type
 
 
+## TASK-022-2: 여관은 InnCapacity(데이터 기반 업그레이드 레벨)를 레벨 소스로 사용한다.
+## 그 외 핵심 건물은 여전히 업그레이드 미구현이므로 1을 유지한다(2D와 동일 계약).
 func get_level() -> int:
+	if core_type == "inn":
+		return InnCapacity.get_level()
 	return 1
 
 
@@ -77,3 +161,79 @@ func get_building_label() -> String:
 
 func get_interact_prompt() -> String:
 	return "%s (Lv.%d)" % [get_building_label(), get_level()]
+
+
+## TASK-022-3: 여관 레벨에 따른 placeholder prop/visual variation.
+## 기존 Body/Roof placeholder는 유지하고, 레벨이 오를수록 장식 prop을 추가해
+## "업그레이드가 시각적으로 드러난다"를 표현한다. logic/collision은 건드리지 않는다.
+## 레벨 1: 변화 없음(기본). 레벨 2: 출입구 옆 확장 박스 + 깃발. 레벨 3: 추가 확장 + 지붕 마감.
+func _update_inn_visual(level: int) -> void:
+	_clear_props()
+	if level >= 2:
+		_add_prop_box(Vector3(2.2, 0.9, 1.0), Vector3(1.0, 1.0, 1.0), PROP_COLOR)
+		_add_prop_box(Vector3(-2.2, 1.2, -1.2), Vector3(0.8, 0.8, 0.8), PROP_COLOR.darkened(0.2))
+		_add_flag(Vector3(0.0, 4.6, 0.0))
+	if level >= 3:
+		_add_prop_box(Vector3(0.0, 4.5, 0.0), Vector3(4.6, 0.4, 4.6),
+			PLACEHOLDER_COLORS["inn"].darkened(0.45))
+		_add_prop_box(Vector3(-2.6, 0.9, 0.0), Vector3(0.6, 1.4, 0.6), PROP_COLOR.darkened(0.3))
+
+
+## prop 루트를 한 번만 생성하고 재사용한다. queue_free로 루트를 갈아엎으면
+## 같은 이름("InnProps")의 freed 노드가 같은 프레임에 남아 get_node가 오래된
+## 빈 노드를 반환하는 문제가 있어, 루트는 유지하고 자식 prop만 비운다.
+func _ensure_props_root() -> Node3D:
+	if _props_root == null or not is_instance_valid(_props_root):
+		_props_root = Node3D.new()
+		_props_root.name = "InnProps"
+		_visual.add_child(_props_root)
+	return _props_root
+
+
+func _clear_props() -> void:
+	var root := _ensure_props_root()
+	for child in root.get_children():
+		child.free()
+
+
+func _add_prop_box(pos: Vector3, size: Vector3, color: Color) -> void:
+	var mi := MeshInstance3D.new()
+	mi.name = "PropBox"
+	mi.mesh = BoxMesh.new()
+	(mi.mesh as BoxMesh).size = size
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 1.0
+	mi.material_override = mat
+	mi.position = pos
+	_ensure_props_root().add_child(mi)
+
+
+func _add_flag(pos: Vector3) -> void:
+	var pole := MeshInstance3D.new()
+	pole.name = "FlagPole"
+	pole.mesh = CylinderMesh.new()
+	(pole.mesh as CylinderMesh).top_radius = 0.04
+	(pole.mesh as CylinderMesh).bottom_radius = 0.04
+	(pole.mesh as CylinderMesh).height = 1.6
+	var pole_mat := StandardMaterial3D.new()
+	pole_mat.albedo_color = Color(0.4, 0.36, 0.3)
+	pole.material_override = pole_mat
+	pole.position = pos
+	_ensure_props_root().add_child(pole)
+	var banner := MeshInstance3D.new()
+	banner.name = "FlagBanner"
+	banner.mesh = BoxMesh.new()
+	(banner.mesh as BoxMesh).size = Vector3(0.8, 0.45, 0.05)
+	var banner_mat := StandardMaterial3D.new()
+	banner_mat.albedo_color = FLAG_COLOR
+	banner.material_override = banner_mat
+	banner.position = pos + Vector3(0.4, 0.4, 0.0)
+	_ensure_props_root().add_child(banner)
+
+
+func _on_inn_level_changed(level: int, _worker_capacity: int, _mercenary_capacity: int) -> void:
+	if core_type != "inn":
+		return
+	_update_inn_visual(level)
+	_name_label.text = get_building_label()

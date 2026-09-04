@@ -1,0 +1,12 @@
+<glob>
+<pattern>**/GAME_DESIGN.md
+</pattern>
+</glob>
+<glob>
+<pattern>tests/*task0303*_test.gd
+</pattern>
+</glob>
+<glob>
+<pattern>tests/**/*0303*
+</pattern>
+</glob>

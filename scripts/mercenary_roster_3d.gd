@@ -356,10 +356,14 @@ func get_rally_point_for_zone(zone: int, world: Node = null) -> Vector3:
 		WorldMap.RALLY_SPACES.get(dir, Rect2())).get_center()
 
 
+## TASK-022-2: 3D 런타임 roster도 동일 여관 용병 보유 한도를 강제한다.
+## 주점 UI→autoload→여기 이월 경로와 관계없이 cap은 항상 같은 소스에서 계산된다.
 func add_mercenary(mercenary: MercenaryData) -> bool:
 	if mercenary == null or not mercenary is MercenaryData:
 		return false
 	if get_mercenary(mercenary.id) != null:
+		return false
+	if get_count() >= InnCapacity.get_mercenary_capacity():
 		return false
 	_mercenaries.append(mercenary)
 	mercenaries_changed.emit()

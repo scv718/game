@@ -69,6 +69,9 @@ var _hit_flash_left := 0.0
 @onready var _visual: Node3D = $Visual
 @onready var _body_mesh: MeshInstance3D = $Visual/BodyVisual
 
+## TASK-3D-CMB-001-VIS: placeholder capsule을 Quaternius 캐릭터 모델로 교체.
+var _quaternius_model: Node3D = null
+
 ## TASK-014-3: 사망 시 emit(2D 계약 동일).
 signal died(enemy: Node)
 
@@ -80,6 +83,21 @@ func _ready() -> void:
 	NavigationPolicy3D.configure_agent(_nav_agent)
 	_body_mesh.set_surface_override_material(
 		0, _body_mesh.mesh.surface_get_material(0).duplicate())
+	_replace_with_quaternius()
+
+
+## Placeholder capsule 대신 Quaternius 캐릭터 모델을 사용한다. worker_actor_3d와
+## 동일한 Visual child 계약(placeholder 숨김 + 모델 추가). hit flash는 Quaternius
+## 모델의 불투명 스킨에 emission으로 그대로 드러난다(_apply_hit_visual 접근 경로).
+func _replace_with_quaternius() -> void:
+	var model := VisualAssetCatalog3D.instantiate_model("human/male_base")
+	if model == null:
+		return
+	_quaternius_model = model
+	model.position = Vector3(0.0, 0.0, 0.0)
+	model.scale = Vector3.ONE * 0.5
+	_visual.add_child(model)
+	_body_mesh.visible = false
 
 
 ## Spawner가 식별 정보/방향을 설정한다.
@@ -368,11 +386,10 @@ func _face_yaw(desired: float, delta: float) -> void:
 
 
 ## hit flash placeholder. VIS가 실제 피격 표현으로 교체할 지점이다.
+## placeholder capsule은 숨겨지므로 Quaternius 모델의 불투명 스킨에 emission을
+## 적용해 피격 피드백을 그대로 드러낸다.
 func _apply_hit_visual() -> void:
-	var mat := _body_mesh.get_surface_override_material(0)
-	if mat is StandardMaterial3D:
-		(mat as StandardMaterial3D).emission_enabled = true
-		(mat as StandardMaterial3D).emission = Color(0.9, 0.15, 0.1)
+	_apply_quaternius_emission(true)
 	_hit_flash_left = 0.15
 
 
@@ -381,9 +398,25 @@ func _tick_hit_flash(delta: float) -> void:
 		return
 	_hit_flash_left -= delta
 	if _hit_flash_left <= 0.0:
-		var mat := _body_mesh.get_surface_override_material(0)
-		if mat is StandardMaterial3D:
-			(mat as StandardMaterial3D).emission_enabled = false
+		_apply_quaternius_emission(false)
+
+
+## Quaternius 모델의 불투명 MeshInstance3D 스킨 표면에 emission을 일괄 적용한다.
+func _apply_quaternius_emission(on: bool) -> void:
+	if _quaternius_model == null or not is_instance_valid(_quaternius_model):
+		return
+	for mi in _quaternius_model.find_children("*", "MeshInstance3D", true, false):
+		var mesh := (mi as MeshInstance3D).mesh
+		if mesh == null:
+			continue
+		for s in mesh.get_surface_count():
+			var mat := mesh.surface_get_material(s)
+			if mat is StandardMaterial3D and not (mat as StandardMaterial3D).transparency \
+					== BaseMaterial3D.TRANSPARENCY_ALPHA:
+				var dup := (mat as StandardMaterial3D).duplicate()
+				dup.emission_enabled = on
+				dup.emission = Color(0.9, 0.15, 0.1)
+				(mi as MeshInstance3D).set_surface_override_material(s, dup)
 
 
 ## death visual placeholder(월드 제거 직전 1회). VIS 교체 지점.

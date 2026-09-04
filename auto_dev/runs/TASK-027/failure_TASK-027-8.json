@@ -1,0 +1,1 @@
+{"counts": {"AGENT_MAX_TURNS": 1, "TOOL_LOOP_STALLED": 2}, "fingerprints": {"AGENT_MAX_TURNS|status : max_turns": 1, "TOOL_LOOP_STALLED|status : tool_loop_stalled": 2}, "attempts": 3, "sessions": []}

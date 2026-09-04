@@ -2862,6 +2862,13 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 ## TASK-POST3D-INT-001 Economy / Combat Integrated Vertical Slice
 
 - 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829; 위험 파일 변경(FAIL): auto_dev/config.json.bak_qwen3dot6_20260902_135933
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-POST3D-INT-001\design_resolution_TASK-POST3D-INT-001.md 참고): 검증 게이트 반복 실패: 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 재시도: implementer=qwen3-coder:30b 전환 (설계 갈등 시 thinker 자동 해결)
 - 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 위험 파일 변경(FAIL): auto_dev/config.json; 위험 파일 변경(FAIL): auto_dev/prompts/implementer.md; 위험 파일 변경(FAIL): auto_dev/prompts/reviewer.md; 위험 파일 변경(FAIL): auto_dev/supervisor.py; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904
 - 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/config.json; 위험 파일 변경(FAIL): auto_dev/prompts/implementer.md; 위험 파일 변경(FAIL): auto_dev/prompts/reviewer.md; 위험 파일 변경(FAIL): auto_dev/supervisor.py
 - 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/config.json; 위험 파일 변경(FAIL): auto_dev/prompts/implementer.md; 위험 파일 변경(FAIL): auto_dev/prompts/reviewer.md; 위험 파일 변경(FAIL): auto_dev/supervisor.py
@@ -2990,6 +2997,13 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 ## TASK-POST3D-REG-001 Full Overnight Regression
 
 - 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829; 위험 파일 변경(FAIL): auto_dev/config.json.bak_qwen3dot6_20260902_135933
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-POST3D-REG-001\design_resolution_TASK-POST3D-REG-001.md 참고): 검증 게이트 반복 실패: 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260831_012827; 위험 파일 변경(FAIL): auto_dev/config.json.bak_bigpickle_20260902_012436; 위험 파일 변경(FAIL): auto_dev/config.json.bak_deepseek_20260831_011829
+- 피드백: 재시도: implementer=qwen3-coder:30b 전환 (설계 갈등 시 thinker 자동 해결)
 - 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 위험 파일 변경(FAIL): auto_dev/config.json; 위험 파일 변경(FAIL): auto_dev/prompts/implementer.md; 위험 파일 변경(FAIL): auto_dev/prompts/reviewer.md; 위험 파일 변경(FAIL): auto_dev/supervisor.py; 위험 파일 변경(FAIL): auto_dev/config.json.bak_20260828_013904
 - 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/config.json; 위험 파일 변경(FAIL): auto_dev/prompts/implementer.md; 위험 파일 변경(FAIL): auto_dev/prompts/reviewer.md; 위험 파일 변경(FAIL): auto_dev/supervisor.py
 - 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/config.json; 위험 파일 변경(FAIL): auto_dev/prompts/implementer.md; 위험 파일 변경(FAIL): auto_dev/prompts/reviewer.md; 위험 파일 변경(FAIL): auto_dev/supervisor.py
@@ -3487,7 +3501,105 @@ If `task0082_test.gd` is giving errors, paste its content here and I will help y
 
 ### TASK-027-5 Potion Auto-consume / Food Preparation Hook
 
-- 상태: NEEDS_DESIGN
+- 상태: FIX
+- 피드백: 게이트 수정 ANALYSIS_ONLY (1/2): STATUS : ANALYSIS_ONLY
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: AGENT_MAX_TURNS (1/2): STATUS : MAX_TURNS
+- 피드백: 게이트 수정 ANALYSIS_ONLY (1/2): STATUS : ANALYSIS_ONLY
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 반복 실패 분류: TEST_FAILED - 수정 재시도: 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 반복 실패 분류: TEST_FAILED - 수정 재시도: 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 반복 실패 분류: TEST_TIMEOUT - 수정 재시도: 태스크 테스트 TIMEOUT: task0275_test.gd
+태스크 테스트 TIMEOUT: 120초 초과
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 TIMEOUT: task0275_test.gd
+태스크 테스트 TIMEOUT: 120초 초과
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 TIMEOUT: task0275_test.gd
+태스크 테스트 TIMEOUT: 120초 초과
+- 피드백: 게이트 반복 실패 분류: TEST_FAILED - 수정 재시도: 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 수정 AGENT_MAX_TURNS (1/2): STATUS : MAX_TURNS
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 수정 AGENT_MAX_TURNS (1/2): STATUS : MAX_TURNS
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0275_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0275*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-027\design_resolution_TASK-027-5.md 참고): 검증 게이트 반복 실패: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 재시도: implementer=qwen3-coder:30b 전환 (설계 갈등 시 thinker 자동 해결)
 - 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
 - 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
 - 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
@@ -3509,7 +3621,47 @@ If `task0082_test.gd` is giving errors, paste its content here and I will help y
 
 ### TASK-027-6 Dungeon Death / Retreat / Party Wipe
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 반복 실패 분류: TEST_TIMEOUT - 수정 재시도: 태스크 테스트 TIMEOUT: task0276_test.gd
+태스크 테스트 TIMEOUT: 120초 초과
+Godot Engine v4.7.1.stable.official.a13da
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 TIMEOUT: task0276_test.gd
+태스크 테스트 TIMEOUT: 120초 초과
+Godot Engine v4.7.1.stable.official.a13da
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 TIMEOUT: task0276_test.gd
+태스크 테스트 TIMEOUT: 120초 초과
+Godot Engine v4.7.1.stable.official.a13da
+- 피드백: ANALYSIS_ONLY (1/2): STATUS : ANALYSIS_ONLY
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0276_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0276_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-027\design_resolution_TASK-027-6.md 참고): 검증 게이트 반복 실패: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
 - 설명: Dungeon 전투 종료 조건을 명확히 처리한다.
 - lethal death:
   - Mercenary lethal death → 기존 Death Ledger 기록.
@@ -3528,7 +3680,47 @@ If `task0082_test.gd` is giving errors, paste its content here and I will help y
 
 ### TASK-027-7 Reward / Return
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
+- 피드백: 게이트 반복 실패 분류: TEST_FAILED - 수정 재시도: 태스크 테스트 FAIL: task0277_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0277_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0277_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 반복 실패 분류: TEST_FAILED - 수정 재시도: 태스크 테스트 FAIL: task0277_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0277_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0277_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-027\design_resolution_TASK-027-7.md 참고): 검증 게이트 반복 실패: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
 - 요구사항:
   - CLEAR/RETREAT/FAIL 결과를 분리.
   - clear reward는 dungeon run당 정확히 1회.
@@ -3542,7 +3734,41 @@ If `task0082_test.gd` is giving errors, paste its content here and I will help y
 
 ### TASK-027-8 Dungeon 통합 검증
 
-- 상태: QUEUED
+- 상태: BLOCKED_AGENT
+- 피드백: TOOL_LOOP_STALLED 한도 초과 - 자동 중단, 독립 태스크 계속 진행
+- 피드백: TOOL_LOOP_STALLED (1/2): STATUS : TOOL_LOOP_STALLED
+- 피드백: 게이트 수정 AGENT_MAX_TURNS (1/2): STATUS : MAX_TURNS
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0278_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 반복 실패 분류: TEST_FAILED - 수정 재시도: 태스크 테스트 FAIL: task0278_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0278_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0278_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-027\design_resolution_TASK-027-8.md 참고): 검증 게이트 반복 실패: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
 - 시나리오:
   1. Region DISCOVERED.
   2. Dungeon DISCOVERED.
@@ -3624,7 +3850,30 @@ If `task0082_test.gd` is giving errors, paste its content here and I will help y
 
 ### TASK-028-3 Strategic Loop Regression
 
-- 상태: NEEDS_DESIGN
+- 상태: FIX
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0283_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -; 회귀(smoke) TIMEOUT
+태스크 테스트 TIMEOUT: 300초 초과
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-028\design_resolution_TASK-028-3.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Micro
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 재시도: implementer=qwen3-coder:30b 전환 (설계 갈등 시 thinker 자동 해결)
 - 피드백: 검증 게이트 3회 실패 (review=SKIPPED): 네트워크/인프라 오류 아님. 1) task0283 테스트 파일(tests/*task0283*_test.gd) 미생성, 2) e-threat2 워크트리 smoke 회귀가 900초 제한 내 RESULT=PASS 못 냄(회귀 hang/과다 장시간). 사람 개입 필요: 워크트리 변경 커밋/회귀 안정화 또는 게이트 타임아웃·회귀 스코프 재검토. - 2026-09-02
 - 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0283*_test.gd); 회귀(smoke) FAIL
 PASS 마커 없음 (실행 실패 추정)
@@ -3689,7 +3938,28 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-029-1 Equipment Runtime Audit
 
-- 상태: NEEDS_DESIGN
+- 상태: IMPLEMENT
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 FAIL: task0291_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 FAIL: task0291_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 FAIL: task0291_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb -; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-029\design_resolution_TASK-029-1.md 참고): 검증 게이트 반복 실패: 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task0291*_test.gd)
+- 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task0291*_test.gd)
+- 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task0291*_test.gd)
+- 피드백: 재시도: implementer=qwen3-coder:30b 전환 (설계 갈등 시 thinker 자동 해결)
 - 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task0291*_test.gd)
 - 피드백: 게이트 실패 (2/3): 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task0291*_test.gd)
 - 피드백: 게이트 실패 (1/3): 위험 파일 변경(FAIL): auto_dev/EQUIPMENT_RUNTIME_AUDIT.md; 태스크 테스트 파일을 찾지 못함 (tests/*task0291*_test.gd)
@@ -3723,7 +3993,7 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-029-2 Equipment Definition
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 - 최소 필드:
   - equipment_id.
   - display_name.
@@ -3746,7 +4016,7 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-029-3 Mercenary Equipment Slots / Modifier Pipeline
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 - 요구사항:
   - Weapon/Armor equip/unequip.
   - slot compatibility.
@@ -3765,7 +4035,7 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-029-4 Equipment UI / Combat Regression
 
-- 상태: QUEUED
+- 상태: IMPLEMENT
 - 요구사항:
   - Roster detail에서 현재 장비/변경 가능.
   - combat actor spawn 시 effective stats 반영.
@@ -3785,7 +4055,31 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-030-1 Production Building Audit
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-030\design_resolution_TASK-030-1.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0301*_test.gd)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -3812,7 +4106,25 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-030-2 Equipment Recipe Data
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-030\design_resolution_TASK-030-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0302*_test.gd)
 - 최소 필드:
   - recipe_id.
   - material costs.
@@ -3829,7 +4141,25 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-030-3 Craft Runtime / Output
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-030\design_resolution_TASK-030-3.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0303*_test.gd)
 - 요구사항:
   - material validation.
   - start craft.
@@ -3842,7 +4172,25 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-030-4 Production Regression
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-030\design_resolution_TASK-030-4.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0304*_test.gd)
 - 시나리오:
   1. material 확보.
   2. production building.
@@ -3892,6 +4240,23 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 ### TASK-031-2 Class Definition
 
 - 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 FAIL: task0312_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0312_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0312_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-031\design_resolution_TASK-031-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 FAIL: task0312_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0312_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Mi
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0312*_test.gd)
+- 피드백: 재시도: implementer=qwen3-coder:30b 전환 (설계 갈등 시 thinker 자동 해결)
 - 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0312*_test.gd)
 - 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0312*_test.gd)
 - 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0312*_test.gd)
@@ -3954,6 +4319,32 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 ### TASK-032-1 Skill Runtime Audit / Contract
 
 - 상태: IMPLEMENT
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: SUSPICIOUS_TEST_CHANGE: tests/smoke_test.gd assertion 16→0 감소; 태스크 테스트 FAIL: task0321_test.gd
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+Starting TASK-032-1 Smoke Test
+PASS: GAM
+- 피드백: 게이트 실패 (2/3): SUSPICIOUS_TEST_CHANGE: tests/smoke_test.gd assertion 16→0 감소; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-032\design_resolution_TASK-032-1.md 참고): 검증 게이트 반복 실패: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4068,7 +4459,54 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-033-1 Enemy Runtime Audit
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'P12GodotShape3D' we; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERR; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERR; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-033\design_resolution_TASK-033-1.md 참고): 검증 게이트 반복 실패: 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERROR: 1 RID allocations of type 'P12GodotShape3D' we; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERR; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERR; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERR; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0331_test.gd
+PASS 마커 없음 (실행 실패 추정)
+ type 'P11GodotBody3D' were leaked at exit.
+ERR; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4280,7 +4718,31 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-036-1 Defense Upgrade Contract
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-036\design_resolution_TASK-036-1.md 참고): 검증 게이트 반복 실패: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4428,7 +4890,13 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-038-2 Automation Building
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0382*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0382*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0382*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-038\design_resolution_TASK-038-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0382*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0382*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0382*_test.gd)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4474,7 +4942,8 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-039-1 Food Runtime Audit
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4499,7 +4968,13 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-039-2 Food Quality
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0392*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0392*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0392*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-039\design_resolution_TASK-039-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0392*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0392*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0392*_test.gd)
 - 요구사항:
   - 기존 기획의 quality grade가 있으면 유지.
   - 최소 3 tier vertical slice.
@@ -4629,7 +5104,25 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-041-1 Siege Design/Runtime Audit
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0411*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0411*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0411*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-041\design_resolution_TASK-041-1.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0411*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Micro
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0411*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0411*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4801,7 +5294,25 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-043-1 Resident Runtime Audit
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-043\design_resolution_TASK-043-1.md 참고): 검증 게이트 반복 실패: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4866,7 +5377,25 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-044-1 Animal Data / Actor
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-044\design_resolution_TASK-044-1.md 참고): 검증 게이트 반복 실패: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -4935,7 +5464,25 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-045-1 Eligibility Matrix / Audit
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0451*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0451*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0451*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-045\design_resolution_TASK-045-1.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0451*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Micro
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0451*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0451*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5053,7 +5600,8 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-046-1 Persistence Audit / Ownership Map
 
-- 상태: QUEUED
+- 상태: DONE
+- 피드백: auto-gate PASS (review=SKIPPED): 태스크 테스트/회귀/diff/임시파일/위험파일 검증 통과
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5079,7 +5627,13 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-046-2 Save Schema / Versioning
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0462*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0462*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0462*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-046\design_resolution_TASK-046-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0462*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0462*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0462*_test.gd)
 - 요구사항:
   - top-level schema_version.
   - stable IDs.
@@ -5168,7 +5722,25 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-047-1 Design Audit
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0471*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0471*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0471*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-047\design_resolution_TASK-047-1.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0471*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Micro
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0471*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0471*_test.gd); 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5234,7 +5806,25 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-048-1 Tutorial Flow Audit / State
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-048\design_resolution_TASK-048-1.md 참고): 검증 게이트 반복 실패: 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5323,7 +5913,13 @@ Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 
 ### TASK-049-2 Gameplay SFX
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0492*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0492*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0492*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-049\design_resolution_TASK-049-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0492*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0492*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0492*_test.gd)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5441,7 +6037,13 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-050-2 Economy Balance
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 파일을 찾지 못함 (tests/*task0502*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0502*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0502*_test.gd)
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-050\design_resolution_TASK-050-2.md 참고): 검증 게이트 반복 실패: 태스크 테스트 파일을 찾지 못함 (tests/*task0502*_test.gd)
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0502*_test.gd)
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 파일을 찾지 못함 (tests/*task0502*_test.gd)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5500,7 +6102,36 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-051-1 Population / Navigation Stress
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 태스크 테스트 FAIL: task0511_test.gd
+lds 16 workers / 8 LJ / 8 MN (no duplicates)
+PASS: final mercenary census never exceeds the deployed population (%d <= ; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GodotEngine.GodotEngine_Microsoft.Winge
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0511_test.gd
+lds 16 workers / 8 LJ / 8 MN (no duplicates)
+PASS: final mercenary ce; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0511_test.gd
+lds 16 workers / 8 LJ / 8 MN (no duplicates)
+PASS: final mercenary ce; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-051\design_resolution_TASK-051-1.md 참고): 검증 게이트 반복 실패: 태스크 테스트 FAIL: task0511_test.gd
+lds 16 workers / 8 LJ / 8 MN (no duplicates)
+PASS: final mercenary census never exceeds the deployed population (%d <= ; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추
+- 피드백: 게이트 실패 (2/3): 태스크 테스트 FAIL: task0511_test.gd
+lds 16 workers / 8 LJ / 8 MN (no duplicates)
+PASS: final mercenary ce; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
+- 피드백: 게이트 실패 (1/3): 태스크 테스트 FAIL: task0511_test.gd
+lds 16 workers / 8 LJ / 8 MN (no duplicates)
+PASS: final mercenary ce; 회귀(smoke) FAIL
+PASS 마커 없음 (실행 실패 추정)
+Command '['C:\\Users\\skfnx\\AppData\\Local\\Microsoft\\WinGet\
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
@@ -5583,7 +6214,13 @@ Godot Engine v4.7.1.stable.official.a13da4feb - https://godoten
 
 ### TASK-052-1 Demo Start State / New Game
 
-- 상태: QUEUED
+- 상태: NEEDS_DESIGN
+- 피드백: 검증 게이트 3회 실패 - 수동 확인 필요: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 설계 해결안 자동 생성됨 (runs\TASK-052\design_resolution_TASK-052-1.md 참고): 검증 게이트 반복 실패: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (2/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
+- 피드백: 게이트 실패 (1/3): 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)
 - 피드백: 이전 시도 시간 초과: 실행 시간 초과 (7200초)

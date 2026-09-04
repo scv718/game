@@ -43,6 +43,11 @@ func get_worker_group() -> String:
 	return "lumberjacks_3d"
 
 
+## TASK-037-1 upgrade contract identity(BuildingUpgrade3D 단일 소스).
+func get_upgrade_identity() -> String:
+	return "lumberyard"
+
+
 func get_worker_label() -> String:
 	return "Worker"
 

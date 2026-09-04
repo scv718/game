@@ -33,6 +33,13 @@ var move_speed: float = 120.0
 var alive := true
 var defense_zone: DefenseZone = DefenseZone.NONE
 
+## TASK-021-3 Mercenary 별도 Potion slot.
+## battle start 전에 장착하는 Potion slot(potion_id + count)이다. TASK-021-2의
+## PotionData 정의만 받으며, 실제 자동 소비/효과 적용은 MercenaryPotionService가
+## 수행한다. Food와 별도 계층이며 영구 Save/Load는 구현하지 않는다(기존 data 계약).
+var potion_slot_id: String = ""
+var potion_slot_count: int = 0
+
 
 func _init(p_id: String = "", p_name: String = "", p_class: MercClass = MercClass.SWORDSMAN) -> void:
 	id = p_id
@@ -55,3 +62,32 @@ func set_defense_zone(zone: DefenseZone) -> void:
 
 func get_defense_zone() -> DefenseZone:
 	return defense_zone
+
+
+## TASK-021-3: Potion slot에 포션을 장착한다. 알려진 potion_id와 양수 count만
+## 받아들인다. battle start 전에 장착하는 것을 전제로 한다(전투 중 재장착은 아님).
+func equip_potion(potion_id: String, count: int) -> bool:
+	if not PotionData.is_known(potion_id):
+		return false
+	potion_slot_id = potion_id
+	potion_slot_count = maxi(0, count)
+	return true
+
+
+## TASK-021-3: Potion slot 장착을 해제한다.
+func unequip_potion() -> void:
+	potion_slot_id = ""
+	potion_slot_count = 0
+
+
+func get_potion_slot_id() -> String:
+	return potion_slot_id
+
+
+func get_potion_slot_count() -> int:
+	return potion_slot_count
+
+
+## TASK-021-3: Potion slot에 장착된 포션이 있는지.
+func has_potion_slot() -> bool:
+	return potion_slot_id != "" and potion_slot_count > 0

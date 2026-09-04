@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/wild_herb_3d.gd" id="1_script"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_interact"]
+radius = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaf"]
+albedo_color = Color(0.32, 0.62, 0.28, 1)
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_leaf"]
+material = SubResource("StandardMaterial3D_leaf")
+radius = 0.32
+height = 0.55
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_picked"]
+albedo_color = Color(0.42, 0.35, 0.22, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_picked"]
+material = SubResource("StandardMaterial3D_picked")
+top_radius = 0.06
+bottom_radius = 0.1
+height = 0.12
+
+[node name="WildHerb3D" type="Area3D"]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("1_script")
+resource_id = "herb"
+
+[node name="InteractionShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("SphereShape3D_interact")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="GrownVisual" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="PickedVisual" type="MeshInstance3D" parent="Visual"]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_picked")
