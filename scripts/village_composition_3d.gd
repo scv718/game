@@ -63,8 +63,8 @@ const PATH_MARGIN := 0.5
 
 ## -- 지면/path 톤. ground albedo는 task3dvis0013 가독성 밴드 검증과 같은 값.
 const GROUND_TONE_ALBEDO := Color(0.34, 0.50, 0.29)
-const PATH_ALBEDO := Color(0.40, 0.34, 0.26, 0.90)
-const PLAZA_ALBEDO := Color(0.46, 0.40, 0.32, 0.94)
+const PATH_ALBEDO := Color(0.44, 0.40, 0.32)
+const PLAZA_ALBEDO := Color(0.49, 0.48, 0.43)
 const PATH_STRIP_Y := 0.05
 const HOUSE_VISUAL_SCALE := 0.72
 
@@ -123,6 +123,7 @@ func _ready() -> void:
 	var paths_root := Node3D.new()
 	paths_root.name = "Paths"
 	add_child(paths_root)
+	_build_stream_boundary()
 	var chars_root := Node3D.new()
 	chars_root.name = "Villagers"
 	add_child(chars_root)
@@ -229,7 +230,8 @@ func _build_paths(root: Node3D) -> void:
 	var plaza_material := StandardMaterial3D.new()
 	plaza_material.albedo_color = PLAZA_ALBEDO
 	plaza_material.roughness = 1.0
-	plaza_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	plaza_material.albedo_texture = _make_ground_noise_texture(
+		Color(0.78, 0.76, 0.68), Color(1.0, 0.98, 0.91), 0.09)
 	plaza.material_override = plaza_material
 	root.add_child(plaza)
 	_spawn_path_curve(root, "Path_Gate_Main", [Vector3(-30, 0, -3),
@@ -338,7 +340,8 @@ func _spawn_path_joint(root: Node3D, joint_name: String, pos: Vector3,
 	var material := StandardMaterial3D.new()
 	material.albedo_color = PATH_ALBEDO
 	material.roughness = 1.0
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.albedo_texture = _make_ground_noise_texture(
+		Color(0.82, 0.78, 0.68), Color(1.0, 0.97, 0.88), 0.12)
 	instance.material_override = material
 	root.add_child(instance)
 
@@ -358,9 +361,102 @@ func _spawn_path_segment(root: Node3D, path_name: String, from: Vector3,
 	var material := StandardMaterial3D.new()
 	material.albedo_color = PATH_ALBEDO
 	material.roughness = 1.0
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.albedo_texture = _make_ground_noise_texture(
+		Color(0.82, 0.78, 0.68), Color(1.0, 0.97, 0.88), 0.12)
 	instance.material_override = material
 	root.add_child(instance)
+
+
+func _make_ground_noise_texture(dark: Color, light: Color,
+		frequency: float) -> NoiseTexture2D:
+	var noise := FastNoiseLite.new()
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	noise.frequency = frequency
+	noise.fractal_octaves = 3
+	var texture := NoiseTexture2D.new()
+	texture.width = 256
+	texture.height = 256
+	texture.seamless = true
+	texture.noise = noise
+	var ramp := Gradient.new()
+	ramp.colors = PackedColorArray([dark, light])
+	texture.color_ramp = ramp
+	return texture
+
+
+func _build_stream_boundary() -> void:
+	# A shallow visual creek gives the forest/production edge a geographic
+	# reason to exist, echoing the reference composition without introducing a
+	# new navigation or resource owner. The existing production road crosses it
+	# at a short authored timber bridge.
+	var stream_root := Node3D.new()
+	stream_root.name = "EasternCreekVisual"
+	add_child(stream_root)
+	var water := StandardMaterial3D.new()
+	water.albedo_color = Color(0.20, 0.43, 0.46)
+	water.roughness = 0.34
+	water.metallic = 0.08
+	water.albedo_texture = _make_ground_noise_texture(
+		Color(0.58, 0.76, 0.74), Color(0.86, 0.94, 0.86), 0.055)
+	var points := [Vector3(39, 0, -35), Vector3(41, 0, -25),
+		Vector3(40, 0, -15), Vector3(42, 0, -5), Vector3(41, 0, 4),
+		Vector3(43, 0, 13), Vector3(45, 0, 24), Vector3(44, 0, 36)]
+	for i in range(points.size() - 1):
+		var from: Vector3 = points[i]
+		var to: Vector3 = points[i + 1]
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(4.2 + (0.6 if i % 2 == 0 else 0.0), 0.025,
+			from.distance_to(to) + 1.6)
+		var segment := MeshInstance3D.new()
+		segment.name = "CreekSegment_%02d" % i
+		segment.mesh = mesh
+		segment.position = (from + to) * 0.5
+		segment.position.y = 0.024
+		segment.look_at_from_position(segment.position, to, Vector3.UP)
+		segment.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		segment.material_override = water
+		stream_root.add_child(segment)
+	for i in range(1, points.size() - 1):
+		var bend_mesh := CylinderMesh.new()
+		bend_mesh.top_radius = 2.35
+		bend_mesh.bottom_radius = 2.35
+		bend_mesh.height = 0.028
+		var bend := MeshInstance3D.new()
+		bend.name = "CreekBend_%02d" % i
+		bend.mesh = bend_mesh
+		bend.position = Vector3(points[i].x, 0.026, points[i].z)
+		bend.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		bend.material_override = water
+		stream_root.add_child(bend)
+	# Three 2m floor modules form a readable bridge at the production crossing.
+	for i in range(3):
+		var plank := VisualAssetCatalog3D.instantiate_model("bld/floor_wood_light")
+		if plank == null:
+			continue
+		plank.name = "CreekBridge_%02d" % i
+		plank.position = Vector3(40.5 + float(i) * 2.0, 0.09, 12.0)
+		plank.rotation.y = deg_to_rad(90.0)
+		plank.set_meta("kind", "visual_bridge")
+		stream_root.add_child(plank)
+	# Sparse banks transition into forest and quarry rather than outlining the
+	# whole stream with a mechanical repeated border.
+	for item in [
+		[Vector3(37.2, 0, -28), "rock/medium_2", 0.42],
+		[Vector3(44.0, 0, -20), "veg/bush_common", 0.82],
+		[Vector3(37.4, 0, -11), "rock/medium_1", 0.38],
+		[Vector3(45.0, 0, -2), "veg/bush_common", 0.76],
+		[Vector3(38.5, 0, 5), "rock/medium_3", 0.44],
+		[Vector3(46.0, 0, 18), "rock/medium_2", 0.52],
+		[Vector3(41.0, 0, 27), "veg/bush_common", 0.82],
+	]:
+		var bank_prop := VisualAssetCatalog3D.instantiate_model(item[1])
+		if bank_prop == null:
+			continue
+		bank_prop.position = item[0]
+		bank_prop.rotation.y = deg_to_rad(float(item[0].z * 19.0))
+		bank_prop.scale = Vector3.ONE * item[2]
+		bank_prop.set_meta("kind", "creek_bank")
+		stream_root.add_child(bank_prop)
 
 
 ## -- VILLAGE: 저밀도 생활 공간. 집 5채 + 생활 props. 수목은 포인트 2그루만.
@@ -376,6 +472,11 @@ func _build_village(root: Node3D) -> void:
 	_add_cuteskull_house(root, "House_4_2", Vector3(20, 0, 18), -104.0)
 	_add_cuteskull_house(root, "House_5_2", Vector3(29, 0, 15), -78.0)
 	_add_cuteskull_house(root, "House_2_3", Vector3(25, 0, 22), -61.0)
+	# The southern lane grew as a loose hamlet, filling the former empty green
+	# void without turning the settlement into a mathematical ring.
+	_add_cuteskull_house(root, "House_1_1", Vector3(7, 0, 17), 153.0)
+	_add_cuteskull_house(root, "House_2_1", Vector3(-13, 0, 19), 126.0)
+	_add_cuteskull_house(root, "House_5_1", Vector3(13, 0, 25), -34.0)
 	_spawn_cuteskull_prop("Market/Well", "VillageWell", Vector3(1.0, 0, -2.2),
 		-8.0, 0.085)
 	_spawn_cuteskull_prop("Market/Market_1_2", "MarketAwningWest",
@@ -384,6 +485,8 @@ func _build_village(root: Node3D) -> void:
 		Vector3(-5.5, 0, 4.7), -21.0, 0.10)
 	_spawn_cuteskull_prop("Market/Cart", "MarketHandcart",
 		Vector3(-2.3, 0, 6.2), 38.0, 0.09)
+	_spawn_cuteskull_prop("Market/Market_1_2", "SouthLaneAwning",
+		Vector3(4.0, 0, 12.5), 146.0, 0.085)
 
 	# A restrained forecourt around the Keep creates a readable focal point
 	# without adding a new gameplay landmark or collision owner.
@@ -436,6 +539,16 @@ func _build_village(root: Node3D) -> void:
 		["Tree_7", Vector3(39, 0, 8), 0.094],
 		["Tree_3", Vector3(36, 0, -5), 0.10],
 		["Tree_6", Vector3(34, 0, -16), 0.096],
+		["Tree_2", Vector3(42, 0, -20), 0.10],
+		["Tree_5", Vector3(47, 0, -15), 0.096],
+		["Tree_4", Vector3(43, 0, -9), 0.09],
+		["Tree_8", Vector3(48, 0, -4), 0.10],
+		["Tree_1", Vector3(44, 0, 3), 0.095],
+		["Tree_6", Vector3(49, 0, 9), 0.10],
+		["Tree_3", Vector3(45, 0, 15), 0.092],
+		["Tree_7", Vector3(48, 0, 22), 0.098],
+		["Tree_5", Vector3(39, 0, 27), 0.10],
+		["Tree_2", Vector3(31, 0, 30), 0.096],
 	]
 	for i in canopy_layout.size():
 		var item: Array = canopy_layout[i]
@@ -445,6 +558,19 @@ func _build_village(root: Node3D) -> void:
 		Vector3(7, 0, 4), Vector3(14, 0, 12), Vector3(26, 0, 9)]:
 		_spawn("rock/medium_1", "village", "roadside", pos,
 			float(pos.z * 13.0), 0.28)
+	# Uneven plaza edging and lane-side vegetation give the open surfaces a
+	# constructed, inhabited boundary while keeping every travel line readable.
+	for i in range(12):
+		var angle := TAU * float(i) / 12.0 + 0.14
+		var radius := 5.1 + (0.35 if i % 3 == 0 else 0.0)
+		_spawn("rock/medium_3", "village", "plaza_edge",
+			Vector3(2.0 + cos(angle) * radius, 0, -2.0 + sin(angle) * radius),
+			rad_to_deg(angle), 0.13)
+	for pos in [Vector3(-17, 0, 17), Vector3(-7, 0, 20),
+		Vector3(2, 0, 15), Vector3(10, 0, 21), Vector3(18, 0, 28),
+		Vector3(22, 0, 13), Vector3(29, 0, 25)]:
+		_spawn("veg/bush_common", "village", "lane_buffer", pos,
+			float(pos.x * 17.0), 0.75)
 
 	# Small private yards reinforce two residential clusters without filling paths.
 	for item in [
@@ -606,6 +732,19 @@ func _spawn_ground_patch(node_name: String, pos: Vector3, radius: float,
 		depth_scale: float, color: Color) -> void:
 	var patch := MeshInstance3D.new()
 	patch.name = node_name
+	patch.mesh = _make_irregular_ground_mesh(radius, depth_scale)
+	patch.position = Vector3(pos.x, 0.012, pos.z)
+	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 1.0
+	if color.a < 0.999:
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	patch.material_override = material
+	add_child(patch)
+
+
+func _make_irregular_ground_mesh(radius: float, depth_scale: float) -> ArrayMesh:
 	var mesh := ArrayMesh.new()
 	var vertices := PackedVector3Array([Vector3.ZERO])
 	var normals := PackedVector3Array([Vector3.UP])
@@ -631,14 +770,7 @@ func _spawn_ground_patch(node_name: String, pos: Vector3, radius: float,
 	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	arrays[Mesh.ARRAY_INDEX] = indices
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	patch.mesh = mesh
-	patch.position = Vector3(pos.x, 0.012, pos.z)
-	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 1.0
-	patch.material_override = material
-	add_child(patch)
+	return mesh
 
 
 func _spawn_frontier_model(key: String, pos: Vector3, yaw_deg: float,
@@ -823,7 +955,7 @@ func _spawn_cuteskull_prop(source_path: String, node_name: String,
 		return null
 	var prop := source.duplicate() as Node3D
 	prop.name = node_name
-	prop.position = WorldCoords3D.flatten(pos)
+	prop.position = pos
 	prop.scale = Vector3.ONE * uniform_scale
 	_normalize_cuteskull_model(prop)
 	_orient_cuteskull_model(prop, yaw_deg)

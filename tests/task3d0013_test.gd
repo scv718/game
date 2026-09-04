@@ -267,7 +267,9 @@ func _zoom_wheel() -> void:
 ## -- ZOOM_MAP (zoom 배율 -> orthographic size 매핑 계약) --
 func _zoom_map() -> void:
 	var base_units := root.get_visible_rect().size.y * WorldCoords3D.PX_TO_UNIT
-	var size_at_day: float = _cam_ctl._ortho_size_for_zoom(_cam_ctl.day_zoom)
+	# This assertion verifies the zoom-1 parity formula, independently of the
+	# art-directed DAY default (which is intentionally allowed to be > 1.0).
+	var size_at_day: float = _cam_ctl._ortho_size_for_zoom(1.0)
 	var size_at_night: float = _cam_ctl._ortho_size_for_zoom(_cam_ctl.night_zoom)
 	_check(_near(size_at_day, base_units),
 		"zoom 1.0 maps to viewport height in world units (2D zoom parity formula)")

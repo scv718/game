@@ -31,6 +31,11 @@ func _process(_delta: float) -> bool:
 	_check(world != null, "main runtime keeps World3D owner")
 	_check(composition != null and composition.is_in_group("village_composition_3d"),
 		"main runtime instantiates authored village composition")
+	var camera_controller := _main.get_tree().get_first_node_in_group("camera_controller_3d")
+	_check(camera_controller != null
+		and absf(camera_controller.pitch_degrees) >= 72.0
+		and absf(camera_controller.pitch_degrees) <= 76.0,
+		"gameplay camera exposes building facades at 72-76 degree elevation")
 	if composition != null:
 		for zone in ["village", "forest", "lumberyard", "quarry"]:
 			_check(composition.get_zone_root(zone) != null,
@@ -48,6 +53,14 @@ func _process(_delta: float) -> bool:
 			"south agriculture branches connect to the road network")
 		_check(composition.get_node_or_null("Zone_Village/AgriculturePlot") != null,
 			"agriculture plot is readable as a compact south district")
+		var creek := composition.get_node_or_null("EasternCreekVisual")
+		_check(creek != null, "eastern creek separates village production from wilderness")
+		var bridge_parts := 0
+		if creek != null:
+			for child in creek.get_children():
+				if child.name.begins_with("CreekBridge_"):
+					bridge_parts += 1
+		_check(bridge_parts == 3, "production road crosses creek on authored timber bridge")
 		for fortification in [
 			"CuteskullWall_SouthWest", "CuteskullWall_South",
 			"CuteskullWall_GateFlankSouth", "CuteskullMainGate",
