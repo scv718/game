@@ -1,0 +1,52 @@
+[gd_scene load_steps=13 format=3 uid="uid://dsgsn8sx0p31k"]
+
+[ext_resource type="PackedScene" uid="uid://basdk7ri8xopj" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements.tscn" id="1_rxdp8"]
+[ext_resource type="PackedScene" uid="uid://boxifco68gq5j" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements_corner_bevel.tscn" id="2_b4eyc"]
+[ext_resource type="PackedScene" uid="uid://xqxwod0q30uo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements_corner_round.tscn" id="3_h3g3u"]
+[ext_resource type="PackedScene" uid="uid://clwyxew7h1tjt" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements_corner_square.tscn" id="4_66aww"]
+[ext_resource type="PackedScene" uid="uid://6vs7j46krjgd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/battlements/wall_battlements_45_deg.tscn" id="5_s7xpr"]
+[ext_resource type="PackedScene" uid="uid://celmx6t5w7uem" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation.tscn" id="10_e6def"]
+[ext_resource type="PackedScene" uid="uid://dvgxi674k5fsv" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation_bevelled_corner.tscn" id="11_m022t"]
+[ext_resource type="PackedScene" uid="uid://dsyx8iuaaf65o" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation_corner_square.tscn" id="12_p2uqg"]
+[ext_resource type="PackedScene" uid="uid://c2cpm0f5q6c3d" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation_round_corner.tscn" id="13_ncoxk"]
+[ext_resource type="PackedScene" uid="uid://br2psjnb3203x" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/machicolation/wall_machicolation_45_deg.tscn" id="14_qn231"]
+[ext_resource type="PackedScene" uid="uid://epp7mfslpobu" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/brattice/brattice_wall_1.tscn" id="19_fblc3"]
+[ext_resource type="PackedScene" uid="uid://detqmmois0mo0" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/brattice/brattice_wall_2.tscn" id="20_mhkcb"]
+
+[node name="Battlements_Machicolation_Brattice_MeshLib" type="Node3D"]
+
+[node name="Wall_Battlements" parent="." instance=ExtResource("1_rxdp8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 39)
+
+[node name="Wall_Battlements_Corner_Bevel" parent="." instance=ExtResource("2_b4eyc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 3, 39)
+
+[node name="Wall_Battlements_Corner_Round" parent="." instance=ExtResource("3_h3g3u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 7, 39)
+
+[node name="Wall_Battlements_Corner_Square" parent="." instance=ExtResource("4_66aww")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0, 39)
+
+[node name="Wall_Battlements_45Deg" parent="." instance=ExtResource("5_s7xpr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 12, 23)
+
+[node name="Wall_Machicolation" parent="." instance=ExtResource("10_e6def")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 11, 39)
+
+[node name="Wall_Machicolation_Bevelled_Corner" parent="." instance=ExtResource("11_m022t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 14, 39)
+
+[node name="Wall_Machicolation_Corner_Square" parent="." instance=ExtResource("12_p2uqg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 11, 39)
+
+[node name="Wall_Machicolation_Round_Corner" parent="." instance=ExtResource("13_ncoxk")]
+transform = Transform3D(1.12833, 0, 0, 0, 1, 0, 0, 0, 1.12833, 25, 18, 39)
+
+[node name="Wall_Machicolation_45Deg" parent="." instance=ExtResource("14_qn231")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 12, 27)
+
+[node name="Brattice_Wall_1" parent="." instance=ExtResource("19_fblc3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 11)
+
+[node name="Brattice_Wall_2" parent="." instance=ExtResource("20_mhkcb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, 11)

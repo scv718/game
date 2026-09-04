@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://8u2tqtxaymma"]
+
+[ext_resource type="Material" uid="uid://dlrwkayh4n2hl" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Wall_Mat.tres" id="1_w2bba"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rhms4"]
+_surfaces = [{
+"aabb": AABB(-1, 0, 0, 1.00001, 6.00001, 6.00001),
+"format": 4097,
+"index_count": 18,
+"index_data": PackedByteArray(1, 0, 7, 0, 0, 0, 1, 0, 4, 0, 7, 0, 2, 0, 4, 0, 1, 0, 2, 0, 3, 0, 4, 0, 0, 0, 6, 0, 5, 0, 0, 0, 7, 0, 6, 0),
+"name": "BrickWall",
+"primitive": 3,
+"vertex_count": 8,
+"vertex_data": PackedByteArray(162, 166, 25, 51, 0, 0, 192, 64, 0, 0, 192, 64, 162, 166, 25, 179, 0, 0, 192, 64, 0, 0, 0, 128, 0, 0, 128, 191, 0, 0, 192, 64, 0, 0, 0, 128, 0, 0, 128, 191, 0, 0, 0, 0, 0, 0, 0, 128, 162, 166, 25, 179, 0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 127, 191, 0, 0, 192, 64, 0, 0, 192, 64, 255, 255, 127, 191, 0, 0, 0, 0, 0, 0, 192, 64, 162, 166, 25, 51, 0, 0, 0, 0, 0, 0, 192, 64)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_g06id"]
+resource_name = "CastleWallsKit_Wall_Bridge_Half_Arc_Wall_B"
+_surfaces = [{
+"aabb": AABB(-1, 0, 0, 1.00001, 6.00001, 6.00001),
+"attribute_data": PackedByteArray(173, 170, 42, 62, 0, 0, 0, 0, 0, 0, 128, 51, 0, 0, 0, 0, 85, 85, 85, 63, 0, 0, 0, 52, 0, 0, 128, 63, 0, 0, 128, 51, 0, 0, 128, 63, 0, 0, 128, 51, 0, 0, 128, 63, 0, 0, 128, 63, 86, 85, 85, 63, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63, 171, 170, 42, 62, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63),
+"format": 4119,
+"index_count": 18,
+"index_data": PackedByteArray(3, 0, 11, 0, 1, 0, 3, 0, 7, 0, 11, 0, 4, 0, 6, 0, 2, 0, 4, 0, 5, 0, 6, 0, 0, 0, 9, 0, 8, 0, 0, 0, 10, 0, 9, 0),
+"material": ExtResource("1_w2bba"),
+"name": "BrickWall",
+"primitive": 3,
+"vertex_count": 12,
+"vertex_data": PackedByteArray(162, 166, 25, 51, 0, 0, 192, 64, 0, 0, 192, 64, 255, 127, 255, 127, 255, 255, 255, 191, 162, 166, 25, 51, 0, 0, 192, 64, 0, 0, 192, 64, 255, 255, 255, 127, 255, 255, 255, 255, 162, 166, 25, 179, 0, 0, 192, 64, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 162, 166, 25, 179, 0, 0, 192, 64, 0, 0, 0, 128, 255, 255, 255, 127, 255, 255, 255, 255, 0, 0, 128, 191, 0, 0, 192, 64, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 0, 0, 128, 191, 0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 162, 166, 25, 179, 0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 162, 166, 25, 179, 0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 255, 127, 255, 255, 255, 255, 255, 255, 127, 191, 0, 0, 192, 64, 0, 0, 192, 64, 255, 127, 255, 127, 255, 255, 255, 191, 255, 255, 127, 191, 0, 0, 0, 0, 0, 0, 192, 64, 255, 127, 255, 127, 255, 255, 255, 191, 162, 166, 25, 51, 0, 0, 0, 0, 0, 0, 192, 64, 255, 127, 255, 127, 255, 255, 255, 191, 162, 166, 25, 51, 0, 0, 0, 0, 0, 0, 192, 64, 255, 255, 255, 127, 255, 255, 255, 255)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_rhms4")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_coq5o"]
+data = PackedVector3Array(0, 6, 0, 0, 0, 6, 0, 6, 6, 0, 6, 0, 0, 0, 0, 0, 0, 6, -1, 6, 0, 0, 0, 0, 0, 6, 0, -1, 6, 0, -1, 0, 0, 0, 0, 0, 0, 6, 6, -1, 0, 6, -1, 6, 6, 0, 6, 6, 0, 0, 6, -1, 0, 6)
+
+[node name="Wall_Bridge_Half_Arc_Wall_B" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_g06id")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_coq5o")

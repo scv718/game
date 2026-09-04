@@ -1,0 +1,121 @@
+[gd_scene load_steps=30 format=3 uid="uid://co3ofnmfy4ybv"]
+
+[ext_resource type="PackedScene" uid="uid://uynxrcrcbhyh" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_arch.tscn" id="1_bft3t"]
+[ext_resource type="PackedScene" uid="uid://8gienapt2dy8" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_square.tscn" id="2_1sdwu"]
+[ext_resource type="PackedScene" uid="uid://berx6nbhmme47" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_slit.tscn" id="3_08gsv"]
+[ext_resource type="PackedScene" uid="uid://c5sdw14vbvbt" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_slits.tscn" id="4_o810d"]
+[ext_resource type="PackedScene" uid="uid://cw2g4568qdtmf" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_wall.tscn" id="5_dda7m"]
+[ext_resource type="PackedScene" uid="uid://dorlvfh76qx5p" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_window_arch.tscn" id="6_nf75x"]
+[ext_resource type="PackedScene" uid="uid://dm2jsjr4yvhwf" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_window_square.tscn" id="7_u61qp"]
+[ext_resource type="PackedScene" uid="uid://cs0k3wh2ub4l" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_bevel.tscn" id="8_mevvn"]
+[ext_resource type="PackedScene" uid="uid://dclm7o6c4ymhr" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_bevel_slits.tscn" id="9_yqh2i"]
+[ext_resource type="PackedScene" uid="uid://kjqyfrharkoo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_round.tscn" id="10_436cp"]
+[ext_resource type="PackedScene" uid="uid://bn0pyb3widms0" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_round_slits.tscn" id="11_w1q67"]
+[ext_resource type="PackedScene" uid="uid://cuochh2eawxno" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_square.tscn" id="12_x6obq"]
+[ext_resource type="PackedScene" uid="uid://duji8b8y7qxq7" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_square_slits.tscn" id="13_dyc02"]
+[ext_resource type="PackedScene" uid="uid://xlqj5on5ctwh" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_arc_wall_top.tscn" id="14_7q5ar"]
+[ext_resource type="PackedScene" uid="uid://dq5kjg6kudrtu" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arch_a.tscn" id="15_f27id"]
+[ext_resource type="PackedScene" uid="uid://71k8kv18da00" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arch_b.tscn" id="16_mdjrl"]
+[ext_resource type="PackedScene" uid="uid://c02w2y15tuvcw" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arc_wall_a.tscn" id="17_g8gln"]
+[ext_resource type="PackedScene" uid="uid://deih6hd6fg1tn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arc_wall_b.tscn" id="18_u4ew1"]
+[ext_resource type="PackedScene" uid="uid://cvy1fp74ogsfc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_door_arch_45_deg.tscn" id="19_powya"]
+[ext_resource type="PackedScene" uid="uid://c0el5fm5dp20g" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_door_square_45_deg.tscn" id="20_50fkg"]
+[ext_resource type="PackedScene" uid="uid://bmhuegcu08g4q" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_slit_45_deg.tscn" id="21_p3n4r"]
+[ext_resource type="PackedScene" uid="uid://cuqaalyuivfi7" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_wall_45_deg.tscn" id="22_0b2ek"]
+[ext_resource type="PackedScene" uid="uid://ha8k38cd78eg" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_window_arch_45_deg.tscn" id="23_l4kkm"]
+[ext_resource type="PackedScene" uid="uid://dw8b2f756xupc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_window_square_45_deg.tscn" id="24_vf30j"]
+[ext_resource type="PackedScene" uid="uid://1ujipm1ukkkn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_arc_wall_top_45_deg.tscn" id="25_dnrqt"]
+[ext_resource type="PackedScene" uid="uid://bhuqp0wr6kx88" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arch_a_45_deg.tscn" id="26_gtufu"]
+[ext_resource type="PackedScene" uid="uid://b1ktkfn35apeq" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arch_b_45_deg.tscn" id="27_fgq3m"]
+[ext_resource type="PackedScene" uid="uid://chydvejhqjsy4" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arc_wall_a_45_deg.tscn" id="28_41bfi"]
+[ext_resource type="PackedScene" uid="uid://bibs4q08hhhnd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arc_wall_b_45_deg.tscn" id="29_snclr"]
+
+[node name="Courtines_MeshLib" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 0, 21)
+
+[node name="Courtine_Door_Arch" parent="." instance=ExtResource("1_bft3t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4557, 0, -5.98366)
+
+[node name="Courtine_Door_Square" parent="." instance=ExtResource("2_1sdwu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4557, 0, -5.98366)
+
+[node name="Courtine_Slit" parent="." instance=ExtResource("3_08gsv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.45567, 0, -5.98366)
+
+[node name="Courtine_Slits" parent="." instance=ExtResource("4_o810d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.54433, 0, -5.98366)
+
+[node name="Courtine_Wall" parent="." instance=ExtResource("5_dda7m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4557, 0, -5.98366)
+
+[node name="Courtine_Window_Arch" parent="." instance=ExtResource("6_nf75x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4557, 6, -5.98366)
+
+[node name="Courtine_Window_Square" parent="." instance=ExtResource("7_u61qp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4557, 6, -5.98366)
+
+[node name="Courtine_Corner_Bevel" parent="." instance=ExtResource("8_mevvn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5443, 0, -4.98366)
+
+[node name="Courtine_Corner_Bevel_Slits" parent="." instance=ExtResource("9_yqh2i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5443, 6, -4.98366)
+
+[node name="Courtine_Corner_Round" parent="." instance=ExtResource("10_436cp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.54433, 0, -4.98366)
+
+[node name="Courtine_Corner_Round_Slits" parent="." instance=ExtResource("11_w1q67")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.54433, 6, -4.98366)
+
+[node name="Courtine_Corner_Square" parent="." instance=ExtResource("12_x6obq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5443, 0, -4.98366)
+
+[node name="Courtine_Corner_Square_Slits" parent="." instance=ExtResource("13_dyc02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5443, 6, -4.98366)
+
+[node name="Courtine_Arc_Wall_Top" parent="." instance=ExtResource("14_7q5ar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4557, 6, 1.01634)
+
+[node name="Courtine_HalfArch_A" parent="." instance=ExtResource("15_f27id")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.45567, 6, 1.01634)
+
+[node name="Courtine_HalfArch_B" parent="." instance=ExtResource("16_mdjrl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.45567, 6, 1.01634)
+
+[node name="Courtine_Half_Arc_Wall_A" parent="." instance=ExtResource("17_g8gln")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.45567, 0, 1.01634)
+
+[node name="Courtine_Half_Arc_Wall_B" parent="." instance=ExtResource("18_u4ew1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.45567, 0, 1.01634)
+
+[node name="Courtine_Door_Arch_45Deg" parent="." instance=ExtResource("19_powya")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, 5)
+
+[node name="Courtine_Door_Square_45Deg" parent="." instance=ExtResource("20_50fkg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 6, 5)
+
+[node name="Courtine_Slit_45Deg" parent="." instance=ExtResource("21_p3n4r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 6, 1)
+
+[node name="Courtine_Wall_45Deg" parent="." instance=ExtResource("22_0b2ek")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72, 0, -3)
+
+[node name="Courtine_Window_Arch_45Deg" parent="." instance=ExtResource("23_l4kkm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 0, 1)
+
+[node name="Courtine_Window_Square_45_Deg" parent="." instance=ExtResource("24_vf30j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72, 6, -3)
+
+[node name="Courtine_Arc_Wall_Top_45Deg" parent="." instance=ExtResource("25_dnrqt")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -60, 6, 15)
+
+[node name="Courtine_HalfArch_A_45Deg" parent="." instance=ExtResource("26_gtufu")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -54, 6, 21)
+
+[node name="Courtine_HalfArch_B_45Deg" parent="." instance=ExtResource("27_fgq3m")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -66, 6, 9)
+
+[node name="Courtine_Half_Arc_Wall_A_45Deg" parent="." instance=ExtResource("28_41bfi")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -54, 0, 21)
+
+[node name="Courtine_Half_Arc_Wall_B_45Deg" parent="." instance=ExtResource("29_snclr")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -66, 0, 9)

@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://qunw6qvly0jq"]
+
+[ext_resource type="Material" uid="uid://3rs2efi6s1ls" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Floor_Mat.tres" id="1_h7vus"]
+[ext_resource type="Material" uid="uid://k72idgv446ky" path="res://assets/LoafbrrAssets/CastleWallKit/materials/DoorSticker_Mat.tres" id="2_ejae7"]
+[ext_resource type="Material" uid="uid://cjfeikrt2eyou" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Trims_Mat.tres" id="3_am66m"]
+[ext_resource type="Material" uid="uid://dlrwkayh4n2hl" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Wall_Mat.tres" id="4_0urf8"]
+[ext_resource type="PackedScene" uid="uid://dh4dgcw1hk1nc" path="res://assets/LoafbrrAssets/CastleWallKit/gltf/CastleWallsKit.gltf" id="5_vnv8m"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_m6pll"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+material_override = ExtResource("1_h7vus")
+mesh = SubResource("PlaneMesh_m6pll")
+surface_material_override/0 = ExtResource("1_h7vus")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.996195, -0.0868242, -0.00759614, -0.0225576, 0.341039, -0.939778, 0.0841861, -0.936031, -0.3417, 4, 0, 1)
+mesh = SubResource("PlaneMesh_m6pll")
+surface_material_override/0 = ExtResource("2_ejae7")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 4)
+material_override = ExtResource("3_am66m")
+mesh = SubResource("PlaneMesh_m6pll")
+surface_material_override/0 = ExtResource("3_am66m")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 4)
+material_override = ExtResource("4_0urf8")
+mesh = SubResource("PlaneMesh_m6pll")
+surface_material_override/0 = ExtResource("4_0urf8")
+
+[node name="CastleWallsKit" parent="." instance=ExtResource("5_vnv8m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)

@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://beggw2qukufnk"]
+
+[ext_resource type="Material" uid="uid://dlrwkayh4n2hl" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Wall_Mat.tres" id="1_hhvfi"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ohrje"]
+_surfaces = [{
+"aabb": AABB(-6, 0, 0, 6.00001, 6.00001, 1e-05),
+"format": 4097,
+"index_count": 6,
+"index_data": PackedByteArray(2, 0, 1, 0, 0, 0, 2, 0, 3, 0, 1, 0),
+"name": "BrickWall",
+"primitive": 3,
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 192, 64, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 192, 192, 0, 0, 192, 64, 0, 0, 0, 128, 0, 0, 192, 192, 0, 0, 0, 0, 0, 0, 0, 128)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_8frr4"]
+resource_name = "CastleWallsKit_Wall_Wall"
+_surfaces = [{
+"aabb": AABB(-6, 0, 0, 6.00001, 6.00001, 1e-05),
+"attribute_data": PackedByteArray(0, 0, 128, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 51, 0, 0, 128, 63, 0, 0, 128, 63),
+"format": 4119,
+"index_count": 6,
+"index_data": PackedByteArray(2, 0, 1, 0, 0, 0, 2, 0, 3, 0, 1, 0),
+"material": ExtResource("1_hhvfi"),
+"name": "BrickWall",
+"primitive": 3,
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 192, 64, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 0, 0, 192, 192, 0, 0, 192, 64, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191, 0, 0, 192, 192, 0, 0, 0, 0, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ohrje")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_myfgf"]
+data = PackedVector3Array(-6, 6, 0, 0, 0, 0, 0, 6, 0, -6, 6, 0, -6, 0, 0, 0, 0, 0)
+
+[node name="Wall_Wall" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_8frr4")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_myfgf")

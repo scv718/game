@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://g56iu0v5eduw"]
+
+[ext_resource type="Material" uid="uid://3rs2efi6s1ls" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Floor_Mat.tres" id="1_bt0om"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_sk5y6"]
+_surfaces = [{
+"aabb": AABB(-3, 0, -3, 6.00001, 1e-05, 6.00001),
+"format": 4097,
+"index_count": 3,
+"index_data": PackedByteArray(1, 0, 0, 0, 2, 0),
+"name": "BrickFloor",
+"primitive": 3,
+"vertex_count": 3,
+"vertex_data": PackedByteArray(0, 0, 64, 64, 0, 0, 0, 0, 0, 0, 64, 64, 0, 0, 64, 192, 0, 0, 0, 0, 0, 0, 64, 192, 0, 0, 64, 192, 0, 0, 0, 0, 0, 0, 64, 64)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0dtxp"]
+resource_name = "CastleWallsKit_Floor_45Deg"
+_surfaces = [{
+"aabb": AABB(-3, 0, -3, 6.00001, 1e-05, 6.00001),
+"attribute_data": PackedByteArray(169, 187, 209, 56, 113, 249, 127, 63, 115, 249, 127, 63, 0, 0, 210, 56, 115, 15, 210, 56, 0, 160, 209, 56),
+"format": 4119,
+"index_count": 3,
+"index_data": PackedByteArray(1, 0, 0, 0, 2, 0),
+"material": ExtResource("1_bt0om"),
+"name": "BrickFloor",
+"primitive": 3,
+"vertex_count": 3,
+"vertex_data": PackedByteArray(0, 0, 64, 64, 0, 0, 0, 0, 0, 0, 64, 64, 255, 127, 255, 255, 0, 0, 254, 255, 0, 0, 64, 192, 0, 0, 0, 0, 0, 0, 64, 192, 255, 127, 255, 255, 0, 0, 254, 255, 0, 0, 64, 192, 0, 0, 0, 0, 0, 0, 64, 64, 255, 127, 255, 255, 0, 0, 254, 255)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_sk5y6")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ua70j"]
+data = PackedVector3Array(-3, 0, -3, 3, 0, 3, -3, 0, 3)
+
+[node name="Floor_45Deg" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_0dtxp")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_ua70j")

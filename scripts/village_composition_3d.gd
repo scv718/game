@@ -68,6 +68,19 @@ const PLAZA_ALBEDO := Color(0.61, 0.52, 0.38)
 const PATH_STRIP_Y := 0.05
 const HOUSE_VISUAL_SCALE := 0.72
 
+## Loafbrr Castle Wall Kit: visual-only frontier fortification candidates.
+## The packed scenes contain their own optional StaticBody3D; instances are
+## stripped to GeometryInstance3D children below so gameplay/navigation owners
+## remain exclusively owned by the existing world systems.
+const LOAFBRR_WALL_SCENE := preload(
+	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_wall.tscn")
+const LOAFBRR_GATE_SCENE := preload(
+	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_arch.tscn")
+const LOAFBRR_CORNER_SCENE := preload(
+	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_round_slits.tscn")
+const LOAFBRR_TOWER_SCENE := preload(
+	"res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/battlement/bartizan_corner_round_battlement.tscn")
+
 ## -- 제한적 variation 팔레트(태스크 원칙). 이 범위 밖 모델을 추가하지 않는다.
 ## house palette: catalog house_building 조합(floor/wall/window/door 교체).
 const HOUSE_PLASTER := {
@@ -424,13 +437,23 @@ func _build_frontier_dressing() -> void:
 		Color(0.35, 0.31, 0.24))
 	_spawn_ground_patch("CorruptedGround", Vector3(-88, 0, 0), 20.0, 0.78,
 		Color(0.20, 0.18, 0.19))
-	for z in range(-24, 25, 4):
-		_spawn_frontier_model("bld/wall_brick_straight", Vector3(-38, 0, z),
-			90.0, 0.9)
-	for z in [-28, 28]:
-		_spawn_frontier_model("bld/wall_brick_straight", Vector3(-38, 0, z),
-			90.0, 1.15)
-	_spawn_frontier_model("bld/wall_brick_door_flat", Vector3(-38, 0, 0), 90.0, 1.0)
+	# Loafbrr courtines are 12m-wide, 6m-high authored stone wall scenes.
+	# Four segments leave the central arch gate as the readable entrance.
+	for z in [-24.0, -12.0, 12.0, 24.0]:
+		_spawn_fortification_scene(LOAFBRR_WALL_SCENE,
+				Vector3(-30, 0, z), 90.0, 0.82, "LoafbrrWall_%d" % int(z))
+	_spawn_fortification_scene(LOAFBRR_GATE_SCENE, Vector3(-30, 0, 0),
+		90.0, 0.82, "LoafbrrMainGate")
+	# End/corner pieces and two elevated bartizan towers establish the frontier
+	# silhouette without turning the settlement into a closed castle perimeter.
+	_spawn_fortification_scene(LOAFBRR_CORNER_SCENE, Vector3(-30, 0, -30),
+		90.0, 0.82, "LoafbrrWallEndSouth")
+	_spawn_fortification_scene(LOAFBRR_CORNER_SCENE, Vector3(-30, 0, 30),
+		270.0, 0.82, "LoafbrrWallEndNorth")
+	_spawn_fortification_scene(LOAFBRR_TOWER_SCENE, Vector3(-30, 0, -33),
+		90.0, 0.78, "LoafbrrWatchtowerSouth")
+	_spawn_fortification_scene(LOAFBRR_TOWER_SCENE, Vector3(-30, 0, 33),
+		270.0, 0.78, "LoafbrrWatchtowerNorth")
 	for z in [-18, -10, 10, 18]:
 		_spawn_frontier_model("bld/fence_wooden_single", Vector3(-48, 0, z),
 			90.0, 0.9)
@@ -476,6 +499,52 @@ func _spawn_frontier_model(key: String, pos: Vector3, yaw_deg: float,
 	model.set_meta("zone", "frontier")
 	model.set_meta("kind", "visual_dressing")
 	add_child(model)
+
+
+func _spawn_fortification_scene(scene: PackedScene, pos: Vector3,
+		yaw_deg: float, uniform_scale: float, node_name: String) -> Node3D:
+	if scene == null:
+		push_error("VillageComposition3D: Loafbrr fortification scene is null")
+		return null
+	var model := scene.instantiate() as Node3D
+	if model == null:
+		push_error("VillageComposition3D: Loafbrr fortification root is not Node3D")
+		return null
+	model.name = node_name
+	model.position = WorldCoords3D.flatten(pos)
+	model.rotation.y = deg_to_rad(yaw_deg)
+	model.scale = Vector3.ONE * uniform_scale
+	model.set_meta("asset_source", "Loafbrr Castle Wall Kit")
+	model.set_meta("zone", "frontier")
+	model.set_meta("kind", "visual_fortification")
+	_make_fortification_materials_visible(model)
+	_strip_fortification_colliders(model)
+	add_child(model)
+	return model
+
+
+func _make_fortification_materials_visible(node: Node) -> void:
+	if node is MeshInstance3D and node.mesh != null:
+		var mesh := node.mesh.duplicate() as ArrayMesh
+		if mesh != null:
+			for surface in mesh.get_surface_count():
+				var material := mesh.surface_get_material(surface)
+				if material is BaseMaterial3D:
+					var local_material := material.duplicate() as BaseMaterial3D
+					local_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+					mesh.surface_set_material(surface, local_material)
+					node.material_override = local_material
+			node.mesh = mesh
+	for child in node.get_children():
+		_make_fortification_materials_visible(child)
+
+
+func _strip_fortification_colliders(node: Node) -> void:
+	for child in node.get_children():
+		if child is StaticBody3D or child is CollisionObject3D:
+			child.free()
+		else:
+			_strip_fortification_colliders(child)
 
 
 func _spawn_portal(pos: Vector3) -> void:

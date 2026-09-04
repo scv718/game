@@ -1,0 +1,57 @@
+[gd_scene load_steps=15 format=3 uid="uid://dw0dl81qnd8nu"]
+
+[ext_resource type="PackedScene" uid="uid://bbhvewuxdemi2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/walls_mesh_lib.tscn" id="1_10bvj"]
+[ext_resource type="PackedScene" uid="uid://dsgsn8sx0p31k" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/battlements_machicolation_brattice_mesh_lib.tscn" id="2_2yjac"]
+[ext_resource type="PackedScene" uid="uid://co3ofnmfy4ybv" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/courtines_mesh_lib.tscn" id="3_3wusn"]
+[ext_resource type="PackedScene" uid="uid://tn07jit115ie" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/floors_mesh_lib.tscn" id="4_pdeac"]
+[ext_resource type="PackedScene" uid="uid://d4nekovhd7olg" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/bartizan_mesh_lib.tscn" id="5_ce2pv"]
+[ext_resource type="PackedScene" uid="uid://crf61qmocvy3k" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/pillars_mesh_lib.tscn" id="6_i4r0a"]
+[ext_resource type="PackedScene" uid="uid://b2317rx7o0hqy" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_door.tscn" id="60_r8j7n"]
+[ext_resource type="PackedScene" uid="uid://4rv75tlp23n2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_gate_arch.tscn" id="61_458w0"]
+[ext_resource type="PackedScene" uid="uid://c6eu30pmny2mn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_gate_square.tscn" id="62_g42jt"]
+[ext_resource type="PackedScene" uid="uid://did1qj4brekfc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_portcullis.tscn" id="63_s7bdd"]
+[ext_resource type="PackedScene" uid="uid://dcaiteu4fm1ni" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_arch.tscn" id="64_f53ia"]
+[ext_resource type="PackedScene" uid="uid://clqvp7dn6wmw5" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_a.tscn" id="65_42kim"]
+[ext_resource type="PackedScene" uid="uid://c8nfx7u0yfbsd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_b.tscn" id="66_g564j"]
+[ext_resource type="PackedScene" uid="uid://dp7pm35vi4u2m" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_c.tscn" id="67_p4b3f"]
+
+[node name="CastleWallsKit_MeshLib" type="Node3D"]
+
+[node name="Walls_MeshLib" parent="." instance=ExtResource("1_10bvj")]
+
+[node name="Battlements_Machicolation_Brattice_MeshLib" parent="." instance=ExtResource("2_2yjac")]
+
+[node name="Courtines_MeshLib" parent="." instance=ExtResource("3_3wusn")]
+
+[node name="Floors_MeshLib" parent="." instance=ExtResource("4_pdeac")]
+
+[node name="Bartizan_MeshLib" parent="." instance=ExtResource("5_ce2pv")]
+
+[node name="Pillars_MeshLib" parent="." instance=ExtResource("6_i4r0a")]
+
+[node name="DoorStickers" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 9)
+
+[node name="DoorSticker_Door" parent="DoorStickers" instance=ExtResource("60_r8j7n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45567, 0, 0.0163383)
+
+[node name="DoorSticker_Gate_Arch" parent="DoorStickers" instance=ExtResource("61_458w0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.54433, 0, 0.0163383)
+
+[node name="DoorSticker_Gate_Square" parent="DoorStickers" instance=ExtResource("62_g42jt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.54433, 0, 0.0163383)
+
+[node name="DoorSticker_Portcullis" parent="DoorStickers" instance=ExtResource("63_s7bdd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.45567, 0, 0.0163383)
+
+[node name="DoorSticker_Window_Arch" parent="DoorStickers" instance=ExtResource("64_f53ia")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45567, 4, 0.0163383)
+
+[node name="DoorSticker_Window_Square_A" parent="DoorStickers" instance=ExtResource("65_42kim")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.544331, 3, 0.0163383)
+
+[node name="DoorSticker_Window_Square_B" parent="DoorStickers" instance=ExtResource("66_g564j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.54433, 1, 0.0163383)
+
+[node name="DoorSticker_Window_Square_C" parent="DoorStickers" instance=ExtResource("67_p4b3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.544331, 5, 0.0163383)

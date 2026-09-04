@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://devtmehfx5qma"]
+
+[ext_resource type="Material" uid="uid://3rs2efi6s1ls" path="res://assets/LoafbrrAssets/CastleWallKit/materials/Brick_Floor_Mat.tres" id="1_80cfc"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7ffud"]
+_surfaces = [{
+"aabb": AABB(-3, 0, -3, 6, 1e-05, 6),
+"format": 4097,
+"index_count": 21,
+"index_data": PackedByteArray(2, 0, 7, 0, 8, 0, 2, 0, 6, 0, 7, 0, 2, 0, 3, 0, 4, 0, 0, 0, 1, 0, 2, 0, 4, 0, 0, 0, 2, 0, 1, 0, 6, 0, 2, 0, 5, 0, 3, 0, 2, 0),
+"name": "BrickFloor",
+"primitive": 3,
+"vertex_count": 9,
+"vertex_data": PackedByteArray(0, 0, 192, 63, 0, 0, 0, 0, 0, 0, 64, 192, 254, 255, 63, 64, 0, 0, 0, 0, 0, 0, 192, 191, 1, 0, 32, 53, 0, 0, 0, 0, 123, 172, 234, 168, 2, 0, 64, 192, 0, 0, 0, 0, 249, 255, 191, 191, 7, 0, 192, 191, 0, 0, 0, 0, 252, 255, 63, 192, 255, 255, 63, 192, 0, 0, 0, 0, 240, 102, 102, 53, 0, 0, 64, 64, 0, 0, 0, 0, 1, 0, 192, 63, 255, 255, 191, 63, 0, 0, 0, 0, 254, 255, 63, 64, 0, 0, 32, 53, 0, 0, 0, 0, 0, 0, 64, 64)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_dsdih"]
+resource_name = "CastleWallsKit_Bartizan_Corner_Floor_Bevel"
+_surfaces = [{
+"aabb": AABB(-3, 0, -3, 6, 1e-05, 6),
+"attribute_data": PackedByteArray(21, 185, 13, 60, 232, 54, 130, 62, 229, 54, 130, 62, 0, 186, 13, 60, 1, 0, 0, 63, 0, 0, 0, 63, 236, 54, 130, 62, 33, 201, 125, 63, 193, 185, 13, 60, 147, 228, 62, 63, 4, 0, 0, 63, 30, 201, 125, 63, 143, 228, 62, 63, 0, 185, 13, 60, 28, 201, 125, 63, 230, 54, 130, 62, 29, 201, 125, 63, 254, 255, 255, 62),
+"format": 4119,
+"index_count": 21,
+"index_data": PackedByteArray(2, 0, 7, 0, 8, 0, 2, 0, 6, 0, 7, 0, 2, 0, 3, 0, 4, 0, 0, 0, 1, 0, 2, 0, 4, 0, 0, 0, 2, 0, 1, 0, 6, 0, 2, 0, 5, 0, 3, 0, 2, 0),
+"material": ExtResource("1_80cfc"),
+"name": "BrickFloor",
+"primitive": 3,
+"vertex_count": 9,
+"vertex_data": PackedByteArray(0, 0, 192, 63, 0, 0, 0, 0, 0, 0, 64, 192, 255, 127, 255, 255, 255, 127, 255, 191, 254, 255, 63, 64, 0, 0, 0, 0, 0, 0, 192, 191, 255, 127, 255, 255, 255, 127, 255, 191, 1, 0, 32, 53, 0, 0, 0, 0, 123, 172, 234, 168, 255, 127, 255, 255, 255, 127, 255, 191, 2, 0, 64, 192, 0, 0, 0, 0, 249, 255, 191, 191, 255, 127, 255, 255, 255, 127, 255, 191, 7, 0, 192, 191, 0, 0, 0, 0, 252, 255, 63, 192, 255, 127, 255, 255, 255, 127, 255, 191, 255, 255, 63, 192, 0, 0, 0, 0, 240, 102, 102, 53, 255, 127, 255, 255, 255, 127, 255, 191, 0, 0, 64, 64, 0, 0, 0, 0, 1, 0, 192, 63, 255, 127, 255, 255, 255, 127, 255, 191, 255, 255, 191, 63, 0, 0, 0, 0, 254, 255, 63, 64, 255, 127, 255, 255, 255, 127, 255, 191, 0, 0, 32, 53, 0, 0, 0, 0, 0, 0, 64, 64, 255, 127, 255, 255, 255, 127, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_7ffud")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_2ev0i"]
+data = PackedVector3Array(0, 0, 0, 1.5, 0, 3, 0, 0, 3, 0, 0, 0, 3, 0, 1.5, 1.5, 0, 3, 0, 0, 0, -3, 0, -1.5, -1.5, 0, -3, 1.5, 0, -3, 3, 0, -1.5, 0, 0, 0, -1.5, 0, -3, 1.5, 0, -3, 0, 0, 0, 3, 0, -1.5, 3, 0, 1.5, 0, 0, 0, -3, 0, 0, -3, 0, -1.5, 0, 0, 0)
+
+[node name="Bartizan_Corner_Floor_Bevel" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_dsdih")
+skeleton = NodePath("")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_2ev0i")

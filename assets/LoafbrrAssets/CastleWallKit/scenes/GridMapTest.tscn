@@ -1,0 +1,173 @@
+[gd_scene load_steps=22 format=3 uid="uid://drqtmk2jtgr44"]
+
+[ext_resource type="MeshLibrary" uid="uid://cxjcm470qdsnr" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/MeshLib/Walls.tres" id="1_8ilf6"]
+[ext_resource type="MeshLibrary" uid="uid://datif0vfstmhj" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/MeshLib/Floor.tres" id="2_v5af0"]
+[ext_resource type="MeshLibrary" uid="uid://de3hapuh1ej0h" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/MeshLib/Bartizan.tres" id="3_uryhd"]
+[ext_resource type="MeshLibrary" uid="uid://dii21ahs22opg" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/MeshLib/Battlements.tres" id="4_3eonc"]
+[ext_resource type="MeshLibrary" uid="uid://oeakak6jg8ku" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/MeshLib/Courtines.tres" id="5_sbmx3"]
+[ext_resource type="MeshLibrary" uid="uid://dvbvovssemmc1" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/GridMaps/MeshLib/Pillar.tres" id="6_mwvhx"]
+[ext_resource type="PackedScene" uid="uid://b2317rx7o0hqy" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_door.tscn" id="8_ff1o5"]
+[ext_resource type="PackedScene" uid="uid://c6eu30pmny2mn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_gate_square.tscn" id="9_m4fsd"]
+[ext_resource type="PackedScene" uid="uid://4rv75tlp23n2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_gate_arch.tscn" id="10_fsvbr"]
+[ext_resource type="PackedScene" uid="uid://did1qj4brekfc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_portcullis.tscn" id="11_05vwn"]
+[ext_resource type="PackedScene" uid="uid://dcaiteu4fm1ni" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_arch.tscn" id="12_lhttt"]
+[ext_resource type="PackedScene" uid="uid://clqvp7dn6wmw5" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_a.tscn" id="13_3vyc4"]
+[ext_resource type="PackedScene" uid="uid://c8nfx7u0yfbsd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_b.tscn" id="14_6vm40"]
+[ext_resource type="PackedScene" uid="uid://dp7pm35vi4u2m" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_c.tscn" id="15_bnfiv"]
+[ext_resource type="Script" path="res://addons/freecam_3D/freecam.gd" id="15_bq1n2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qg5nx"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+sky_energy_multiplier = 2.0
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_cb5tv"]
+sky_material = SubResource("ProceduralSkyMaterial_qg5nx")
+
+[sub_resource type="Environment" id="Environment_jnog1"]
+background_mode = 2
+background_energy_multiplier = 0.71
+sky = SubResource("Sky_cb5tv")
+ambient_light_source = 3
+reflected_light_source = 2
+ssao_enabled = true
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_p51rp"]
+size = Vector2(300, 300)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_408gy"]
+albedo_color = Color(0.34902, 0.501961, 0.372549, 1)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_tkxvv"]
+data = PackedVector3Array(150, 0, 150, -150, 0, 150, 150, 0, -150, -150, 0, 150, -150, 0, -150, 150, 0, -150)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_jnog1")
+
+[node name="Floors" type="GridMap" parent="."]
+mesh_library = ExtResource("2_v5af0")
+cell_size = Vector3(1, 1, 1)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(1179659, 18, 1441797, 1245183, 18, 655366, 1179650, 15, 655360, 1179656, 15, 655360, 1179656, 9, 655360, 1179650, 9, 655360, 1179650, 3, 1048576, 1179656, 3, 1048576, 1179656, 65533, 1048576, 1179650, 65533, 1048576, 1179650, 65527, 1048578, 1179656, 65527, 1, 1179670, 65520, 1441794, 1179664, 65514, 1048578, 1179670, 65514, 2, 1179664, 65520, 655362, 1245168, 0, 1441792, 1245168, 65530, 1441792, 1245174, 0, 1441792, 1245174, 65530, 1441792)
+}
+metadata/_editor_floor_ = Vector3(0, 18, 0)
+
+[node name="Bartizan" type="GridMap" parent="."]
+mesh_library = ExtResource("3_uryhd")
+cell_size = Vector3(1, 1, 1)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(1048575, 18, 655363, 655359, 18, 655365, 262143, 18, 655363, 589835, 18, 1441792, 983051, 18, 1441792, 393227, 18, 1441793, 1245183, 18, 655375, 1179659, 18, 1441804)
+}
+metadata/_editor_floor_ = Vector3(0, 18, 0)
+
+[node name="Battlements" type="GridMap" parent="."]
+mesh_library = ExtResource("4_3eonc")
+cell_size = Vector3(1, 1, 1)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(1245183, 65533, 1048581, 1245183, 3, 1048576, 1245183, 9, 1048576, 1179659, 65533, 1441797, 1179664, 65520, 655368, 1179670, 65520, 1441800, 1179670, 65514, 8, 1179664, 65514, 1048584, 1179650, 65527, 1048584, 1179656, 65527, 6, 1179659, 3, 1441797, 1179659, 9, 1441797, 851932, 65513, 1048579, 786432, 65513, 2, 851962, 65510, 0, 851956, 65510, 0, 851950, 65510, 0, 851944, 65510, 0, 851938, 65510, 0, 851926, 65519, 1048580, 851922, 65523, 1048580, 851919, 65526, 1048580, 851917, 65531, 1048576, 851917, 1, 1048576, 327662, 65510, 11, 327656, 65510, 10, 1245174, 65530, 3, 1245168, 65530, 1048579, 1245165, 0, 1048576, 1245177, 0, 1441792)
+}
+metadata/_editor_floor_ = Vector3(0, 18, 0)
+
+[node name="Courtines" type="GridMap" parent="."]
+mesh_library = ExtResource("5_sbmx3")
+cell_size = Vector3(1, 6, 1)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(65515, 65510, 4, 65521, 65510, 4, 131045, 65510, 5, 131051, 65510, 5, 131057, 65510, 2, 131058, 65510, 15, 131068, 65510, 14, 65532, 65510, 16, 65522, 65510, 17, 65539, 65510, 9, 3, 65510, 9, 65497, 65510, 1048587, 131033, 65510, 1048588, 131031, 65518, 1048597, 131027, 65522, 1048597, 131023, 65526, 1048597, 65495, 65518, 1048597, 65491, 65522, 1048597, 65487, 65526, 1048597, 65485, 65528, 1048580, 131021, 65528, 1048580, 131021, 65534, 1048580, 65485, 65534, 1048580, 65509, 65510, 1)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Pillar" type="GridMap" parent="."]
+mesh_library = ExtResource("6_mwvhx")
+cell_size = Vector3(1, 6, 1)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(65497, 65516, 0, 131033, 65516, 0, 196569, 65516, 1, 131022, 65528, 1441792, 65486, 65528, 1441792, 196558, 65528, 1441793, 131022, 4, 1441792, 65486, 4, 1441792, 196558, 4, 1441793, 131075, 65516, 1441793, 65539, 65516, 1441792, 3, 65516, 1441792)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Walls" type="GridMap" parent="."]
+mesh_library = ExtResource("1_8ilf6")
+cell_size = Vector3(1, 6, 1)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(65535, 18, 655371, 11, 18, 1441803, 65547, 18, 1441803, 131071, 18, 655371, 131083, 18, 1441803, 196607, 18, 655371, 131083, 6, 1048580, 131083, 0, 1048580, 131083, 65530, 1048580, 196607, 6, 1048580, 196607, 0, 1048580, 196607, 65530, 1048580, 65535, 6, 1048580, 65535, 0, 1048580, 65535, 65530, 1048580, 131071, 65530, 1048580, 131071, 0, 1048580, 131071, 6, 1048580, 65547, 6, 1048580, 65547, 0, 1048580, 65547, 65530, 1048580, 11, 65530, 1048580, 11, 6, 1048580, 11, 0, 1048580, 131083, 65524, 8, 196606, 65523, 1048586, 131071, 65524, 1048585, 65535, 65524, 1048585, 11, 65524, 7, 65547, 65524, 7, 131053, 65527, 1048587, 131065, 65527, 11, 196601, 65527, 12, 196589, 65527, 1048588, 131084, 65510, 1048586, 131097, 65511, 9, 131097, 65523, 1441801, 131085, 65523, 655369, 65562, 65510, 10, 65548, 65510, 1048586, 65561, 65523, 1441801, 65549, 65523, 655369, 13, 65523, 655369, 13, 65511, 1048585, 25, 65511, 9, 25, 65523, 1441801, 65517, 65527, 1048587, 65529, 65527, 11, 65529, 65533, 1048580, 131065, 65533, 1048580, 196601, 65533, 1048580, 196589, 3, 1441796, 131053, 3, 1441796, 65517, 3, 1441796)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="doorStickers" type="Node3D" parent="."]
+
+[node name="DoorSticker_Door" parent="doorStickers" instance=ExtResource("8_ff1o5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -9.04366)
+
+[node name="DoorSticker_Gate_Square" parent="doorStickers" instance=ExtResource("9_m4fsd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -9.01334)
+
+[node name="DoorSticker_Gate_Arch" parent="doorStickers" instance=ExtResource("10_fsvbr")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -19.0291, 0, -6)
+
+[node name="DoorSticker_Portcullis" parent="doorStickers" instance=ExtResource("11_05vwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -26)
+
+[node name="DoorSticker_Window_Arch" parent="doorStickers" instance=ExtResource("12_lhttt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 12, -9.01165)
+
+[node name="DoorSticker_Window_Square_A" parent="doorStickers" instance=ExtResource("13_3vyc4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 12, -9.01165)
+
+[node name="DoorSticker_Window_Square_B" parent="doorStickers" instance=ExtResource("14_6vm40")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 12, -9.01165)
+
+[node name="DoorSticker_Window_Square_C" parent="doorStickers" instance=ExtResource("15_bnfiv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 12, -9.01165)
+
+[node name="lights" type="Node3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="lights"]
+transform = Transform3D(0.817181, 0.190048, -0.544148, 0.163413, 0.828947, 0.534923, 0.552731, -0.52605, 0.646343, 0, 27, 0)
+shadow_enabled = true
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="lights"]
+transform = Transform3D(-0.817207, -0.18906, 0.544453, 0.164179, 0.829164, 0.534352, -0.552465, 0.526064, -0.646559, 0, 27, 0)
+light_energy = 0.75
+shadow_enabled = true
+
+[node name="DirectionalLight3D3" type="DirectionalLight3D" parent="lights"]
+transform = Transform3D(0.552465, -0.526064, 0.646559, 0.164179, 0.829164, 0.534352, -0.817207, -0.18906, 0.544453, 0, 27, 0)
+light_energy = 0.5
+
+[node name="DirectionalLight3D4" type="DirectionalLight3D" parent="lights"]
+transform = Transform3D(-0.552465, 0.526064, -0.646559, 0.164179, 0.829164, 0.534352, 0.817207, 0.18906, -0.544453, 0, 27, 0)
+light_energy = 0.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_p51rp")
+surface_material_override/0 = SubResource("StandardMaterial3D_408gy")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_tkxvv")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 5, -40)
+script = ExtResource("15_bq1n2")
+overlay_text = false

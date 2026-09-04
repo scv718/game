@@ -1,0 +1,40 @@
+[gd_scene load_steps=10 format=3 uid="uid://tn07jit115ie"]
+
+[ext_resource type="PackedScene" uid="uid://jhhw883klnds" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Floor/wall_floor.tscn" id="1_16dnp"]
+[ext_resource type="PackedScene" uid="uid://dhkmv42rb38qc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Floor/wall_floor_beveled.tscn" id="2_f08kc"]
+[ext_resource type="PackedScene" uid="uid://vleq3npj0hi2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Floor/wall_floor_round.tscn" id="3_uvjfo"]
+[ext_resource type="PackedScene" uid="uid://ejwx3c24684n" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/bridge/wall_bridge_arc_floor.tscn" id="4_d4dir"]
+[ext_resource type="PackedScene" uid="uid://g56iu0v5eduw" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/floor/floor_45_deg.tscn" id="5_82pvf"]
+[ext_resource type="PackedScene" uid="uid://devtmehfx5qma" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan_corner_floor_bevel.tscn" id="6_l3iht"]
+[ext_resource type="PackedScene" uid="uid://deoy1yhfvhiqo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan_corner__floor_round.tscn" id="7_t31nc"]
+[ext_resource type="PackedScene" uid="uid://r2fe2t2dhclj" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan_floor_bevel.tscn" id="8_wf48a"]
+[ext_resource type="PackedScene" uid="uid://dwhssu2rlxft7" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan__floor_round.tscn" id="9_joj06"]
+
+[node name="Floors_MeshLib" type="Node3D"]
+
+[node name="Wall_Floor" parent="." instance=ExtResource("1_16dnp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 12, 41)
+
+[node name="Wall_Floor_Beveled" parent="." instance=ExtResource("2_f08kc")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 30, 12, 44)
+
+[node name="Wall_Floor_Round" parent="." instance=ExtResource("3_uvjfo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 12, 44)
+
+[node name="Wall_Bridge_Arc_Floor" parent="." instance=ExtResource("4_d4dir")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 12, 44)
+
+[node name="Floor_45Deg" parent="." instance=ExtResource("5_82pvf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 12, 24)
+
+[node name="Bartizan_Corner_Floor_Bevel" parent="." instance=ExtResource("6_l3iht")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 86, 11, 27)
+
+[node name="Bartizan_Corner__Floor_Round" parent="." instance=ExtResource("7_t31nc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96, 12, 27)
+
+[node name="Bartizan_Floor_Bevel" parent="." instance=ExtResource("8_wf48a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 104, 12, 28)
+
+[node name="Bartizan__Floor_Round" parent="." instance=ExtResource("9_joj06")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112, 12, 28)

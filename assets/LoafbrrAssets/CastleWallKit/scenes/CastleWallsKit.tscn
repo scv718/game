@@ -1,0 +1,760 @@
+[gd_scene load_steps=125 format=3 uid="uid://dt14vr7ejp75r"]
+
+[ext_resource type="PackedScene" uid="uid://celmx6t5w7uem" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation.tscn" id="1_ccmcy"]
+[ext_resource type="PackedScene" uid="uid://dsyx8iuaaf65o" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation_corner_square.tscn" id="2_v628t"]
+[ext_resource type="PackedScene" uid="uid://c2cpm0f5q6c3d" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation_round_corner.tscn" id="3_n6a71"]
+[ext_resource type="PackedScene" uid="uid://dvgxi674k5fsv" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Machicolations/wall_machicolation_bevelled_corner.tscn" id="4_ou8j8"]
+[ext_resource type="PackedScene" uid="uid://basdk7ri8xopj" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements.tscn" id="5_rknp6"]
+[ext_resource type="PackedScene" uid="uid://clwyxew7h1tjt" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements_corner_square.tscn" id="6_scbwx"]
+[ext_resource type="PackedScene" uid="uid://boxifco68gq5j" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements_corner_bevel.tscn" id="7_75hv7"]
+[ext_resource type="PackedScene" uid="uid://xqxwod0q30uo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Battlements/wall_battlements_corner_round.tscn" id="8_khqlp"]
+[ext_resource type="PackedScene" uid="uid://vleq3npj0hi2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Floor/wall_floor_round.tscn" id="9_mruts"]
+[ext_resource type="PackedScene" uid="uid://dhkmv42rb38qc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Floor/wall_floor_beveled.tscn" id="10_5nh5b"]
+[ext_resource type="PackedScene" uid="uid://jhhw883klnds" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Floor/wall_floor.tscn" id="11_jgfjp"]
+[ext_resource type="PackedScene" uid="uid://j85qwl86g0kh" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Corner/wall_corner_square.tscn" id="12_p4deb"]
+[ext_resource type="PackedScene" uid="uid://dit5tndwmi6hj" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Corner/wall_corner_square_slits.tscn" id="13_v11ic"]
+[ext_resource type="PackedScene" uid="uid://4jh5lm6vdilt" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Corner/wall_corner_round.tscn" id="14_3jmkr"]
+[ext_resource type="PackedScene" uid="uid://viyylwb1wh4" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Corner/wall_corner_round_slits.tscn" id="15_mmpx8"]
+[ext_resource type="PackedScene" uid="uid://bgmoka54cy0s" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Corner/wall_corner_bevel.tscn" id="16_eo748"]
+[ext_resource type="PackedScene" uid="uid://oylfwsq7ft7j" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Corner/wall_corner_bevel_slits.tscn" id="17_ls3dv"]
+[ext_resource type="PackedScene" uid="uid://d0bl2r65j4db2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_slit.tscn" id="18_8f7nw"]
+[ext_resource type="PackedScene" uid="uid://cvdrne0dfhhft" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_slits.tscn" id="19_18tho"]
+[ext_resource type="PackedScene" uid="uid://3xff4t0bcnfb" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_door_arch.tscn" id="20_8vjiw"]
+[ext_resource type="PackedScene" uid="uid://wsyx7wfifech" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_door_square.tscn" id="21_f2cim"]
+[ext_resource type="PackedScene" uid="uid://beggw2qukufnk" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_wall.tscn" id="22_w6ejy"]
+[ext_resource type="PackedScene" uid="uid://btrb1l7lhxeom" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_window_square.tscn" id="23_ss3n8"]
+[ext_resource type="PackedScene" uid="uid://cfsyaa5u7sj57" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/Wall/wall_window_arch.tscn" id="24_vvk7c"]
+[ext_resource type="PackedScene" uid="uid://qtm3k5lwpmig" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_half_arc_wall_a.tscn" id="25_83hm3"]
+[ext_resource type="PackedScene" uid="uid://bkkq16ahbywbq" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_half_arc_wall_b.tscn" id="26_416ky"]
+[ext_resource type="PackedScene" uid="uid://b273gxxou4yay" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_arc_wall_top.tscn" id="27_v0k7p"]
+[ext_resource type="PackedScene" uid="uid://siij7yoyh5wm" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_arc_wall_top_ceiling.tscn" id="28_0c7v8"]
+[ext_resource type="PackedScene" uid="uid://cqikw28shosur" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_half_arc_a.tscn" id="29_rxijn"]
+[ext_resource type="PackedScene" uid="uid://w41r4wsuxu33" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_half_arc_b.tscn" id="30_us8vg"]
+[ext_resource type="PackedScene" uid="uid://bej6e4nehkncd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_half_arc_tunnel_wall_b.tscn" id="31_jqd1a"]
+[ext_resource type="PackedScene" uid="uid://cwrx73g7rcw3f" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/arc/wall_half_arc_tunnel_wall_a.tscn" id="32_rxm1r"]
+[ext_resource type="PackedScene" uid="uid://d0ufy25en8v6m" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/bridge/wall_bridge_half_arc_a.tscn" id="33_r1g3w"]
+[ext_resource type="PackedScene" uid="uid://ejwx3c24684n" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/bridge/wall_bridge_arc_floor.tscn" id="34_7iqp0"]
+[ext_resource type="PackedScene" uid="uid://cfvv0ghbesg05" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/bridge/wall_bridge_half_arc_b.tscn" id="35_534mr"]
+[ext_resource type="PackedScene" uid="uid://wyckvvxutc7h" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/bridge/wall_bridge_half_arc_wall_a.tscn" id="36_pyoyq"]
+[ext_resource type="PackedScene" uid="uid://8u2tqtxaymma" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Walls/bridge/wall_bridge_half_arc_wall_b.tscn" id="37_v88xx"]
+[ext_resource type="PackedScene" uid="uid://epp7mfslpobu" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/brattice/brattice_wall_1.tscn" id="38_2biyt"]
+[ext_resource type="PackedScene" uid="uid://detqmmois0mo0" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/brattice/brattice_wall_2.tscn" id="39_w35qd"]
+[ext_resource type="PackedScene" uid="uid://cuochh2eawxno" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_square.tscn" id="40_3p7fe"]
+[ext_resource type="PackedScene" uid="uid://duji8b8y7qxq7" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_square_slits.tscn" id="41_iedpu"]
+[ext_resource type="PackedScene" uid="uid://cs0k3wh2ub4l" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_bevel.tscn" id="42_xmune"]
+[ext_resource type="PackedScene" uid="uid://dclm7o6c4ymhr" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_bevel_slits.tscn" id="43_fnmt4"]
+[ext_resource type="PackedScene" uid="uid://kjqyfrharkoo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_round.tscn" id="44_bxga5"]
+[ext_resource type="PackedScene" uid="uid://bn0pyb3widms0" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_round_slits.tscn" id="45_k3v32"]
+[ext_resource type="PackedScene" uid="uid://uynxrcrcbhyh" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_arch.tscn" id="46_eg6oi"]
+[ext_resource type="PackedScene" uid="uid://8gienapt2dy8" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_square.tscn" id="47_ufwn3"]
+[ext_resource type="PackedScene" uid="uid://c5sdw14vbvbt" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_slits.tscn" id="48_srnja"]
+[ext_resource type="PackedScene" uid="uid://berx6nbhmme47" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_slit.tscn" id="49_kv07s"]
+[ext_resource type="PackedScene" uid="uid://cw2g4568qdtmf" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_wall.tscn" id="50_qe0t6"]
+[ext_resource type="PackedScene" uid="uid://dm2jsjr4yvhwf" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_window_square.tscn" id="51_2wa3i"]
+[ext_resource type="PackedScene" uid="uid://dorlvfh76qx5p" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_window_arch.tscn" id="52_yp5bg"]
+[ext_resource type="PackedScene" uid="uid://dq5kjg6kudrtu" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arch_a.tscn" id="53_p4c0j"]
+[ext_resource type="PackedScene" uid="uid://71k8kv18da00" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arch_b.tscn" id="54_u4myc"]
+[ext_resource type="PackedScene" uid="uid://c02w2y15tuvcw" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arc_wall_a.tscn" id="55_xwl07"]
+[ext_resource type="PackedScene" uid="uid://xlqj5on5ctwh" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_arc_wall_top.tscn" id="56_0d8id"]
+[ext_resource type="PackedScene" uid="uid://deih6hd6fg1tn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/arc/courtine_half_arc_wall_b.tscn" id="57_5lrk7"]
+[ext_resource type="PackedScene" uid="uid://cdgp703lr46me" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Pillar/pillar_top.tscn" id="58_ancql"]
+[ext_resource type="PackedScene" uid="uid://btrt5h4w23l20" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Pillar/pillar.tscn" id="59_ymdt7"]
+[ext_resource type="PackedScene" uid="uid://6vs7j46krjgd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/battlements/wall_battlements_45_deg.tscn" id="60_g1v1v"]
+[ext_resource type="PackedScene" uid="uid://b2317rx7o0hqy" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_door.tscn" id="60_udifx"]
+[ext_resource type="PackedScene" uid="uid://4rv75tlp23n2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_gate_arch.tscn" id="61_bgu1p"]
+[ext_resource type="PackedScene" uid="uid://br2psjnb3203x" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/machicolation/wall_machicolation_45_deg.tscn" id="61_ink54"]
+[ext_resource type="PackedScene" uid="uid://c6eu30pmny2mn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_gate_square.tscn" id="62_fnet2"]
+[ext_resource type="PackedScene" uid="uid://cvy1fp74ogsfc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_door_arch_45_deg.tscn" id="62_tw2ji"]
+[ext_resource type="PackedScene" uid="uid://did1qj4brekfc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_portcullis.tscn" id="63_mp00j"]
+[ext_resource type="PackedScene" uid="uid://c0el5fm5dp20g" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_door_square_45_deg.tscn" id="63_pu1bu"]
+[ext_resource type="PackedScene" uid="uid://ha8k38cd78eg" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_window_arch_45_deg.tscn" id="64_8vatv"]
+[ext_resource type="PackedScene" uid="uid://dcaiteu4fm1ni" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_arch.tscn" id="64_82t3e"]
+[ext_resource type="PackedScene" uid="uid://clqvp7dn6wmw5" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_a.tscn" id="65_koy1d"]
+[ext_resource type="PackedScene" uid="uid://bmhuegcu08g4q" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_slit_45_deg.tscn" id="65_xm2vh"]
+[ext_resource type="PackedScene" uid="uid://c8nfx7u0yfbsd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_b.tscn" id="66_61s6c"]
+[ext_resource type="PackedScene" uid="uid://dw8b2f756xupc" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_window_square_45_deg.tscn" id="66_ogkv0"]
+[ext_resource type="PackedScene" uid="uid://dp7pm35vi4u2m" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/DoorStickers/door_sticker_window_square_c.tscn" id="67_7wfs6"]
+[ext_resource type="PackedScene" uid="uid://cuqaalyuivfi7" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/wall/courtine_wall_45_deg.tscn" id="67_cduxw"]
+[ext_resource type="PackedScene" uid="uid://dhjsdfxtd8w05" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/stairs/bartizan_corner_stairs.tscn" id="68_jagge"]
+[ext_resource type="PackedScene" uid="uid://chydvejhqjsy4" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arc_wall_a_45_deg.tscn" id="68_urj4q"]
+[ext_resource type="PackedScene" uid="uid://vqgb1a585xuq" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/stairs/bartizan_stairs.tscn" id="69_6y570"]
+[ext_resource type="PackedScene" uid="uid://1ujipm1ukkkn" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_arc_wall_top_45_deg.tscn" id="69_ka060"]
+[ext_resource type="PackedScene" uid="uid://bibs4q08hhhnd" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arc_wall_b_45_deg.tscn" id="70_aobsl"]
+[ext_resource type="PackedScene" uid="uid://cleo5rqkv8p85" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/stairs/stairs.tscn" id="70_rh05y"]
+[ext_resource type="PackedScene" uid="uid://clmbnmehd53jv" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/stairs/stairs_wall_a.tscn" id="71_nq1l0"]
+[ext_resource type="PackedScene" uid="uid://b1ktkfn35apeq" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arch_b_45_deg.tscn" id="71_ux36w"]
+[ext_resource type="PackedScene" uid="uid://bk8h80m84n66c" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/stairs/stairs_wall_b.tscn" id="72_aqdfi"]
+[ext_resource type="PackedScene" uid="uid://bhuqp0wr6kx88" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Courtines/arc/courtine_half_arch_a_45_deg.tscn" id="72_ivhnw"]
+[ext_resource type="PackedScene" uid="uid://g56iu0v5eduw" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/floor/floor_45_deg.tscn" id="73_80twu"]
+[ext_resource type="PackedScene" uid="uid://cywaevdf34ytx" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Walls/wall_door_arch_45_deg.tscn" id="74_2kuvd"]
+[ext_resource type="PackedScene" uid="uid://d1xr8qlv4nv8l" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Walls/wall_door_square_45_deg.tscn" id="75_plvoy"]
+[ext_resource type="PackedScene" uid="uid://1gpdnfvxrpns" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Walls/wall_window_arch_45_deg.tscn" id="76_ab6dr"]
+[ext_resource type="PackedScene" uid="uid://bkv6kqq4eut08" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Walls/wall_wall_45_deg.tscn" id="77_luwi6"]
+[ext_resource type="PackedScene" uid="uid://d0lavfoaln81m" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Walls/wall_slit_45_deg.tscn" id="78_2dag7"]
+[ext_resource type="PackedScene" uid="uid://drs643j5m40m2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/45DegreeParts/Walls/wall_window_square_45_deg.tscn" id="79_hdwnc"]
+[ext_resource type="PackedScene" uid="uid://dcug8c8mbt2jo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/machicolation/bartizan_corner_round_machicolation.tscn" id="80_obb8m"]
+[ext_resource type="PackedScene" uid="uid://bm46lt75ql0ns" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/machicolation/bartizan_corner_bevel_machicolation.tscn" id="81_spurf"]
+[ext_resource type="PackedScene" uid="uid://nwqyx1465d5t" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/battlement/bartizan_corner_round_battlement.tscn" id="82_07gs1"]
+[ext_resource type="PackedScene" uid="uid://dlusaxjada1sw" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/battlement/bartizan_corner_bevel_battlement.tscn" id="83_vxpxv"]
+[ext_resource type="PackedScene" uid="uid://dc3rg34sdcet1" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/bartizan_corner_bevel_slits.tscn" id="84_nipjt"]
+[ext_resource type="PackedScene" uid="uid://co1b64wiqvba2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/bartizan_corner_bevel.tscn" id="85_m74h1"]
+[ext_resource type="PackedScene" uid="uid://cibd4vwq4muep" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/bartizan_corner_bevel_bottom.tscn" id="86_qioto"]
+[ext_resource type="PackedScene" uid="uid://ccufgyl3l2cah" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/bartizan_corner_round.tscn" id="87_72kds"]
+[ext_resource type="PackedScene" uid="uid://b5i373s0of3kb" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/bartizan_corner_round_slits.tscn" id="88_k0nkc"]
+[ext_resource type="PackedScene" uid="uid://7adl1kyoi518" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/bartizan_corner_round_bottom.tscn" id="89_721wm"]
+[ext_resource type="PackedScene" uid="uid://devtmehfx5qma" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan_corner_floor_bevel.tscn" id="90_4u0id"]
+[ext_resource type="PackedScene" uid="uid://deoy1yhfvhiqo" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan_corner__floor_round.tscn" id="91_2b35q"]
+[ext_resource type="PackedScene" uid="uid://dwhssu2rlxft7" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan__floor_round.tscn" id="92_rhb7d"]
+[ext_resource type="PackedScene" uid="uid://r2fe2t2dhclj" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/floor/bartizan_floor_bevel.tscn" id="93_e15dp"]
+[ext_resource type="PackedScene" uid="uid://dyk4e7oa6onaw" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/bartizan_bevel.tscn" id="107_kp6vn"]
+[ext_resource type="PackedScene" uid="uid://cnoy7glk6qvwl" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/bartizan_bevel_bottom.tscn" id="108_0ekyw"]
+[ext_resource type="PackedScene" uid="uid://dxrfd2aoyb8h2" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/bartizan_bevel_slits.tscn" id="109_f32nf"]
+[ext_resource type="PackedScene" uid="uid://cu7wekvnbv8wh" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/bartizan_round.tscn" id="110_mw5tp"]
+[ext_resource type="PackedScene" uid="uid://dmsrwwo8ys0ct" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/bartizan_round_bottom.tscn" id="111_866dg"]
+[ext_resource type="PackedScene" uid="uid://blbsph6es6gba" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/battlement/bartizan_bevel_battlement.tscn" id="111_l1sy5"]
+[ext_resource type="PackedScene" uid="uid://5rurerdmpc6t" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/battlement/bartizan_round_battlement.tscn" id="112_rvb28"]
+[ext_resource type="PackedScene" uid="uid://bf2b7ib35gt43" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/bartizan_round_slits.tscn" id="112_x7p6r"]
+[ext_resource type="PackedScene" uid="uid://duyv3q1sycrnb" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/machicolation/bartizan_bevel_machicolation.tscn" id="113_g5sl5"]
+[ext_resource type="PackedScene" uid="uid://bxks1r1yvayo6" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/half/machicolation/bartizan_round_machicolation.tscn" id="114_gvsu7"]
+[ext_resource type="Script" path="res://addons/freecam_3D/freecam.gd" id="117_6ic13"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xi1tl"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+sky_energy_multiplier = 8.0
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_snwo4"]
+sky_material = SubResource("ProceduralSkyMaterial_xi1tl")
+
+[sub_resource type="Environment" id="Environment_1b0p0"]
+background_mode = 2
+background_energy_multiplier = 0.3
+sky = SubResource("Sky_snwo4")
+ssao_enabled = true
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_beghn"]
+size = Vector2(300, 300)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_d7hdg"]
+data = PackedVector3Array(150, 0, 150, -150, 0, 150, 150, 0, -150, -150, 0, 150, -150, 0, -150, 150, 0, -150)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5gnxo"]
+size = Vector2(300, 300)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_em2de"]
+albedo_color = Color(0.184314, 0.278431, 0.227451, 1)
+
+[node name="CastleWallsKit" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1b0p0")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.334567, 0.371575, 0, 0.743145, 0.66913, -0.500003, 0.579483, -0.643581, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Walls" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65, 0, 45)
+
+[node name="Wall_Floor" parent="Walls" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21, -7)
+
+[node name="Wall_Floor_Beveled" parent="Walls" instance=ExtResource("10_5nh5b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 21, -7)
+
+[node name="Wall_Floor_Round" parent="Walls" instance=ExtResource("9_mruts")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 21, -7)
+
+[node name="Wall_Door_Arch" parent="Walls" instance=ExtResource("20_8vjiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -10)
+
+[node name="Wall_Door_Square" parent="Walls" instance=ExtResource("21_f2cim")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -10)
+
+[node name="Wall_Slit" parent="Walls" instance=ExtResource("18_8f7nw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -10)
+
+[node name="Wall_Slits" parent="Walls" instance=ExtResource("19_18tho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 7, -10)
+
+[node name="Wall_Wall" parent="Walls" instance=ExtResource("22_w6ejy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, -10)
+
+[node name="Wall_Window_Arch" parent="Walls" instance=ExtResource("24_vvk7c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, -10)
+
+[node name="Wall_Window_Square" parent="Walls" instance=ExtResource("23_ss3n8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 14, -10)
+
+[node name="Wall_Corner_Bevel" parent="Walls" instance=ExtResource("16_eo748")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 7, -10)
+
+[node name="Wall_Corner_Bevel_Slits" parent="Walls" instance=ExtResource("17_ls3dv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 14, -10)
+
+[node name="Wall_Corner_Round" parent="Walls" instance=ExtResource("14_3jmkr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 7, -10)
+
+[node name="Wall_Corner_Round_Slits" parent="Walls" instance=ExtResource("15_mmpx8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 14, -11)
+
+[node name="Wall_Corner_Square" parent="Walls" instance=ExtResource("12_p4deb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 7, -10)
+
+[node name="Wall_Corner_Square_Slits" parent="Walls" instance=ExtResource("13_v11ic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 14, -10)
+
+[node name="Wall_Battlements" parent="Walls" instance=ExtResource("5_rknp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 22, -10)
+
+[node name="Wall_Battlements_Corner_Bevel" parent="Walls" instance=ExtResource("7_75hv7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 22, -7)
+
+[node name="Wall_Battlements_Corner_Round" parent="Walls" instance=ExtResource("8_khqlp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 22, -7)
+
+[node name="Wall_Battlements_Corner_Square" parent="Walls" instance=ExtResource("6_scbwx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 22, -7)
+
+[node name="Wall_Machicolation" parent="Walls" instance=ExtResource("1_ccmcy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 25, -10)
+
+[node name="Wall_Machicolation_Bevelled_Corner" parent="Walls" instance=ExtResource("4_ou8j8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 25, -7)
+
+[node name="Wall_Machicolation_Corner_Square" parent="Walls" instance=ExtResource("2_v628t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, -7)
+
+[node name="Wall_Machicolation_Round_Corner" parent="Walls" instance=ExtResource("3_n6a71")]
+transform = Transform3D(1.12833, 0, 0, 0, 1, 0, 0, 0, 1.12833, -7, 25, -7)
+
+[node name="Wall_Bridge_Arc_Floor" parent="Walls" instance=ExtResource("34_7iqp0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 14, -10)
+
+[node name="Wall_Bridge_Half_Arc_A" parent="Walls" instance=ExtResource("33_r1g3w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 8, -10)
+
+[node name="Wall_Bridge_Half_Arc_B" parent="Walls" instance=ExtResource("35_534mr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 8, -10)
+
+[node name="Wall_Bridge_Half_Arc_Wall_A" parent="Walls" instance=ExtResource("36_pyoyq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1, -10)
+
+[node name="Wall_Bridge_Half_Arc_Wall_B" parent="Walls" instance=ExtResource("37_v88xx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, -10)
+
+[node name="Wall_Arc_Wall_Top" parent="Walls" instance=ExtResource("27_v0k7p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 22, -10)
+
+[node name="Wall_Arc_Wall_Top_Ceiling" parent="Walls" instance=ExtResource("28_0c7v8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 22, -7)
+
+[node name="Wall_Half_Arc_A" parent="Walls" instance=ExtResource("29_rxijn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 22, -10)
+
+[node name="Wall_Half_Arc_B" parent="Walls" instance=ExtResource("30_us8vg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 22, -10)
+
+[node name="Wall_Half_Arc_Tunnel_Wall_A" parent="Walls" instance=ExtResource("32_rxm1r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 22, -7)
+
+[node name="Wall_Half_Arc_Tunnel_Wall_B" parent="Walls" instance=ExtResource("31_jqd1a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 22, -7)
+
+[node name="Wall_Half_Arc_Wall_A" parent="Walls" instance=ExtResource("25_83hm3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 15, -10)
+
+[node name="Wall_Half_Arc_Wall_B" parent="Walls" instance=ExtResource("26_416ky")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 15, -10)
+
+[node name="Courtines" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94, 0, 41)
+
+[node name="Courtine_Door_Arch" parent="Courtines" instance=ExtResource("46_eg6oi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4557, 0, -5.98366)
+
+[node name="Courtine_Door_Square" parent="Courtines" instance=ExtResource("47_ufwn3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.4557, 0, -5.98366)
+
+[node name="Courtine_Slit" parent="Courtines" instance=ExtResource("49_kv07s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.45567, 0, -5.98366)
+
+[node name="Courtine_Slits" parent="Courtines" instance=ExtResource("48_srnja")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4557, 14, -5.98366)
+
+[node name="Courtine_Wall" parent="Courtines" instance=ExtResource("50_qe0t6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4557, 0, -5.98366)
+
+[node name="Courtine_Window_Arch" parent="Courtines" instance=ExtResource("52_yp5bg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4557, 7, -5.98366)
+
+[node name="Courtine_Window_Square" parent="Courtines" instance=ExtResource("51_2wa3i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4557, 7, -5.98366)
+
+[node name="Courtine_Corner_Bevel" parent="Courtines" instance=ExtResource("42_xmune")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4557, 21, -5.98366)
+
+[node name="Courtine_Corner_Bevel_Slits" parent="Courtines" instance=ExtResource("43_fnmt4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4557, 21, -5.98366)
+
+[node name="Courtine_Corner_Round" parent="Courtines" instance=ExtResource("44_bxga5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.4557, 21, -5.98366)
+
+[node name="Courtine_Corner_Round_Slits" parent="Courtines" instance=ExtResource("45_k3v32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4557, 21, -5.98366)
+
+[node name="Courtine_Corner_Square" parent="Courtines" instance=ExtResource("40_3p7fe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.4557, 7, -5.98366)
+
+[node name="Courtine_Corner_Square_Slits" parent="Courtines" instance=ExtResource("41_iedpu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.4557, 14, -5.98366)
+
+[node name="Courtine_Arc_Wall_Top" parent="Courtines" instance=ExtResource("56_0d8id")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.4557, 14, -5.98366)
+
+[node name="Courtine_HalfArch_A" parent="Courtines" instance=ExtResource("53_p4c0j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.54433, 14, -5.98366)
+
+[node name="Courtine_HalfArch_B" parent="Courtines" instance=ExtResource("54_u4myc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.455673, 14, -5.98366)
+
+[node name="Courtine_Half_Arc_Wall_A" parent="Courtines" instance=ExtResource("55_xwl07")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.54433, 7, -5.98366)
+
+[node name="Courtine_Half_Arc_Wall_B" parent="Courtines" instance=ExtResource("57_5lrk7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.455673, 7, -5.98366)
+
+[node name="Brattice" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79, 8, 35)
+
+[node name="Brattice_Wall_1" parent="Brattice" instance=ExtResource("38_2biyt")]
+
+[node name="Brattice_Wall_2" parent="Brattice" instance=ExtResource("39_w35qd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 0)
+
+[node name="Pillars" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 32)
+
+[node name="Pillar" parent="Pillars" instance=ExtResource("59_ymdt7")]
+
+[node name="Pillar_Top" parent="Pillars" instance=ExtResource("58_ancql")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+
+[node name="DoorStickers" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83, 0, 35)
+
+[node name="DoorSticker_Door" parent="DoorStickers" instance=ExtResource("60_udifx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45567, 0, 0.0163383)
+
+[node name="DoorSticker_Gate_Arch" parent="DoorStickers" instance=ExtResource("61_bgu1p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.54433, 0, 0.0163383)
+
+[node name="DoorSticker_Gate_Square" parent="DoorStickers" instance=ExtResource("62_fnet2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.54433, 0, 0.0163383)
+
+[node name="DoorSticker_Portcullis" parent="DoorStickers" instance=ExtResource("63_mp00j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.45567, 0, 0.0163383)
+
+[node name="DoorSticker_Window_Arch" parent="DoorStickers" instance=ExtResource("64_82t3e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45567, 4, 0.0163383)
+
+[node name="DoorSticker_Window_Square_A" parent="DoorStickers" instance=ExtResource("65_koy1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.544331, 3, 0.0163383)
+
+[node name="DoorSticker_Window_Square_B" parent="DoorStickers" instance=ExtResource("66_61s6c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.54433, 1, 0.0163383)
+
+[node name="DoorSticker_Window_Square_C" parent="DoorStickers" instance=ExtResource("67_7wfs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.544331, 5, 0.0163383)
+
+[node name="Stairs" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 75, 15, 37)
+
+[node name="Bartizan_Corner_Stairs" parent="Stairs" instance=ExtResource("68_jagge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
+
+[node name="Bartizan_Stairs" parent="Stairs" instance=ExtResource("69_6y570")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -2)
+
+[node name="Stairs" parent="Stairs" instance=ExtResource("70_rh05y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -2)
+
+[node name="Stairs_Wall_A" parent="Stairs" instance=ExtResource("71_nq1l0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -2)
+
+[node name="Stairs_Wall_B" parent="Stairs" instance=ExtResource("72_aqdfi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -2)
+
+[node name="45Deg_Walls" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 14, 29)
+
+[node name="Wall_Battlements_45Deg" parent="45Deg_Walls" instance=ExtResource("60_g1v1v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 14, -6)
+
+[node name="Wall_Machicolation_45Deg" parent="45Deg_Walls" instance=ExtResource("61_ink54")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 15, -1)
+
+[node name="Floor_45Deg" parent="45Deg_Walls" instance=ExtResource("73_80twu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 14, -4)
+
+[node name="Wall_Door_Arch_45Deg2" parent="45Deg_Walls" instance=ExtResource("74_2kuvd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -6)
+
+[node name="Wall_Door_Square_45Deg2" parent="45Deg_Walls" instance=ExtResource("75_plvoy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 4)
+
+[node name="Wall_Slit_45Deg2" parent="45Deg_Walls" instance=ExtResource("78_2dag7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 7, -6)
+
+[node name="Wall_Wall_45Deg2" parent="45Deg_Walls" instance=ExtResource("77_luwi6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -1)
+
+[node name="Wall_Window_Arch_45Deg2" parent="45Deg_Walls" instance=ExtResource("76_ab6dr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 7, 4)
+
+[node name="Wall_Window_Square_45Deg2" parent="45Deg_Walls" instance=ExtResource("79_hdwnc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, -1)
+
+[node name="45DegCourtines" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 16)
+
+[node name="Courtine_Door_Arch_45Deg" parent="45DegCourtines" instance=ExtResource("62_tw2ji")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 17)
+
+[node name="Courtine_Door_Square_45Deg" parent="45DegCourtines" instance=ExtResource("63_pu1bu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 7, 17)
+
+[node name="Courtine_Slit_45Deg" parent="45DegCourtines" instance=ExtResource("65_xm2vh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 7, 12)
+
+[node name="Courtine_Wall_45Deg" parent="45DegCourtines" instance=ExtResource("67_cduxw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 7)
+
+[node name="Courtine_Window_Arch_45Deg" parent="45DegCourtines" instance=ExtResource("64_8vatv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 12)
+
+[node name="Courtine_Window_Square_45_Deg" parent="45DegCourtines" instance=ExtResource("66_ogkv0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 7, 7)
+
+[node name="Courtine_Arc_Wall_Top_45Deg" parent="45DegCourtines" instance=ExtResource("69_ka060")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -4, 23, 2)
+
+[node name="Courtine_HalfArch_A_45Deg" parent="45DegCourtines" instance=ExtResource("72_ivhnw")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -2, 7, 4)
+
+[node name="Courtine_HalfArch_B_45Deg" parent="45DegCourtines" instance=ExtResource("71_ux36w")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -7, 20, 0)
+
+[node name="Courtine_Half_Arc_Wall_A_45Deg" parent="45DegCourtines" instance=ExtResource("68_urj4q")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -2, 0, 4)
+
+[node name="Courtine_Half_Arc_Wall_B_45Deg" parent="45DegCourtines" instance=ExtResource("70_aobsl")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -7, 13, 0)
+
+[node name="Bartizan_Corners" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 136, 14, 38)
+
+[node name="Bartizan_Corner_Bevel" parent="Bartizan_Corners" instance=ExtResource("85_m74h1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, -1)
+
+[node name="Bartizan_Corner_Bevel_Bottom" parent="Bartizan_Corners" instance=ExtResource("86_qioto")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, -4, -1)
+
+[node name="Bartizan_Corner_Bevel_Slits" parent="Bartizan_Corners" instance=ExtResource("84_nipjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 7, -1)
+
+[node name="Bartizan_Corner_Round" parent="Bartizan_Corners" instance=ExtResource("87_72kds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+
+[node name="Bartizan_Corner_Round_Bottom" parent="Bartizan_Corners" instance=ExtResource("89_721wm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -4, -1)
+
+[node name="Bartizan_Corner_Round_Slits" parent="Bartizan_Corners" instance=ExtResource("88_k0nkc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 7, -1)
+
+[node name="Bartizan_Corner_Bevel_Battlement" parent="Bartizan_Corners" instance=ExtResource("83_vxpxv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 7, -1)
+
+[node name="Bartizan_Corner_Round_Battlement" parent="Bartizan_Corners" instance=ExtResource("82_07gs1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 12, -1)
+
+[node name="Bartizan_Corner_Bevel_Machicolation" parent="Bartizan_Corners" instance=ExtResource("81_spurf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 12, -1)
+
+[node name="Bartizan_Corner_Round_Machicolation" parent="Bartizan_Corners" instance=ExtResource("80_obb8m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 7, -1)
+
+[node name="Bartizan_Corner_Floor_Bevel" parent="Bartizan_Corners" instance=ExtResource("90_4u0id")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 11, -1)
+
+[node name="Bartizan_Corner__Floor_Round" parent="Bartizan_Corners" instance=ExtResource("91_2b35q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 11, -1)
+
+[node name="Bartizan_half" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157, 14, 38)
+
+[node name="Bartizan_Bevel" parent="Bartizan_half" instance=ExtResource("107_kp6vn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 0)
+
+[node name="Bartizan_Bevel_Bottom" parent="Bartizan_half" instance=ExtResource("108_0ekyw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -4, 0)
+
+[node name="Bartizan_Bevel_Slits" parent="Bartizan_half" instance=ExtResource("109_f32nf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 7, 0)
+
+[node name="Bartizan_Round" parent="Bartizan_half" instance=ExtResource("110_mw5tp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+
+[node name="Bartizan_Round_Bottom" parent="Bartizan_half" instance=ExtResource("111_866dg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -4, 0)
+
+[node name="Bartizan_Round_Slits" parent="Bartizan_half" instance=ExtResource("112_x7p6r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 7, 0)
+
+[node name="Bartizan_Bevel_Battlement" parent="Bartizan_half" instance=ExtResource("111_l1sy5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 12, -1)
+
+[node name="Bartizan_Round_Battlement" parent="Bartizan_half" instance=ExtResource("112_rvb28")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 12, 0)
+
+[node name="Bartizan_Bevel_Machicolation" parent="Bartizan_half" instance=ExtResource("113_g5sl5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 7, 0)
+
+[node name="Bartizan_Round_Machicolation" parent="Bartizan_half" instance=ExtResource("114_gvsu7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 7, 0)
+
+[node name="Bartizan_Floor_Bevel" parent="Bartizan_half" instance=ExtResource("93_e15dp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 11, 0)
+
+[node name="Bartizan__Floor_Round" parent="Bartizan_half" instance=ExtResource("92_rhb7d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 11, 0)
+
+[node name="Demo" type="Node3D" parent="."]
+visible = false
+
+[node name="45Deg_Walls2" type="Node3D" parent="Demo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29, 0, -41)
+
+[node name="Wall_Battlements_45Deg" parent="Demo/45Deg_Walls2" instance=ExtResource("60_g1v1v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 12, -5)
+
+[node name="Wall_Machicolation_45Deg" parent="Demo/45Deg_Walls2" instance=ExtResource("61_ink54")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 12, -1)
+
+[node name="Wall_Door_Arch_45Deg2" parent="Demo/45Deg_Walls2" instance=ExtResource("74_2kuvd")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 13, 0, -41)
+
+[node name="Wall_Door_Square_45Deg2" parent="Demo/45Deg_Walls2" instance=ExtResource("75_plvoy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, -41)
+
+[node name="Wall_Slit_45Deg2" parent="Demo/45Deg_Walls2" instance=ExtResource("78_2dag7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 6, -5)
+
+[node name="Wall_Wall_45Deg2" parent="Demo/45Deg_Walls2" instance=ExtResource("77_luwi6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, -49)
+
+[node name="Wall_Wall_45Deg4" parent="Demo/45Deg_Walls2" instance=ExtResource("77_luwi6")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 21, 0, -49)
+
+[node name="Wall_Wall_45Deg5" parent="Demo/45Deg_Walls2" instance=ExtResource("77_luwi6")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 17, 0, -45)
+
+[node name="Wall_Wall_45Deg3" parent="Demo/45Deg_Walls2" instance=ExtResource("77_luwi6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, -45)
+
+[node name="Wall_Window_Arch_45Deg2" parent="Demo/45Deg_Walls2" instance=ExtResource("76_ab6dr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 6, 3)
+
+[node name="Wall_Window_Square_45Deg2" parent="Demo/45Deg_Walls2" instance=ExtResource("79_hdwnc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 6, -1)
+
+[node name="Walls2" type="Node3D" parent="Demo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -20)
+
+[node name="Wall_Door_Arch" parent="Demo/Walls2" instance=ExtResource("20_8vjiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -7)
+
+[node name="Wall_Door_Square" parent="Demo/Walls2" instance=ExtResource("21_f2cim")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, -7)
+
+[node name="Wall_Door_Square2" parent="Demo/Walls2" instance=ExtResource("21_f2cim")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11, 0, -57)
+
+[node name="Wall_Slit" parent="Demo/Walls2" instance=ExtResource("18_8f7nw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -7)
+
+[node name="Wall_Slits" parent="Demo/Walls2" instance=ExtResource("19_18tho")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -7)
+
+[node name="Wall_Wall" parent="Demo/Walls2" instance=ExtResource("22_w6ejy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 12, -72)
+
+[node name="Wall_Wall4" parent="Demo/Walls2" instance=ExtResource("22_w6ejy")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4, 0, -60)
+
+[node name="Wall_Wall5" parent="Demo/Walls2" instance=ExtResource("22_w6ejy")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -22, 0, -60)
+
+[node name="Wall_Wall2" parent="Demo/Walls2" instance=ExtResource("22_w6ejy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 12, -72)
+
+[node name="Wall_Wall3" parent="Demo/Walls2" instance=ExtResource("22_w6ejy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 12, -72)
+
+[node name="Wall_Window_Arch" parent="Demo/Walls2" instance=ExtResource("24_vvk7c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -7)
+
+[node name="Wall_Window_Square" parent="Demo/Walls2" instance=ExtResource("23_ss3n8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, -7)
+
+[node name="Wall_Corner_Bevel" parent="Demo/Walls2" instance=ExtResource("16_eo748")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -2)
+
+[node name="Wall_Corner_Bevel_Slits" parent="Demo/Walls2" instance=ExtResource("17_ls3dv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 6, -2)
+
+[node name="Wall_Corner_Round" parent="Demo/Walls2" instance=ExtResource("14_3jmkr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -2)
+
+[node name="Wall_Corner_Round_Slits" parent="Demo/Walls2" instance=ExtResource("15_mmpx8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 6, -3)
+
+[node name="Wall_Corner_Square" parent="Demo/Walls2" instance=ExtResource("12_p4deb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2)
+
+[node name="Wall_Corner_Square_Slits" parent="Demo/Walls2" instance=ExtResource("13_v11ic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 6, -2)
+
+[node name="Wall_Battlements" parent="Demo/Walls2" instance=ExtResource("5_rknp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 0, -1)
+
+[node name="Wall_Battlements_Corner_Bevel" parent="Demo/Walls2" instance=ExtResource("7_75hv7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 3, -1)
+
+[node name="Wall_Battlements_Corner_Round" parent="Demo/Walls2" instance=ExtResource("8_khqlp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 7, -1)
+
+[node name="Wall_Battlements_Corner_Square" parent="Demo/Walls2" instance=ExtResource("6_scbwx")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -26, 0, -1)
+
+[node name="Wall_Machicolation" parent="Demo/Walls2" instance=ExtResource("1_ccmcy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 11, -1)
+
+[node name="Wall_Machicolation_Bevelled_Corner" parent="Demo/Walls2" instance=ExtResource("4_ou8j8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 14, -1)
+
+[node name="Wall_Machicolation_Corner_Square" parent="Demo/Walls2" instance=ExtResource("2_v628t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 11, -1)
+
+[node name="Wall_Machicolation_Round_Corner" parent="Demo/Walls2" instance=ExtResource("3_n6a71")]
+transform = Transform3D(1.12833, 0, 0, 0, 1, 0, 0, 0, 1.12833, -25, 18, -1)
+
+[node name="Wall_Bridge_Arc_Floor" parent="Demo/Walls2" instance=ExtResource("34_7iqp0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 12, 4)
+
+[node name="Wall_Bridge_Half_Arc_A" parent="Demo/Walls2" instance=ExtResource("33_r1g3w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 6, 4)
+
+[node name="Wall_Bridge_Half_Arc_B" parent="Demo/Walls2" instance=ExtResource("35_534mr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 6, 4)
+
+[node name="Wall_Bridge_Half_Arc_Wall_A" parent="Demo/Walls2" instance=ExtResource("36_pyoyq")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 40, 0, 4)
+
+[node name="Wall_Bridge_Half_Arc_Wall_B" parent="Demo/Walls2" instance=ExtResource("37_v88xx")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0, 4)
+
+[node name="Wall_Arc_Wall_Top" parent="Demo/Walls2" instance=ExtResource("27_v0k7p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 5, 1)
+
+[node name="Wall_Arc_Wall_Top_Ceiling" parent="Demo/Walls2" instance=ExtResource("28_0c7v8")]
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 11, 10, 4)
+
+[node name="Wall_Half_Arc_A" parent="Demo/Walls2" instance=ExtResource("29_rxijn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 5, 1)
+
+[node name="Wall_Half_Arc_B" parent="Demo/Walls2" instance=ExtResource("30_us8vg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 5, 1)
+
+[node name="Wall_Half_Arc_Tunnel_Wall_A" parent="Demo/Walls2" instance=ExtResource("32_rxm1r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 5, 1)
+
+[node name="Wall_Half_Arc_Tunnel_Wall_B" parent="Demo/Walls2" instance=ExtResource("31_jqd1a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 5, 1)
+
+[node name="Wall_Half_Arc_Wall_A" parent="Demo/Walls2" instance=ExtResource("25_83hm3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, -1, 1)
+
+[node name="Wall_Half_Arc_Wall_B" parent="Demo/Walls2" instance=ExtResource("26_416ky")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, 1)
+
+[node name="floors" type="Node3D" parent="Demo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 0)
+
+[node name="Floor_45Deg" parent="Demo/floors" instance=ExtResource("73_80twu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 6, -89)
+
+[node name="Floor_45Deg2" parent="Demo/floors" instance=ExtResource("73_80twu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 6, -83)
+
+[node name="Floor_45Deg3" parent="Demo/floors" instance=ExtResource("73_80twu")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -15, 6, -83)
+
+[node name="Floor_45Deg4" parent="Demo/floors" instance=ExtResource("73_80twu")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9, 6, -89)
+
+[node name="Wall_Floor" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 6, -89)
+
+[node name="Wall_Floor2" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6, -89)
+
+[node name="Wall_Floor3" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 6, -89)
+
+[node name="Wall_Floor4" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 6, -83)
+
+[node name="Wall_Floor7" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 6, -83)
+
+[node name="Wall_Floor9" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 6, -77)
+
+[node name="Wall_Floor10" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 6, -77)
+
+[node name="Wall_Floor5" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6, -83)
+
+[node name="Wall_Floor6" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 6, -83)
+
+[node name="Wall_Floor8" parent="Demo/floors" instance=ExtResource("11_jgfjp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 6, -83)
+
+[node name="Wall_Floor_Beveled" parent="Demo/floors" instance=ExtResource("10_5nh5b")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -7, 12, -16)
+
+[node name="Wall_Floor_Round" parent="Demo/floors" instance=ExtResource("9_mruts")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 12, -16)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Demo"]
+visible = false
+mesh = SubResource("PlaneMesh_beghn")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Demo/MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Demo/MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_d7hdg")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 4, 0)
+script = ExtResource("117_6ic13")
+overlay_text = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, 0)
+mesh = SubResource("PlaneMesh_5gnxo")
+surface_material_override/0 = SubResource("StandardMaterial3D_em2de")

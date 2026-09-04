@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=4 format=3 uid="uid://cjfeikrt2eyou"]
+
+[ext_resource type="Texture2D" uid="uid://bmo6fnav2r3qh" path="res://assets/LoafbrrAssets/CastleWallKit/textures/BrickTrims/Base Color_BrickTrims.png" id="1_v5kaf"]
+[ext_resource type="Texture2D" uid="uid://57dw2len531m" path="res://assets/LoafbrrAssets/CastleWallKit/textures/BrickTrims/MRAO_BrickTrims.exr" id="2_2srhf"]
+[ext_resource type="Texture2D" uid="uid://cv4q3nqwo8drs" path="res://assets/LoafbrrAssets/CastleWallKit/textures/BrickTrims/NORMAL_BrickTrims.png" id="3_mepu0"]
+
+[resource]
+albedo_texture = ExtResource("1_v5kaf")
+roughness_texture = ExtResource("2_2srhf")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_mepu0")
+ao_enabled = true
+ao_texture = ExtResource("2_2srhf")

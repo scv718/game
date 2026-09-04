@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://clqvp7dn6wmw5"]
+
+[ext_resource type="Material" uid="uid://k72idgv446ky" path="res://assets/LoafbrrAssets/CastleWallKit/materials/DoorSticker_Mat.tres" id="1_s2s2e"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_me85m"]
+_surfaces = [{
+"aabb": AABB(-0.672055, -0.896934, -2.68164e-07, 1.34411, 1.79387, 1.05363e-05),
+"format": 4097,
+"index_count": 6,
+"index_data": PackedByteArray(1, 0, 2, 0, 0, 0, 1, 0, 3, 0, 2, 0),
+"name": "WallStickers",
+"primitive": 3,
+"vertex_count": 4,
+"vertex_data": PackedByteArray(201, 11, 44, 191, 120, 157, 101, 191, 38, 248, 143, 52, 201, 11, 44, 63, 120, 157, 101, 191, 91, 120, 63, 180, 201, 11, 44, 191, 120, 157, 101, 63, 92, 120, 63, 52, 201, 11, 44, 63, 120, 157, 101, 63, 38, 248, 143, 180)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_id3ur"]
+resource_name = "CastleWallsKit_DoorSticker_Window_Square_A"
+_surfaces = [{
+"aabb": AABB(-0.672055, -0.896934, -2.68164e-07, 1.34411, 1.79387, 1.05363e-05),
+"attribute_data": PackedByteArray(0, 0, 128, 63, 0, 0, 128, 63, 107, 75, 44, 63, 0, 0, 128, 63, 0, 0, 128, 63, 27, 73, 16, 63, 105, 75, 44, 63, 27, 73, 16, 63),
+"format": 4119,
+"index_count": 6,
+"index_data": PackedByteArray(1, 0, 2, 0, 0, 0, 1, 0, 3, 0, 2, 0),
+"material": ExtResource("1_s2s2e"),
+"name": "WallStickers",
+"primitive": 3,
+"vertex_count": 4,
+"vertex_data": PackedByteArray(201, 11, 44, 191, 120, 157, 101, 191, 38, 248, 143, 52, 255, 255, 255, 255, 0, 0, 255, 191, 201, 11, 44, 63, 120, 157, 101, 191, 91, 120, 63, 180, 255, 255, 255, 255, 0, 0, 255, 191, 201, 11, 44, 191, 120, 157, 101, 63, 92, 120, 63, 52, 255, 255, 255, 255, 0, 0, 255, 191, 201, 11, 44, 63, 120, 157, 101, 63, 38, 248, 143, 180, 255, 255, 255, 255, 0, 0, 255, 191)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_me85m")
+
+[node name="DoorSticker_Window_Square_A" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_id3ur")
+skeleton = NodePath("")

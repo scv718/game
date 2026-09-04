@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://crf61qmocvy3k"]
+
+[ext_resource type="PackedScene" uid="uid://btrt5h4w23l20" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Pillar/pillar.tscn" id="1_gqw0b"]
+[ext_resource type="PackedScene" uid="uid://cdgp703lr46me" path="res://assets/LoafbrrAssets/CastleWallKit/scenes/Pillar/pillar_top.tscn" id="2_18kat"]
+
+[node name="Pillars_MeshLib" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 9)
+
+[node name="Pillar" parent="." instance=ExtResource("1_gqw0b")]
+
+[node name="Pillar_Top" parent="." instance=ExtResource("2_18kat")]

@@ -1,0 +1,26 @@
+[gd_resource type="StandardMaterial3D" load_steps=5 format=3 uid="uid://k72idgv446ky"]
+
+[ext_resource type="Texture2D" uid="uid://c30hnm7bb5o2v" path="res://assets/LoafbrrAssets/CastleWallKit/textures/DoorStickers/DoorSticker_DiffuseTransparent.png" id="1_s5xka"]
+[ext_resource type="Texture2D" uid="uid://d3p0amohovi4o" path="res://assets/LoafbrrAssets/CastleWallKit/textures/DoorStickers/DoorSticker_MRAO.exr" id="2_8wsoo"]
+[ext_resource type="Texture2D" uid="uid://cax2kblbjvire" path="res://assets/LoafbrrAssets/CastleWallKit/textures/DoorStickers/DoorSticker_bump.png" id="3_5mw3d"]
+[ext_resource type="Texture2D" uid="uid://ena70b6sueop" path="res://assets/LoafbrrAssets/CastleWallKit/textures/DoorStickers/DoorSticker_Normal.png" id="4_5o7wm"]
+
+[resource]
+transparency = 2
+alpha_scissor_threshold = 0.1
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_s5xka")
+metallic = 1.0
+metallic_texture = ExtResource("2_8wsoo")
+roughness = 0.87
+roughness_texture = ExtResource("2_8wsoo")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("4_5o7wm")
+ao_enabled = true
+ao_texture = ExtResource("2_8wsoo")
+ao_texture_channel = 2
+heightmap_enabled = true
+heightmap_scale = 3.0
+heightmap_texture = ExtResource("3_5mw3d")
+heightmap_flip_texture = true
