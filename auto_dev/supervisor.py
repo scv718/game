@@ -410,12 +410,19 @@ _WT_ALREADY_REGISTERED = re.compile(r".*worktree.*(already.*exist|exists)", re.I
 
 
 def _ensure_group_worktree(main, wt):
-    """COMMIT-GATE WORKTREE INVARIANT: NEW TASK WORKTREE HEAD == CURRENT CANONICAL MAIN HEAD at task start.
+    """COMMIT-GATE WORKTREE INVARIANT: a new task's worktree must be a descendant
+    of (or equal to) the current canonical main HEAD.
 
+    Allowed:
     - missing wt            -> create it at the current canonical main HEAD
                               (git worktree add -b <branch> <wt> <main_head>).
-    - exists && HEAD == main -> reuse (fresh, not stale).
-    - exists && HEAD != main -> refuse and exit (preserve the stale worktree, never run on it).
+    - exists && wt HEAD == main HEAD            -> reuse (fresh).
+    - exists && main HEAD is ancestor of wt HEAD
+             && worktree branch == expected group branch
+                                                 -> reuse (legitimate accumulated
+                                                    commits on this group's branch).
+    Refused (old/stale/diverged; preserved but never run on):
+    - exists && main HEAD is NOT an ancestor of wt HEAD.
     Returns the expected worktree HEAD on success; exits non-zero on refusal."""
     head = _git_rev_parse(main, "HEAD")
     if not head:
@@ -442,8 +449,18 @@ def _ensure_group_worktree(main, wt):
     if actual == head:
         log(f"[WT] 워크트리 재사용(HEAD 일치): {wt} @ {head}")
         return head
-    log(f"[WT-ERR] 기존 워크트리가 STALE: {wt} HEAD={actual}, canonical main HEAD={head}. "
-        f"재사용 금지(보존은 유지). stale 워크트리에 작업 실행 중단.")
+    # wt HEAD != main HEAD. 허용하려면 main HEAD가 wt HEAD의 ancestor여야 하고,
+    # 해당 worktree가 이 그룹의 expected branch여야 한다(동일 그룹 branch에
+    # TASK commit이 정상 누적된 legitimate descendant).
+    actual_branch = (_run_cmd(["git", "-C", wt, "branch", "--show-current"], timeout=30)[1] or "").strip()
+    if actual_branch == branch:
+        rc, _, _ = _run_cmd(["git", "-C", main, "merge-base", "--is-ancestor", head, actual], timeout=30)
+        if rc == 0:
+            log(f"[WT] 워크트리 재사용(descendant, 동일 그룹 branch {branch}): {wt} @ {actual}")
+            return head
+    log(f"[WT-ERR] 기존 워크트리가 STALE: {wt} HEAD={actual}, canonical main HEAD={head} "
+        f"(branch={actual_branch}, expected={branch}). 재사용 금지(보존은 유지). "
+        f"old/stale/diverged 워크트리에 작업 실행 중단.")
     sys.exit(1)
 
 
