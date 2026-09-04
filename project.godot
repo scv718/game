@@ -26,10 +26,15 @@ PopulationConsumption="*res://scripts/population_consumption.gd"
 FirstEncounterSpawner="*res://scripts/first_encounter_spawner.gd"
 DeathLedger="*res://scripts/death_ledger.gd"
 ExplorationManager="*res://scripts/exploration_manager.gd"
+AudioManager="*res://scripts/audio_manager.gd"
 ThreatSystem="*res://scripts/threat_system.gd"
 WaveManager="*res://scripts/wave_manager.gd"
 DungeonManager="*res://scripts/dungeon_manager.gd"
 DungeonPreparationManager="*res://scripts/dungeon_preparation_manager.gd"
+
+[audio]
+
+default_bus_layout="res://audio/default_bus_layout.tres"
 
 [display]
 
