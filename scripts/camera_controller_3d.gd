@@ -28,7 +28,7 @@ const CAMERA_DISTANCE := 160.0
 ## 고정 Top-down 사선 각도(deg). 북(-Z)이 화면 위쪽으로 읽히는 기본값이며
 ## HUMAN_CHECK 결과에 따라 export 튜닝으로만 조정한다. 런타임 회전 입력 없음.
 ## VIS-001-5: Slightly more top-down for colony management readability.
-@export var pitch_degrees: float = -60.0
+@export var pitch_degrees: float = -82.0
 @export var yaw_degrees: float = 0.0
 
 ## 기존 2D 정책과 동일한 zoom 배율 값(클수록 확대). NIGHT는 마을 overview 지휘 시점.

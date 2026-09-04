@@ -27,9 +27,9 @@ class_name VillageComposition3D
 
 ## -- 공간 밀도 zone(태스크 원칙의 단일 소스). Rect2 = XZ 평면(x=min_x, y=min_z).
 const ZONE_VILLAGE := Rect2(-11, -11, 22, 22)
-const ZONE_FOREST := Rect2(-35, -31, 12, 22)
-const ZONE_LUMBERYARD := Rect2(-30, 3, 11, 11)
-const ZONE_QUARRY := Rect2(16, 10, 14, 12)
+const ZONE_FOREST := Rect2(27, -31, 12, 22)
+const ZONE_LUMBERYARD := Rect2(18, 3, 11, 11)
+const ZONE_QUARRY := Rect2(41, 10, 14, 12)
 
 const ZONE_RECTS := {
 	"village": ZONE_VILLAGE,
@@ -43,9 +43,9 @@ const ZONE_RECTS := {
 const PATH_SPINE := Rect2(-1, -24, 2, 42)
 const PATH_EAST := Rect2(0, -1, 23, 2)
 const PATH_WEST := Rect2(-21, -1, 21, 2)
-const PATH_FOREST := Rect2(-21, -27, 2, 26)
-const PATH_YARD := Rect2(-21, 1, 2, 4)
-const PATH_QUARRY := Rect2(21, 1, 2, 13)
+const PATH_FOREST := Rect2(21, -27, 2, 26)
+const PATH_YARD := Rect2(21, 1, 2, 4)
+const PATH_QUARRY := Rect2(40, 1, 2, 20)
 const PATH_PLAZA := Rect2(-3, -3, 6, 6)
 
 const PATH_CORRIDORS := {
@@ -108,6 +108,14 @@ func _ready() -> void:
 	for zone in ZONE_RECTS:
 		var root := Node3D.new()
 		root.name = "Zone_%s" % zone.to_pascal_case()
+		# Authored visual zones are re-rooted around the settlement. Gameplay
+		# resources/navigation keep their existing WorldMap coordinates.
+		if zone == "forest":
+			root.position.x = 62.0
+		elif zone == "lumberyard":
+			root.position.x = 48.0
+		elif zone == "quarry":
+			root.position.x = 25.0
 		add_child(root)
 		_zone_roots[zone] = root
 	_build_village_clearing()
@@ -123,6 +131,7 @@ func _ready() -> void:
 	_build_lumberyard(_zone_roots["lumberyard"])
 	_build_quarry(_zone_roots["quarry"])
 	_build_characters(chars_root)
+	_build_frontier_dressing()
 
 
 ## world3d.tscn의 placeholder GroundVisual에 stylized 잔디 톤을 입힌다.
@@ -213,6 +222,10 @@ func _build_paths(root: Node3D) -> void:
 		Vector3(-4, 0, 10.5), Vector3(-8, 0, 12), Vector3(-13, 0, 13)], 1.4)
 	_spawn_path_curve(root, "Path_Farm_East", [Vector3(1, 0, 9),
 		Vector3(4, 0, 10.5), Vector3(8, 0, 12), Vector3(13, 0, 13)], 1.4)
+	_spawn_path_curve(root, "Path_Production", [Vector3(1, 0, 2),
+		Vector3(8, 0, 3), Vector3(15, 0, 6), Vector3(21, 0, 8)], 1.35)
+	_spawn_path_curve(root, "Path_Forest_East", [Vector3(21, 0, -1),
+		Vector3(24, 0, -7), Vector3(27, 0, -12)], 1.3)
 
 
 func _build_village_clearing() -> void:
@@ -342,6 +355,87 @@ func _build_farm_plot(root: Node3D) -> void:
 		_spawn("bld/fence_wooden_single", "village", "farm_fence", pos, 90.0)
 	_spawn("prop/farmcrate_carrot", "village", "farm_prop", Vector3(4.8, 0, 12.0))
 	_spawn("prop/farmcrate_apple", "village", "farm_prop", Vector3(9.2, 0, 12.8))
+
+
+func _build_frontier_dressing() -> void:
+	# Left-side danger progression: the visual-only layer deliberately sits
+	# outside gameplay gates/spawn owners and uses catalog assets only.
+	_spawn_ground_patch("BattlefieldGround", Vector3(-58, 0, 0), 18.0, 0.72,
+		Color(0.35, 0.31, 0.24))
+	_spawn_ground_patch("CorruptedGround", Vector3(-88, 0, 0), 20.0, 0.78,
+		Color(0.20, 0.18, 0.19))
+	for z in range(-24, 25, 4):
+		_spawn_frontier_model("bld/wall_brick_straight", Vector3(-38, 0, z),
+			90.0, 0.9)
+	for z in [-28, 28]:
+		_spawn_frontier_model("bld/wall_brick_straight", Vector3(-38, 0, z),
+			90.0, 1.15)
+	_spawn_frontier_model("bld/wall_brick_door_flat", Vector3(-38, 0, 0), 90.0, 1.0)
+	for z in [-18, -10, 10, 18]:
+		_spawn_frontier_model("bld/fence_wooden_single", Vector3(-48, 0, z),
+			90.0, 0.9)
+	for pos in [Vector3(-55, 0, -13), Vector3(-61, 0, 12),
+			Vector3(-71, 0, -15), Vector3(-79, 0, 13), Vector3(-94, 0, -12),
+			Vector3(-99, 0, 14)]:
+		_spawn_frontier_model("tree/dead_1", pos, 0.0, 0.55)
+	for pos in [Vector3(-52, 0, 8), Vector3(-66, 0, -7), Vector3(-82, 0, 8),
+			Vector3(-96, 0, -5)]:
+		_spawn_frontier_model("rock/medium_2", pos, 0.0, 0.65)
+	_spawn_portal(Vector3(-112, 0, 0))
+
+
+func _spawn_ground_patch(node_name: String, pos: Vector3, radius: float,
+		depth_scale: float, color: Color) -> void:
+	var patch := MeshInstance3D.new()
+	patch.name = node_name
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = radius
+	mesh.bottom_radius = radius
+	mesh.height = 0.025
+	patch.mesh = mesh
+	patch.position = Vector3(pos.x, 0.012, pos.z)
+	patch.scale = Vector3(1.0, 1.0, depth_scale)
+	patch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 1.0
+	patch.material_override = material
+	add_child(patch)
+
+
+func _spawn_frontier_model(key: String, pos: Vector3, yaw_deg: float,
+		uniform_scale: float) -> void:
+	var model := VisualAssetCatalog3D.instantiate_model(key)
+	if model == null:
+		push_error("VillageComposition3D: frontier model failed '%s'" % key)
+		return
+	model.position = WorldCoords3D.flatten(pos)
+	model.rotation.y = deg_to_rad(yaw_deg)
+	model.scale = Vector3.ONE * uniform_scale
+	model.set_meta("catalog_key", key)
+	model.set_meta("zone", "frontier")
+	model.set_meta("kind", "visual_dressing")
+	add_child(model)
+
+
+func _spawn_portal(pos: Vector3) -> void:
+	var portal := MeshInstance3D.new()
+	portal.name = "DistantPortal"
+	var mesh := TorusMesh.new()
+	mesh.inner_radius = 3.0
+	mesh.outer_radius = 4.0
+	mesh.rings = 16
+	mesh.ring_segments = 32
+	portal.mesh = mesh
+	portal.position = Vector3(pos.x, 0.35, pos.z)
+	portal.rotation_degrees.x = 90.0
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(0.48, 0.08, 0.7)
+	material.emission_enabled = true
+	material.emission = Color(0.22, 0.02, 0.4)
+	material.emission_energy_multiplier = 2.5
+	portal.material_override = material
+	add_child(portal)
 
 
 ## house_size_m: 4 또는 6(m). 문은 로컬 남쪽(+Z) 벽에 있고 yaw_deg로 방향을 돌린다.
