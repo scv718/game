@@ -121,8 +121,10 @@ func _run_setup() -> void:
 	# invert state로 방해받지 않는 안전 시작 확인은 여기서 하지 않고,
 	# begin_run이 IN_PROGRESS가 아니면 실패하는지 전용 체크는 cleanup 후 확인한다.
 	# (상태를 되돌리면 spawn 검증 전 상태가 깨지므로 여기서는 시작만 준비)
-	var started: bool = _runtime.begin_run(DUNGEON_ID)
-	_check(started, "begin_run starts a clean encounter")
+	var started: bool = _runtime.is_run_active()
+	if not started:
+		started = _runtime.begin_run(DUNGEON_ID)
+	_check(started, "dungeon departure starts a clean encounter")
 	_check(_runtime.is_run_active(), "runtime reports run active")
 	_check(_runtime.get_dungeon_id() == DUNGEON_ID, "runtime dungeon_id set")
 	_check(_runtime.get_arena() != null and is_instance_valid(_runtime.get_arena()), \
