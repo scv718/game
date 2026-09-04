@@ -191,6 +191,14 @@ func _assemble_modular_room(root: Node3D, parts: Dictionary) -> void:
 			Vector3(-half - 0.8, 0.0, half - 0.5), 0.0, 0.75)
 		_add_building_model(root, "prop/torch_metal",
 			Vector3(half + 0.8, 0.0, half - 0.5), 0.0, 0.75)
+		# Four short stone piers give the Keep a compact defensive silhouette
+		# without changing the gameplay footprint or adding collision owners.
+		for corner in [Vector3(-2.5, 0.0, -2.5), Vector3(2.5, 0.0, -2.5),
+				Vector3(-2.5, 0.0, 2.5), Vector3(2.5, 0.0, 2.5)]:
+			_add_building_model(root, "bld/wall_brick_straight", corner,
+				90.0, visual_scale * 0.82)
+			_add_building_model(root, "bld/roof_roundtiles_6x6",
+				corner + Vector3(0.0, 3.35, 0.0), 0.0, 0.34)
 	elif core_type == "tavern":
 		_add_building_model(root, "bld/chimney", Vector3(1.0, 0.0, -0.6),
 			0.0, visual_scale)
@@ -229,6 +237,7 @@ func _add_building_model(root: Node3D, key: String, pos: Vector3,
 	model.set_meta("kind", "core_building_visual")
 	root.add_child(model)
 	_enable_model_meshes(model)
+	_apply_role_tone(model, key)
 	return model
 
 
@@ -237,6 +246,42 @@ func _enable_model_meshes(node: Node) -> void:
 		if child is GeometryInstance3D:
 			(child as GeometryInstance3D).visible = true
 		_enable_model_meshes(child)
+
+
+func _apply_role_tone(node: Node, key: String) -> void:
+	var tone := Color(0.42, 0.42, 0.42)
+	if core_type == "keep":
+		# Keep stone is cool gray; its roof is charcoal slate.
+		tone = Color(0.31, 0.34, 0.37) if key.begins_with("bld/roof") \
+			else Color(0.52, 0.54, 0.55)
+	elif key.begins_with("bld/roof"):
+		tone = {
+			"tavern": Color(0.30, 0.27, 0.23),
+			"inn": Color(0.29, 0.30, 0.29),
+			"grocery": Color(0.34, 0.29, 0.23),
+			"equipment": Color(0.27, 0.28, 0.29),
+		}.get(core_type, Color(0.32, 0.29, 0.25))
+	else:
+		tone = {
+			"tavern": Color(0.52, 0.43, 0.34),
+			"inn": Color(0.47, 0.46, 0.42),
+			"grocery": Color(0.55, 0.48, 0.34),
+			"equipment": Color(0.42, 0.43, 0.43),
+		}.get(core_type, Color(0.45, 0.45, 0.45))
+	var material := StandardMaterial3D.new()
+	material.albedo_color = tone
+	material.roughness = 0.92
+	for child in node.get_children():
+		if child is GeometryInstance3D:
+			(child as GeometryInstance3D).material_override = material
+		_apply_tone_to_children(child, material)
+
+
+func _apply_tone_to_children(node: Node, material: StandardMaterial3D) -> void:
+	for child in node.get_children():
+		if child is GeometryInstance3D:
+			(child as GeometryInstance3D).material_override = material
+		_apply_tone_to_children(child, material)
 
 
 func get_core_type() -> String:

@@ -529,9 +529,10 @@ func _add_house(root: Node3D, house_size_m: int, palette: Dictionary,
 	# 지붕: capture_environment_3d에서 검증된 처마 걸침 조립식.
 	var roof_scale := (float(house_size_m) + ROOF_EAVE_OVERHANG) \
 		/ ROOF_NATIVE_SPAN
-	_attach_model(house, "bld/roof_roundtiles_6x6",
+	var roof := _attach_model(house, "bld/roof_roundtiles_6x6",
 		Vector3(0, WALL_HEIGHT + ROOF_NATIVE_EAVE_DROP * roof_scale, 0),
 		0.0, roof_scale)
+	_apply_house_tone(roof, palette == HOUSE_BRICK)
 	if with_chimney:
 		_attach_model(house, "bld/chimney",
 			Vector3(float(house_size_m) * 0.22, 0.39
@@ -552,6 +553,24 @@ func _add_house(root: Node3D, house_size_m: int, palette: Dictionary,
 		"zone": "village",
 	})
 	return house
+
+
+func _apply_house_tone(node: Node3D, brick: bool) -> void:
+	if node == null:
+		return
+	var material := StandardMaterial3D.new()
+	# Desaturated roof tones keep the settlement grounded as a frontier outpost.
+	material.albedo_color = Color(0.28, 0.29, 0.29) if brick \
+		else Color(0.33, 0.29, 0.25)
+	material.roughness = 0.94
+	_apply_house_tone_recursive(node, material)
+
+
+func _apply_house_tone_recursive(node: Node, material: StandardMaterial3D) -> void:
+	for child in node.get_children():
+		if child is GeometryInstance3D:
+			(child as GeometryInstance3D).material_override = material
+		_apply_house_tone_recursive(child, material)
 
 
 ## house 컨테이너(로컬 좌표)에 catalog 모델을 붙인다.
