@@ -3,7 +3,8 @@ class_name TavernRecruitmentUI
 
 ## TASK-011-3 주점 Worker 고용 프로토타입 UI.
 ## TASK-014-1 용병 고용 후보 1명을 별도 섹션으로 추가한다.
-## 고정된 프로토타입 후보 목록(Lumberjack A/B, Miner A/B)을 표시하고,
+## TASK-019-2 Farmer 고용 후보 2명(Farmer A/B)을 추가한다.
+## 고정된 프로토타입 후보 목록(Lumberjack A/B, Miner A/B, Farmer A/B)을 표시하고,
 ## 고용 시 WorkerData를 WorkerRoster에 정확히 1회 추가한다.
 ## 용병 후보는 고용 시 MercenaryData를 MercenaryRoster에 정확히 1회 추가한다.
 ## 경제/Gold 시스템이 없으므로 고용 비용은 임시로 0이며 비용 시스템은 만들지 않는다.
@@ -14,6 +15,8 @@ const CANDIDATES := [
 	{ "id": "lumberjack_B", "name": "Lumberjack B", "job": WorkerData.Job.LUMBERJACK },
 	{ "id": "miner_A", "name": "Miner A", "job": WorkerData.Job.MINER },
 	{ "id": "miner_B", "name": "Miner B", "job": WorkerData.Job.MINER },
+	{ "id": "farmer_A", "name": "Farmer A", "job": WorkerData.Job.FARMER },
+	{ "id": "farmer_B", "name": "Farmer B", "job": WorkerData.Job.FARMER },
 ]
 
 ## TASK-014-1: 고정 Mercenary 후보 1명. prototype 고용 비용 0.

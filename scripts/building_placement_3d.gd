@@ -32,11 +32,13 @@ class_name BuildingPlacement3D
 
 const LUMBERYARD_SCENE := preload("res://scenes/lumberyard_3d.tscn")
 const QUARRY_SCENE := preload("res://scenes/quarry_3d.tscn")
+const FARM_SCENE := preload("res://scenes/farm_3d.tscn")
 const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
 const BUILD_COSTS := {
 	"lumberyard": {"wood": 10},
 	"quarry": {"wood": 10},
+	"farm": {"wood": 10},
 	"wall": {"wood": 2},
 	"gate": {"wood": 5},
 }
@@ -112,6 +114,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if event.keycode == KEY_4:
 			_set_building_type("gate")
+			return
+		if event.keycode == KEY_5:
+			_set_building_type("farm")
 			return
 		if event.keycode == KEY_R:
 			if _active:
@@ -444,21 +449,29 @@ func _try_place_at(pos: Vector3) -> void:
 	if not _is_valid_position(pos):
 		feedback.emit("Invalid position")
 		return
-	var cost: int = int(BUILD_COSTS["lumberyard"].get("wood", 0))
+	var cost: int = int(BUILD_COSTS[_building_type].get("wood", 0))
 	if not VillageResources.has("wood", cost):
 		feedback.emit("Not enough Wood")
 		return
 	VillageResources.spend("wood", cost)
-	var lumberyard: Node3D = LUMBERYARD_SCENE.instantiate() as Node3D
-	lumberyard.position = WorldCoords3D.flatten(pos)
+	var scene: PackedScene = _building_scene_for(_building_type)
+	var building: Node3D = scene.instantiate() as Node3D
+	building.position = WorldCoords3D.flatten(pos)
 	var world := get_tree().get_first_node_in_group("world3d")
 	if world != null:
-		world.add_child(lumberyard)
+		world.add_child(building)
 	else:
-		get_parent().add_child(lumberyard)
+		get_parent().add_child(building)
 	NavigationPolicy3D.request_rebuild_debounced(get_tree())
-	feedback.emit("Lumberyard built")
+	feedback.emit("%s built" % _building_type.capitalize())
 	_set_active(false)
+
+
+## TASK-019-1: free-building 타입(Lumberyard/Farm)의 scene을 반환.
+func _building_scene_for(building_type: String) -> PackedScene:
+	if building_type == "farm":
+		return FARM_SCENE
+	return LUMBERYARD_SCENE
 
 
 func _try_place_quarry_at(pos: Vector3) -> void:
