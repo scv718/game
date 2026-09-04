@@ -49,16 +49,15 @@ func _process(_delta: float) -> bool:
 		_check(composition.get_node_or_null("Zone_Village/AgriculturePlot") != null,
 			"agriculture plot is readable as a compact south district")
 		for fortification in [
-			"LoafbrrWall_-24", "LoafbrrWall_-12", "LoafbrrMainGate",
-			"LoafbrrWall_12", "LoafbrrWall_24", "LoafbrrWallEndSouth",
-			"LoafbrrWallEndNorth", "LoafbrrWatchtowerSouth",
-			"LoafbrrWatchtowerNorth",
+			"LoafbrrWall_-21", "LoafbrrWall_-15",
+			"LoafbrrGateFlankSouth", "LoafbrrMainGateOpening",
+			"LoafbrrGateFlankNorth", "LoafbrrWall_9", "LoafbrrWall_15",
 		]:
 			var authored := composition.get_node_or_null(fortification)
 			_check(authored != null and authored.get_meta("asset_source", "")
 					== "Loafbrr Castle Wall Kit",
 				"frontier uses authored Loafbrr visual: %s" % fortification)
-		_check(composition.get_node_or_null("LoafbrrMainGate") != null,
+		_check(composition.get_node_or_null("LoafbrrMainGateOpening") != null,
 			"frontier gate remains a distinct visual landmark")
 	for item in [
 		{"name": "Keep", "pos": Vector3(0, 0, 0)},

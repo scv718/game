@@ -76,10 +76,8 @@ const LOAFBRR_WALL_SCENE := preload(
 	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_wall.tscn")
 const LOAFBRR_GATE_SCENE := preload(
 	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_door_arch.tscn")
-const LOAFBRR_CORNER_SCENE := preload(
-	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Corner/courtine_corner_round_slits.tscn")
-const LOAFBRR_TOWER_SCENE := preload(
-	"res://assets/LoafbrrAssets/CastleWallKit/scenes/bartizan/corners/battlement/bartizan_corner_round_battlement.tscn")
+const LOAFBRR_FLANK_SCENE := preload(
+	"res://assets/LoafbrrAssets/CastleWallKit/scenes/Courtines/Wall/courtine_slits.tscn")
 
 ## -- 제한적 variation 팔레트(태스크 원칙). 이 범위 밖 모델을 추가하지 않는다.
 ## house palette: catalog house_building 조합(floor/wall/window/door 교체).
@@ -437,23 +435,19 @@ func _build_frontier_dressing() -> void:
 		Color(0.35, 0.31, 0.24))
 	_spawn_ground_patch("CorruptedGround", Vector3(-88, 0, 0), 20.0, 0.78,
 		Color(0.20, 0.18, 0.19))
-	# Loafbrr courtines are 12m-wide, 6m-high authored stone wall scenes.
-	# Four segments leave the central arch gate as the readable entrance.
-	for z in [-24.0, -12.0, 12.0, 24.0]:
+	# Courtine wall geometry is a 6m module (local X = 6m). After the 90-degree
+	# turn, each root advances 6m along Z; roots are offset by -3m because the
+	# authored mesh occupies local X=-6..0. The opening is therefore integrated
+	# into one continuous sequence rather than floating between wall pieces.
+	for z in [-21.0, -15.0, 9.0, 15.0]:
 		_spawn_fortification_scene(LOAFBRR_WALL_SCENE,
-				Vector3(-30, 0, z), 90.0, 0.82, "LoafbrrWall_%d" % int(z))
-	_spawn_fortification_scene(LOAFBRR_GATE_SCENE, Vector3(-30, 0, 0),
-		90.0, 0.82, "LoafbrrMainGate")
-	# End/corner pieces and two elevated bartizan towers establish the frontier
-	# silhouette without turning the settlement into a closed castle perimeter.
-	_spawn_fortification_scene(LOAFBRR_CORNER_SCENE, Vector3(-30, 0, -30),
-		90.0, 0.82, "LoafbrrWallEndSouth")
-	_spawn_fortification_scene(LOAFBRR_CORNER_SCENE, Vector3(-30, 0, 30),
-		270.0, 0.82, "LoafbrrWallEndNorth")
-	_spawn_fortification_scene(LOAFBRR_TOWER_SCENE, Vector3(-30, 0, -33),
-		90.0, 0.78, "LoafbrrWatchtowerSouth")
-	_spawn_fortification_scene(LOAFBRR_TOWER_SCENE, Vector3(-30, 0, 33),
-		270.0, 0.78, "LoafbrrWatchtowerNorth")
+				Vector3(-30, 0, z), 90.0, 1.0, "LoafbrrWall_%d" % int(z))
+	_spawn_fortification_scene(LOAFBRR_FLANK_SCENE, Vector3(-30, 0, -9),
+		90.0, 1.0, "LoafbrrGateFlankSouth")
+	_spawn_fortification_scene(LOAFBRR_GATE_SCENE, Vector3(-30, 0, -3),
+		90.0, 1.0, "LoafbrrMainGateOpening")
+	_spawn_fortification_scene(LOAFBRR_FLANK_SCENE, Vector3(-30, 0, 3),
+		90.0, 1.0, "LoafbrrGateFlankNorth")
 	for z in [-18, -10, 10, 18]:
 		_spawn_frontier_model("bld/fence_wooden_single", Vector3(-48, 0, z),
 			90.0, 0.9)
