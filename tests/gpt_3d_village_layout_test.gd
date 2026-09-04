@@ -50,10 +50,10 @@ func _process(_delta: float) -> bool:
 			"agriculture plot is readable as a compact south district")
 	for item in [
 		{"name": "Keep", "pos": Vector3(0, 0, 0)},
-		{"name": "Tavern", "pos": Vector3(-14, 0, -3)},
-		{"name": "Inn", "pos": Vector3(14, 0, -3)},
-		{"name": "Grocery", "pos": Vector3(-13, 0, 13)},
-		{"name": "EquipmentShop", "pos": Vector3(13, 0, 13)},
+		{"name": "Tavern", "pos": Vector3(-16, 0, -9)},
+		{"name": "Inn", "pos": Vector3(16, 0, -9)},
+		{"name": "Grocery", "pos": Vector3(-17, 0, 15)},
+		{"name": "EquipmentShop", "pos": Vector3(17, 0, 15)},
 	]:
 		var building := world.get_node_or_null(item["name"])
 		_check(building != null and building.position.is_equal_approx(item["pos"]),

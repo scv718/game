@@ -40,13 +40,13 @@ const ZONE_RECTS := {
 
 ## -- Main path corridor(XZ 평면 통행 구역). solid 배치 금지 구역이며
 ## PATH_MARGIN만큼 여유를 두고 검증한다(path_clearance 계약).
-const PATH_SPINE := Rect2(-1, -24, 2, 42)
-const PATH_EAST := Rect2(0, -1, 23, 2)
-const PATH_WEST := Rect2(-21, -1, 21, 2)
+const PATH_SPINE := Rect2(-2.25, -24, 4.5, 42)
+const PATH_EAST := Rect2(0, -2.25, 26, 4.5)
+const PATH_WEST := Rect2(-26, -2.25, 26, 4.5)
 const PATH_FOREST := Rect2(21, -27, 2, 26)
 const PATH_YARD := Rect2(21, 1, 2, 4)
 const PATH_QUARRY := Rect2(40, 1, 2, 20)
-const PATH_PLAZA := Rect2(-3, -3, 6, 6)
+const PATH_PLAZA := Rect2(-4.5, -4.5, 9, 9)
 
 const PATH_CORRIDORS := {
 	"spine": PATH_SPINE,
@@ -215,10 +215,10 @@ func _build_paths(root: Node3D) -> void:
 		root.add_child(instance)
 	# Secondary lanes bend around the settlement instead of exposing a debug-like
 	# rectilinear grid. They are visual-only and remain outside gameplay owners.
-	_spawn_path_curve(root, "Path_Tavern", [Vector3(-1, 0, 0),
-		Vector3(-6, 0, -1.4), Vector3(-10, 0, -2.5), Vector3(-14, 0, -3)], 1.35)
-	_spawn_path_curve(root, "Path_Inn", [Vector3(1, 0, 0),
-		Vector3(6, 0, -1.2), Vector3(10, 0, -2.4), Vector3(14, 0, -3)], 1.35)
+	_spawn_path_curve(root, "Path_Tavern", [Vector3(-2, 0, -1),
+		Vector3(-6, 0, -3.5), Vector3(-11, 0, -6.5), Vector3(-16, 0, -9)], 1.7)
+	_spawn_path_curve(root, "Path_Inn", [Vector3(2, 0, -1),
+		Vector3(6, 0, -3.5), Vector3(11, 0, -6.5), Vector3(16, 0, -9)], 1.7)
 	_spawn_path_curve(root, "Path_Farm_West", [Vector3(-1, 0, 9),
 		Vector3(-4, 0, 10.5), Vector3(-8, 0, 12), Vector3(-13, 0, 13)], 1.4)
 	_spawn_path_curve(root, "Path_Farm_East", [Vector3(1, 0, 9),
@@ -278,13 +278,15 @@ func _spawn_path_segment(root: Node3D, path_name: String, from: Vector3,
 
 ## -- VILLAGE: 저밀도 생활 공간. 집 5채 + 생활 props. 수목은 포인트 2그루만.
 func _build_village(root: Node3D) -> void:
-	_add_house(root, 4, HOUSE_PLASTER, Vector3(-7, 0, -8), 78.0, true)
-	_add_house(root, 4, HOUSE_BRICK, Vector3(-8, 0, 4), 102.0, false)
-	_add_house(root, 4, HOUSE_BRICK, Vector3(7, 0, -7), -72.0, true)
-	_add_house(root, 4, HOUSE_PLASTER, Vector3(8, 0, 7), -108.0, false)
-	_add_house(root, 6, HOUSE_PLASTER, Vector3(-5, 0, -16), 82.0, true)
-	_add_house(root, 4, HOUSE_PLASTER, Vector3(-9, 0, 9), 118.0, false)
-	_add_house(root, 4, HOUSE_BRICK, Vector3(10, 0, -10), -52.0, false)
+	# Houses sit beyond the widened roads, leaving a deliberate open ring around
+	# the Keep and service buildings instead of a tight radial prefab cluster.
+	_add_house(root, 4, HOUSE_PLASTER, Vector3(-11, 0, -12), 78.0, true)
+	_add_house(root, 4, HOUSE_BRICK, Vector3(-12, 0, 9), 102.0, false)
+	_add_house(root, 4, HOUSE_BRICK, Vector3(12, 0, -12), -72.0, true)
+	_add_house(root, 4, HOUSE_PLASTER, Vector3(13, 0, 10), -108.0, false)
+	_add_house(root, 6, HOUSE_PLASTER, Vector3(-10, 0, -20), 82.0, true)
+	_add_house(root, 4, HOUSE_PLASTER, Vector3(-16, 0, 15), 118.0, false)
+	_add_house(root, 4, HOUSE_BRICK, Vector3(17, 0, -17), -52.0, false)
 
 	# A restrained forecourt around the Keep creates a readable focal point
 	# without adding a new gameplay landmark or collision owner.
@@ -312,17 +314,17 @@ func _build_village(root: Node3D) -> void:
 			Vector3(side * 2.4, 0, 18.0), 90.0)
 
 	# 동쪽 잔도 시장 행(마을 기능 정체성 props).
-	_spawn("prop/stall_empty", "village", "prop", Vector3(6, 0, -3.2),
+	_spawn("prop/stall_empty", "village", "prop", Vector3(7, 0, 5.6),
 		0.0, 1.0, Vector2(0.95, 0.5))
-	_spawn("prop/stall_cart_empty", "village", "prop", Vector3(9.5, 0, -3.2),
+	_spawn("prop/stall_cart_empty", "village", "prop", Vector3(10.5, 0, 5.8),
 		0.0, 1.0, Vector2(1.55, 0.55))
-	_spawn("prop/farmcrate_apple", "village", "prop", Vector3(7.4, 0, -2.2))
-	_spawn("prop/farmcrate_carrot", "village", "prop", Vector3(8.1, 0, -2.0))
-	_spawn("prop/farmcrate_empty", "village", "prop", Vector3(6.2, 0, 3.2))
-	_spawn("prop/coin_pile", "village", "prop", Vector3(7.8, 0, -1.6))
-	_spawn("prop/bag", "village", "prop", Vector3(6.6, 0, -2.5))
-	_spawn("prop/barrel", "village", "prop", Vector3(5.2, 0, -2.6))
-	_spawn("prop/barrel", "village", "prop", Vector3(10.2, 0, 3.0))
+	_spawn("prop/farmcrate_apple", "village", "prop", Vector3(8.2, 0, 6.2))
+	_spawn("prop/farmcrate_carrot", "village", "prop", Vector3(9.1, 0, 6.4))
+	_spawn("prop/farmcrate_empty", "village", "prop", Vector3(7.4, 0, 7.0))
+	_spawn("prop/coin_pile", "village", "prop", Vector3(10.0, 0, 6.8))
+	_spawn("prop/bag", "village", "prop", Vector3(8.0, 0, 7.2))
+	_spawn("prop/barrel", "village", "prop", Vector3(6.2, 0, 6.4))
+	_spawn("prop/barrel", "village", "prop", Vector3(11.4, 0, 6.8))
 
 	# 광장 화단 + 가옥 담장.
 	_spawn("veg/flower_group_4", "village", "prop", Vector3(-2.4, 0, -2.4))
@@ -342,22 +344,22 @@ func _build_landmark_dressing() -> void:
 		Vector3(0, 0, 3.9), 0.0, 0.72)
 
 	# Tavern: barrels, outdoor table substitute and a warm lantern silhouette.
-	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-17.2, 0, -5.2),
+	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-19.2, 0, -10.2),
 		18.0, 0.82)
-	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-16.0, 0, -5.7),
+	_spawn("prop/barrel", "village", "tavern_cluster", Vector3(-18.0, 0, -10.7),
 		-12.0, 0.72)
 	_spawn("prop/stall_cart_empty", "village", "tavern_cluster",
-		Vector3(-17.0, 0, -1.0), 90.0, 0.72)
+		Vector3(-19.0, 0, -6.0), 90.0, 0.72)
 	_spawn("prop/lantern_wall", "village", "tavern_cluster",
-		Vector3(-11.7, 0, -4.8), 180.0, 0.8)
+		Vector3(-15.7, 0, -9.8), 180.0, 0.8)
 
 	# Inn: wagon and travel goods establish lodging/travel identity.
-	_spawn("bld/wagon", "village", "inn_cluster", Vector3(17.2, 0, -5.2),
+	_spawn("bld/wagon", "village", "inn_cluster", Vector3(19.2, 0, -10.2),
 		-18.0, 0.72)
-	_spawn("prop/bag", "village", "inn_cluster", Vector3(16.0, 0, -1.2),
+	_spawn("prop/bag", "village", "inn_cluster", Vector3(18.0, 0, -6.0),
 		22.0, 0.8)
 	_spawn("prop/chest_wood", "village", "inn_cluster",
-		Vector3(18.2, 0, -1.0), -15.0, 0.72)
+		Vector3(20.2, 0, -6.0), -15.0, 0.72)
 
 	# Blacksmith/equipment side: anvil, chopping log, fuel and forge light.
 	_spawn("tool/anvil", "village", "blacksmith_cluster",
