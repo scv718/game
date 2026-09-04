@@ -10,9 +10,8 @@ class_name CoreBuilding3D
 ## - core_type/label/level/prompt 형식은 2D CoreBuilding과 동일 값을 유지한다
 ##   (기존 building identity/data 보존). BuildingPlacement 대상이 아니며
 ##   업그레이드 효과/비용 시스템은 여전히 없고 level은 1로 유지한다.
-## - 2D Sprite2D AtlasTexture 대신 placeholder는 Visual slot 하위 primitive mesh +
-##   per-type 식별 색 + Label3D nameplate로 식별한다. Quaternius 실물 visual은
-##   VIS 태스크가 이 slot의 mesh만 교체하는 구조다(placeholder는 무수정 교체 대상).
+## - 2D Sprite2D AtlasTexture 대신 Visual slot 하위의 Quaternius 모듈 조립으로
+##   실제 건물 silhouette를 구성한다. collision/interaction은 기존 owner가 유지한다.
 ## - 상호작용 연결(주점 고용 UI / 여관 Roster UI)은 core_building_interactable_3d.gd가
 ##   2D core_building_interactable.gd와 동일 그룹 계약으로 수행한다.
 ## - group은 2D("core_buildings")와 분리된 "core_buildings_3d"를 사용한다.
@@ -28,7 +27,7 @@ const LABELS := {
 	"equipment": "장비점",
 }
 
-## placeholder 건물별 식별 색. 실물 visual 투입 시 VIS가 slot과 함께 교체한다.
+## fallback 식별 색. 실물 visual이 로드되지 않을 때만 사용한다.
 const PLACEHOLDER_COLORS := {
 	"keep": Color(0.55, 0.58, 0.66),
 	"tavern": Color(0.74, 0.52, 0.3),
@@ -47,32 +46,58 @@ const PLACEHOLDER_COLORS := {
 const PROP_COLOR := Color(0.42, 0.34, 0.26)
 const FLAG_COLOR := Color(0.9, 0.82, 0.5)
 
-## Quaternius building part mapping per core_type.
+## Quaternius building part mapping per core_type. 각 type은 wall/roof와 모듈 수를
+## 달리해 generic house 복제를 피한다.
 const BUILDING_PARTS := {
 	"keep": {
 		"wall": "bld/wall_brick_straight",
+		"door": "bld/wall_brick_door_flat",
+		"window": "bld/wall_brick_window_wide",
+		"floor": "bld/floor_brick",
 		"roof": "bld/roof_roundtiles_6x6",
-		"scale": 1.0,
+		"cells": 3,
+		"visual_scale": 0.72,
+		"roof_scale": 0.82,
 	},
 	"tavern": {
 		"wall": "bld/wall_plaster_woodgrid",
+		"door": "bld/wall_plaster_door_flat",
+		"window": "bld/wall_plaster_window_wide",
+		"floor": "bld/floor_wood_light",
 		"roof": "bld/roof_roundtiles_6x6",
-		"scale": 1.0,
+		"cells": 2,
+		"visual_scale": 0.78,
+		"roof_scale": 0.65,
 	},
 	"inn": {
 		"wall": "bld/wall_brick_window_wide",
+		"door": "bld/wall_brick_door_flat",
+		"window": "bld/wall_brick_window_wide",
+		"floor": "bld/floor_brick",
 		"roof": "bld/roof_roundtiles_6x6",
-		"scale": 1.0,
+		"cells": 2,
+		"visual_scale": 0.76,
+		"roof_scale": 0.62,
 	},
 	"grocery": {
 		"wall": "bld/wall_plaster_straight",
-		"roof": "bld/roof_wooden_2x1",
-		"scale": 0.9,
+		"door": "bld/wall_plaster_door_flat",
+		"window": "bld/wall_plaster_window_wide",
+		"floor": "bld/floor_wood_light",
+		"roof": "bld/overhang_roof_plaster",
+		"cells": 2,
+		"visual_scale": 0.7,
+		"roof_scale": 0.76,
 	},
 	"equipment": {
 		"wall": "bld/wall_brick_straight",
+		"door": "bld/wall_brick_door_flat",
+		"window": "bld/wall_brick_window_wide",
+		"floor": "bld/floor_brick",
 		"roof": "bld/roof_wooden_2x1",
-		"scale": 0.9,
+		"cells": 2,
+		"visual_scale": 0.72,
+		"roof_scale": 0.68,
 	},
 }
 
@@ -108,39 +133,110 @@ func _apply_config() -> void:
 		_update_inn_visual(InnCapacity.get_level())
 
 
-## Replace placeholder BoxMesh with Quaternius building parts.
+## Replace placeholder BoxMesh with a complete Quaternius modular building.
 func _replace_with_quaternius() -> void:
-	# Clear previous models
+	# Clear previous replacement root and hide primitive placeholders.
 	for m in _quaternius_models:
 		if is_instance_valid(m):
-			m.queue_free()
+			m.free()
 	_quaternius_models.clear()
 	var parts: Dictionary = BUILDING_PARTS.get(core_type, {})
 	if parts.is_empty():
 		return
-	# Hide placeholder meshes
 	_body_mesh.visible = false
 	_roof_mesh.visible = false
-	# Wall model (main body)
-	var wall_key: String = parts.get("wall", "")
-	if not wall_key.is_empty():
-		var wall_model := VisualAssetCatalog3D.instantiate_model(wall_key)
-		if wall_model != null:
-			var s: float = parts.get("scale", 1.0)
-			wall_model.scale = Vector3(s, s, s)
-			wall_model.position = Vector3(0.0, 1.5, 0.0)
-			_visual.add_child(wall_model)
-			_quaternius_models.append(wall_model)
-	# Roof model
-	var roof_key: String = parts.get("roof", "")
-	if not roof_key.is_empty():
-		var roof_model := VisualAssetCatalog3D.instantiate_model(roof_key)
-		if roof_model != null:
-			var s: float = parts.get("scale", 1.0)
-			roof_model.scale = Vector3(s, s, s)
-			roof_model.position = Vector3(0.0, 3.9, 0.0)
-			_visual.add_child(roof_model)
-			_quaternius_models.append(roof_model)
+	var replacement := Node3D.new()
+	replacement.name = "ReplacementBuildingRoot"
+	_visual.add_child(replacement)
+	_quaternius_models.append(replacement)
+	_assemble_modular_room(replacement, parts)
+
+
+func _assemble_modular_room(root: Node3D, parts: Dictionary) -> void:
+	var cells: int = int(parts.get("cells", 2))
+	var visual_scale: float = float(parts.get("visual_scale", 0.72))
+	var roof_scale: float = float(parts.get("roof_scale", 0.65))
+	var wall_key: String = String(parts.get("wall", ""))
+	var door_key: String = String(parts.get("door", wall_key))
+	var window_key: String = String(parts.get("window", wall_key))
+	var floor_key: String = String(parts.get("floor", "bld/floor_brick"))
+	var half := float(cells)
+	# Floor tiles create an explicit footprint, while the outer wall ring keeps
+	# the entrance readable from the fixed top-down camera.
+	for x in range(cells):
+		for z in range(cells):
+			_add_building_model(root, floor_key,
+				Vector3(-half + 1.0 + x * 2.0, 0.0,
+					half - 1.0 - z * 2.0), 0.0, visual_scale)
+	for i in range(cells):
+		var offset := -half + 1.0 + i * 2.0
+		_add_building_model(root, wall_key, Vector3(offset, 0.0, -half),
+			0.0, visual_scale)
+		_add_building_model(root, wall_key, Vector3(-half, 0.0, offset),
+			90.0, visual_scale)
+		_add_building_model(root, wall_key, Vector3(half, 0.0, offset),
+			90.0, visual_scale)
+		# South side: centered door, windows on the remaining modules.
+		var front_key := door_key if i == cells / 2 else window_key
+		_add_building_model(root, front_key, Vector3(offset, 0.0, half),
+			180.0, visual_scale)
+	var roof := _add_building_model(root, String(parts.get("roof", "")),
+		Vector3(0.0, 3.75, 0.0), 0.0, roof_scale)
+	if roof != null:
+		root.set_meta("roof_asset", parts.get("roof", ""))
+	if core_type == "keep":
+		_add_building_model(root, "bld/stairs_exterior_straight",
+			Vector3(0.0, 0.0, half + 1.1), 180.0, visual_scale * 0.8)
+		_add_building_model(root, "prop/torch_metal",
+			Vector3(-half - 0.8, 0.0, half - 0.5), 0.0, 0.75)
+		_add_building_model(root, "prop/torch_metal",
+			Vector3(half + 0.8, 0.0, half - 0.5), 0.0, 0.75)
+	elif core_type == "tavern":
+		_add_building_model(root, "bld/chimney", Vector3(1.0, 0.0, -0.6),
+			0.0, visual_scale)
+		_add_building_model(root, "prop/lantern_wall",
+			Vector3(half + 0.25, 1.6, half - 0.5), 90.0, 0.72)
+	elif core_type == "inn":
+		_add_building_model(root, "bld/chimney", Vector3(-1.0, 0.0, -0.6),
+			0.0, visual_scale)
+		_add_building_model(root, "bld/shutters_wide_open",
+			Vector3(half + 0.2, 1.1, -0.1), 90.0, visual_scale * 0.8)
+	elif core_type == "equipment":
+		_add_building_model(root, "bld/chimney", Vector3(0.8, 0.0, -0.7),
+			0.0, visual_scale)
+		_add_building_model(root, "tool/anvil", Vector3(half + 0.65, 0.0, 0.7),
+			15.0, visual_scale * 0.72)
+		_add_building_model(root, "tool/workbench",
+			Vector3(-half - 0.65, 0.0, 0.7), -15.0, visual_scale * 0.72)
+	elif core_type == "grocery":
+		_add_building_model(root, "prop/stall_empty",
+			Vector3(0.0, 0.0, half + 1.0), 180.0, visual_scale * 0.82)
+
+
+func _add_building_model(root: Node3D, key: String, pos: Vector3,
+		yaw_deg: float, uniform_scale: float) -> Node3D:
+	if key.is_empty():
+		return null
+	var model := VisualAssetCatalog3D.instantiate_model(key)
+	if model == null:
+		push_error("CoreBuilding3D: replacement model failed '%s'" % key)
+		return null
+	model.position = pos
+	model.rotation.y = deg_to_rad(yaw_deg)
+	model.scale = Vector3.ONE * uniform_scale
+	model.visible = true
+	model.set_meta("catalog_key", key)
+	model.set_meta("kind", "core_building_visual")
+	root.add_child(model)
+	_enable_model_meshes(model)
+	return model
+
+
+func _enable_model_meshes(node: Node) -> void:
+	for child in node.get_children():
+		if child is GeometryInstance3D:
+			(child as GeometryInstance3D).visible = true
+		_enable_model_meshes(child)
 
 
 func get_core_type() -> String:
