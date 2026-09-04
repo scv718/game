@@ -32,6 +32,9 @@ var attack_interval: float = 1.0
 var move_speed: float = 120.0
 var alive := true
 var defense_zone: DefenseZone = DefenseZone.NONE
+## TASK-021-3 / TASK-027-5: Potion is a separate battle slot, not Food.
+var potion_slot_id := ""
+var potion_slot_count := 0
 
 
 func _init(p_id: String = "", p_name: String = "", p_class: MercClass = MercClass.SWORDSMAN) -> void:
@@ -55,3 +58,23 @@ func set_defense_zone(zone: DefenseZone) -> void:
 
 func get_defense_zone() -> DefenseZone:
 	return defense_zone
+
+func equip_potion(potion_id: String, count: int) -> bool:
+	if not PotionData.is_known(potion_id):
+		return false
+	potion_slot_id = potion_id
+	potion_slot_count = maxi(0, count)
+	return true
+
+func unequip_potion() -> void:
+	potion_slot_id = ""
+	potion_slot_count = 0
+
+func get_potion_slot_id() -> String:
+	return potion_slot_id
+
+func get_potion_slot_count() -> int:
+	return potion_slot_count
+
+func has_potion_slot() -> bool:
+	return not potion_slot_id.is_empty() and potion_slot_count > 0

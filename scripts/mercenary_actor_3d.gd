@@ -80,6 +80,9 @@ var _last_focus_pos := Vector3.ZERO
 var _unreachable_target: Node = null
 var _unreachable_cooldown := 0.0
 var _hit_flash_left := 0.0
+## TASK-027-5: one successful Potion consume per spawned combat actor.
+var _potion_consumed := false
+var _potion_service = null
 ## nav agent에 마지막으로 설정한 목적지. 바뀔 때만 대입 + 즉시 path 갱신한다.
 ## "미설정" 판정은 _has_nav_dest로 한다. 세계 원점(safe rally)도 유효한 목적지이므로
 ## Vector3.ZERO를 미설정 센티널로 쓰면 첫 이동 명령이 무시되어 RETREAT가 영구
@@ -112,6 +115,7 @@ func _physics_process(delta: float) -> void:
 	if not alive or state == MercState.DEAD:
 		velocity = Vector3.ZERO
 		return
+	_tick_auto_potion()
 	_attack_cd = maxf(0.0, _attack_cd - delta)
 	_unreachable_cooldown = maxf(0.0, _unreachable_cooldown - delta)
 	_tick_hit_flash(delta)
@@ -297,6 +301,19 @@ func take_damage(amount: int) -> void:
 	hit_taken.emit(amount)
 	if current_hp <= 0:
 		die()
+
+func _tick_auto_potion() -> void:
+	if _potion_consumed or merc_data == null:
+		return
+	if _potion_service == null:
+		var service_script: GDScript = load("res://scripts/mercenary_potion_service.gd") as GDScript
+		if service_script == null:
+			return
+		_potion_service = service_script.new(get_node_or_null("/root/VillageResources"))
+	var result: Dictionary = _potion_service.auto_consume(merc_data, current_hp, _potion_consumed)
+	if result.get("ok", false):
+		current_hp = int(result.get("new_hp", current_hp))
+		_potion_consumed = true
 
 
 ## 사망 처리. MercenaryData.alive=false 반영, 그룹 제외, Death Ledger 기록,

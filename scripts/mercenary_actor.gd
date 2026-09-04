@@ -55,6 +55,9 @@ var _last_focus_pos := Vector2.ZERO
 
 ## TASK-014-6 사망 처리에서 재사용.
 signal died(mercenary: Node)
+## Per-spawn guard: one successful consume at most, independent of frame rate.
+var _potion_consumed := false
+var _potion_service = null
 
 @onready var _nav_agent: NavigationAgent2D = $NavigationAgent2D
 
@@ -71,6 +74,7 @@ func _physics_process(delta: float) -> void:
 	if not alive or state == MercState.DEAD:
 		velocity = Vector2.ZERO
 		return
+	_tick_auto_potion()
 	_attack_cd = maxf(0.0, _attack_cd - delta)
 	match state:
 		MercState.IDLE:
@@ -282,6 +286,19 @@ func _in_attack_range() -> bool:
 	if _target == null or not is_instance_valid(_target):
 		return false
 	return global_position.distance_to(_target.global_position) <= ATTACK_RANGE
+
+func _tick_auto_potion() -> void:
+	if _potion_consumed or merc_data == null:
+		return
+	if _potion_service == null:
+		var service_script: GDScript = load("res://scripts/mercenary_potion_service.gd") as GDScript
+		if service_script == null:
+			return
+		_potion_service = service_script.new(get_node_or_null("/root/VillageResources"))
+	var result: Dictionary = _potion_service.auto_consume(merc_data, current_hp, _potion_consumed)
+	if result.get("ok", false):
+		current_hp = int(result.get("new_hp", current_hp))
+		_potion_consumed = true
 
 
 func _reached_defense_point() -> bool:
