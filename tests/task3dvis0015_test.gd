@@ -282,7 +282,10 @@ func _paths() -> void:
 	var flat_ok := true
 	var shadow_ok := true
 	for strip in paths_root.get_children():
-		if not _near(strip.position.y, _village.PATH_STRIP_Y):
+		# Dirt edge layers sit slightly below the traveled center to avoid
+		# z-fighting while remaining a non-colliding ground visual.
+		if strip.position.y > _village.PATH_STRIP_Y + 0.002 \
+				or strip.position.y < _village.PATH_STRIP_Y - 0.016:
 			flat_ok = false
 		if strip.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
 			shadow_ok = false
