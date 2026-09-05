@@ -878,7 +878,7 @@ func _build_frontier_dressing() -> void:
 	for pos in [Vector3(-52, 0, 8), Vector3(-66, 0, -7), Vector3(-82, 0, 8),
 			Vector3(-96, 0, -5)]:
 		_spawn_frontier_model("rock/medium_2", pos, 0.0, 0.65)
-	_spawn_portal(Vector3(-112, 0, 0))
+	_spawn_portal(Vector3(-175, 0, 0))
 
 
 func _spawn_ground_patch(node_name: String, pos: Vector3, radius: float,
@@ -1029,23 +1029,149 @@ func _strip_fortification_colliders(node: Node) -> void:
 
 
 func _spawn_portal(pos: Vector3) -> void:
-	var portal := MeshInstance3D.new()
+	# The portal is a distant world-scale anomaly, not a gate or building.
+	# Its lower half is deliberately buried below the horizon/ground line so the
+	# camera reads a colossal half-disc emerging beyond the frontier.
+	var portal := Node3D.new()
 	portal.name = "DistantPortal"
-	var mesh := TorusMesh.new()
-	mesh.inner_radius = 3.0
-	mesh.outer_radius = 4.0
-	mesh.rings = 16
-	mesh.ring_segments = 32
-	portal.mesh = mesh
-	portal.position = Vector3(pos.x, 0.35, pos.z)
-	portal.rotation_degrees.x = 90.0
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.48, 0.08, 0.7)
-	material.emission_enabled = true
-	material.emission = Color(0.22, 0.02, 0.4)
-	material.emission_energy_multiplier = 2.5
-	portal.material_override = material
+	portal.position = Vector3(pos.x, 0.0, pos.z)
 	add_child(portal)
+
+	var core := MeshInstance3D.new()
+	core.name = "AbyssCore"
+	core.mesh = _make_portal_half_disc(36.0, 64)
+	core.position = Vector3(0.0, 0.0, 0.0)
+	core.scale = Vector3(1.0, 1.0, 0.22)
+	var core_material := StandardMaterial3D.new()
+	core_material.albedo_color = Color(0.002, 0.001, 0.008)
+	core_material.roughness = 1.0
+	core_material.metallic = 0.0
+	core_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	core_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	core_material.emission_enabled = true
+	core_material.emission = Color(0.008, 0.001, 0.02)
+	core_material.emission_energy_multiplier = 0.35
+	core.material_override = core_material
+	portal.add_child(core)
+
+	var halo := MeshInstance3D.new()
+	halo.name = "UnstablePurpleHalo"
+	halo.mesh = _make_portal_half_ring(35.0, 39.0, 96)
+	halo.position = Vector3(0.0, 0.0, 0.1)
+	halo.material_override = _portal_energy_material(Color(0.28, 0.015, 0.68), 4.5)
+	portal.add_child(halo)
+
+	var outer_halo := MeshInstance3D.new()
+	outer_halo.name = "RiftDistortionEdge"
+	outer_halo.mesh = _make_portal_half_ring(39.0, 42.0, 96)
+	outer_halo.position = Vector3(0.0, 0.0, 0.2)
+	outer_halo.material_override = _portal_energy_material(Color(0.07, 0.002, 0.22), 2.2)
+	portal.add_child(outer_halo)
+
+	var glow := MeshInstance3D.new()
+	glow.name = "AtmosphericPurpleGlow"
+	var glow_mesh := QuadMesh.new()
+	glow_mesh.size = Vector2(100.0, 100.0)
+	glow.mesh = glow_mesh
+	glow.position = Vector3(0.0, 0.0, 0.30)
+	glow.rotation_degrees.x = 90.0
+	glow.material_override = _portal_glow_material()
+	portal.add_child(glow)
+
+	var anomaly_light := OmniLight3D.new()
+	anomaly_light.name = "AbyssAmbientLight"
+	anomaly_light.light_color = Color(0.28, 0.02, 0.48)
+	anomaly_light.light_energy = 2.0
+	anomaly_light.omni_range = 76.0
+	anomaly_light.position = Vector3(0.0, 11.0, 2.0)
+	portal.add_child(anomaly_light)
+
+	# No collision body is attached: this is a distant visual/world-boundary event.
+
+
+func _make_portal_half_disc(radius: float, segments: int) -> ArrayMesh:
+	var vertices := PackedVector3Array([Vector3.ZERO])
+	var uvs := PackedVector2Array([Vector2(0.5, 0.0)])
+	for i in range(segments + 1):
+		var angle := PI * float(i) / float(segments)
+		var point := Vector3(cos(angle) * radius, sin(angle) * radius, 0.0)
+		vertices.append(point)
+		uvs.append(Vector2(0.5 + point.x / (radius * 2.0), point.y / radius))
+	var indices := PackedInt32Array()
+	for i in range(segments):
+		indices.append(0)
+		indices.append(i + 1)
+		indices.append(i + 2)
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
+
+func _make_portal_half_ring(inner_radius: float, outer_radius: float,
+		segments: int) -> ArrayMesh:
+	var vertices := PackedVector3Array()
+	var indices := PackedInt32Array()
+	for i in range(segments + 1):
+		var angle := PI * float(i) / float(segments)
+		var direction := Vector3(cos(angle), sin(angle), 0.0)
+		vertices.append(direction * outer_radius)
+		vertices.append(direction * inner_radius)
+	for i in range(segments):
+		var base := i * 2
+		indices.append(base)
+		indices.append(base + 1)
+		indices.append(base + 2)
+		indices.append(base + 2)
+		indices.append(base + 1)
+		indices.append(base + 3)
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
+
+func _portal_energy_material(color: Color, energy: float) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_color = Color(color.r, color.g, color.b, 0.82)
+	material.emission_enabled = true
+	material.emission = color
+	material.emission_energy_multiplier = energy
+	return material
+
+
+func _portal_glow_material() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+	shader_type spatial;
+	render_mode unshaded, cull_disabled, blend_add, depth_draw_never;
+
+	void fragment() {
+		vec2 p = UV * 2.0 - 1.0;
+		if (p.y < 0.0) { discard; }
+		float radius = length(p);
+		float edge = smoothstep(1.08, 0.55, radius);
+		float pulse = 0.72 + 0.28 * sin(TIME * 2.4 + p.x * 8.0 + p.y * 5.0);
+		float tear = 0.82 + 0.18 * sin(TIME * 5.0 + p.x * 31.0) * sin(TIME * 3.0 + p.y * 19.0);
+		float alpha = edge * 0.16 * pulse * tear;
+		if (alpha < 0.008) { discard; }
+		ALBEDO = vec3(0.16, 0.005, 0.42);
+		EMISSION = vec3(0.22, 0.008, 0.62) * pulse * 2.0;
+		ALPHA = alpha;
+	}
+	"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	return material
 
 
 ## house_size_m: 4 또는 6(m). 문은 로컬 남쪽(+Z) 벽에 있고 yaw_deg로 방향을 돌린다.
