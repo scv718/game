@@ -235,10 +235,10 @@ func _catalog_defense_kind() -> String:
 func _snap_catalog_wall_endpoint(mouse: Vector3) -> Vector3:
 	var best := _snap_cell_center(mouse)
 	var best_distance := 1.25
-	for node in get_tree().get_nodes_in_group("catalog_defense_walls_3d"):
+	for node in get_tree().get_nodes_in_group("catalog_defense_nodes_3d"):
 		if not is_instance_valid(node):
 			continue
-		for endpoint in _wall_endpoints(node as Node3D):
+		for endpoint in _defense_endpoints(node as Node3D):
 			var distance := WorldCoords3D.distance_xz(endpoint, mouse)
 			if distance < best_distance:
 				best_distance = distance
@@ -249,10 +249,16 @@ func _snap_catalog_wall_endpoint(mouse: Vector3) -> Vector3:
 	return best
 
 
-func _wall_endpoints(node: Node3D) -> Array:
-	var length := float(node.get_meta("segment_length_units", 0.0))
+func _defense_endpoints(node: Node3D) -> Array:
+	var length := float(node.get_meta("connection_span_units", 0.0))
 	if length <= 0.0:
 		return []
+	if node.get_meta("catalog_kind", "") == "tower":
+		var radius := length * 0.5
+		return [node.global_position + Vector3(radius, 0.0, 0.0),
+			node.global_position + Vector3(-radius, 0.0, 0.0),
+			node.global_position + Vector3(0.0, 0.0, radius),
+			node.global_position + Vector3(0.0, 0.0, -radius)]
 	var axis := Vector3(cos(node.rotation.y), 0.0, -sin(node.rotation.y))
 	return [node.global_position - axis * length * 0.5,
 		node.global_position + axis * length * 0.5]
@@ -434,7 +440,7 @@ func _is_valid_catalog_position(pos: Vector3) -> bool:
 	var aabb := _footprint_aabb(pos, extents)
 	for hit in _query_blocker_hits(pos, extents, 16):
 		var collider = hit.get("collider")
-		if collider is Node3D and collider.is_in_group("catalog_defense_walls_3d") \
+		if collider is Node3D and collider.is_in_group("catalog_defense_nodes_3d") \
 				and _is_catalog_wall_connection(pos, collider as Node3D):
 			continue
 		if collider is Node3D and _rejects_placement_geometry(aabb, collider):
@@ -443,7 +449,7 @@ func _is_valid_catalog_position(pos: Vector3) -> bool:
 
 
 func _is_catalog_wall_connection(pos: Vector3, collider: Node3D) -> bool:
-	for endpoint in _wall_endpoints(collider):
+	for endpoint in _defense_endpoints(collider):
 		if WorldCoords3D.distance_xz(pos, endpoint) <= 0.3:
 			return true
 	return false
@@ -626,11 +632,14 @@ func _try_place_cuteskull_at(pos: Vector3, cost: int, keep_active: bool = false)
 	building.add_to_group("buildings_3d")
 	if _catalog_defense_kind() == "wall":
 		building.add_to_group("catalog_defense_walls_3d")
+	if _catalog_defense_kind() != "standard":
+		building.add_to_group("catalog_defense_nodes_3d")
 	building.set_meta("asset_source", "Cuteskull city16.fbx")
 	building.set_meta("source_node", _cuteskull_asset_name())
 	building.set_meta("catalog_kind", _catalog_defense_kind())
-	building.set_meta("segment_length_units",
-		_cuteskull_lengths_px.get(_cuteskull_asset_name(), 0.0) * WorldCoords3D.PX_TO_UNIT)
+	var connection_span := _extents_for_type(_building_type, pos).x * 2.0 * WorldCoords3D.PX_TO_UNIT
+	building.set_meta("connection_span_units", connection_span)
+	building.set_meta("segment_length_units", connection_span)
 	building.set_meta("catalog_cost", {"wood": cost})
 	building.rotation.y = deg_to_rad(_catalog_rotation_degrees())
 	var half := _extents_for_type(_building_type, pos) * WorldCoords3D.PX_TO_UNIT
