@@ -7,11 +7,11 @@ const VILLAGE_SCENE := "res://scenes/village_composition_3d.tscn"
 const PIVOT := Vector3(-2.0, 0.0, -4.0)
 const ORTHO_SIZE := 48.0
 const CANDIDATES := [
-	{"name": "before", "pitch": -74.0},
-	{"name": "candidate_a", "pitch": -70.0},
-	{"name": "candidate_b", "pitch": -66.0},
-	{"name": "candidate_c", "pitch": -62.0},
-	{"name": "final", "pitch": -66.0},
+	{"name": "before", "pitch": -66.0},
+	{"name": "candidate_a", "pitch": -62.0},
+	{"name": "candidate_b", "pitch": -58.0},
+	{"name": "candidate_c", "pitch": -54.0},
+	{"name": "final", "pitch": -58.0},
 ]
 
 var _camera_controller: Node

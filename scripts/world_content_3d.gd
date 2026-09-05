@@ -38,6 +38,7 @@ func _ready() -> void:
 	# apply_ground_tone 재사용. 이 노드의 parent가 world3d.tscn World3D 루트다.)
 	var composition: Node = VILLAGE_COMPOSITION_SCRIPT.new()
 	composition.apply_ground_tone(get_parent())
+	composition.spawn_distant_portal(self, Vector3(-175.0, 0.0, 0.0))
 	composition.free()
 	if grass_only:
 		return

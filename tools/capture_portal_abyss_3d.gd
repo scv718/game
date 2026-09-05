@@ -1,21 +1,16 @@
 extends SceneTree
 
-const PIVOT := Vector3(-175.0, 0.0, 0.0)
-const ORTHO_SIZE := 96.0
+const PIVOT := Vector3(-125.0, 0.0, 0.0)
+const ORTHO_SIZE := 84.0
 var _frames := 0
 var _camera_controller: Node
 var _camera: Camera3D
 
 
 func _initialize() -> void:
-	var world := (load("res://scenes/world3d.tscn") as PackedScene).instantiate()
-	root.add_child(world)
-	_camera_controller = (load("res://scenes/camera_controller_3d.tscn") as PackedScene).instantiate()
-	root.add_child(_camera_controller)
-	root.add_child((load("res://scenes/environment_3d.tscn") as PackedScene).instantiate())
-	var village := (load("res://scenes/village_composition_3d.tscn") as PackedScene).instantiate()
-	root.add_child(village)
-	village.apply_ground_tone(world)
+	var main := (load("res://scenes/main_3d.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	_camera_controller = main.get_node("CameraController3D")
 
 
 func _process(_delta: float) -> bool:
@@ -25,7 +20,7 @@ func _process(_delta: float) -> bool:
 		if _camera == null:
 			return false
 		_camera_controller.set_process(false)
-		_camera_controller.pitch_degrees = -66.0
+		_camera_controller.pitch_degrees = -58.0
 		_camera_controller._apply_fixed_orientation()
 		_camera_controller.position = PIVOT
 		_camera.size = ORTHO_SIZE

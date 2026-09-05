@@ -1028,30 +1028,30 @@ func _strip_fortification_colliders(node: Node) -> void:
 			_strip_fortification_colliders(child)
 
 
-func _spawn_portal(pos: Vector3) -> void:
+func spawn_distant_portal(target_parent: Node3D, pos: Vector3) -> Node3D:
+	if target_parent == null:
+		return null
+	var existing := target_parent.get_node_or_null("DistantPortal") as Node3D
+	if existing != null:
+		return existing
+	return _spawn_portal(pos, target_parent)
+
+
+func _spawn_portal(pos: Vector3, target_parent: Node3D = self) -> Node3D:
 	# The portal is a distant world-scale anomaly, not a gate or building.
 	# Its lower half is deliberately buried below the horizon/ground line so the
 	# camera reads a colossal half-disc emerging beyond the frontier.
 	var portal := Node3D.new()
 	portal.name = "DistantPortal"
 	portal.position = Vector3(pos.x, 0.0, pos.z)
-	add_child(portal)
+	target_parent.add_child(portal)
 
 	var core := MeshInstance3D.new()
 	core.name = "AbyssCore"
 	core.mesh = _make_portal_half_disc(36.0, 64)
 	core.position = Vector3(0.0, 0.0, 0.0)
 	core.scale = Vector3(1.0, 1.0, 0.22)
-	var core_material := StandardMaterial3D.new()
-	core_material.albedo_color = Color(0.002, 0.001, 0.008)
-	core_material.roughness = 1.0
-	core_material.metallic = 0.0
-	core_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	core_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	core_material.emission_enabled = true
-	core_material.emission = Color(0.008, 0.001, 0.02)
-	core_material.emission_energy_multiplier = 0.35
-	core.material_override = core_material
+	core.material_override = _portal_core_material()
 	portal.add_child(core)
 
 	var halo := MeshInstance3D.new()
@@ -1068,13 +1068,26 @@ func _spawn_portal(pos: Vector3) -> void:
 	outer_halo.material_override = _portal_energy_material(Color(0.07, 0.002, 0.22), 2.2)
 	portal.add_child(outer_halo)
 
+	var aura_band := MeshInstance3D.new()
+	aura_band.name = "TornAuraBand"
+	aura_band.mesh = _make_portal_irregular_half_ring(42.5, 47.5, 96, 0.35)
+	aura_band.position = Vector3(0.0, 0.0, 0.24)
+	aura_band.material_override = _portal_energy_material(Color(0.23, 0.008, 0.62, 0.58), 3.4)
+	portal.add_child(aura_band)
+
+	var outer_wisp := MeshInstance3D.new()
+	outer_wisp.name = "OuterAuraWisp"
+	outer_wisp.mesh = _make_portal_irregular_half_ring(48.0, 50.5, 96, 1.7)
+	outer_wisp.position = Vector3(0.0, 0.0, 0.26)
+	outer_wisp.material_override = _portal_energy_material(Color(0.14, 0.004, 0.44, 0.38), 2.8)
+	portal.add_child(outer_wisp)
+
 	var glow := MeshInstance3D.new()
 	glow.name = "AtmosphericPurpleGlow"
 	var glow_mesh := QuadMesh.new()
 	glow_mesh.size = Vector2(100.0, 100.0)
 	glow.mesh = glow_mesh
 	glow.position = Vector3(0.0, 0.0, 0.30)
-	glow.rotation_degrees.x = 90.0
 	glow.material_override = _portal_glow_material()
 	portal.add_child(glow)
 
@@ -1087,6 +1100,7 @@ func _spawn_portal(pos: Vector3) -> void:
 	portal.add_child(anomaly_light)
 
 	# No collision body is attached: this is a distant visual/world-boundary event.
+	return portal
 
 
 func _make_portal_half_disc(radius: float, segments: int) -> ArrayMesh:
@@ -1115,12 +1129,16 @@ func _make_portal_half_disc(radius: float, segments: int) -> ArrayMesh:
 func _make_portal_half_ring(inner_radius: float, outer_radius: float,
 		segments: int) -> ArrayMesh:
 	var vertices := PackedVector3Array()
+	var uvs := PackedVector2Array()
 	var indices := PackedInt32Array()
 	for i in range(segments + 1):
 		var angle := PI * float(i) / float(segments)
 		var direction := Vector3(cos(angle), sin(angle), 0.0)
 		vertices.append(direction * outer_radius)
 		vertices.append(direction * inner_radius)
+		var arc_u := float(i) / float(segments)
+		uvs.append(Vector2(arc_u, 1.0))
+		uvs.append(Vector2(arc_u, 0.0))
 	for i in range(segments):
 		var base := i * 2
 		indices.append(base)
@@ -1132,20 +1150,91 @@ func _make_portal_half_ring(inner_radius: float, outer_radius: float,
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	arrays[Mesh.ARRAY_INDEX] = indices
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	return mesh
 
 
-func _portal_energy_material(color: Color, energy: float) -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.albedo_color = Color(color.r, color.g, color.b, 0.82)
-	material.emission_enabled = true
-	material.emission = color
-	material.emission_energy_multiplier = energy
+func _make_portal_irregular_half_ring(inner_radius: float, outer_radius: float,
+		segments: int, phase: float) -> ArrayMesh:
+	var vertices := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	var indices := PackedInt32Array()
+	for i in range(segments + 1):
+		var arc_u := float(i) / float(segments)
+		var angle := PI * arc_u
+		var ripple := sin(angle * 7.0 + phase) * 1.15 \
+			+ sin(angle * 19.0 - phase * 2.0) * 0.55
+		var direction := Vector3(cos(angle), sin(angle), 0.0)
+		vertices.append(direction * (outer_radius + ripple))
+		vertices.append(direction * (inner_radius + ripple * 0.35))
+		uvs.append(Vector2(arc_u, 1.0))
+		uvs.append(Vector2(arc_u, 0.0))
+	for i in range(segments):
+		var base := i * 2
+		indices.append_array(PackedInt32Array([
+			base, base + 1, base + 2,
+			base + 2, base + 1, base + 3,
+		]))
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	return mesh
+
+
+func _portal_core_material() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+	shader_type spatial;
+	render_mode unshaded, cull_disabled;
+
+	void fragment() {
+		vec2 p = vec2((UV.x - 0.5) * 2.0, UV.y);
+		float radius = length(p);
+		float angle = atan(p.y, p.x);
+		float spiral_a = pow(0.5 + 0.5 * sin(angle * 5.0 - radius * 22.0 - TIME * 1.8), 9.0);
+		float spiral_b = pow(0.5 + 0.5 * sin(angle * 3.0 - radius * 15.0 + TIME * 1.1), 12.0);
+		float fade = smoothstep(0.06, 0.88, radius) * (1.0 - smoothstep(0.92, 1.0, radius));
+		float vortex = (spiral_a * 0.72 + spiral_b * 0.38) * fade;
+		vec3 void_color = vec3(0.001, 0.0, 0.006);
+		vec3 violet = vec3(0.30, 0.008, 0.72) * vortex * 4.0;
+		ALBEDO = void_color;
+		EMISSION = void_color + violet;
+	}
+	"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	return material
+
+
+func _portal_energy_material(color: Color, energy: float) -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+	shader_type spatial;
+	render_mode unshaded, cull_disabled, blend_add, depth_draw_never, depth_test_disabled;
+	uniform vec4 tint : source_color = vec4(0.4, 0.02, 0.9, 1.0);
+	uniform float energy = 3.0;
+
+	void fragment() {
+		float broken_edge = 0.58 + 0.42 * sin(UV.x * 83.0 + TIME * 4.0)
+			* sin(UV.x * 31.0 - TIME * 2.3);
+		float radial = 0.55 + 0.45 * sin(UV.y * 8.0 + UV.x * 25.0 - TIME * 3.2);
+		float alpha = clamp(0.52 + broken_edge * 0.42 + radial * 0.18, 0.0, 1.0);
+		ALBEDO = tint.rgb;
+		EMISSION = tint.rgb * energy * (0.72 + broken_edge * 0.48);
+		ALPHA = alpha * tint.a;
+	}
+	"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("tint", color)
+	material.set_shader_parameter("energy", energy)
 	return material
 
 
@@ -1153,19 +1242,27 @@ func _portal_glow_material() -> ShaderMaterial:
 	var shader := Shader.new()
 	shader.code = """
 	shader_type spatial;
-	render_mode unshaded, cull_disabled, blend_add, depth_draw_never;
+	render_mode unshaded, cull_disabled, blend_add, depth_draw_never, depth_test_disabled;
 
 	void fragment() {
 		vec2 p = UV * 2.0 - 1.0;
+		p.y = -p.y;
 		if (p.y < 0.0) { discard; }
 		float radius = length(p);
-		float edge = smoothstep(1.08, 0.55, radius);
-		float pulse = 0.72 + 0.28 * sin(TIME * 2.4 + p.x * 8.0 + p.y * 5.0);
-		float tear = 0.82 + 0.18 * sin(TIME * 5.0 + p.x * 31.0) * sin(TIME * 3.0 + p.y * 19.0);
-		float alpha = edge * 0.16 * pulse * tear;
+		float angle = atan(p.y, p.x);
+		float warped_radius = radius + 0.025 * sin(angle * 13.0 + TIME * 2.1)
+			+ 0.018 * sin(angle * 29.0 - TIME * 3.4);
+		float rim = 1.0 - smoothstep(0.025, 0.085, abs(warped_radius - 0.72));
+		float haze = 1.0 - smoothstep(0.10, 0.31, abs(warped_radius - 0.72));
+		float wisps = pow(max(0.0, sin(angle * 11.0 - radius * 25.0 + TIME * 2.8)), 8.0)
+			* smoothstep(0.54, 0.74, radius) * (1.0 - smoothstep(0.74, 1.02, radius));
+		float inner_swirl = pow(max(0.0, sin(angle * 5.0 - radius * 19.0 - TIME * 1.7)), 10.0)
+			* smoothstep(0.18, 0.70, radius) * (1.0 - smoothstep(0.64, 0.82, radius));
+		float pulse = 0.78 + 0.22 * sin(TIME * 2.4 + angle * 3.0);
+		float alpha = (haze * 0.13 + rim * 0.42 + wisps * 0.30 + inner_swirl * 0.18) * pulse;
 		if (alpha < 0.008) { discard; }
-		ALBEDO = vec3(0.16, 0.005, 0.42);
-		EMISSION = vec3(0.22, 0.008, 0.62) * pulse * 2.0;
+		ALBEDO = vec3(0.23, 0.006, 0.58);
+		EMISSION = vec3(0.31, 0.01, 0.82) * (haze * 0.55 + rim * 2.4 + wisps * 1.7 + inner_swirl);
 		ALPHA = alpha;
 	}
 	"""

@@ -2,6 +2,7 @@ extends SceneTree
 
 const SCENE := "res://scenes/village_composition_3d.tscn"
 var _root: Node3D
+var _main: Node
 var _frames := 0
 var _failed := false
 
@@ -9,6 +10,8 @@ var _failed := false
 func _initialize() -> void:
 	_root = (load(SCENE) as PackedScene).instantiate() as Node3D
 	root.add_child(_root)
+	_main = (load("res://scenes/main_3d.tscn") as PackedScene).instantiate()
+	root.add_child(_main)
 
 
 func _process(_delta: float) -> bool:
@@ -17,6 +20,8 @@ func _process(_delta: float) -> bool:
 		return false
 	var portal := _root.get_node_or_null("DistantPortal") as Node3D
 	_check(portal != null, "distant abyss portal exists")
+	_check(_main.get_node_or_null("World3D/WorldContent3D/DistantPortal") != null,
+		"distant abyss portal is wired into the canonical main runtime")
 	if portal != null:
 		_check(portal.get_node_or_null("AbyssCore") != null, "black abyss core exists")
 		_check(portal.get_node_or_null("UnstablePurpleHalo") != null,
