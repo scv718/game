@@ -675,7 +675,7 @@ def _record_source_commit(task, base, commit, reason=""):
     rng = f"{base}..{commit}" if (base and base != commit) else (commit or "")
     data = {
         "task": task["id"],
-        "status": "DONE",
+        "status": "WAIT_INTEGRATION",
         "source_base_commit": base,
         "source_commit": commit,
         "source_provenance_range": rng,
@@ -684,7 +684,8 @@ def _record_source_commit(task, base, commit, reason=""):
         "integrator_contract": (
             "TASK 전체 integration 은 source_base_commit..source_commit 범위 전체의 commit 들을 "
             "모두 포함해야 한다. source_commit 단일 cherry-pick 으로 TASK 전체를 integration "
-            "했다고 간주하지 말 것 (partial agent commit 이 존재할 수 있다)."
+            "했다고 간주하지 말 것 (partial agent commit 이 존재할 수 있다). "
+            "DONE 은 Integration Coordinator 가 INTEGRATED + REGRESSION_PASS 확인 후에만 기록한다."
         ),
         "note": reason,
     }
@@ -695,19 +696,66 @@ def _record_source_commit(task, base, commit, reason=""):
         pass
 
 
+def _v2_state_path():
+    """Harness V2 persistent state 경로 (supervisor/auto_lane 공용). gitignore 대상(자동 커밋 금지)."""
+    return os.path.join(BASE_DIR, "state_v2.json")
+
+
+def _v2_store():
+    """V2 TaskState 저장소 로드 (없으면 빈 스토어 자동 생성)."""
+    try:
+        from harness_v2.core import V2StateStore
+    except Exception as e:
+        log(f"[V2] harness_v2.core 로드 불가 - DONE 보류: {e}")
+        return None
+    return V2StateStore(_v2_state_path())
+
+
 def finalize_done(task, tasks, queue_path, reason):
-    """DONE 전 commit gate. 성공 TASK 는 반드시 source commit 보유해야 DONE.
-    반환: DONE 처리했으면 True, commit 실패로 보류했으면 False."""
+    """DONE 전 commit gate. 성공 TASK 는 반드시 source commit 보유.
+
+    V2 계약: 여기서는 절대 DONE 을 기록하지 않는다.
+    SOURCE_VALIDATED -> SOURCE_COMMITTED -> WAIT_INTEGRATION 까지만 소유하고,
+    INTEGRATED/REGRESSION_PASS -> DONE 전이는 Integration Coordinator 가 수행한다.
+    반환: source 단계 완료(WAIT_INTEGRATION 기록)했으면 True, commit 실패로 보류했으면 False."""
     root = WORKTREE_DIR or cfg("project_dir")
     ok, base, commit, creason = ensure_source_commit(task, root)
     if ok and commit:
         if not base:
             base = _git_rev_parse(root, commit + "^") or commit
         _record_source_commit(task, base, commit, creason)
-        fb = (reason or "") + f" | source_base={base[:12]}..source={commit[:12]}"
-        update_queue(tasks, queue_path, task["id"], "DONE", feedback=fb)
-        write_result(task, "DONE", fb + f"\n- source_base_commit: {base}\n- source_commit: {commit}\n- source_provenance_range: {base}..{commit}\n- worktree: {root}")
-        log(f"[{task['id']}] DONE (provenance {base[:12]}..{commit[:12]})")
+
+        store = _v2_store()
+        if store is None:
+            update_queue(tasks, queue_path, task["id"], "FIX",
+                         feedback="V2 상태 스토어 초기화 실패 - DONE 보류")
+            return False
+        try:
+            from harness_v2.core import Lifecycle, LifecycleController
+            tid = task["id"]
+            v2 = store.get_task(tid)
+            if v2 is None:
+                from harness_v2.core import TaskState
+                dep_ids = [d.strip().upper() for d in str(task.get("depends_on") or "").split(",") if d.strip()]
+                v2 = TaskState(tid, depends_on=dep_ids,
+                               source_branch=(WORKTREE_DIR or cfg("project_dir")))
+            ctl = LifecycleController(store)
+            ctl.source_validated(v2)
+            v2.source_commit = commit
+            v2.source_validation_result = "PASS"
+            ctl.record(v2, Lifecycle.SOURCE_COMMITTED, source_commit=commit)
+            ctl.wait_integration(v2)
+            store.put_task(v2)
+        except Exception as e:
+            update_queue(tasks, queue_path, task["id"], "FIX",
+                         feedback=f"V2 상태 기록 실패 - DONE 보류: {str(e)[:150]}")
+            return False
+
+        fb = (reason or "") + f" | source_base={base[:12]}..source={commit[:12]} | WAIT_INTEGRATION"
+        update_queue(tasks, queue_path, task["id"], "WAIT_INTEGRATION", feedback=fb)
+        write_result(task, "WAIT_INTEGRATION",
+                     fb + f"\n- source_base_commit: {base}\n- source_commit: {commit}\n- source_provenance_range: {base}..{commit}\n- worktree: {root}")
+        log(f"[{task['id']}] SOURCE_COMMITTED -> WAIT_INTEGRATION (provenance {base[:12]}..{commit[:12]})")
         return True
     # commit 실패 → DONE 금지. implementation/test PASS 상태는 로그에 보존하고 non-success 로 남김.
     update_queue(tasks, queue_path, task["id"], "FIX",

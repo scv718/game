@@ -299,7 +299,9 @@ class IntegrationCoordinator:
             task.set(Lifecycle.REGRESSION_PASS, integration_validation_result="PASS")
             task.set(Lifecycle.DONE)
         self.store.put_task(task)
-        self.store.set_baseline(integrated)
+        # NOTE: persistent integration_baseline_commit 은 여기서 갱신하지 않는다.
+        # production 호출자(auto_lane) 가 main fast-forward 성공 확인 후에만 store.set_baseline() 한다.
+        # (optimistic concurrency guard: baseline 은 main 반영 후에만 이동)
         return task
 
 
