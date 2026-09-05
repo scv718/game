@@ -31,6 +31,12 @@ func _init() -> void:
 		model.basis = Basis(Vector3.RIGHT, deg_to_rad(-90.0))
 		_check(_mesh_count(model) > 0, "%s extracts as a renderable complete building" % asset_name)
 		model.free()
+	var wall_source := source_root.get_node_or_null(
+		"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/Castle_Wall") as Node3D
+	var wall_mesh := wall_source.get_child(0).mesh as Mesh
+	var wall_length_units := wall_mesh.get_aabb().size.x * 0.17
+	_check(wall_length_units > 10.0 and wall_length_units < 12.0,
+		"Castle_Wall runtime segment length is measured from imported mesh")
 	source_root.free()
 	print("BUILDING_CATALOG_3D_RESULT=%s" % ("PASS" if _failures == 0 else "FAIL"))
 	quit(0 if _failures == 0 else 1)

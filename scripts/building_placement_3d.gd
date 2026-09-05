@@ -111,6 +111,10 @@ var _last_mouse_screen_pos := Vector2.ZERO
 var _catalog_panel: PanelContainer = null
 var _catalog_open := false
 var _cuteskull_extents_px: Dictionary = {}
+var _cuteskull_lengths_px: Dictionary = {}
+var _catalog_rotation_quarters := 0
+var _wall_drag_start := Vector3.INF
+var _wall_dragging := false
 
 
 func _ready() -> void:
@@ -144,7 +148,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if event.keycode == KEY_R:
 			if _active:
-				_set_remove_mode(not _remove_mode)
+				if _is_cuteskull_type():
+					_catalog_rotation_quarters = posmod(_catalog_rotation_quarters + 1, 4)
+					_refresh_ghost()
+					feedback.emit("Rotation %d°" % _catalog_rotation_degrees())
+				else:
+					_set_remove_mode(not _remove_mode)
 			return
 	if event.is_action_pressed("build"):
 		_toggle_catalog()
@@ -168,7 +177,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif _building_type == "gate":
 				_try_place_gate_at(_snap_gate(ground_pos))
 			else:
-				_try_place_at(_snap_cell_center(ground_pos))
+				_try_place_at(_catalog_target(ground_pos))
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			_set_active(false)
 		get_viewport().set_input_as_handled()
@@ -184,7 +193,7 @@ func _refresh_ghost() -> void:
 	var mouse := _ground_point_at(_last_mouse_screen_pos)
 	if not mouse.is_finite():
 		return
-	var target := _snap_cell_center(mouse)
+	var target := _catalog_target(mouse)
 	if _building_type == "quarry":
 		var deposit := _find_deposit_at(mouse)
 		if deposit != null:
@@ -192,6 +201,61 @@ func _refresh_ghost() -> void:
 	elif _building_type == "gate":
 		target = _snap_gate(mouse)
 	_show_ghost_at(target)
+
+
+func _catalog_target(mouse: Vector3) -> Vector3:
+	if not _is_cuteskull_type():
+		return _snap_cell_center(mouse)
+	if _is_catalog_wall():
+		return _snap_catalog_wall_endpoint(mouse)
+	return _snap_cell_center(mouse)
+
+
+func _catalog_rotation_degrees() -> float:
+	return float(_catalog_rotation_quarters * 90)
+
+
+func _is_catalog_wall() -> bool:
+	return _is_cuteskull_type() and _cuteskull_asset_name() == "Castle_Wall"
+
+
+func _catalog_defense_kind() -> String:
+	if not _is_cuteskull_type():
+		return "standard"
+	var asset := _cuteskull_asset_name()
+	if asset == "Castle_Wall":
+		return "wall"
+	if asset.begins_with("Castle_Entrance") or asset.ends_with("_Door"):
+		return "gate"
+	if asset.begins_with("Castle_Tower"):
+		return "tower"
+	return "defense"
+
+
+func _snap_catalog_wall_endpoint(mouse: Vector3) -> Vector3:
+	var best := _snap_cell_center(mouse)
+	var best_distance := 1.25
+	for node in get_tree().get_nodes_in_group("catalog_defense_walls_3d"):
+		if not is_instance_valid(node):
+			continue
+		for endpoint in _wall_endpoints(node as Node3D):
+			var distance := WorldCoords3D.distance_xz(endpoint, mouse)
+			if distance < best_distance:
+				best_distance = distance
+				var length: float = _cuteskull_lengths_px.get(_cuteskull_asset_name(), 1.0) * WorldCoords3D.PX_TO_UNIT
+				var axis := Vector3(cos(deg_to_rad(_catalog_rotation_degrees())), 0.0,
+					-sin(deg_to_rad(_catalog_rotation_degrees())))
+				best = endpoint + axis * length * 0.5
+	return best
+
+
+func _wall_endpoints(node: Node3D) -> Array:
+	var length := float(node.get_meta("segment_length_units", 0.0))
+	if length <= 0.0:
+		return []
+	var axis := Vector3(cos(node.rotation.y), 0.0, -sin(node.rotation.y))
+	return [node.global_position - axis * length * 0.5,
+		node.global_position + axis * length * 0.5]
 
 
 ## TASK-CTRL-001-2 대응 공개 상태 접근자(기존 2D 계약 동일).
@@ -205,6 +269,9 @@ func _set_building_type(building_type: String) -> void:
 		return
 	_building_type = building_type
 	_remove_mode = false
+	_catalog_rotation_quarters = 0
+	_wall_drag_start = Vector3.INF
+	_wall_dragging = false
 	if _ghost:
 		_ghost.queue_free()
 		_ghost = null
@@ -232,6 +299,9 @@ func _set_active(value: bool) -> void:
 		return
 	_active = value
 	_remove_mode = false
+	if not value:
+		_wall_drag_start = Vector3.INF
+		_wall_dragging = false
 	if not _active:
 		_catalog_open = false
 		if _catalog_panel != null:
@@ -254,6 +324,9 @@ func _show_ghost_at(pos: Vector3) -> void:
 		_ghost_rect_extents_px = extents
 		_apply_footprint_size(extents)
 	_ghost.position = WorldCoords3D.flatten(pos)
+	_ghost.rotation.y = deg_to_rad(_catalog_rotation_degrees()) if _is_cuteskull_type() else 0.0
+	if _is_catalog_wall() and _wall_dragging:
+		_rebuild_wall_drag_preview(pos)
 	_update_ghost_color()
 
 
@@ -340,6 +413,8 @@ func _snap_cell_center(pos: Vector3) -> Vector3:
 
 
 func _is_valid_position(pos: Vector3) -> bool:
+	if _is_cuteskull_type():
+		return _is_valid_catalog_position(pos)
 	if _building_type == "quarry":
 		var deposit := _find_deposit_at(pos)
 		return deposit != null and not deposit.is_occupied()
@@ -350,6 +425,28 @@ func _is_valid_position(pos: Vector3) -> bool:
 	var extents := _extents_for_type(_building_type, pos)
 	return _is_footprint_in_bounds(pos, extents) \
 		and _query_blocker_hits(pos, extents, 1).is_empty()
+
+
+func _is_valid_catalog_position(pos: Vector3) -> bool:
+	var extents := _extents_for_type(_building_type, pos)
+	if not _is_footprint_in_bounds(pos, extents):
+		return false
+	var aabb := _footprint_aabb(pos, extents)
+	for hit in _query_blocker_hits(pos, extents, 16):
+		var collider = hit.get("collider")
+		if collider is Node3D and collider.is_in_group("catalog_defense_walls_3d") \
+				and _is_catalog_wall_connection(pos, collider as Node3D):
+			continue
+		if collider is Node3D and _rejects_placement_geometry(aabb, collider):
+			return false
+	return true
+
+
+func _is_catalog_wall_connection(pos: Vector3, collider: Node3D) -> bool:
+	for endpoint in _wall_endpoints(collider):
+		if WorldCoords3D.distance_xz(pos, endpoint) <= 0.3:
+			return true
+	return false
 
 
 func _is_valid_wall_position(pos: Vector3) -> bool:
@@ -496,6 +593,16 @@ func _try_place_at(pos: Vector3) -> void:
 		return
 	VillageResources.spend("wood", cost)
 	if _is_cuteskull_type():
+		if _is_catalog_wall():
+			if not _wall_dragging:
+				_wall_drag_start = pos
+				_wall_dragging = true
+				feedback.emit("Wall line start set; click again to confirm")
+				_refresh_ghost()
+				return
+			if _wall_drag_start.is_finite():
+				_try_place_wall_line(_wall_drag_start, pos)
+				return
 		_try_place_cuteskull_at(pos, cost)
 		return
 	var scene: PackedScene = _building_scene_for(_building_type)
@@ -511,15 +618,21 @@ func _try_place_at(pos: Vector3) -> void:
 	_set_active(false)
 
 
-func _try_place_cuteskull_at(pos: Vector3, cost: int) -> void:
+func _try_place_cuteskull_at(pos: Vector3, cost: int, keep_active: bool = false) -> void:
 	var building := StaticBody3D.new()
 	building.name = "PlayerBuilding_%s" % _cuteskull_asset_name()
 	building.collision_layer = CollisionLayers3D.BUILDING
 	building.collision_mask = 0
 	building.add_to_group("buildings_3d")
+	if _catalog_defense_kind() == "wall":
+		building.add_to_group("catalog_defense_walls_3d")
 	building.set_meta("asset_source", "Cuteskull city16.fbx")
 	building.set_meta("source_node", _cuteskull_asset_name())
+	building.set_meta("catalog_kind", _catalog_defense_kind())
+	building.set_meta("segment_length_units",
+		_cuteskull_lengths_px.get(_cuteskull_asset_name(), 0.0) * WorldCoords3D.PX_TO_UNIT)
 	building.set_meta("catalog_cost", {"wood": cost})
+	building.rotation.y = deg_to_rad(_catalog_rotation_degrees())
 	var half := _extents_for_type(_building_type, pos) * WorldCoords3D.PX_TO_UNIT
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
@@ -541,7 +654,8 @@ func _try_place_cuteskull_at(pos: Vector3, cost: int) -> void:
 		get_parent().add_child(building)
 	NavigationPolicy3D.request_rebuild_debounced(get_tree())
 	feedback.emit("%s built" % _cuteskull_asset_name())
-	_set_active(false)
+	if not keep_active:
+		_set_active(false)
 
 
 func _is_cuteskull_type() -> bool:
@@ -566,6 +680,7 @@ func _cache_cuteskull_extents() -> void:
 				_cuteskull_extents_px[asset_name] = Vector2(
 					size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5,
 					size.y * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5)
+				_cuteskull_lengths_px[asset_name] = size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT
 				break
 	source_root.free()
 
@@ -589,6 +704,63 @@ func _make_cuteskull_model(asset_name: String, ghost: bool) -> Node3D:
 		_apply_ghost_material(model, mat)
 	source_root.free()
 	return model
+
+
+func _rebuild_wall_drag_preview(endpoint: Vector3) -> void:
+	if _ghost == null or not _wall_drag_start.is_finite():
+		return
+	for child in _ghost.get_children():
+		if child is Node3D and child.name.begins_with("DragWall_"):
+			child.queue_free()
+	var delta := endpoint - _wall_drag_start
+	var horizontal := absf(delta.x) >= absf(delta.z)
+	var direction := 1.0 if (delta.x if horizontal else delta.z) >= 0.0 else -1.0
+	var distance := absf(delta.x) if horizontal else absf(delta.z)
+	var segment_length: float = _cuteskull_lengths_px.get(_cuteskull_asset_name(), 1.0) * WorldCoords3D.PX_TO_UNIT
+	var count := maxi(1, int(floor(distance / maxf(segment_length, 0.01))))
+	var angle := 0.0 if horizontal else 90.0
+	if direction < 0.0:
+		angle += 180.0
+	_ghost.rotation.y = deg_to_rad(angle)
+	for index in count:
+		var model := _make_cuteskull_model(_cuteskull_asset_name(), true)
+		if model == null:
+			continue
+		model.name = "DragWall_%d" % index
+		model.position = Vector3((index + 0.5) * segment_length, 0.0, 0.0)
+		_ghost.add_child(model)
+
+
+func _try_place_wall_line(start: Vector3, endpoint: Vector3) -> void:
+	var delta := endpoint - start
+	var horizontal := absf(delta.x) >= absf(delta.z)
+	var direction := 1.0 if (delta.x if horizontal else delta.z) >= 0.0 else -1.0
+	var distance := absf(delta.x) if horizontal else absf(delta.z)
+	var segment_length: float = _cuteskull_lengths_px.get(_cuteskull_asset_name(), 1.0) * WorldCoords3D.PX_TO_UNIT
+	var count := maxi(1, int(floor(distance / maxf(segment_length, 0.01))))
+	var angle := 0.0 if horizontal else 90.0
+	if direction < 0.0:
+		angle += 180.0
+	_catalog_rotation_quarters = int(round(angle / 90.0)) % 4
+	var cost := _cost_for_type(_building_type) * count
+	if not VillageResources.has("wood", cost):
+		feedback.emit("Not enough Wood")
+		return
+	for index in count:
+		var axis := Vector3(cos(deg_to_rad(angle)), 0.0, -sin(deg_to_rad(angle)))
+		var center: Vector3 = start + axis * segment_length * (index + 0.5)
+		if not _is_valid_position(center):
+			feedback.emit("Invalid wall line")
+			return
+	VillageResources.spend("wood", cost)
+	for index in count:
+		var axis := Vector3(cos(deg_to_rad(angle)), 0.0, -sin(deg_to_rad(angle)))
+		var center: Vector3 = start + axis * segment_length * (index + 0.5)
+		_try_place_cuteskull_at(center, _cost_for_type(_building_type), true)
+	feedback.emit("Wall line built (%d segments)" % count)
+	_wall_drag_start = Vector3.INF
+	_wall_dragging = false
+	_set_active(false)
 
 
 func _normalize_cuteskull_model(model: Node) -> void:
