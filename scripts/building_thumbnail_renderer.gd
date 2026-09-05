@@ -11,10 +11,15 @@ const SOURCE_PATH := "88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/"
 var _city_scene: PackedScene
 var _textures: Dictionary = {}
 var _viewports: Dictionary = {}
+var _source_paths: Dictionary = {}
 
 
 func configure(city_scene: PackedScene) -> void:
 	_city_scene = city_scene
+
+
+func set_source_paths(source_paths: Dictionary) -> void:
+	_source_paths = source_paths.duplicate(true)
 
 
 func get_thumbnail(asset_name: String) -> Texture2D:
@@ -40,7 +45,8 @@ func _create_thumbnail(asset_name: String) -> Texture2D:
 	if _city_scene == null:
 		return null
 	var source_root := _city_scene.instantiate()
-	var source := source_root.get_node_or_null(SOURCE_PATH + asset_name) as Node3D
+	var source_path: String = _source_paths.get(asset_name, SOURCE_PATH + asset_name)
+	var source := source_root.get_node_or_null(source_path) as Node3D
 	if source == null:
 		source_root.free()
 		return null

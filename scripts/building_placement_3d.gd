@@ -114,6 +114,9 @@ var _catalog_open := false
 var _cuteskull_extents_px: Dictionary = {}
 var _cuteskull_lengths_px: Dictionary = {}
 var _thumbnail_renderer: BuildingThumbnailRenderer
+var _catalog_groups: Dictionary = {}
+var _catalog_source_paths: Dictionary = {}
+var _catalog_category_containers: Dictionary = {}
 var _catalog_rotation_quarters := 0
 var _wall_drag_start := Vector3.INF
 var _wall_dragging := false
@@ -126,8 +129,10 @@ func _ready() -> void:
 	_work_radius_units = sample.work_radius * WorldCoords3D.PX_TO_UNIT
 	sample.free()
 	_cache_cuteskull_extents()
+	_discover_additional_catalog_assets()
 	_thumbnail_renderer = THUMBNAIL_RENDERER_SCRIPT.new()
 	_thumbnail_renderer.configure(CUTESKULL_CITY)
+	_thumbnail_renderer.set_source_paths(_catalog_source_paths)
 	add_child(_thumbnail_renderer)
 	_build_catalog_ui()
 
@@ -684,25 +689,81 @@ func _cuteskull_asset_name(building_type: String = "") -> String:
 func _cache_cuteskull_extents() -> void:
 	var source_root := CUTESKULL_CITY.instantiate()
 	for asset_name in CUTESKULL_BUILDINGS + CUTESKULL_DEFENSE:
-		var source := source_root.get_node_or_null(
-			"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name) as Node3D
-		if source == null:
-			continue
-		for child in source.get_children():
-			if child is MeshInstance3D and (child as MeshInstance3D).mesh:
-				var size: Vector3 = (child as MeshInstance3D).mesh.get_aabb().size
-				_cuteskull_extents_px[asset_name] = Vector2(
-					size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5,
-					size.y * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5)
-				_cuteskull_lengths_px[asset_name] = size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT
-				break
+		_cache_asset_extents(source_root, asset_name, "88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name)
 	source_root.free()
+
+
+func _cache_asset_extents(source_root: Node, asset_name: String, source_path: String) -> void:
+	var source := source_root.get_node_or_null(source_path) as Node3D
+	if source == null:
+		return
+	for child in source.get_children():
+		if child is MeshInstance3D and (child as MeshInstance3D).mesh:
+			var size: Vector3 = (child as MeshInstance3D).mesh.get_aabb().size
+			_cuteskull_extents_px[asset_name] = Vector2(
+				size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5,
+				size.y * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5)
+			_cuteskull_lengths_px[asset_name] = size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT
+			break
+
+
+func _discover_additional_catalog_assets() -> void:
+	_catalog_groups = {
+		"Buildings": CUTESKULL_BUILDINGS.duplicate(),
+		"Defense": CUTESKULL_DEFENSE.duplicate(),
+		"Castle Parts": ["Castle_Roof_1", "Castle_Roof_2"],
+		"Market / Props": [],
+		"Environment": [],
+		"Characters": [],
+	}
+	var source_root := CUTESKULL_CITY.instantiate()
+	for asset_name in CUTESKULL_BUILDINGS + CUTESKULL_DEFENSE:
+		_catalog_source_paths[asset_name] = "88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name
+	for asset_name in _catalog_groups["Castle Parts"]:
+		_catalog_source_paths[asset_name] = "88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name
+		_cache_asset_extents(source_root, asset_name, _catalog_source_paths[asset_name])
+	var categories := {
+		"Market / Props": "Market",
+		"Environment": "Environment_001",
+		"Characters": "People_empty",
+	}
+	for category in categories:
+		var parent := source_root.get_node_or_null(
+			"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + categories[category])
+		if parent == null:
+			continue
+		for child in parent.get_children():
+			if not child is Node3D or not _contains_mesh(child):
+				continue
+			var asset_name := str(child.name)
+			_catalog_groups[category].append(asset_name)
+			_catalog_source_paths[asset_name] = "88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/%s/%s" % [categories[category], asset_name]
+			_cache_asset_extents(source_root, asset_name, _catalog_source_paths[asset_name])
+	source_root.free()
+
+
+func _contains_mesh(node: Node) -> bool:
+	if node is MeshInstance3D and (node as MeshInstance3D).mesh != null:
+		return true
+	for child in node.get_children():
+		if _contains_mesh(child):
+			return true
+	return false
+
+
+func _all_catalog_assets() -> Array:
+	var result: Array = []
+	for category in _catalog_groups:
+		for asset_name in _catalog_groups[category]:
+			if not result.has(asset_name):
+				result.append(asset_name)
+	return result
 
 
 func _make_cuteskull_model(asset_name: String, ghost: bool) -> Node3D:
 	var source_root := CUTESKULL_CITY.instantiate()
-	var source := source_root.get_node_or_null(
-		"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name) as Node3D
+	var source := source_root.get_node_or_null(_catalog_source_paths.get(
+		asset_name, "88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name)) as Node3D
 	if source == null:
 		source_root.free()
 		return null
@@ -837,26 +898,51 @@ func _build_catalog_ui() -> void:
 	var column := VBoxContainer.new()
 	margin.add_child(column)
 	var title := Label.new()
-	title.text = "BUILDING CATALOG  •  Complete Cuteskull Buildings"
+	title.text = "BUILDING CATALOG  •  Cuteskull Asset Library"
 	title.add_theme_font_size_override("font_size", 18)
 	column.add_child(title)
 	var hint := Label.new()
 	hint.text = "Select an asset • Free build • R rotate • Click place • ESC cancel"
 	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.82))
 	column.add_child(hint)
+	var category_select := OptionButton.new()
+	category_select.name = "CategoryFilter"
+	category_select.custom_minimum_size = Vector2(0, 34)
+	for category in _catalog_groups:
+		category_select.add_item("%s (%d)" % [category, _catalog_groups[category].size()])
+	category_select.item_selected.connect(_on_catalog_category_changed)
+	column.add_child(category_select)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(scroll)
-	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(grid)
-	_add_catalog_section(grid, "COMPLETE BUILDINGS")
-	for asset_name in CUTESKULL_BUILDINGS:
-		_add_catalog_button(grid, asset_name, "Complete building")
-	_add_catalog_section(grid, "DEFENSE")
-	for asset_name in CUTESKULL_DEFENSE:
-		_add_catalog_button(grid, asset_name, "Defense structure")
+	var category_column := VBoxContainer.new()
+	category_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(category_column)
+	for category in _catalog_groups:
+		var category_box := VBoxContainer.new()
+		category_box.name = "Category_%s" % category.replace("/", "_").replace(" ", "_")
+		category_box.visible = _catalog_category_containers.is_empty()
+		_catalog_category_containers[category] = category_box
+		category_column.add_child(category_box)
+		var section := Label.new()
+		section.text = "%s  (%d)" % [category, _catalog_groups[category].size()]
+		section.add_theme_font_size_override("font_size", 15)
+		section.add_theme_color_override("font_color", Color(0.95, 0.78, 0.42))
+		category_box.add_child(section)
+		var grid := GridContainer.new()
+		grid.columns = 2
+		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		category_box.add_child(grid)
+		for asset_name in _catalog_groups[category]:
+			_add_catalog_button(grid, asset_name, category)
+
+
+func _on_catalog_category_changed(index: int) -> void:
+	var categories := _catalog_groups.keys()
+	if index < 0 or index >= categories.size():
+		return
+	for category in _catalog_category_containers:
+		_catalog_category_containers[category].visible = category == categories[index]
 
 
 func _add_catalog_section(grid: GridContainer, title_text: String) -> void:
@@ -909,10 +995,9 @@ func _on_catalog_item_pressed(asset_name: String) -> void:
 
 func get_building_catalog() -> Array:
 	var result: Array = []
-	for asset_name in CUTESKULL_BUILDINGS:
-		result.append({"asset_name": asset_name, "category": "complete", "cost": {"wood": 0}, "complete": true})
-	for asset_name in CUTESKULL_DEFENSE:
-		result.append({"asset_name": asset_name, "category": "defense", "cost": {"wood": 0}, "complete": false})
+	for category in _catalog_groups:
+		for asset_name in _catalog_groups[category]:
+			result.append({"asset_name": asset_name, "category": category, "cost": {"wood": 0}, "complete": category == "Buildings"})
 	return result
 
 
