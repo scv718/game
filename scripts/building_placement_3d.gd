@@ -35,6 +35,25 @@ const QUARRY_SCENE := preload("res://scenes/quarry_3d.tscn")
 const FARM_SCENE := preload("res://scenes/farm_3d.tscn")
 const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
+const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
+const CUTESKULL_BUILDINGS := [
+	"House_1_1", "House_1_2",
+	"House_2_1", "House_2_2", "House_2_3",
+	"House_3_1", "House_3_2",
+	"House_4_1", "House_4_2",
+	"House_5_1", "House_5_2", "House_5_3",
+	"House_6_1", "House_6_2",
+	"House_7_1", "House_7_2", "House_7_3",
+	"Church_1", "Church_2",
+]
+const CUTESKULL_DEFENSE := [
+	"Castle_Wall",
+	"Castle_Entrance", "Castle_Entrance__2",
+	"Castle_Tower_1", "Castle_Tower_2", "Castle_Tower_3",
+	"Castle_Tower_4", "Castle_Tower_5", "Castle_Tower_6",
+	"Castle_Wall_Door", "Castle_Tower_Door",
+]
+const CUTESKULL_SCALE := 0.17
 const BUILD_COSTS := {
 	"lumberyard": {"wood": 10},
 	"quarry": {"wood": 10},
@@ -89,6 +108,9 @@ var _query_shape := BoxShape3D.new()
 ## 마지막 mouse screen 좌표. motion event가 unhandled로 도달할 때 갱신되며,
 ## ghost _process가 이 좌표의 지면 교차점을 따라간다(2D get_global_mouse_position 역할).
 var _last_mouse_screen_pos := Vector2.ZERO
+var _catalog_panel: PanelContainer = null
+var _catalog_open := false
+var _cuteskull_extents_px: Dictionary = {}
 
 
 func _ready() -> void:
@@ -97,6 +119,8 @@ func _ready() -> void:
 	var sample: Node3D = LUMBERYARD_SCENE.instantiate()
 	_work_radius_units = sample.work_radius * WorldCoords3D.PX_TO_UNIT
 	sample.free()
+	_cache_cuteskull_extents()
+	_build_catalog_ui()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -123,7 +147,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				_set_remove_mode(not _remove_mode)
 			return
 	if event.is_action_pressed("build"):
-		_set_active(not _active)
+		_toggle_catalog()
+		get_viewport().set_input_as_handled()
+		return
 	elif event.is_action_pressed("ui_cancel"):
 		if _active:
 			_set_active(false)
@@ -179,6 +205,11 @@ func _set_building_type(building_type: String) -> void:
 		return
 	_building_type = building_type
 	_remove_mode = false
+	if _ghost:
+		_ghost.queue_free()
+		_ghost = null
+		_ghost_rect = null
+		_footprint_material = null
 	if _active:
 		_refresh_ghost()
 	building_type_changed.emit(_building_type)
@@ -201,6 +232,10 @@ func _set_active(value: bool) -> void:
 		return
 	_active = value
 	_remove_mode = false
+	if not _active:
+		_catalog_open = false
+		if _catalog_panel != null:
+			_catalog_panel.visible = false
 	if _active:
 		_refresh_ghost()
 	elif _ghost:
@@ -250,6 +285,10 @@ func _create_ghost(extents: Vector2) -> void:
 	_ghost_rect.position.y = FOOTPRINT_BOX_HEIGHT_UNITS * 0.5
 	_ghost.add_child(_ghost_rect)
 	_apply_footprint_size(extents)
+	if _is_cuteskull_type():
+		var model := _make_cuteskull_model(_cuteskull_asset_name(), true)
+		if model != null:
+			_ghost.add_child(model)
 	add_child(_ghost)
 
 
@@ -270,6 +309,8 @@ func _ghost_material(color: Color) -> StandardMaterial3D:
 
 ## 현재 build type/위치에 맞는 ghost footprint 반폭(논리 px)을 반환.
 func _extents_for_type(building_type: String, pos: Vector3) -> Vector2:
+	if building_type.begins_with("cuteskull/"):
+		return _cuteskull_extents_px.get(_cuteskull_asset_name(building_type), BUILDING_FOOTPRINT_PX * 0.5)
 	match building_type:
 		"wall":
 			return WALL_FOOTPRINT_PX * 0.5
@@ -449,11 +490,14 @@ func _try_place_at(pos: Vector3) -> void:
 	if not _is_valid_position(pos):
 		feedback.emit("Invalid position")
 		return
-	var cost: int = int(BUILD_COSTS[_building_type].get("wood", 0))
+	var cost: int = _cost_for_type(_building_type)
 	if not VillageResources.has("wood", cost):
 		feedback.emit("Not enough Wood")
 		return
 	VillageResources.spend("wood", cost)
+	if _is_cuteskull_type():
+		_try_place_cuteskull_at(pos, cost)
+		return
 	var scene: PackedScene = _building_scene_for(_building_type)
 	var building: Node3D = scene.instantiate() as Node3D
 	building.position = WorldCoords3D.flatten(pos)
@@ -465,6 +509,214 @@ func _try_place_at(pos: Vector3) -> void:
 	NavigationPolicy3D.request_rebuild_debounced(get_tree())
 	feedback.emit("%s built" % _building_type.capitalize())
 	_set_active(false)
+
+
+func _try_place_cuteskull_at(pos: Vector3, cost: int) -> void:
+	var building := StaticBody3D.new()
+	building.name = "PlayerBuilding_%s" % _cuteskull_asset_name()
+	building.collision_layer = CollisionLayers3D.BUILDING
+	building.collision_mask = 0
+	building.add_to_group("buildings_3d")
+	building.set_meta("asset_source", "Cuteskull city16.fbx")
+	building.set_meta("source_node", _cuteskull_asset_name())
+	building.set_meta("catalog_cost", {"wood": cost})
+	var half := _extents_for_type(_building_type, pos) * WorldCoords3D.PX_TO_UNIT
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(half.x * 2.0, 3.0, half.y * 2.0)
+	shape.shape = box
+	shape.position.y = 1.5
+	building.add_child(shape)
+	var model := _make_cuteskull_model(_cuteskull_asset_name(), false)
+	if model == null:
+		building.free()
+		feedback.emit("Building asset unavailable")
+		return
+	building.add_child(model)
+	building.position = WorldCoords3D.flatten(pos)
+	var world := get_tree().get_first_node_in_group("world3d")
+	if world != null:
+		world.add_child(building)
+	else:
+		get_parent().add_child(building)
+	NavigationPolicy3D.request_rebuild_debounced(get_tree())
+	feedback.emit("%s built" % _cuteskull_asset_name())
+	_set_active(false)
+
+
+func _is_cuteskull_type() -> bool:
+	return _building_type.begins_with("cuteskull/")
+
+
+func _cuteskull_asset_name(building_type: String = "") -> String:
+	var value := building_type if building_type != "" else _building_type
+	return value.trim_prefix("cuteskull/")
+
+
+func _cache_cuteskull_extents() -> void:
+	var source_root := CUTESKULL_CITY.instantiate()
+	for asset_name in CUTESKULL_BUILDINGS + CUTESKULL_DEFENSE:
+		var source := source_root.get_node_or_null(
+			"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name) as Node3D
+		if source == null:
+			continue
+		for child in source.get_children():
+			if child is MeshInstance3D and (child as MeshInstance3D).mesh:
+				var size: Vector3 = (child as MeshInstance3D).mesh.get_aabb().size
+				_cuteskull_extents_px[asset_name] = Vector2(
+					size.x * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5,
+					size.y * CUTESKULL_SCALE / WorldCoords3D.PX_TO_UNIT * 0.5)
+				break
+	source_root.free()
+
+
+func _make_cuteskull_model(asset_name: String, ghost: bool) -> Node3D:
+	var source_root := CUTESKULL_CITY.instantiate()
+	var source := source_root.get_node_or_null(
+		"88edabdafae14a9ca65722f3a709ce8a_fbx/RootNode2/" + asset_name) as Node3D
+	if source == null:
+		source_root.free()
+		return null
+	var model := source.duplicate() as Node3D
+	model.name = "Cuteskull_%s" % asset_name
+	model.scale = Vector3.ONE * CUTESKULL_SCALE
+	_normalize_cuteskull_model(model)
+	_orient_cuteskull_model(model)
+	model.set_meta("asset_source", "Cuteskull city16.fbx")
+	model.set_meta("source_node", asset_name)
+	if ghost:
+		var mat := _ghost_material(COLOR_VALID)
+		_apply_ghost_material(model, mat)
+	source_root.free()
+	return model
+
+
+func _normalize_cuteskull_model(model: Node) -> void:
+	for child in model.get_children():
+		if child is MeshInstance3D and (child as MeshInstance3D).mesh:
+			var aabb := (child as MeshInstance3D).mesh.get_aabb()
+			child.position = Vector3(-aabb.position.x - aabb.size.x * 0.5,
+				-aabb.position.y - aabb.size.y * 0.5, -aabb.position.z)
+			return
+
+
+func _orient_cuteskull_model(model: Node3D) -> void:
+	model.basis = Basis(Vector3.RIGHT, deg_to_rad(-90.0))
+
+
+func _apply_ghost_material(node: Node, mat: StandardMaterial3D) -> void:
+	if node is MeshInstance3D:
+		(node as MeshInstance3D).material_override = mat
+	for child in node.get_children():
+		_apply_ghost_material(child, mat)
+
+
+func _cost_for_type(building_type: String) -> int:
+	if building_type.begins_with("cuteskull/"):
+		return 10
+	return int(BUILD_COSTS.get(building_type, {}).get("wood", 0))
+
+
+func _toggle_catalog() -> void:
+	_catalog_open = not _catalog_open
+	if _catalog_panel != null:
+		_catalog_panel.visible = _catalog_open
+	if _catalog_open:
+		if not _active:
+			_set_active(true)
+		feedback.emit("Select a complete Cuteskull building")
+	else:
+		_set_active(false)
+
+
+func _build_catalog_ui() -> void:
+	var scene_root := get_tree().current_scene
+	var hud := scene_root.get_node_or_null("HUD") if scene_root != null else null
+	if hud == null:
+		hud = get_parent().get_node_or_null("HUD")
+	if hud == null:
+		return
+	_catalog_panel = PanelContainer.new()
+	_catalog_panel.name = "BuildingCatalog"
+	_catalog_panel.position = Vector2(700, 86)
+	_catalog_panel.custom_minimum_size = Vector2(470, 540)
+	_catalog_panel.visible = false
+	hud.add_child(_catalog_panel)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 18)
+	margin.add_theme_constant_override("margin_top", 14)
+	margin.add_theme_constant_override("margin_right", 18)
+	margin.add_theme_constant_override("margin_bottom", 14)
+	_catalog_panel.add_child(margin)
+	var column := VBoxContainer.new()
+	margin.add_child(column)
+	var title := Label.new()
+	title.text = "BUILDING CATALOG  •  Complete Cuteskull Buildings"
+	title.add_theme_font_size_override("font_size", 18)
+	column.add_child(title)
+	var hint := Label.new()
+	hint.text = "Select an asset • Wood 10 • R rotate • Click place • ESC cancel"
+	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.82))
+	column.add_child(hint)
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	column.add_child(scroll)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(grid)
+	_add_catalog_section(grid, "COMPLETE BUILDINGS")
+	for asset_name in CUTESKULL_BUILDINGS:
+		_add_catalog_button(grid, asset_name, "Complete building")
+	_add_catalog_section(grid, "DEFENSE")
+	for asset_name in CUTESKULL_DEFENSE:
+		_add_catalog_button(grid, asset_name, "Defense structure")
+
+
+func _add_catalog_section(grid: GridContainer, title_text: String) -> void:
+	var section := Label.new()
+	section.text = title_text
+	section.add_theme_font_size_override("font_size", 15)
+	section.add_theme_color_override("font_color", Color(0.95, 0.78, 0.42))
+	grid.add_child(section)
+	var spacer := Control.new()
+	grid.add_child(spacer)
+
+
+func _add_catalog_button(grid: GridContainer, asset_name: String, category: String) -> void:
+	var button := Button.new()
+	button.custom_minimum_size = Vector2(205, 58)
+	button.text = "[3D PREVIEW]  %s\n%s • Wood 10" % [asset_name, category]
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.tooltip_text = "%s: %s" % [category, asset_name]
+	button.pressed.connect(_on_catalog_item_pressed.bind(asset_name))
+	grid.add_child(button)
+
+
+func _on_catalog_item_pressed(asset_name: String) -> void:
+	_set_building_type("cuteskull/%s" % asset_name)
+	_catalog_open = false
+	if _catalog_panel != null:
+		_catalog_panel.visible = false
+	_set_active(true)
+	feedback.emit("%s selected" % asset_name)
+
+
+func get_building_catalog() -> Array:
+	var result: Array = []
+	for asset_name in CUTESKULL_BUILDINGS:
+		result.append({"asset_name": asset_name, "category": "complete", "cost": {"wood": 10}, "complete": true})
+	for asset_name in CUTESKULL_DEFENSE:
+		result.append({"asset_name": asset_name, "category": "defense", "cost": {"wood": 10}, "complete": false})
+	return result
+
+
+func get_selected_catalog_asset() -> String:
+	return _cuteskull_asset_name() if _is_cuteskull_type() else ""
+
+
+func is_catalog_open() -> bool:
+	return _catalog_open
 
 
 ## TASK-019-1: free-building 타입(Lumberyard/Farm)의 scene을 반환.
