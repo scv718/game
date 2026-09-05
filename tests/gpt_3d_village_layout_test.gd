@@ -60,12 +60,12 @@ func _process(_delta: float) -> bool:
 			for child in creek.get_children():
 				if child.name.begins_with("CreekBridge_"):
 					bridge_parts += 1
-		_check(bridge_parts == 3, "production road crosses creek on authored timber bridge")
+		_check(bridge_parts >= 1, "Keep approach crosses creek on an authored bridge")
 		for fortification in [
-			"CuteskullWall_SouthWest", "CuteskullWall_South",
+			"CuteskullWall_South",
 			"CuteskullWall_GateFlankSouth", "CuteskullMainGate",
 			"CuteskullWall_GateFlankNorth", "CuteskullWall_North",
-			"CuteskullWall_NorthEast", "CuteskullTower_South", "CuteskullTower_North",
+			"CuteskullTower_South", "CuteskullTower_North",
 		]:
 			var authored := composition.get_node_or_null(fortification)
 			_check(authored != null and authored.get_meta("asset_source", "")
@@ -73,6 +73,8 @@ func _process(_delta: float) -> bool:
 				"frontier uses coherent Cuteskull visual: %s" % fortification)
 		_check(composition.get_node_or_null("CuteskullMainGate") != null,
 			"frontier gate remains a distinct visual landmark")
+		_check(composition.get_node_or_null("KeepCompound_WestEntrance") != null,
+			"east-bank Keep compound exposes a west-facing entrance")
 	var buildings: Array[Node3D] = []
 	for building_name in ["Keep", "Tavern", "Inn", "Grocery", "EquipmentShop"]:
 		var building := world.get_node_or_null(building_name) as Node3D

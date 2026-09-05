@@ -48,11 +48,11 @@ const FLAG_COLOR := Color(0.9, 0.82, 0.5)
 
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
 const CUTESKULL_BUILDINGS := {
-	"keep": ["Castle_Entrance", "Castle_Wall", "Castle_Tower_1", "Castle_Tower_2"],
+	"keep": ["Church_2", "Castle_Tower_3", "Castle_Tower_1", "Castle_Tower_2"],
 	"tavern": ["House_3_1"],
-	"inn": ["House_4_1"],
-	"grocery": ["House_5_2"],
-	"equipment": ["House_2_2"],
+	"inn": ["House_7_1"],
+	"grocery": ["House_4_1"],
+	"equipment": ["House_5_1"],
 }
 
 ## Quaternius building part mapping per core_type. 각 type은 wall/roof와 모듈 수를
@@ -177,26 +177,27 @@ func _replace_with_cuteskull(root: Node3D) -> bool:
 		model.name = "Cuteskull_%s" % source_name
 		var local_yaw := 0.0
 		if core_type == "keep":
-			if source_name == "Castle_Entrance":
-				model.position = Vector3(0.0, 0.0, 1.6)
-			elif source_name == "Castle_Wall":
-				model.position = Vector3(-2.8, 0.0, -2.6)
-				local_yaw = 90.0
+			if source_name == "Church_2":
+				model.position = Vector3.ZERO
+			elif source_name == "Castle_Tower_3":
+				model.position = Vector3(-3.4, 0.0, -2.6)
 			elif source_name == "Castle_Tower_1":
-				model.position = Vector3(-2.8, 0.0, -5.0)
+				model.position = Vector3(3.6, 0.0, -2.0)
 			else:
-				model.position = Vector3(2.8, 0.0, 0.2)
+				model.position = Vector3(3.2, 0.0, 3.0)
 		else:
 			model.position = Vector3.ZERO
-		var model_scale := 0.13
-		if source_name == "Castle_Tower_1":
-			model_scale = 0.072
+		var model_scale := 0.145
+		if source_name == "Castle_Tower_3":
+			model_scale = 0.076
+		elif source_name == "Castle_Tower_1":
+			model_scale = 0.082
 		elif source_name == "Castle_Tower_2":
-			model_scale = 0.085
+			model_scale = 0.095
 		elif source_name == "Castle_Wall":
 			model_scale = 0.09
 		elif core_type != "keep":
-			model_scale = 0.13
+			model_scale = 0.17
 		model.scale = Vector3.ONE * model_scale
 		_normalize_cuteskull_model(model)
 		_orient_cuteskull_model(model, local_yaw)
