@@ -36,6 +36,7 @@ const FARM_SCENE := preload("res://scenes/farm_3d.tscn")
 const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
+const THUMBNAIL_RENDERER_SCRIPT := preload("res://scripts/building_thumbnail_renderer.gd")
 const CUTESKULL_BUILDINGS := [
 	"House_1_1", "House_1_2",
 	"House_2_1", "House_2_2", "House_2_3",
@@ -112,6 +113,7 @@ var _catalog_panel: PanelContainer = null
 var _catalog_open := false
 var _cuteskull_extents_px: Dictionary = {}
 var _cuteskull_lengths_px: Dictionary = {}
+var _thumbnail_renderer: BuildingThumbnailRenderer
 var _catalog_rotation_quarters := 0
 var _wall_drag_start := Vector3.INF
 var _wall_dragging := false
@@ -124,6 +126,9 @@ func _ready() -> void:
 	_work_radius_units = sample.work_radius * WorldCoords3D.PX_TO_UNIT
 	sample.free()
 	_cache_cuteskull_extents()
+	_thumbnail_renderer = THUMBNAIL_RENDERER_SCRIPT.new()
+	_thumbnail_renderer.configure(CUTESKULL_CITY)
+	add_child(_thumbnail_renderer)
 	_build_catalog_ui()
 
 
@@ -865,13 +870,32 @@ func _add_catalog_section(grid: GridContainer, title_text: String) -> void:
 
 
 func _add_catalog_button(grid: GridContainer, asset_name: String, category: String) -> void:
+	var item := PanelContainer.new()
+	item.custom_minimum_size = Vector2(205, 150)
+	grid.add_child(item)
+	var column := VBoxContainer.new()
+	item.add_child(column)
+	var thumbnail := TextureRect.new()
+	thumbnail.custom_minimum_size = Vector2(0, 92)
+	thumbnail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	thumbnail.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	thumbnail.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	thumbnail.texture = _thumbnail_renderer.get_thumbnail(asset_name) if _thumbnail_renderer else null
+	if thumbnail.texture == null:
+		thumbnail.tooltip_text = "Preview unavailable: %s" % asset_name
+		var fallback := Label.new()
+		fallback.text = "[3D PREVIEW\nUNAVAILABLE]"
+		fallback.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		fallback.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		thumbnail.add_child(fallback)
+	column.add_child(thumbnail)
 	var button := Button.new()
-	button.custom_minimum_size = Vector2(205, 58)
-	button.text = "[3D PREVIEW]  %s\n%s • Free" % [asset_name, category]
+	button.custom_minimum_size = Vector2(0, 50)
+	button.text = "%s\n%s • Free" % [asset_name, category]
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.tooltip_text = "%s: %s" % [category, asset_name]
 	button.pressed.connect(_on_catalog_item_pressed.bind(asset_name))
-	grid.add_child(button)
+	column.add_child(button)
 
 
 func _on_catalog_item_pressed(asset_name: String) -> void:
