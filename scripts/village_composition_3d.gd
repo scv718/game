@@ -605,19 +605,19 @@ func _build_village(root: Node3D) -> void:
 	# Houses sit beyond the widened roads, leaving a deliberate open ring around
 	# the Keep and service buildings instead of a tight radial prefab cluster.
 	# Two uneven residential clusters grew from side lanes rather than a ring.
-	_add_cuteskull_house(root, "House_4_1", Vector3(-7, 0, -21), 18.0)
-	_add_cuteskull_house(root, "House_5_1", Vector3(3, 0, -24), -12.0)
-	_add_cuteskull_house(root, "House_2_1", Vector3(12, 0, -19), 31.0)
-	_add_cuteskull_house(root, "House_2_2", Vector3(-13, 0, -24), 37.0)
-	_add_cuteskull_house(root, "House_1_1", Vector3(-2, 0, -18), -28.0)
-	_add_cuteskull_house(root, "House_4_2", Vector3(20, 0, 18), -104.0)
-	_add_cuteskull_house(root, "House_5_2", Vector3(29, 0, 15), -78.0)
-	_add_cuteskull_house(root, "House_2_3", Vector3(25, 0, 22), -61.0)
+	_add_cuteskull_house(root, "House_4_1", Vector3(-14, 0, -26), 18.0)
+	_add_cuteskull_house(root, "House_5_1", Vector3(-3, 0, -27), -12.0)
+	_add_cuteskull_house(root, "House_2_1", Vector3(10, 0, -23), 31.0)
+	_add_cuteskull_house(root, "House_2_2", Vector3(-22, 0, -15), 37.0)
+	_add_cuteskull_house(root, "House_1_1", Vector3(1, 0, -15), -28.0)
+	_add_cuteskull_house(root, "House_4_2", Vector3(19, 0, 17), -104.0)
+	_add_cuteskull_house(root, "House_5_2", Vector3(30, 0, 13), -78.0)
+	_add_cuteskull_house(root, "House_2_3", Vector3(29, 0, 24), -61.0)
 	# The southern lane grew as a loose hamlet, filling the former empty green
 	# void without turning the settlement into a mathematical ring.
 	_add_cuteskull_house(root, "House_1_1", Vector3(7, 0, 17), 153.0)
 	_add_cuteskull_house(root, "House_2_1", Vector3(-13, 0, 19), 126.0)
-	_add_cuteskull_house(root, "House_5_1", Vector3(13, 0, 25), -34.0)
+	_add_cuteskull_house(root, "House_5_1", Vector3(14, 0, 27), -34.0)
 	_spawn_cuteskull_prop("Market/Well", "VillageWell", Vector3(1.0, 0, -2.2),
 		-8.0, 0.085)
 	_spawn_cuteskull_prop("Market/Market_1_2", "MarketAwningWest",
@@ -1128,7 +1128,9 @@ func _add_cuteskull_house(root: Node3D, source_name: String,
 	house.set_meta("kind", "house")
 	_zone_roots["village"].add_child(house)
 	_solids.append({
-		"rect": Rect2(pos.x - 3.5, pos.z - 3.5, 7.0, 7.0),
+		# Conservative 8x8m visual footprint. The source FBX variants have
+		# different eaves, so the clearance includes the largest roof silhouette.
+		"rect": Rect2(pos.x - 4.0, pos.z - 4.0, 8.0, 8.0),
 		"key": "cuteskull/%s" % source_name,
 		"zone": "village",
 	})
