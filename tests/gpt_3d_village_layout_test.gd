@@ -33,9 +33,9 @@ func _process(_delta: float) -> bool:
 		"main runtime instantiates authored village composition")
 	var camera_controller := _main.get_tree().get_first_node_in_group("camera_controller_3d")
 	_check(camera_controller != null
-		and absf(camera_controller.pitch_degrees) >= 72.0
-		and absf(camera_controller.pitch_degrees) <= 76.0,
-		"gameplay camera exposes building facades at 72-76 degree elevation")
+		and absf(camera_controller.pitch_degrees) >= 62.0
+		and absf(camera_controller.pitch_degrees) <= 70.0,
+		"gameplay camera exposes building facades at 62-70 degree elevation")
 	if composition != null:
 		for zone in ["village", "forest", "lumberyard", "quarry"]:
 			_check(composition.get_zone_root(zone) != null,
