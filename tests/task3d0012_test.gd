@@ -193,23 +193,24 @@ func _coords() -> void:
 ## -- REGIONS --
 func _regions() -> void:
 	var bounds: AABB = _world.get_bounds_aabb()
-	_check(_v3_near(bounds.position, Vector3(-192.0, 0.0, -192.0))
-		and _v3_near(bounds.size, Vector3(384.0, 0.0, 384.0)),
-		"world bounds AABB = legacy BOUNDS_RECT in XZ units")
+	_check(_v3_near(bounds.position, Vector3(-256.0, 0.0, -256.0))
+		and _v3_near(bounds.size, Vector3(512.0, 0.0, 512.0)),
+		"world bounds AABB = expanded 512x512 3D play space")
 
 	var edge_samples := [
 		Vector2.ZERO, Vector2(1535, 1000), Vector2(-1536, 500),
-		Vector2(1536, 0), Vector2(0, -2000), Vector2(1200, -1200),
-		Vector2(-1500, 200),
+		Vector2(2047, 0), Vector2(0, -2047), Vector2(2048, 0),
+		Vector2(0, -2048), Vector2(-2100, 200),
 	]
 	var parity_ok := true
 	for s in edge_samples:
-		var expected: bool = _map.is_in_bounds(s)
+		var expected: bool = s.x >= -2048.0 and s.x < 2048.0 \
+			and s.y >= -2048.0 and s.y < 2048.0
 		var actual := WorldCoords3D.is_in_bounds_xz(WorldCoords3D.to_world_xz(s))
 		if expected != actual:
 			parity_ok = false
 			print("  mismatch at %s: 2D=%s 3D=%s" % [str(s), str(expected), str(actual)])
-	_check(parity_ok, "is_in_bounds_xz matches legacy WorldMap.is_in_bounds on edges")
+	_check(parity_ok, "is_in_bounds_xz matches expanded 3D bounds on edges")
 
 	var corridor: Rect2 = WorldMap.GATE_CORRIDORS["south"]
 	var corridor_box := WorldCoords3D.rect_to_aabb(corridor)
@@ -367,7 +368,7 @@ func _marker_position(marker: String) -> Vector3:
 		"GroundOrigin":
 			return Vector3(0.0, 0.25, 0.0)
 		"BoundaryEast":
-			return Vector3(191.5, 2.0, 0.0)
+			return Vector3(255.5, 2.0, 0.0)
 		_:
 			var node := _world.get_node_or_null(NodePath(marker)) as Node3D
 			return node.global_position if node != null else Vector3.ZERO

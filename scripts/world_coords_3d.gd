@@ -32,8 +32,10 @@ const TILE_SIZE_UNITS := GRID_CELL_UNITS
 ## 지면 높이. 자유 높이 이동/점프 금지(LOCK)에 따라 ground Y는 항상 0.
 const GROUND_Y := 0.0
 
-## 기존 WorldMap.BOUNDS_RECT(-1536,-1536,3072,3072)의 XZ 표현 (= ±192 unit).
-const WORLD_HALF_UNITS := WorldMap.WORLD_HALF * PX_TO_UNIT
+## 3D 플레이 공간은 중앙 정착지와 기존 논리 좌표를 보존하면서 외곽 잔디/건설
+## 여유 공간을 더 제공한다. 2D legacy world는 기존 3072px 범위를 유지하고,
+## 3D world만 512x512 units로 확장한다.
+const WORLD_HALF_UNITS := 256.0
 const WORLD_BOUNDS_XZ := AABB(
 	Vector3(-WORLD_HALF_UNITS, GROUND_Y, -WORLD_HALF_UNITS),
 	Vector3(WORLD_HALF_UNITS * 2.0, 0.0, WORLD_HALF_UNITS * 2.0))

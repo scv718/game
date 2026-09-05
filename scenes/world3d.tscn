@@ -3,16 +3,16 @@
 [ext_resource type="Script" path="res://scripts/world_root_3d.gd" id="1_worldroot"]
 
 [sub_resource type="BoxShape3D" id="GroundShape"]
-size = Vector3(384, 1, 384)
+size = Vector3(512, 1, 512)
 
 [sub_resource type="PlaneMesh" id="GroundMesh"]
-size = Vector2(384, 384)
+size = Vector2(512, 512)
 
 [sub_resource type="BoxShape3D" id="BoundaryNS"]
-size = Vector3(386, 4, 2)
+size = Vector3(514, 4, 2)
 
 [sub_resource type="BoxShape3D" id="BoundaryEW"]
-size = Vector3(2, 4, 386)
+size = Vector3(2, 4, 514)
 
 [node name="World3D" type="Node3D"]
 script = ExtResource("1_worldroot")
@@ -26,19 +26,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("GroundShape")
 
 [node name="BoundaryNorth" type="CollisionShape3D" parent="Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -192)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -256)
 shape = SubResource("BoundaryNS")
 
 [node name="BoundarySouth" type="CollisionShape3D" parent="Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 192)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 256)
 shape = SubResource("BoundaryNS")
 
 [node name="BoundaryWest" type="CollisionShape3D" parent="Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 2, 0)
 shape = SubResource("BoundaryEW")
 
 [node name="BoundaryEast" type="CollisionShape3D" parent="Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 192, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 256, 2, 0)
 shape = SubResource("BoundaryEW")
 
 [node name="GroundVisual" type="MeshInstance3D" parent="."]
