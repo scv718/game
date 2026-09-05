@@ -40,6 +40,8 @@ func _ready() -> void:
 	composition.apply_ground_tone(get_parent())
 	composition.spawn_distant_portal(self, Vector3(-175.0, 0.0, 0.0))
 	composition.free()
+	var nature := preload("res://scripts/natural_world_3d.gd").new()
+	add_child(nature)
 	if grass_only:
 		return
 	_spawn_starter_trees()

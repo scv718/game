@@ -93,7 +93,8 @@ func _run_runtime_checks() -> void:
 	var nodes: Array[Node] = []
 	_collect_nodes(_main, nodes)
 	for node in nodes:
-		if node is Camera3D:
+		# Catalog preview cameras own independent SubViewports, not the game view.
+		if node is Camera3D and node.get_viewport() == _main.get_viewport():
 			camera_count += 1
 		elif node is NavigationRegion3D:
 			nav_region_count += 1
