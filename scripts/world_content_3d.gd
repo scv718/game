@@ -25,6 +25,7 @@ const STONE_DEPOSIT_SCENE := preload("res://scenes/stone_deposit_3d.tscn")
 const VILLAGE_COMPOSITION_SCRIPT := preload("res://scripts/village_composition_3d.gd")
 
 var _spawned := false
+@export var grass_only := false
 
 
 func _ready() -> void:
@@ -38,6 +39,8 @@ func _ready() -> void:
 	var composition: Node = VILLAGE_COMPOSITION_SCRIPT.new()
 	composition.apply_ground_tone(get_parent())
 	composition.free()
+	if grass_only:
+		return
 	_spawn_starter_trees()
 	_spawn_forest_clusters()
 	_spawn_stone_deposit()

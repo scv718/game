@@ -55,11 +55,11 @@ const CUTESKULL_DEFENSE := [
 ]
 const CUTESKULL_SCALE := 0.17
 const BUILD_COSTS := {
-	"lumberyard": {"wood": 10},
-	"quarry": {"wood": 10},
-	"farm": {"wood": 10},
-	"wall": {"wood": 2},
-	"gate": {"wood": 5},
+	"lumberyard": {"wood": 0},
+	"quarry": {"wood": 0},
+	"farm": {"wood": 0},
+	"wall": {"wood": 0},
+	"gate": {"wood": 0},
 }
 ## gameplay footprint(논리 px). collision shape 단일 소스이며 visual mesh 크기와 무관.
 ## 기존 2D BUILDING_SIZE/WALL_FOOTPRINT/GATE 사이즈와 동일 값이다.
@@ -794,7 +794,7 @@ func _apply_ghost_material(node: Node, mat: StandardMaterial3D) -> void:
 
 func _cost_for_type(building_type: String) -> int:
 	if building_type.begins_with("cuteskull/"):
-		return 10
+		return 0
 	return int(BUILD_COSTS.get(building_type, {}).get("wood", 0))
 
 
@@ -836,7 +836,7 @@ func _build_catalog_ui() -> void:
 	title.add_theme_font_size_override("font_size", 18)
 	column.add_child(title)
 	var hint := Label.new()
-	hint.text = "Select an asset • Wood 10 • R rotate • Click place • ESC cancel"
+	hint.text = "Select an asset • Free build • R rotate • Click place • ESC cancel"
 	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.82))
 	column.add_child(hint)
 	var scroll := ScrollContainer.new()
@@ -867,7 +867,7 @@ func _add_catalog_section(grid: GridContainer, title_text: String) -> void:
 func _add_catalog_button(grid: GridContainer, asset_name: String, category: String) -> void:
 	var button := Button.new()
 	button.custom_minimum_size = Vector2(205, 58)
-	button.text = "[3D PREVIEW]  %s\n%s • Wood 10" % [asset_name, category]
+	button.text = "[3D PREVIEW]  %s\n%s • Free" % [asset_name, category]
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.tooltip_text = "%s: %s" % [category, asset_name]
 	button.pressed.connect(_on_catalog_item_pressed.bind(asset_name))
@@ -886,9 +886,9 @@ func _on_catalog_item_pressed(asset_name: String) -> void:
 func get_building_catalog() -> Array:
 	var result: Array = []
 	for asset_name in CUTESKULL_BUILDINGS:
-		result.append({"asset_name": asset_name, "category": "complete", "cost": {"wood": 10}, "complete": true})
+		result.append({"asset_name": asset_name, "category": "complete", "cost": {"wood": 0}, "complete": true})
 	for asset_name in CUTESKULL_DEFENSE:
-		result.append({"asset_name": asset_name, "category": "defense", "cost": {"wood": 10}, "complete": false})
+		result.append({"asset_name": asset_name, "category": "defense", "cost": {"wood": 0}, "complete": false})
 	return result
 
 

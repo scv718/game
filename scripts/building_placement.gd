@@ -5,10 +5,10 @@ const QUARRY_SCENE := preload("res://scenes/quarry.tscn")
 const WALL_SCENE := preload("res://scenes/wall.tscn")
 const GATE_SCENE := preload("res://scenes/gate.tscn")
 const BUILD_COSTS := {
-	"lumberyard": {"wood": 10},
-	"quarry": {"wood": 10},
-	"wall": {"wood": 2},
-	"gate": {"wood": 5},
+	"lumberyard": {"wood": 0},
+	"quarry": {"wood": 0},
+	"wall": {"wood": 0},
+	"gate": {"wood": 0},
 }
 const GRID_SIZE := 16
 const BUILDING_SIZE := 32

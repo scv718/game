@@ -27,10 +27,10 @@ var _daytime_timer: SceneTreeTimer = null
 
 const DAYTIME_REFRESH_INTERVAL := 0.25
 const BUILD_TYPE_HINTS := {
-	"lumberyard": "Lumberyard - Wood 10",
-	"quarry": "Quarry (needs Stone Deposit) - Wood 10",
-	"wall": "Wall (16px segment) - Wood 2",
-	"gate": "Gate (48px corridor) - Wood 5",
+	"lumberyard": "Lumberyard - Free",
+	"quarry": "Quarry (needs Stone Deposit) - Free",
+	"wall": "Wall (16px segment) - Free",
+	"gate": "Gate (48px corridor) - Free",
 }
 ## TASK-018-3: shortage/raw-fallback 경고 색. 부족은 선명한 빨강(명확한 경고),
 ## raw ingredient 소비는 호박색(비효율 소비 안내)으로 구분한다.

@@ -228,7 +228,7 @@ grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBox_prompt")
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "Lumberyard - Wood 10\n1/2: Select Building / Left Click: Build / ESC: Cancel"
+text = "Lumberyard - Free\n1/2: Select Building / Left Click: Build / ESC: Cancel"
 visible = false
 
 [node name="TavernRecruitmentUI" parent="." instance=ExtResource("2_recruit")]
