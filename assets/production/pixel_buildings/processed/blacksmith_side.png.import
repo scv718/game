@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qblj7sgc8nwf"
-path="res://.godot/imported/tavern_front.png-fe5445a0e59c34682c2dfac53c6f9f1a.ctex"
+uid="uid://cf80cgiflfiao"
+path="res://.godot/imported/blacksmith_side.png-d9e1627b890940abe54a1b3e3c5a7949.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/production/pixel_buildings/tavern_front.png"
-dest_files=["res://.godot/imported/tavern_front.png-fe5445a0e59c34682c2dfac53c6f9f1a.ctex"]
+source_file="res://assets/production/pixel_buildings/processed/blacksmith_side.png"
+dest_files=["res://.godot/imported/blacksmith_side.png-d9e1627b890940abe54a1b3e3c5a7949.ctex"]
 
 [params]
 
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

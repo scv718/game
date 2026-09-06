@@ -14,14 +14,14 @@ func _run() -> void:
 	var sample := tavern_scene.instantiate() as StaticBody3D
 	var sprite := sample.get_node("Sprite3D") as Sprite3D
 	var shape := sample.get_node("CollisionShape3D") as CollisionShape3D
-	_check(sprite.texture != null and sprite.texture.get_size() == Vector2(1254, 1254),
-		"source PNG imports at original resolution")
+	_check(sprite.texture != null and sprite.texture.get_size().x < 1254 and sprite.texture.get_size().y < 1254,
+		"processed texture uses alpha bounding box")
 	_check(sprite.texture_filter == BaseMaterial3D.TEXTURE_FILTER_NEAREST,
 		"pixel art uses nearest texture filtering")
 	_check(sprite.billboard == BaseMaterial3D.BILLBOARD_ENABLED,
 		"2.5D tavern faces the gameplay camera")
-	_check(shape.shape is BoxShape3D and shape.shape.size == Vector3(17, 4, 10),
-		"tavern has independent 3D gameplay footprint")
+	_check(shape.shape is BoxShape3D and shape.shape.size == Vector3(6, 4, 5),
+		"tavern uses the target 6x5m gameplay footprint")
 	sample.free()
 	var main: Node = load("res://scenes/main_3d.tscn").instantiate()
 	root.add_child(main)
@@ -43,6 +43,19 @@ func _run() -> void:
 				entry_found = entry.complete and entry.cost.wood == 0
 	_check(entry_found and pixel_names.has("Blacksmith") and pixel_names.has("Inn") and pixel_names.has("Keep"),
 		"pixel building catalog contains all four rotated building sets")
+	var target_footprints := {
+		"Blacksmith": Vector3(6, 4, 5), "Tavern": Vector3(6, 4, 5),
+		"Inn": Vector3(7, 4, 6), "Keep": Vector3(10, 4, 8),
+	}
+	for asset_name in target_footprints:
+		var footprint_sample := tavern_scene.instantiate() as StaticBody3D
+		placement._configure_pixel_instance(footprint_sample, asset_name, 0)
+		var footprint_shape := footprint_sample.get_node("CollisionShape3D") as CollisionShape3D
+		var footprint_sprite := footprint_sample.get_node("Sprite3D") as Sprite3D
+		_check(footprint_shape.shape.size == target_footprints[asset_name] and not footprint_sprite.shaded
+			and footprint_sprite.texture_filter == BaseMaterial3D.TEXTURE_FILTER_NEAREST,
+			"%s uses target footprint and unshaded nearest rendering" % asset_name)
+		footprint_sample.free()
 	placement._set_building_type("pixel/Tavern")
 	_check(placement._is_valid_position(Vector3.ZERO), "pixel tavern accepts open clearing")
 	var front_texture: Texture2D = placement._pixel_texture("Tavern", 0)

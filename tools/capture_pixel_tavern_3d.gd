@@ -18,12 +18,14 @@ func _capture() -> void:
 
 	var camera_controller: Node3D = main.get_node("CameraController3D")
 	camera_controller.position = Vector3.ZERO
-	camera_controller.day_zoom = 1.5
-	camera_controller._zoom_target = 1.5
-	camera_controller.get_camera().size = camera_controller._ortho_size_for_zoom(1.5)
+	# Comparison capture only: enlarge the placed building without changing the
+	# gameplay camera default (which remains at its project setting).
+	camera_controller.day_zoom = 5.0
+	camera_controller._zoom_target = 5.0
+	camera_controller.get_camera().size = camera_controller._ortho_size_for_zoom(5.0)
 
 	var placement: Node = main.get_node("BuildingPlacement3D")
-	placement._set_building_type("pixel/Keep")
+	placement._set_building_type("pixel/Tavern")
 	placement._try_place_at(Vector3.ZERO)
 	for _frame in range(10):
 		await process_frame

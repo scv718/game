@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/production/pixel_buildings/tavern_front.png" id="1_texture"]
+[ext_resource type="Texture2D" path="res://assets/production/pixel_buildings/processed/tavern_front.png" id="1_texture"]
 
 [sub_resource type="BoxShape3D" id="footprint"]
-size = Vector3(17, 4, 10)
+size = Vector3(6, 4, 5)
 
 [node name="PixelTavern3D" type="StaticBody3D" groups=["buildings_3d", "pixel_buildings_3d"]]
 collision_layer = 2
@@ -18,9 +18,11 @@ position = Vector3(0, 2, 0)
 shape = SubResource("footprint")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-position = Vector3(0, 7.938, 0)
+position = Vector3(0, 3.35, 0)
 texture_filter = 0
 billboard = 1
+shaded = false
 alpha_cut = 2
-pixel_size = 0.014
+pixel_size = 0.00595
+scale = Vector3(1, 1, 1)
 texture = ExtResource("1_texture")

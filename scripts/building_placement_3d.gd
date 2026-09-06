@@ -37,30 +37,30 @@ const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
 const PIXEL_BUILDING_SCENE := preload("res://scenes/pixel_tavern_3d.tscn")
-const PIXEL_LEGACY_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/tavern_front.png")
+const PIXEL_LEGACY_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/processed/tavern_front.png")
 const PIXEL_BLACKSMITH_TEXTURES := {
-	"front": preload("res://assets/production/pixel_buildings/blacksmith_front.png"),
-	"back": preload("res://assets/production/pixel_buildings/blacksmith_back.png"),
-	"side": preload("res://assets/production/pixel_buildings/blacksmith_side.png"),
-	"side_2": preload("res://assets/production/pixel_buildings/blacksmith_side_2.png"),
+	"front": preload("res://assets/production/pixel_buildings/processed/blacksmith_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/processed/blacksmith_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/processed/blacksmith_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/processed/blacksmith_side_2.png"),
 }
 const PIXEL_INN_TEXTURES := {
-	"front": preload("res://assets/production/pixel_buildings/inn_front.png"),
-	"back": preload("res://assets/production/pixel_buildings/inn_back.png"),
-	"side": preload("res://assets/production/pixel_buildings/inn_side.png"),
-	"side_2": preload("res://assets/production/pixel_buildings/inn_side_2.png"),
+	"front": preload("res://assets/production/pixel_buildings/processed/inn_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/processed/inn_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/processed/inn_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/processed/inn_side_2.png"),
 }
 const PIXEL_TAVERN_TEXTURES := {
-	"front": preload("res://assets/production/pixel_buildings/tavern_front.png"),
-	"back": preload("res://assets/production/pixel_buildings/tavern_back.png"),
-	"side": preload("res://assets/production/pixel_buildings/tavern_side.png"),
-	"side_2": preload("res://assets/production/pixel_buildings/tavern_side_2.png"),
+	"front": preload("res://assets/production/pixel_buildings/processed/tavern_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/processed/tavern_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/processed/tavern_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/processed/tavern_side_2.png"),
 }
 const PIXEL_KEEP_TEXTURES := {
-	"front": preload("res://assets/production/pixel_buildings/keep_front.png"),
-	"back": preload("res://assets/production/pixel_buildings/keep_back.png"),
-	"side": preload("res://assets/production/pixel_buildings/keep_side.png"),
-	"side_2": preload("res://assets/production/pixel_buildings/keep_side_2.png"),
+	"front": preload("res://assets/production/pixel_buildings/processed/keep_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/processed/keep_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/processed/keep_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/processed/keep_side_2.png"),
 }
 const PIXEL_BUILDING_TEXTURES := {
 	"Blacksmith": PIXEL_BLACKSMITH_TEXTURES,
@@ -87,11 +87,11 @@ const CUTESKULL_DEFENSE := [
 	"Castle_Wall_Door", "Castle_Tower_Door",
 ]
 const CUTESKULL_SCALE := 0.17
-const PIXEL_BUILDING_EXTENTS_PX := {
-	"Blacksmith": Vector2(68.0, 40.0),
-	"Inn": Vector2(68.0, 40.0),
-	"Tavern": Vector2(68.0, 40.0),
-	"Keep": Vector2(92.0, 62.0),
+const PIXEL_BUILDING_FOOTPRINT_UNITS := {
+	"Blacksmith": Vector2(6.0, 5.0),
+	"Tavern": Vector2(6.0, 5.0),
+	"Inn": Vector2(7.0, 6.0),
+	"Keep": Vector2(10.0, 8.0),
 }
 const BUILD_COSTS := {
 	"lumberyard": {"wood": 0},
@@ -772,7 +772,8 @@ func _pixel_building_name(building_type: String = "") -> String:
 
 
 func _pixel_extents(asset_name: String) -> Vector2:
-	return PIXEL_BUILDING_EXTENTS_PX.get(asset_name, Vector2(68.0, 40.0))
+	var footprint: Vector2 = PIXEL_BUILDING_FOOTPRINT_UNITS.get(asset_name, Vector2(6.0, 5.0))
+	return footprint * WorldCoords3D.UNIT_PER_PX * 0.5
 
 
 func _pixel_texture(asset_name: String, rotation_quarters: int = 0) -> Texture2D:
@@ -787,16 +788,29 @@ func _configure_pixel_instance(instance: StaticBody3D, asset_name: String, rotat
 	var sprite := instance.get_node_or_null("Sprite3D") as Sprite3D
 	if sprite == null:
 		return
-	sprite.texture = _pixel_texture(asset_name, rotation_quarters)
+	var texture := _pixel_texture(asset_name, rotation_quarters)
+	if texture == null:
+		return
+	sprite.texture = texture
 	sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	# The supplied pixel sheets use a black matte. Remove only near-black matte
-	# pixels in the shader while retaining the building's internal dark outlines.
-	var shader := Shader.new()
-	shader.code = "shader_type spatial; render_mode unshaded, cull_disabled, blend_mix; uniform sampler2D sprite_tex; void fragment(){ vec4 c=texture(sprite_tex,UV); float l=max(c.r,max(c.g,c.b)); ALBEDO=c.rgb; ALPHA=c.a*smoothstep(0.008,0.035,l); }"
-	var material := ShaderMaterial.new()
-	material.shader = shader
-	material.set_shader_parameter("sprite_tex", sprite.texture)
-	sprite.material_override = material
+	sprite.shaded = false
+	sprite.material_override = null
+	var footprint: Vector2 = PIXEL_BUILDING_FOOTPRINT_UNITS.get(asset_name, Vector2(6.0, 5.0))
+	var canonical := _pixel_texture(asset_name, 0)
+	var canonical_size := canonical.get_size()
+	var target_width := footprint.x
+	var target_height := target_width * float(canonical_size.y) / float(canonical_size.x)
+	sprite.pixel_size = target_width / float(texture.get_size().x)
+	sprite.scale = Vector3(1.0, target_height / (float(texture.get_size().y) * sprite.pixel_size), 1.0)
+	sprite.position.y = target_height * 0.5
+	var shape := instance.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if shape != null:
+		var box := shape.shape as BoxShape3D
+		if box == null:
+			box = BoxShape3D.new()
+			shape.shape = box
+		box.size = Vector3(footprint.x, 4.0, footprint.y)
+		shape.position.y = 2.0
 
 
 func _cuteskull_asset_name(building_type: String = "") -> String:

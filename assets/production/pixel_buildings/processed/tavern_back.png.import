@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qblj7sgc8nwf"
-path="res://.godot/imported/tavern_front.png-fe5445a0e59c34682c2dfac53c6f9f1a.ctex"
+uid="uid://d3jut8nak1dbx"
+path="res://.godot/imported/tavern_back.png-7b57024fe5d14ce6860a73daff3551f2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/production/pixel_buildings/tavern_front.png"
-dest_files=["res://.godot/imported/tavern_front.png-fe5445a0e59c34682c2dfac53c6f9f1a.ctex"]
+source_file="res://assets/production/pixel_buildings/processed/tavern_back.png"
+dest_files=["res://.godot/imported/tavern_back.png-7b57024fe5d14ce6860a73daff3551f2.ctex"]
 
 [params]
 
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
