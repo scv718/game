@@ -38,8 +38,9 @@ const TEXT := {
 	"day": {"ko": "낮", "en": "DAY"},
 	"night": {"ko": "밤", "en": "NIGHT"},
 	"build_help": {"ko": "1/2/3/4: 건물 선택 / R: 철거 / 좌클릭: 건설 / 우클릭: 취소", "en": "1/2/3/4: Select Building / R: Remove / Left Click: Build / Right Click: Cancel"},
-	"catalog_title": {"ko": "건물 카탈로그  •  Cuteskull 에셋", "en": "BUILDING CATALOG  •  Cuteskull Asset Library"},
+	"catalog_title": {"ko": "건물 카탈로그  •  3D / 픽셀 에셋", "en": "BUILDING CATALOG  •  3D / Pixel Assets"},
 	"catalog_hint": {"ko": "에셋 선택 • 무료 건설 • R 회전 • 클릭 배치 • 우클릭 취소", "en": "Select an asset • Free build • R rotate • Click place • Right click cancel"},
+	"catalog_select_prompt": {"ko": "건설할 건물 에셋을 선택하세요", "en": "Select a building asset"},
 	"free": {"ko": "무료", "en": "Free"},
 	"buildings": {"ko": "건물", "en": "Buildings"},
 	"defense": {"ko": "방어", "en": "Defense"},
@@ -47,6 +48,7 @@ const TEXT := {
 	"market_props": {"ko": "시장 / 소품", "en": "Market / Props"},
 	"environment": {"ko": "환경", "en": "Environment"},
 	"characters": {"ko": "캐릭터", "en": "Characters"},
+	"pixel_buildings": {"ko": "픽셀 건물", "en": "Pixel Buildings"},
 }
 
 const STATIC_UI_PAIRS := {

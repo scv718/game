@@ -36,6 +36,8 @@ const FARM_SCENE := preload("res://scenes/farm_3d.tscn")
 const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
+const PIXEL_TAVERN_SCENE := preload("res://scenes/pixel_tavern_3d.tscn")
+const PIXEL_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/tavern.png")
 const THUMBNAIL_RENDERER_SCRIPT := preload("res://scripts/building_thumbnail_renderer.gd")
 const CUTESKULL_BUILDINGS := [
 	"House_1_1", "House_1_2",
@@ -55,6 +57,7 @@ const CUTESKULL_DEFENSE := [
 	"Castle_Wall_Door", "Castle_Tower_Door",
 ]
 const CUTESKULL_SCALE := 0.17
+const PIXEL_TAVERN_EXTENTS_PX := Vector2(68.0, 40.0)
 const BUILD_COSTS := {
 	"lumberyard": {"wood": 0},
 	"quarry": {"wood": 0},
@@ -166,6 +169,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					_catalog_rotation_quarters = posmod(_catalog_rotation_quarters + 1, 4)
 					_refresh_ghost()
 					feedback.emit("Rotation %d°" % _catalog_rotation_degrees())
+				elif _is_pixel_type():
+					feedback.emit("2.5D pixel buildings use a fixed camera-facing direction")
 				else:
 					_set_remove_mode(not _remove_mode)
 			return
@@ -382,6 +387,16 @@ func _create_ghost(extents: Vector2) -> void:
 		var model := _make_cuteskull_model(_cuteskull_asset_name(), true)
 		if model != null:
 			_ghost.add_child(model)
+	elif _is_pixel_type():
+		var preview := PIXEL_TAVERN_SCENE.instantiate() as StaticBody3D
+		preview.collision_layer = 0
+		preview.remove_from_group("buildings_3d")
+		preview.remove_from_group("pixel_buildings_3d")
+		var preview_shape := preview.get_node("CollisionShape3D") as CollisionShape3D
+		preview_shape.disabled = true
+		var sprite := preview.get_node("Sprite3D") as Sprite3D
+		sprite.modulate = Color(0.55, 1.0, 0.62, 0.72)
+		_ghost.add_child(preview)
 	add_child(_ghost)
 
 
@@ -404,6 +419,8 @@ func _ghost_material(color: Color) -> StandardMaterial3D:
 func _extents_for_type(building_type: String, pos: Vector3) -> Vector2:
 	if building_type.begins_with("cuteskull/"):
 		return _cuteskull_extents_px.get(_cuteskull_asset_name(building_type), BUILDING_FOOTPRINT_PX * 0.5)
+	if building_type == "pixel/Tavern_Pixel":
+		return PIXEL_TAVERN_EXTENTS_PX
 	match building_type:
 		"wall":
 			return WALL_FOOTPRINT_PX * 0.5
@@ -433,7 +450,7 @@ func _snap_cell_center(pos: Vector3) -> Vector3:
 
 
 func _is_valid_position(pos: Vector3) -> bool:
-	if _is_cuteskull_type():
+	if _is_cuteskull_type() or _is_pixel_type():
 		return _is_valid_catalog_position(pos)
 	if _building_type == "quarry":
 		var deposit := _find_deposit_at(pos)
@@ -625,6 +642,9 @@ func _try_place_at(pos: Vector3) -> void:
 				return
 		_try_place_cuteskull_at(pos, cost)
 		return
+	if _is_pixel_type():
+		_try_place_pixel_tavern_at(pos)
+		return
 	var scene: PackedScene = _building_scene_for(_building_type)
 	var building: Node3D = scene.instantiate() as Node3D
 	building.position = WorldCoords3D.flatten(pos)
@@ -685,6 +705,23 @@ func _is_cuteskull_type() -> bool:
 	return _building_type.begins_with("cuteskull/")
 
 
+func _is_pixel_type() -> bool:
+	return _building_type == "pixel/Tavern_Pixel"
+
+
+func _try_place_pixel_tavern_at(pos: Vector3) -> void:
+	var building := PIXEL_TAVERN_SCENE.instantiate() as StaticBody3D
+	building.position = WorldCoords3D.flatten(pos)
+	var world := get_tree().get_first_node_in_group("world3d")
+	if world != null:
+		world.add_child(building)
+	else:
+		get_parent().add_child(building)
+	NavigationPolicy3D.request_rebuild_debounced(get_tree())
+	feedback.emit("픽셀 주점 건설 완료" if GameSettings.locale == "ko" else "Pixel Tavern built")
+	_set_active(false)
+
+
 func _cuteskull_asset_name(building_type: String = "") -> String:
 	var value := building_type if building_type != "" else _building_type
 	return value.trim_prefix("cuteskull/")
@@ -713,6 +750,7 @@ func _cache_asset_extents(source_root: Node, asset_name: String, source_path: St
 
 func _discover_additional_catalog_assets() -> void:
 	_catalog_groups = {
+		"Pixel Buildings": ["Tavern_Pixel"],
 		"Buildings": CUTESKULL_BUILDINGS.duplicate(),
 		"Defense": CUTESKULL_DEFENSE.duplicate(),
 		"Castle Parts": ["Castle_Roof_1", "Castle_Roof_2"],
@@ -863,7 +901,7 @@ func _apply_ghost_material(node: Node, mat: StandardMaterial3D) -> void:
 
 
 func _cost_for_type(building_type: String) -> int:
-	if building_type.begins_with("cuteskull/"):
+	if building_type.begins_with("cuteskull/") or building_type.begins_with("pixel/"):
 		return 0
 	return int(BUILD_COSTS.get(building_type, {}).get("wood", 0))
 
@@ -875,7 +913,7 @@ func _toggle_catalog() -> void:
 	if _catalog_open:
 		if not _active:
 			_set_active(true)
-		feedback.emit("Select a complete Cuteskull building")
+		feedback.emit(GameSettings.text("catalog_select_prompt"))
 	else:
 		_set_active(false)
 
@@ -974,7 +1012,8 @@ func _add_catalog_button(grid: GridContainer, asset_name: String, category: Stri
 	thumbnail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	thumbnail.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	thumbnail.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	thumbnail.texture = _thumbnail_renderer.get_thumbnail(asset_name) if _thumbnail_renderer else null
+	thumbnail.texture = PIXEL_TAVERN_TEXTURE if asset_name == "Tavern_Pixel" \
+		else (_thumbnail_renderer.get_thumbnail(asset_name) if _thumbnail_renderer else null)
 	if thumbnail.texture == null:
 		thumbnail.tooltip_text = "Preview unavailable: %s" % asset_name
 		var fallback := Label.new()
@@ -997,7 +1036,8 @@ func _add_catalog_button(grid: GridContainer, asset_name: String, category: Stri
 func _category_display_name(category: String) -> String:
 	var keys := {
 		"Buildings": "buildings", "Defense": "defense", "Castle Parts": "castle_parts",
-		"Market / Props": "market_props", "Environment": "environment", "Characters": "characters"}
+		"Market / Props": "market_props", "Environment": "environment", "Characters": "characters",
+		"Pixel Buildings": "pixel_buildings"}
 	return GameSettings.text(keys.get(category, category))
 
 
@@ -1023,7 +1063,8 @@ func _on_catalog_language_changed(_locale: String) -> void:
 
 
 func _on_catalog_item_pressed(asset_name: String) -> void:
-	_set_building_type("cuteskull/%s" % asset_name)
+	_set_building_type("pixel/%s" % asset_name if asset_name == "Tavern_Pixel" \
+		else "cuteskull/%s" % asset_name)
 	_catalog_open = false
 	if _catalog_panel != null:
 		_catalog_panel.visible = false
@@ -1035,12 +1076,15 @@ func get_building_catalog() -> Array:
 	var result: Array = []
 	for category in _catalog_groups:
 		for asset_name in _catalog_groups[category]:
-			result.append({"asset_name": asset_name, "category": category, "cost": {"wood": 0}, "complete": category == "Buildings"})
+			result.append({"asset_name": asset_name, "category": category, "cost": {"wood": 0},
+				"complete": category == "Buildings" or category == "Pixel Buildings"})
 	return result
 
 
 func get_selected_catalog_asset() -> String:
-	return _cuteskull_asset_name() if _is_cuteskull_type() else ""
+	if _is_cuteskull_type():
+		return _cuteskull_asset_name()
+	return "Tavern_Pixel" if _is_pixel_type() else ""
 
 
 func is_catalog_open() -> bool:
