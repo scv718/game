@@ -28,6 +28,12 @@ func _run() -> void:
 	await physics_frame
 	await physics_frame
 	var placement: Node = main.get_node("BuildingPlacement3D")
+	var build_key := InputEventKey.new()
+	build_key.physical_keycode = KEY_B
+	build_key.pressed = true
+	placement._unhandled_input(build_key)
+	_check(placement.is_catalog_open(), "B key opens the building catalog")
+	placement._toggle_catalog()
 	var entry_found := false
 	for entry in placement.get_building_catalog():
 		if entry.asset_name == "Tavern_Pixel":
