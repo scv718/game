@@ -35,12 +35,19 @@ func _run() -> void:
 	_check(placement.is_catalog_open(), "B key opens the building catalog")
 	placement._toggle_catalog()
 	var entry_found := false
+	var pixel_names := {}
 	for entry in placement.get_building_catalog():
-		if entry.asset_name == "Tavern_Pixel":
-			entry_found = entry.category == "Pixel Buildings" and entry.complete and entry.cost.wood == 0
-	_check(entry_found, "Tavern_Pixel is registered as a free complete pixel building")
-	placement._set_building_type("pixel/Tavern_Pixel")
+		if entry.category == "Pixel Buildings":
+			pixel_names[entry.asset_name] = true
+			if entry.asset_name == "Tavern":
+				entry_found = entry.complete and entry.cost.wood == 0
+	_check(entry_found and pixel_names.has("Blacksmith") and pixel_names.has("Inn") and pixel_names.has("Keep"),
+		"pixel building catalog contains all four rotated building sets")
+	placement._set_building_type("pixel/Tavern")
 	_check(placement._is_valid_position(Vector3.ZERO), "pixel tavern accepts open clearing")
+	var front_texture: Texture2D = placement._pixel_texture("Tavern", 0)
+	var side_texture: Texture2D = placement._pixel_texture("Tavern", 1)
+	_check(front_texture != side_texture, "R rotation selects a different pixel facade")
 	placement._try_place_at(Vector3.ZERO)
 	await physics_frame
 	var placed := get_nodes_in_group("pixel_buildings_3d")

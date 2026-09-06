@@ -1,8 +1,8 @@
 extends SceneTree
 
 
-const OUTPUT_RUNTIME := "res://test_results/pixel_tavern_runtime.png"
-const OUTPUT_CATALOG := "res://test_results/pixel_tavern_catalog.png"
+const OUTPUT_RUNTIME := "res://test_results/pixel_buildings_runtime.png"
+const OUTPUT_CATALOG := "res://test_results/pixel_buildings_catalog.png"
 
 
 func _initialize() -> void:
@@ -22,14 +22,13 @@ func _capture() -> void:
 	camera_controller._zoom_target = 1.5
 	camera_controller.get_camera().size = camera_controller._ortho_size_for_zoom(1.5)
 
-	var tavern: Node3D = (load("res://scenes/pixel_tavern_3d.tscn") as PackedScene).instantiate()
-	tavern.position = Vector3.ZERO
-	main.get_node("World3D").add_child(tavern)
+	var placement: Node = main.get_node("BuildingPlacement3D")
+	placement._set_building_type("pixel/Keep")
+	placement._try_place_at(Vector3.ZERO)
 	for _frame in range(10):
 		await process_frame
 	_save(OUTPUT_RUNTIME)
 
-	var placement: Node = main.get_node("BuildingPlacement3D")
 	placement._toggle_catalog()
 	for _frame in range(10):
 		await process_frame

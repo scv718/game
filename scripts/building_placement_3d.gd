@@ -36,8 +36,38 @@ const FARM_SCENE := preload("res://scenes/farm_3d.tscn")
 const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
-const PIXEL_TAVERN_SCENE := preload("res://scenes/pixel_tavern_3d.tscn")
-const PIXEL_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/tavern.png")
+const PIXEL_BUILDING_SCENE := preload("res://scenes/pixel_tavern_3d.tscn")
+const PIXEL_LEGACY_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/tavern.png")
+const PIXEL_BLACKSMITH_TEXTURES := {
+	"front": preload("res://assets/production/pixel_buildings/blacksmith_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/blacksmith_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/blacksmith_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/blacksmith_side_2.png"),
+}
+const PIXEL_INN_TEXTURES := {
+	"front": preload("res://assets/production/pixel_buildings/inn_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/inn_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/inn_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/inn_side_2.png"),
+}
+const PIXEL_TAVERN_TEXTURES := {
+	"front": preload("res://assets/production/pixel_buildings/tavern_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/tavern_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/tavern_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/tavern_side_2.png"),
+}
+const PIXEL_KEEP_TEXTURES := {
+	"front": preload("res://assets/production/pixel_buildings/keep_front.png"),
+	"back": preload("res://assets/production/pixel_buildings/keep_back.png"),
+	"side": preload("res://assets/production/pixel_buildings/keep_side.png"),
+	"side_2": preload("res://assets/production/pixel_buildings/keep_side_2.png"),
+}
+const PIXEL_BUILDING_TEXTURES := {
+	"Blacksmith": PIXEL_BLACKSMITH_TEXTURES,
+	"Inn": PIXEL_INN_TEXTURES,
+	"Tavern": PIXEL_TAVERN_TEXTURES,
+	"Keep": PIXEL_KEEP_TEXTURES,
+}
 const THUMBNAIL_RENDERER_SCRIPT := preload("res://scripts/building_thumbnail_renderer.gd")
 const CUTESKULL_BUILDINGS := [
 	"House_1_1", "House_1_2",
@@ -57,7 +87,12 @@ const CUTESKULL_DEFENSE := [
 	"Castle_Wall_Door", "Castle_Tower_Door",
 ]
 const CUTESKULL_SCALE := 0.17
-const PIXEL_TAVERN_EXTENTS_PX := Vector2(68.0, 40.0)
+const PIXEL_BUILDING_EXTENTS_PX := {
+	"Blacksmith": Vector2(68.0, 40.0),
+	"Inn": Vector2(68.0, 40.0),
+	"Tavern": Vector2(68.0, 40.0),
+	"Keep": Vector2(92.0, 62.0),
+}
 const BUILD_COSTS := {
 	"lumberyard": {"wood": 0},
 	"quarry": {"wood": 0},
@@ -170,7 +205,9 @@ func _unhandled_input(event: InputEvent) -> void:
 					_refresh_ghost()
 					feedback.emit("Rotation %d°" % _catalog_rotation_degrees())
 				elif _is_pixel_type():
-					feedback.emit("2.5D pixel buildings use a fixed camera-facing direction")
+					_catalog_rotation_quarters = posmod(_catalog_rotation_quarters + 1, 4)
+					_refresh_ghost()
+					feedback.emit("픽셀 방향 %d°" % _catalog_rotation_degrees())
 				else:
 					_set_remove_mode(not _remove_mode)
 			return
@@ -350,6 +387,10 @@ func _show_ghost_at(pos: Vector3) -> void:
 		_apply_footprint_size(extents)
 	_ghost.position = WorldCoords3D.flatten(pos)
 	_ghost.rotation.y = deg_to_rad(_catalog_rotation_degrees()) if _is_cuteskull_type() else 0.0
+	if _is_pixel_type():
+		var pixel_preview := _ghost.get_node_or_null("PixelTavern3D") as StaticBody3D
+		if pixel_preview != null:
+			_configure_pixel_instance(pixel_preview, _pixel_building_name(), _catalog_rotation_quarters)
 	if _is_catalog_wall() and _wall_dragging:
 		_rebuild_wall_drag_preview(pos)
 	_update_ghost_color()
@@ -388,12 +429,13 @@ func _create_ghost(extents: Vector2) -> void:
 		if model != null:
 			_ghost.add_child(model)
 	elif _is_pixel_type():
-		var preview := PIXEL_TAVERN_SCENE.instantiate() as StaticBody3D
+		var preview := PIXEL_BUILDING_SCENE.instantiate() as StaticBody3D
 		preview.collision_layer = 0
 		preview.remove_from_group("buildings_3d")
 		preview.remove_from_group("pixel_buildings_3d")
 		var preview_shape := preview.get_node("CollisionShape3D") as CollisionShape3D
 		preview_shape.disabled = true
+		_configure_pixel_instance(preview, _pixel_building_name(), _catalog_rotation_quarters)
 		var sprite := preview.get_node("Sprite3D") as Sprite3D
 		sprite.modulate = Color(0.55, 1.0, 0.62, 0.72)
 		_ghost.add_child(preview)
@@ -419,8 +461,8 @@ func _ghost_material(color: Color) -> StandardMaterial3D:
 func _extents_for_type(building_type: String, pos: Vector3) -> Vector2:
 	if building_type.begins_with("cuteskull/"):
 		return _cuteskull_extents_px.get(_cuteskull_asset_name(building_type), BUILDING_FOOTPRINT_PX * 0.5)
-	if building_type == "pixel/Tavern_Pixel":
-		return PIXEL_TAVERN_EXTENTS_PX
+	if _is_pixel_type(building_type):
+		return _pixel_extents(_pixel_building_name(building_type))
 	match building_type:
 		"wall":
 			return WALL_FOOTPRINT_PX * 0.5
@@ -643,7 +685,7 @@ func _try_place_at(pos: Vector3) -> void:
 		_try_place_cuteskull_at(pos, cost)
 		return
 	if _is_pixel_type():
-		_try_place_pixel_tavern_at(pos)
+		_try_place_pixel_building_at(pos)
 		return
 	var scene: PackedScene = _building_scene_for(_building_type)
 	var building: Node3D = scene.instantiate() as Node3D
@@ -705,12 +747,14 @@ func _is_cuteskull_type() -> bool:
 	return _building_type.begins_with("cuteskull/")
 
 
-func _is_pixel_type() -> bool:
-	return _building_type == "pixel/Tavern_Pixel"
+func _is_pixel_type(building_type: String = "") -> bool:
+	var value := building_type if building_type != "" else _building_type
+	return value.begins_with("pixel/") and (_pixel_building_name(value) in PIXEL_BUILDING_TEXTURES or _pixel_building_name(value) == "Tavern_Pixel")
 
 
-func _try_place_pixel_tavern_at(pos: Vector3) -> void:
-	var building := PIXEL_TAVERN_SCENE.instantiate() as StaticBody3D
+func _try_place_pixel_building_at(pos: Vector3) -> void:
+	var building := PIXEL_BUILDING_SCENE.instantiate() as StaticBody3D
+	_configure_pixel_instance(building, _pixel_building_name(), _catalog_rotation_quarters)
 	building.position = WorldCoords3D.flatten(pos)
 	var world := get_tree().get_first_node_in_group("world3d")
 	if world != null:
@@ -718,8 +762,41 @@ func _try_place_pixel_tavern_at(pos: Vector3) -> void:
 	else:
 		get_parent().add_child(building)
 	NavigationPolicy3D.request_rebuild_debounced(get_tree())
-	feedback.emit("픽셀 주점 건설 완료" if GameSettings.locale == "ko" else "Pixel Tavern built")
+	feedback.emit("픽셀 건물 건설 완료" if GameSettings.locale == "ko" else "Pixel building built")
 	_set_active(false)
+
+
+func _pixel_building_name(building_type: String = "") -> String:
+	var value := building_type if building_type != "" else _building_type
+	return value.trim_prefix("pixel/")
+
+
+func _pixel_extents(asset_name: String) -> Vector2:
+	return PIXEL_BUILDING_EXTENTS_PX.get(asset_name, Vector2(68.0, 40.0))
+
+
+func _pixel_texture(asset_name: String, rotation_quarters: int = 0) -> Texture2D:
+	if asset_name == "Tavern_Pixel":
+		return PIXEL_LEGACY_TAVERN_TEXTURE
+	var variants: Dictionary = PIXEL_BUILDING_TEXTURES.get(asset_name, {})
+	var keys := ["front", "side", "back", "side_2"]
+	return variants.get(keys[posmod(rotation_quarters, keys.size())], null)
+
+
+func _configure_pixel_instance(instance: StaticBody3D, asset_name: String, rotation_quarters: int) -> void:
+	var sprite := instance.get_node_or_null("Sprite3D") as Sprite3D
+	if sprite == null:
+		return
+	sprite.texture = _pixel_texture(asset_name, rotation_quarters)
+	sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	# The supplied pixel sheets use a black matte. Remove only near-black matte
+	# pixels in the shader while retaining the building's internal dark outlines.
+	var shader := Shader.new()
+	shader.code = "shader_type spatial; render_mode unshaded, cull_disabled, blend_mix; uniform sampler2D sprite_tex; void fragment(){ vec4 c=texture(sprite_tex,UV); float l=max(c.r,max(c.g,c.b)); ALBEDO=c.rgb; ALPHA=c.a*smoothstep(0.008,0.035,l); }"
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("sprite_tex", sprite.texture)
+	sprite.material_override = material
 
 
 func _cuteskull_asset_name(building_type: String = "") -> String:
@@ -750,7 +827,7 @@ func _cache_asset_extents(source_root: Node, asset_name: String, source_path: St
 
 func _discover_additional_catalog_assets() -> void:
 	_catalog_groups = {
-		"Pixel Buildings": ["Tavern_Pixel"],
+		"Pixel Buildings": ["Blacksmith", "Inn", "Tavern", "Keep"],
 		"Buildings": CUTESKULL_BUILDINGS.duplicate(),
 		"Defense": CUTESKULL_DEFENSE.duplicate(),
 		"Castle Parts": ["Castle_Roof_1", "Castle_Roof_2"],
@@ -1012,7 +1089,7 @@ func _add_catalog_button(grid: GridContainer, asset_name: String, category: Stri
 	thumbnail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	thumbnail.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	thumbnail.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	thumbnail.texture = PIXEL_TAVERN_TEXTURE if asset_name == "Tavern_Pixel" \
+	thumbnail.texture = _pixel_texture(asset_name, 0) if asset_name in PIXEL_BUILDING_TEXTURES \
 		else (_thumbnail_renderer.get_thumbnail(asset_name) if _thumbnail_renderer else null)
 	if thumbnail.texture == null:
 		thumbnail.tooltip_text = "Preview unavailable: %s" % asset_name
@@ -1063,7 +1140,7 @@ func _on_catalog_language_changed(_locale: String) -> void:
 
 
 func _on_catalog_item_pressed(asset_name: String) -> void:
-	_set_building_type("pixel/%s" % asset_name if asset_name == "Tavern_Pixel" \
+	_set_building_type("pixel/%s" % asset_name if asset_name in PIXEL_BUILDING_TEXTURES \
 		else "cuteskull/%s" % asset_name)
 	_catalog_open = false
 	if _catalog_panel != null:
@@ -1084,7 +1161,7 @@ func get_building_catalog() -> Array:
 func get_selected_catalog_asset() -> String:
 	if _is_cuteskull_type():
 		return _cuteskull_asset_name()
-	return "Tavern_Pixel" if _is_pixel_type() else ""
+	return _pixel_building_name() if _is_pixel_type() else ""
 
 
 func is_catalog_open() -> bool:
