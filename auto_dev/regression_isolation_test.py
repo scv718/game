@@ -301,12 +301,138 @@ def test_fg():
             supervisor.CONFIG = saved_cfg
 
 
+def test_group_worktree_env():
+    """A: group mode passes WORKTREE_DIR and does NOT fall back to main.
+
+    Covers: WORKTREE_DIR missing in group mode -> BLOCKED_WORKTREE (fail-closed),
+    never cfg(\"project_dir\") fallback. Solo mode -> main is the working root."""
+    with tempfile.TemporaryDirectory(prefix="reg-gwt-") as temp:
+        base = Path(temp)
+        main = base / "main"
+        wt = base / "worktree"
+        wt.mkdir(parents=True)
+        main.mkdir(parents=True)
+        queue_path = main / "AI_TASK_QUEUE.md"
+        make_queue(queue_path)
+
+        saved_cfg = supervisor.CONFIG
+        saved_wt = supervisor.WORKTREE_DIR
+        saved_gid = supervisor.GROUP_ID
+        saved_pop = supervisor.subprocess.Popen
+        saved_dirty = supervisor._canonical_main_dirty
+        try:
+            supervisor.CONFIG = base_config(main, str(base / "logs")) | {"variant": ""}
+
+            # A1: group mode w/ worktree -> Popen cwd == WORKTREE_DIR (no main fallback)
+            supervisor.GROUP_ID = "GROUP-TEST"
+            supervisor.WORKTREE_DIR = str(wt)
+            supervisor._canonical_main_dirty = lambda: []
+
+            captured = {}
+
+            def spy(*args, **kwargs):
+                captured["args"] = args[0]
+                captured["kwargs"] = kwargs
+                return _FakeProc(*args, **kwargs)
+
+            supervisor.subprocess.Popen = spy
+            sid, text, err = supervisor.run_opencode(
+                "test prompt", "stub-model", extra_args=["--dir", str(wt)], timeout_sec=60)
+            check("A1: group mode cwd == WORKTREE_DIR",
+                  captured["kwargs"].get("cwd") == str(wt))
+            check("A2: --dir == WORKTREE_DIR",
+                  "--dir" in captured["args"]
+                  and captured["args"][captured["args"].index("--dir") + 1] == str(wt))
+            check("A3: no fallback to main cwd",
+                  captured["kwargs"].get("cwd") != str(main))
+            check("A4: clean main -> success", err == "")
+
+            # B: group mode + canonical main dirty after run -> ISOLATION_FAILURE
+            supervisor._canonical_main_dirty = lambda: ["GAME_DESIGN.md", "src/buildings/tower.gd"]
+            sid, text, err = supervisor.run_opencode(
+                "test prompt", "stub-model", extra_args=["--dir", str(wt)], timeout_sec=60)
+            check("B1: main dirty detected -> WORKTREE_ISOLATION_FAILURE",
+                  "WORKTREE_ISOLATION_FAILURE" in (err or ""))
+            check("B2: isolation failure is fatal, not success", sid is None)
+
+            # C: group mode + missing worktree mapping -> BLOCKED_WORKTREE (no fallback)
+            supervisor.WORKTREE_DIR = None
+            raised = False
+            try:
+                supervisor.run_opencode("x", "stub-model", timeout_sec=60)
+            except RuntimeError as e:
+                raised = "BLOCKED_WORKTREE" in str(e)
+            check("C1: missing mapping raises BLOCKED_WORKTREE", raised)
+
+            # E: solo mode (no group) -> main is the root, no dirty check
+            supervisor.GROUP_ID = None
+            supervisor.WORKTREE_DIR = None
+            supervisor._canonical_main_dirty = lambda: (_ for _ in ()).throw(
+                AssertionError("dirty check must NOT run in solo mode"))
+            captured["args"] = captured["kwargs"] = None
+            sid, text, err = supervisor.run_opencode(
+                "solo prompt", "stub-model", timeout_sec=60)
+            check("E1: solo mode cwd == project_dir (main)",
+                  captured["kwargs"].get("cwd") == str(main))
+        finally:
+            supervisor.subprocess.Popen = saved_pop
+            supervisor.WORKTREE_DIR = saved_wt
+            supervisor.GROUP_ID = saved_gid
+            supervisor.CONFIG = saved_cfg
+            supervisor._canonical_main_dirty = saved_dirty
+
+
+def test_dirty_detector():
+    """D: _canonical_main_dirty reads the canonical main repo (cfg project_dir),
+    not the worktree - so worktree-only changes never trip the isolation failure."""
+    with tempfile.TemporaryDirectory(prefix="reg-dirty-") as temp:
+        base = Path(temp)
+        main = base / "main"
+        wt = base / "worktree"
+        wt.mkdir(parents=True)
+        main.mkdir(parents=True)
+
+        saved_cfg = supervisor.CONFIG
+        saved_wt = supervisor.WORKTREE_DIR
+        saved_gid = supervisor.GROUP_ID
+        import harness_v2.core as hcore
+        saved_run = hcore.subprocess.run
+        try:
+            supervisor.CONFIG = base_config(main, str(base / "logs"))
+            supervisor.WORKTREE_DIR = str(wt)
+            supervisor.GROUP_ID = "GROUP-TEST"
+
+            called = []
+
+            def fake_run(cmd, **kwargs):
+                called.append((cmd, kwargs))
+                class _R:
+                    returncode = 0
+                    stdout = "?? tests/worktree_only.gd\n"
+                    stderr = ""
+                return _R()
+
+            hcore.subprocess.run = fake_run
+            dirty = supervisor._canonical_main_dirty()
+            # detector must run `git -C <canonical main>` (not the worktree)
+            check("D1: dirty detector runs git in canonical main (cfg project_dir)",
+                  len(called) == 1 and called[0][0][2] == str(main))
+            check("D2: returns detected paths from main", dirty == ["tests/worktree_only.gd"])
+        finally:
+            hcore.subprocess.run = saved_run
+            supervisor.WORKTREE_DIR = saved_wt
+            supervisor.GROUP_ID = saved_gid
+            supervisor.CONFIG = saved_cfg
+
+
 def main():
     test_c()
     test_a_and_b()
     test_d()
     test_e()
     test_fg()
+    test_group_worktree_env()
+    test_dirty_detector()
     print("ALL PASS")
 
 

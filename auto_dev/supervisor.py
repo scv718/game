@@ -924,8 +924,26 @@ def mark_implementer_fallback(reason):
     log(f"구현자 모델 문제 감지 - 유료 폴백 전환: {reason[:100]}")
 
 
+def _canonical_main_dirty():
+    """canonical main(D:\\game) 의 dirty/untracked 변조 감지.
+
+    격리(그룹) 모드에서는 구현자가 반드시 워크트리에서만 작업해야 한다.
+    absolute-path write 로 main 이 오염되면 즉시 WORKTREE_ISOLATION_FAILURE 로
+    치명 처리한다(supervisor 가 main 을 재오염시킬 수 없도록)."""
+    try:
+        from harness_v2.core import changed_status_paths
+        return changed_status_paths(cfg("project_dir"))
+    except Exception as e:
+        log(f"canonical main dirty 감지 실패(비차단): {str(e)[:150]}")
+        return []
+
+
 def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
     exe = cfg("opencode_exe")
+    if GROUP_ID and not WORKTREE_DIR:
+        raise RuntimeError(
+            "BLOCKED_WORKTREE: 그룹 모드에서 워크트리 매핑이 없습니다. "
+            "main(D:\\game) fallback 은 금지됩니다 - 그룹을 BLOCK 합니다.")
     agent_dir = WORKTREE_DIR or cfg("project_dir")
     args = [exe, "run", prompt, "--model", model, "--auto", "--format", "json",
             "--dir", agent_dir]
@@ -955,7 +973,18 @@ def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
         err_msg = extract_error_event(stdout) or stderr[-2000:] or "알 수 없는 오류"
         log(f"opencode 실패 (exit={proc.returncode}): {err_msg[:200]}")
         return None, "", err_msg
-    return parse_run_output(stdout)
+    sid, text, err = parse_run_output(stdout)
+    # WORKTREE_ISOLATION: 격리 모드에서는 opencode 가 끝난 뒤 canonical main 이
+    # 오염되지 않았는지 반드시 확인한다. 세션 루트가 워크트리여도 모델이
+    # absolute-path write 로 main 을 건드릴 수 있다(원인 증거는 opencode.db).
+    if GROUP_ID and WORKTREE_DIR:
+        dirty = _canonical_main_dirty()
+        if dirty:
+            fatal = ("WORKTREE_ISOLATION_FAILURE: canonical main 오염 감지: "
+                     + ", ".join(dirty[:8]))
+            log(fatal)
+            return None, "", fatal
+    return sid, text, err
 
 
 def extract_error_event(stdout):
@@ -1289,6 +1318,13 @@ def main():
             WORKTREE_DIR = wt_map[GROUP_ID]
             log(f"레인 워크트리: {WORKTREE_DIR}")
             _ensure_group_worktree(cfg("project_dir"), WORKTREE_DIR)
+        else:
+            # WORKTREE_ISOLATION (FAIL-CLOSED): 그룹 모드인데 워크트리 매핑이 없으면
+            # main(D:\game) fallback 을 절대 허용하지 않는다. main 오염에서 자동
+            # 복구되는 것(오염 민감)보다 그룹을 BLOCK 하고 건너뛰는 것이 안전하다.
+            log(f"BLOCKED_WORKTREE: 그룹 '{GROUP_ID}' 워크트리 매핑 없음 - main fallback 금지, 그룹 BLOCK")
+            print(f"BLOCKED_WORKTREE: 그룹 {GROUP_ID} 워크트리 매핑 없음")
+            return
         root = next((t for t in tasks if t["id"] == GROUP_ID), None)
         if root is None:
             print(f"그룹 {GROUP_ID} 없음")
