@@ -37,7 +37,7 @@ const WALL_SCENE := preload("res://scenes/wall_3d.tscn")
 const GATE_SCENE := preload("res://scenes/gate_3d.tscn")
 const CUTESKULL_CITY := preload("res://assets/cuteskull-medieval-city/city16.fbx")
 const PIXEL_BUILDING_SCENE := preload("res://scenes/pixel_tavern_3d.tscn")
-const PIXEL_LEGACY_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/tavern.png")
+const PIXEL_LEGACY_TAVERN_TEXTURE := preload("res://assets/production/pixel_buildings/tavern_front.png")
 const PIXEL_BLACKSMITH_TEXTURES := {
 	"front": preload("res://assets/production/pixel_buildings/blacksmith_front.png"),
 	"back": preload("res://assets/production/pixel_buildings/blacksmith_back.png"),

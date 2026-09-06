@@ -14,7 +14,7 @@ func _run() -> void:
 	var sample := tavern_scene.instantiate() as StaticBody3D
 	var sprite := sample.get_node("Sprite3D") as Sprite3D
 	var shape := sample.get_node("CollisionShape3D") as CollisionShape3D
-	_check(sprite.texture != null and sprite.texture.get_size() == Vector2(1387, 1134),
+	_check(sprite.texture != null and sprite.texture.get_size() == Vector2(1254, 1254),
 		"source PNG imports at original resolution")
 	_check(sprite.texture_filter == BaseMaterial3D.TEXTURE_FILTER_NEAREST,
 		"pixel art uses nearest texture filtering")
