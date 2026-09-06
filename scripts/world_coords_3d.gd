@@ -34,8 +34,8 @@ const GROUND_Y := 0.0
 
 ## 3D 플레이 공간은 중앙 정착지와 기존 논리 좌표를 보존하면서 외곽 잔디/건설
 ## 여유 공간을 더 제공한다. 2D legacy world는 기존 3072px 범위를 유지하고,
-## 3D world만 512x512 units로 확장한다.
-const WORLD_HALF_UNITS := 256.0
+## 3D world만 1536x1536 units로 확장한다.
+const WORLD_HALF_UNITS := 768.0
 const WORLD_BOUNDS_XZ := AABB(
 	Vector3(-WORLD_HALF_UNITS, GROUND_Y, -WORLD_HALF_UNITS),
 	Vector3(WORLD_HALF_UNITS * 2.0, 0.0, WORLD_HALF_UNITS * 2.0))

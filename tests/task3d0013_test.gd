@@ -195,13 +195,14 @@ func _pan_api() -> void:
 	_cam_ctl.pan_camera(Vector3(5000.0, 0.0, 5000.0))
 	_check(_v3_near(_cam_ctl.position,
 		Vector3(foundation_bounds.end.x, 0.0, foundation_bounds.end.z)),
-		"pan_camera clamps pivot to max world corner (+256, +256)")
+		"pan_camera clamps pivot to current maximum world corner")
 	_cam_ctl.pan_camera(Vector3(-10000.0, 5.0, -10000.0))
 	_check(_v3_near(_cam_ctl.position,
 			Vector3(foundation_bounds.position.x, 0.0, foundation_bounds.position.z)),
-		"pan_camera clamps pivot to min world corner (-256, -256) and pins Y to ground")
+		"pan_camera clamps pivot to current minimum world corner and pins Y to ground")
 	_cam_ctl.pan_camera(Vector3(10.0, 0.0, 20.0))
-	_check(_v3_near(_cam_ctl.position, Vector3(-246.0, 0.0, -236.0)),
+	_check(_v3_near(_cam_ctl.position, Vector3(foundation_bounds.position.x + 10.0,
+		0.0, foundation_bounds.position.z + 20.0)),
 		"in-bounds offset moves pivot freely without extra drift")
 	_enter(Phase.PAN_KEYS)
 

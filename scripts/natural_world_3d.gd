@@ -2,7 +2,7 @@ extends Node3D
 ## Fixed environment dressing. All blockers use the existing resource collision
 ## layer, so placement and the canonical navigation baker see the same geometry.
 
-const CLEARING := Rect2(-62, -60, 124, 120)
+const CLEARING := Rect2(-180, -180, 360, 360)
 const SEED := 731904
 var rng := RandomNumberGenerator.new()
 var models: Dictionary = {}
@@ -19,13 +19,14 @@ func _ready() -> void:
 	_river()
 	_forests()
 	_rocklands()
+	_western_ridge()
 	_corruption()
 	_abyss()
 
 func _abyss() -> void:
 	var portal := get_parent().get_node("DistantPortal") as Node3D
 	for child in portal.get_children(): child.free()
-	portal.position=Vector3(-190,0,-70)
+	portal.position=Vector3(-570,0,-210)
 	var shader:=Shader.new()
 	shader.code="""
 	shader_type spatial;
@@ -49,7 +50,7 @@ func _abyss() -> void:
 	var mat:=ShaderMaterial.new()
 	mat.shader=shader
 	var quad:=QuadMesh.new()
-	quad.size=Vector2(186,186)
+	quad.size=Vector2(280,280)
 	var core:=MeshInstance3D.new()
 	core.name="AbyssCore"
 	core.mesh=quad
@@ -59,17 +60,17 @@ func _abyss() -> void:
 	portal.add_child(core)
 	# Low overlapping rock shoulders conceal the cut at ground level.
 	for i in range(29):
-		var x:float=-260.0+i*5.0
-		_model("rock/medium_%d"%(1+i%3),Vector3(x,0,-69+sin(i*.7)*2),rng.randf_range(6,10))
+		var x:float=-668.0+i*7.0
+		_model("rock/medium_%d"%(1+i%3),Vector3(x,0,-209+sin(i*.7)*4),rng.randf_range(9,14))
 
 static func river_x(z: float) -> float:
-	return 112.0 + sin(z * 0.016) * 27.0 + sin(z * 0.033 + 0.7) * 9.0
+	return 336.0 + sin(z * 0.016 / 3.0) * 81.0 + sin(z * 0.033 / 3.0 + 0.7) * 27.0
 
 static func river_width(z: float) -> float:
-	return 15.0 + 5.0 * sin(z * 0.021 + 1.0)
+	return 26.0 + 8.0 * sin(z * 0.021 / 3.0 + 1.0)
 
 static func is_ford(z: float) -> bool:
-	return absf(z) < 10.0 or absf(z - 116.0) < 9.0
+	return absf(z) < 15.0 or absf(z - 350.0) < 15.0
 
 func _ground() -> void:
 	var shader := Shader.new()
@@ -81,14 +82,14 @@ func _ground() -> void:
 	float noise(vec2 p){return texture(terrain_noise,p*.025).r;}
 	void vertex(){world=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;}
 	void fragment(){
-	vec2 p=world.xz;
+	vec2 p=world.xz/3.0;
 	float n=noise(p*.045)*.65+noise(p*.12)*.35;
-	float fine=noise(p*2.8);
+	float fine=noise(world.xz*2.8);
 	vec3 grass=mix(vec3(.105,.16,.067),vec3(.31,.34,.14),n);
 	grass*=.86+fine*.27;
-	float rx=112.0+sin(p.y*.016)*27.0+sin(p.y*.033+.7)*9.0;
-	float rw=15.0+5.0*sin(p.y*.021+1.0);
-	float bank=1.0-smoothstep(rw*.5+2.0,rw*.5+11.0,abs(p.x-rx)+noise(p*.2)*2.0);
+	float rx=(112.0+sin(p.y*.016)*27.0+sin(p.y*.033+.7)*9.0)*3.0;
+	float rw=26.0+8.0*sin(p.y*.021+1.0);
+	float bank=1.0-smoothstep(rw*.5+2.0,rw*.5+11.0,abs(world.x-rx)+noise(p*.2)*2.0);
 	grass=mix(grass,vec3(.29,.255,.17)*(.8+n*.4),bank*.9);
 	float dead=1.0-smoothstep(-170.0,-80.0,p.x+(n-.5)*24.0);
 	vec3 ash=mix(vec3(.055,.045,.062),vec3(.17,.145,.155),n);
@@ -111,7 +112,7 @@ func _ground() -> void:
 	ground.visible = false
 	# Extend the backdrop beyond all gameplay bounds, hiding the rectangular edge.
 	var plane := PlaneMesh.new()
-	plane.size = Vector2(1800, 1800)
+	plane.size = Vector2(5000, 5000)
 	_mesh("DistantGround", plane, material, Vector3(0, 0, 0))
 
 func _river() -> void:
@@ -127,8 +128,8 @@ func _river() -> void:
 	float edge=pow(abs(UV.x*2.0-1.0),7.0);
 	float ripple=sin(world.z*1.6+world.x*.6-TIME*1.7)*sin(world.x*3.1+TIME*.6);
 	float foam=ripple*.015+edge*.13;
-	float ford=1.0-smoothstep(7.0,11.0,abs(world.z));
-	ford=max(ford,1.0-smoothstep(6.0,10.0,abs(world.z-116.0)));
+	float ford=1.0-smoothstep(10.0,17.0,abs(world.z));
+	ford=max(ford,1.0-smoothstep(10.0,17.0,abs(world.z-350.0)));
 	ALBEDO=mix(mix(vec3(.045,.16,.17),vec3(.20,.34,.28),edge),vec3(.24,.30,.23),ford*.7)+foam;
 	ROUGHNESS=.3;METALLIC=.16;
 	}
@@ -137,15 +138,15 @@ func _river() -> void:
 	mat.shader = water
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for i in range(160):
-		var z := -400.0 + i * 5.0
+	for i in range(480):
+		var z := -1200.0 + i * 5.0
 		var a := Vector3(river_x(z)-river_width(z)*.5, .035, z)
 		var b := Vector3(river_x(z)+river_width(z)*.5, .035, z)
 		var c := Vector3(river_x(z+5)-river_width(z+5)*.5, .035, z+5)
 		var d := Vector3(river_x(z+5)+river_width(z+5)*.5, .035, z+5)
 		_triangle(st,a,c,b,Vector2(0,0),Vector2(0,1),Vector2(1,0))
 		_triangle(st,b,c,d,Vector2(1,0),Vector2(0,1),Vector2(1,1))
-		if absf(z) < 250.0 and not is_ford(z+2.5):
+		if absf(z) < 770.0 and not is_ford(z+2.5):
 			_river_block(a,b,c,d)
 	st.generate_normals()
 	_mesh("MeanderingRiver",st.commit(),mat)
@@ -157,7 +158,7 @@ func _river() -> void:
 	shape.shape=river_collision.commit().create_trimesh_shape()
 	body.add_child(shape)
 	add_child(body)
-	for interval in [Vector2(-250,-10),Vector2(10,107),Vector2(125,250)]:
+	for interval in [Vector2(-770,-15),Vector2(15,335),Vector2(365,770)]:
 		var obstacle:=NavigationObstacle3D.new()
 		obstacle.name="RiverNavigationCut"
 		obstacle.avoidance_enabled=false
@@ -176,8 +177,8 @@ func _river() -> void:
 		obstacle.vertices=left
 		add_child(obstacle)
 	# Fords are submerged gravel: water remains visible above the crossing.
-	for i in range(150):
-		var z := rng.randf_range(-280,280)
+	for i in range(330):
+		var z := rng.randf_range(-820,820)
 		if is_ford(z): continue
 		var side := -1.0 if i%2==0 else 1.0
 		var pos := Vector3(river_x(z)+side*(river_width(z)*.5+rng.randf_range(1.5,5)),0,z)
@@ -190,16 +191,16 @@ func _forests() -> void:
 		Vector3(65,0,180),Vector3(-30,0,155),Vector3(-85,0,205),
 		Vector3(-5,0,-245),Vector3(180,0,-255),Vector3(285,0,80),Vector3(30,0,280)]
 	for center in groves:
-		for i in range(160):
+		for i in range(400):
 			var angle := rng.randf()*TAU
-			var radius := sqrt(rng.randf())*rng.randf_range(30,54)
-			var pos: Vector3 = center+Vector3(cos(angle)*radius,0,sin(angle)*radius*.78)
+			var radius := sqrt(rng.randf())*rng.randf_range(80,118)
+			var pos: Vector3 = center*3.0+Vector3(cos(angle)*radius,0,sin(angle)*radius*.78)
 			if CLEARING.grow(12).has_point(Vector2(pos.x,pos.z)): continue
 			if absf(pos.x-river_x(pos.z)) < river_width(pos.z)*.5+8: continue
 			var key := "tree/common_%d" % (1+i%5) if i%3!=0 else "tree/pine_%d" % (1+i%2)
 			_model(key,pos,rng.randf_range(12.0,20.0))
 			forest_count += 1
-			if absf(pos.x)<250 and absf(pos.z)<250:
+			if absf(pos.x)<760 and absf(pos.z)<760:
 				_block(pos,Vector3(1.4,10,1.4),"ForestTrunk")
 			if i%5==0:
 				_model("veg/bush_common",pos+Vector3(3,0,1),rng.randf_range(1.5,2.5))
@@ -208,16 +209,33 @@ func _rocklands() -> void:
 	for center in [Vector3(-78,0,-95),Vector3(46,0,-218),Vector3(228,0,128),
 		Vector3(-90,0,245),Vector3(-248,0,-90),Vector3(-255,0,105)]:
 		for i in range(20):
-			var pos: Vector3 = center+Vector3(rng.randf_range(-25,25),0,rng.randf_range(-20,20))
+			var pos: Vector3 = center*3.0+Vector3(rng.randf_range(-25,25),0,rng.randf_range(-20,20))
 			var height := rng.randf_range(3.0,11.0)
 			_model("rock/medium_%d" % (1+i%3),pos,height)
-			if absf(pos.x)<248 and absf(pos.z)<248:
+			if absf(pos.x)<760 and absf(pos.z)<760:
 				_block(pos,Vector3(height*.85,height, height*.85),"RockMass")
 	# Distant low ridgelines break up the silhouette without changing playable Y=0.
 	for i in range(17):
 		var angle := TAU*float(i)/17
-		var pos := Vector3(cos(angle)*rng.randf_range(455,485),0,sin(angle)*rng.randf_range(455,485))
-		_hill(pos,rng.randf_range(65,95),rng.randf_range(16,28),i)
+		var pos := Vector3(cos(angle)*rng.randf_range(1280,1390),0,sin(angle)*rng.randf_range(1280,1390))
+		_hill(pos,rng.randf_range(130,170),rng.randf_range(30,50),i)
+
+func _western_ridge() -> void:
+	# Mountain shoulders separate the buildable basin from the western abyss.
+	# A broad pass at z=0 stays open for the existing movement/arrival owners.
+	for i in range(41):
+		var z := -700.0 + i * 35.0
+		if absf(z) < 65.0:
+			continue
+		for side in range(2):
+			var pos := Vector3(-325.0 + sin(z * .007) * 27.0 - side * 30.0,
+				0, z + rng.randf_range(-14.0,14.0))
+			var key := "rock/medium_%d" % (1 + i % 3)
+			var node := _model(key,pos,rng.randf_range(26.0,48.0))
+			if node != null:
+				var box: AABB = node.transform * bounds[key]
+				_block(Vector3(box.get_center().x,0,box.get_center().z),
+					Vector3(box.size.x,box.size.y,box.size.z),"WesternRidgeBlock")
 
 func _hill(pos: Vector3, radius: float, height: float, variant: int) -> void:
 	var st:=SurfaceTool.new()
@@ -249,17 +267,17 @@ func _river_block(a:Vector3,b:Vector3,c:Vector3,d:Vector3)->void:
 		var q:Vector3=edge[1]
 		_triangle(river_collision,p,q,Vector3(p.x,-1,p.z))
 		_triangle(river_collision,q,Vector3(q.x,-1,q.z),Vector3(p.x,-1,p.z))
-	if is_ford(a.z-2.5) or a.z<=-245:
+	if is_ford(a.z-2.5) or a.z<=-765:
 		_triangle(river_collision,bb,aa,Vector3(aa.x,-1,aa.z))
 		_triangle(river_collision,bb,Vector3(aa.x,-1,aa.z),Vector3(bb.x,-1,bb.z))
-	if is_ford(c.z+2.5) or c.z>=250:
+	if is_ford(c.z+2.5) or c.z>=770:
 		_triangle(river_collision,cc,dd,Vector3(cc.x,-1,cc.z))
 		_triangle(river_collision,dd,Vector3(dd.x,-1,dd.z),Vector3(cc.x,-1,cc.z))
 
 func _corruption() -> void:
-	for i in range(80):
-		var pos := Vector3(rng.randf_range(-240,-105),0,rng.randf_range(-135,135))
-		if pos.distance_to(Vector3(-175,0,0))<42: continue
+	for i in range(160):
+		var pos := Vector3(rng.randf_range(-725,-340),0,rng.randf_range(-430,430))
+		if pos.distance_to(Vector3(-570,0,-210))<80: continue
 		_model("tree/dead_%d" % (1+i%2),pos,rng.randf_range(5,10))
 		if i%3==0: _model("rock/medium_2",pos+Vector3(3,0,2),rng.randf_range(2,5))
 	var mat := StandardMaterial3D.new()
@@ -269,12 +287,12 @@ func _corruption() -> void:
 	mat.emission_enabled = true
 	mat.emission = Color(.28,.012,.52)
 	mat.emission_energy_multiplier = 1.7
-	for i in range(34):
-		var pos := Vector3(rng.randf_range(-238,-115),.09,rng.randf_range(-105,105))
+	for i in range(70):
+		var pos := Vector3(rng.randf_range(-720,-360),.09,rng.randf_range(-330,330))
 		var st := SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		for j in range(6):
-			var next := pos+Vector3(rng.randf_range(2,5),0,rng.randf_range(-3,3))
+			var next := pos+Vector3(rng.randf_range(5,12),0,rng.randf_range(-6,6))
 			_triangle(st,pos,pos+Vector3(0,0,.45),next)
 			pos=next
 		st.generate_normals()
@@ -293,7 +311,7 @@ func _corruption() -> void:
 	for i in range(16):
 		var quad := QuadMesh.new()
 		quad.size=Vector2(rng.randf_range(20,42),rng.randf_range(8,15))
-		var m := _mesh("CorruptionMist",quad,smoke,Vector3(rng.randf_range(-220,-130),3,rng.randf_range(-110,95)))
+		var m := _mesh("CorruptionMist",quad,smoke,Vector3(rng.randf_range(-710,-400),3,rng.randf_range(-380,280)))
 		m.rotation_degrees.x=-35
 
 func _model(key: String, pos: Vector3, height: float) -> Node3D:
