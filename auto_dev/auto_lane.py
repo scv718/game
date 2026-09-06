@@ -219,48 +219,22 @@ def _regression_ok(repo):
     return ok
 
 
-def _write_queue_done(task_id, feedback):
-    """Integration Coordinator 가 INTEGRATED+REGRESSION_PASS 를 확정한 후에만 호출한다."""
-    queue_path = os.path.join(_cfg("project_dir", r"D:\game"), _cfg("queue_file", "AI_TASK_QUEUE.md"))
-    if not os.path.exists(queue_path):
-        log("[%s] 큐 파일 없음: %s" % (task_id, queue_path))
-        return False
-    heading = re.compile(r"^(#{2,3})\s+" + re.escape(task_id) + r"\b")
-    status = re.compile(r"^-\s*상태\s*[:：]\s*.+$")
-    feedback_re = re.compile(r"^-\s*피드백\s*[:：]\s*.*$")
-    with open(queue_path, encoding="utf-8") as f:
-        lines = f.readlines()
-    out = []
-    in_target = False
-    depth = 0
-    status_done = False
-    feedback_done = False
-    for raw in lines:
-        line = raw.rstrip("\n")
-        m = re.match(r"^(#{2,3})\s+", line)
-        if m:
-            hlevel = len(m.group(1))
-            tid = line[len(m.group(0)):].strip().split()[0] if line[len(m.group(0)):].strip() else ""
-            if tid == task_id:
-                in_target = True
-                depth = hlevel
-            elif in_target and hlevel <= depth:
-                in_target = False
-        if in_target:
-            if status.match(line) and not status_done:
-                out.append("- 상태: DONE\n")
-                status_done = True
-                if feedback is not None:
-                    out.append("- 피드백: %s\n" % feedback)
-                    feedback_done = True
-                continue
-            if feedback_re.match(line) and feedback is not None and not feedback_done:
-                out.append("- 피드백: %s\n" % feedback)
-                feedback_done = True
-                continue
-        out.append(raw)
-    with open(queue_path, "w", encoding="utf-8") as f:
-        f.writelines(out)
+def _write_done_report(task_id, feedback, integrated_commit=""):
+    """Integration Coordinator 가 INTEGRATED+REGRESSION_PASS 를 확정한 후 호출.
+
+    V2 계약: DONE 결과는 canonical main(AI_TASK_QUEUE.md)에 쓰지 않고
+    runtime report 로만 export 한다 (main 은 runtime 동안 항상 clean)."""
+    runs_dir = os.path.join(BASE_DIR, "runs")
+    os.makedirs(runs_dir, exist_ok=True)
+    p = os.path.join(runs_dir, "integration_done.log")
+    line = "[%s] %s DONE commit=%s | %s" % (time.strftime("%Y-%m-%d %H:%M:%S"),
+                                            task_id, (integrated_commit or "")[:12], feedback)
+    try:
+        with open(p, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    except Exception as e:
+        log("[%s] DONE 리포트 기록 실패: %s" % (task_id, e))
+    log(line)
     return True
 
 
@@ -418,7 +392,8 @@ def integrate_ready_tasks(main_repo, store=None):
         task.set(Lifecycle.REGRESSION_PASS, integration_validation_result="PASS")
         task.set(Lifecycle.DONE)
         store.put_task(task)
-        _write_queue_done(task_id, "통합 완료(Integration Coordinator): INTEGRATED + REGRESSION_PASS + main 반영")
+        _write_done_report(task_id, "통합 완료(Integration Coordinator): INTEGRATED + REGRESSION_PASS + main 반영",
+                           integrated_commit=integrated)
         progressed = True
         log("[V2] %s INTEGRATED->DONE (commit=%s)" % (task_id, integrated[:12]))
     return progressed, ""

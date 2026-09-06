@@ -10,6 +10,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import time
 import msvcrt
 
@@ -20,6 +21,7 @@ QUEUE_LOCK_PATH = os.path.join(BASE_DIR, ".queue_lock")
 PROMPT_DIR = os.path.join(BASE_DIR, "prompts")
 GROUP_ID = None  # --group 지정 시 해당 그룹 서브트리만 처리 (병렬 레인)
 WORKTREE_DIR = None  # --group 에 매핑된 git worktree (에이전트 작업 디렉터리)
+CONFIG = {}  # config.json 내용 (main() 에서 로드; 테스트에서 직접 주입 가능)
 # commit-gate: implementer attempt 단위 artifact(attempt_delta) 판정 + source provenance 스냅샷
 _WORKTREE_BASELINE = None  # 시도 시작 시점의 전체 파일 content-hash 스냅샷
 _LAST_ATTEMPT_DELTA = None  # 마지막 시도에서 실제 새로 생성/수정된 파일 목록 (rel path)
@@ -218,50 +220,12 @@ def parse_queue():
 
 
 def update_queue(tasks, path, task_id, status, feedback=None):
-    """지정 태스크의 상태/피드백 줄을 파일에서 직접 갱신 (사람 편집 보존, 레인 간 동시 쓰기 방지)."""
-    with queue_lock():
-        _update_queue_locked(tasks, path, task_id, status, feedback)
+    """runtime 상태 전이. AI_TASK_QUEUE.md(spec) 는 절대 수정하지 않는다.
 
-
-def _update_queue_locked(tasks, path, task_id, status, feedback=None):
-    with open(path, encoding="utf-8") as f:
-        lines = f.readlines()
-
-    target = next((t for t in tasks if t["id"] == task_id), None)
-    if target is None:
-        return
-    in_target = False
-    depth = 0
-    out = []
-    status_written = False
-    feedback_written = False
-    for raw in lines:
-        line = raw.rstrip("\n")
-        m = HEADING_RE.match(line)
-        if m:
-            hlevel = len(m.group(1))
-            tid = m.group(2).strip().split()[0] if m.group(2).strip() else ""
-            if tid == task_id:
-                in_target = True
-                depth = hlevel
-            elif in_target and hlevel <= depth:
-                in_target = False
-        if in_target:
-            sm = STATUS_RE.match(line)
-            if sm and not status_written:
-                out.append(f"- 상태: {status}\n")
-                status_written = True
-                if feedback is not None:
-                    out.append(f"- 피드백: {feedback}\n")
-                    feedback_written = True
-                continue
-            if FEEDBACK_RE.match(line) and feedback is not None and not feedback_written:
-                out.append(f"- 피드백: {feedback}\n")
-                feedback_written = True
-                continue
-        out.append(raw)
-    with open(path, "w", encoding="utf-8") as f:
-        f.writelines(out)
+    V2 계약: runtime status 의 단일 source of truth 는 state_v2.json.
+    큐 파일은 사람이 작성한 계획(spec)으로 read-only 유지 → canonical main clean 유지.
+    상태 변경은 state_v2 에 기록하고 로그로 노출한다."""
+    _v2_mark(task_id, status, feedback=feedback)
 
 
 GATE_TEMP_RE = re.compile(r"^(_probe|_debug|_diag|tmp_|temp_|test_tmp)", re.IGNORECASE)
@@ -711,6 +675,77 @@ def _v2_store():
     return V2StateStore(_v2_state_path())
 
 
+# ── AI_TASK_QUEUE.md spec-only 정책 ──────────────────────────────────────
+# production runtime 동안 canonical main 의 AI_TASK_QUEUE.md 는 read-only spec 이다.
+# runtime status(IMPLEMENT/FIX/REVIEW/WAIT_INTEGRATION/DONE/...) 는 절대 이 파일에
+# 쓰지 않고 state_v2.json 을 단일 source of truth 로 사용한다. 큐 파일의 QUEUED/DONE
+# 등은 state_v2 에 task record 가 없을 때의 bootstrap/spec 값으로만 사용한다.
+_V1_TO_V2 = {
+    "QUEUED": "IMPLEMENT",                     # 설계 해결 재큐 -> retryable attempt
+    "IMPLEMENT": "IMPLEMENT",
+    "REVIEW": "IMPLEMENT",
+    "REVIEW_PARSE_ERROR": "IMPLEMENT",
+    "FIX": "IMPLEMENT",
+    "NEEDS_DESIGN": "CANONICAL_REVIEW_REQUIRED",
+    "WAIT_INTEGRATION": "WAIT_INTEGRATION",
+    "DONE": "DONE",
+}
+V2_RUNTIME = {
+    "WORKTREE_CREATED": "QUEUED",
+    "ENV_BOOTSTRAPPED": "QUEUED",
+    "BASELINE_HEALTHY": "IMPLEMENT",
+    "IMPLEMENT": "IMPLEMENT",
+    "SOURCE_VALIDATED": "IMPLEMENT",
+    "SOURCE_COMMITTED": "IMPLEMENT",
+    "WAIT_INTEGRATION": "WAIT_INTEGRATION",
+    "INTEGRATING": "WAIT_INTEGRATION",
+    "INTEGRATED": "WAIT_INTEGRATION",
+    "REGRESSION_PASS": "WAIT_INTEGRATION",
+    "DONE": "DONE",
+    "INTEGRATION_CONFLICT": "NEEDS_DESIGN",
+    "CANONICAL_REVIEW_REQUIRED": "NEEDS_DESIGN",
+}
+
+
+def _v2_mark(task_id, status, feedback=None):
+    """runtime status 결정을 state_v2 에만 기록 (큐 파일 미수정). 비차단."""
+    store = _v2_store()
+    if store is None:
+        return
+    try:
+        from harness_v2.core import Lifecycle, LifecycleController, TaskState
+        v2 = store.get_task(task_id)
+        if v2 is None:
+            v2 = TaskState(task_id)
+        target = _V1_TO_V2.get(status)
+        fields = {}
+        if feedback:
+            fields["last_error"] = str(feedback)[:400]
+        if status == "FIX":
+            fields.setdefault("failure_class", "GATE_FAILED")
+        if target == Lifecycle.CANONICAL_REVIEW_REQUIRED.value:
+            fields.setdefault("failure_class", "NEEDS_DESIGN")
+        if target:
+            LifecycleController(store).record(
+                v2, Lifecycle(target) if target in Lifecycle.__members__ else target, **fields)
+        else:
+            store.put_task(v2)
+        log(f"[V2][{task_id}] runtime status {status} -> {target or '(keep)'} (state_v2)")
+    except Exception as e:
+        log(f"[V2][{task_id}] 상태 기록 실패(비차단): {str(e)[:120]}")
+
+
+def runtime_status(task_spec):
+    """runtime 판정용 status. state_v2 record 우선, 없으면 큐 spec(bootstrap) 사용."""
+    store = _v2_store()
+    if store is None:
+        return task_spec["status"]
+    v2 = store.get_task(task_spec["id"])
+    if v2 is None:
+        return task_spec["status"]
+    return V2_RUNTIME.get(v2.status, task_spec["status"])
+
+
 def finalize_done(task, tasks, queue_path, reason):
     """DONE 전 commit gate. 성공 TASK 는 반드시 source commit 보유.
 
@@ -901,9 +936,10 @@ def run_opencode(prompt, model, extra_args=None, timeout_sec=1800):
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
     env["OPENCODE_DISABLE_AUTOUPDATE"] = "1"
-    log(f"opencode 실행: model={model} args={extra_args or []}")
+    log(f"opencode 실행: model={model} args={extra_args or []} cwd={agent_dir}")
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             text=True, encoding="utf-8", errors="replace", env=env,
+                            cwd=agent_dir,
                             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
     try:
         stdout, stderr = proc.communicate(timeout=timeout_sec)
@@ -1041,13 +1077,49 @@ def build_task_file(task, queue_path):
             if line.startswith("### ") or line.startswith("## "):
                 break
             block.append(line)
-    out_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "task_context.md")
+    # WORKTREE_ISOLATION: task context 는 canonical main(D:\game)이 아닌 작업 워크트리
+    # 내부에 둔다. opencode --file attach 경로가 main 을 노출하면 에이전트가 main 을
+    # 프로젝트 루트로 오인해 absolute-path write 를 수행할 수 있다(WORKTREE_ISOLATION_FAILURE).
+    # per-task 안정 파일명으로 매 시도 덮어쓰기(시도 간 누적 방지). .md 는 commit
+    # 대상(_COMMIT_SKIP_EXT)에서 제외되므로 source commit 에 포함되지 않는다.
+    if WORKTREE_DIR:
+        runtime_dir = os.path.join(WORKTREE_DIR, ".auto_dev_runtime")
+    else:
+        runtime_dir = os.path.join(tempfile.gettempdir(), "auto_dev_runtime")
+    os.makedirs(runtime_dir, exist_ok=True)
+    out_path = os.path.join(runtime_dir, f"task_context_{task['id']}.md")
     with open(out_path, "w", encoding="utf-8") as f:
         if block:
             f.writelines(block)
         else:
             f.write(format_task_context(task))
+
     return out_path
+
+
+def _v2_record_implement_start(task):
+    """IMPLEMENT 시작부터 V2 persistent store 에 TaskState 를 기록 (early lifecycle).
+
+    기존에는 SOURCE_COMMITTED 단계(finalize_done)에서만 TaskState 가 생성되어,
+    구현 진행 중인 TASK 는 state_v2.tasks 에 존재하지 않았다(tasks={} 관찰).
+    구현 시작 즉시 기록하면 진행 상태/프로비넌스 anchor 를 런타임에 확인할 수 있다.
+    실패해도 구현 자체는 차단하지 않는다 (비차단, 로그만)."""
+    store = _v2_store()
+    if store is None:
+        return
+    try:
+        from harness_v2.core import LifecycleController, TaskState
+        tid = task["id"]
+        v2 = store.get_task(tid)
+        if v2 is None:
+            dep_ids = [d.strip().upper() for d in str(task.get("depends_on") or "").split(",")
+                       if d.strip()]
+            v2 = TaskState(tid, depends_on=dep_ids)
+        attempt = _ATTEMPT_START_HEAD or datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
+        LifecycleController(store).implementation_started(v2, attempt_id=attempt)
+        log(f"[V2][{tid}] state_v2 에 IMPLEMENT 기록 (attempt={attempt})")
+    except Exception as e:
+        log(f"[V2][{task['id']}] IMPLEMENT 기록 실패(비차단): {str(e)[:150]}")
 
 
 def run_implementer(task, session_id=None, review_feedback=None):
@@ -1061,6 +1133,7 @@ def run_implementer(task, session_id=None, review_feedback=None):
         extra += ["--session", session_id]
     root = WORKTREE_DIR or cfg("project_dir")
     set_attempt_baseline(root)  # commit-gate: 시도 시작 baseline + attempt 시작 HEAD 스냅샷
+    _v2_record_implement_start(task)
     sid, text, err = run_opencode_retry(prompt, cfg("implementer_model"), extra,
                                         cfg("implementer_timeout_sec"), task_id=task["id"])
     capture_attempt_delta(root)  # commit-gate: 이번 attempt 실제 변경 파일(delta) 기록
@@ -1165,11 +1238,11 @@ def reset_parse_attempts(task):
 
 def pick_next_task(tasks):
     for t in tasks:
-        if t["leaf"] and t["status"] in RETRYABLE:
+        if t["leaf"] and runtime_status(t) in RETRYABLE:
             if t["id"] in SENTINEL_IDS:
                 continue
             return t
-    sentinel = next((t for t in tasks if t["leaf"] and t["status"] == "QUEUED"
+    sentinel = next((t for t in tasks if t["leaf"] and runtime_status(t) == "QUEUED"
                      and t["id"] in SENTINEL_IDS), None)
     if sentinel is not None:
         return sentinel
@@ -1180,8 +1253,9 @@ def print_status(tasks):
     for t in tasks:
         prefix = "  " if t["level"] == 3 else ""
         mark = " [LEAF]" if t["leaf"] else " [GROUP]"
-        line = f"{prefix}{t['id']:<14} {t['status']:<12} {t['title']}"
-        if t.get("feedback") and t["status"] in ("FIX", "NEEDS_DESIGN", "DONE"):
+        st = runtime_status(t)
+        line = f"{prefix}{t['id']:<14} {st:<12} {t['title']}"
+        if t.get("feedback") and st in ("FIX", "NEEDS_DESIGN", "DONE"):
             line += f"  | {t['feedback'][:60]}"
         print(line)
 
@@ -1243,7 +1317,7 @@ def main():
     else:
         if not acquire_lock():
             return
-        blocked = [t for t in tasks if t["status"] == "NEEDS_DESIGN"]
+        blocked = [t for t in tasks if runtime_status(t) == "NEEDS_DESIGN"]
         if blocked:
             log(f"NEEDS_DESIGN 태스크 존재 ({blocked[0]['id']}) - 자동화 완전 정지, 사람 개입 대기")
             release_lock()
@@ -1263,11 +1337,12 @@ def main():
             return
         session_id = None
         summary = ""
+        rt = runtime_status(task)
         skip_review = bool(CONFIG.get("skip_review"))
-        if skip_review and task["status"] in ("REVIEW", "REVIEW_PARSE_ERROR"):
-            log(f"[{task['id']}] {task['status']} 상태 재개 - 리뷰 스킵 모드이므로 게이트로 바로 진행")
-        elif task["status"] in ("REVIEW", "REVIEW_PARSE_ERROR"):
-            log(f"[{task['id']}] {task['status']} 상태에서 재개 (구현 완료분 그대로 리뷰)")
+        if skip_review and rt in ("REVIEW", "REVIEW_PARSE_ERROR"):
+            log(f"[{task['id']}] {rt} 상태 재개 - 리뷰 스킵 모드이므로 게이트로 바로 진행")
+        elif rt in ("REVIEW", "REVIEW_PARSE_ERROR"):
+            log(f"[{task['id']}] {rt} 상태에서 재개 (구현 완료분 그대로 리뷰)")
         else:
             update_queue(tasks, queue_path, task["id"], "IMPLEMENT")
             log(f"[{task['id']}] IMPLEMENT 시작")

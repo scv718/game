@@ -11,6 +11,8 @@ import json
 import os
 import subprocess
 import tempfile
+import time
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -77,6 +79,38 @@ class V2StateStore:
     def __init__(self, path: str):
         self.path = Path(path)
 
+    @contextmanager
+    def _lock(self):
+        """Cross-process write lock (single-writer). load->mutate->save 를 원자적으로 보호.
+
+        여러 레인(supervisor)과 Integration Coordinator(auto_lane)가 동시에 state_v2 를
+        갱신할 수 있으므로 lost-update 를 막기 위해 state 파일 옆 lock file 을 사용한다.
+        lock file 은 .gitignore 에 등록되어 커밋 대상이 아니다."""
+        lock_path = self.path.with_suffix(self.path.suffix + ".lock")
+        deadline = time.monotonic() + 30.0
+        fd = None
+        while True:
+            try:
+                fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                break
+            except FileExistsError:
+                if time.monotonic() > deadline:
+                    raise TimeoutError("V2 state lock timeout: {}".format(lock_path))
+                time.sleep(0.05)
+        try:
+            os.write(fd, b"lock")
+            os.fsync(fd)
+            yield
+        finally:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+            try:
+                os.remove(str(lock_path))
+            except OSError:
+                pass
+
     def load(self) -> dict:
         if not self.path.exists():
             return {"version": 2, "integration_baseline_commit": "", "tasks": {}}
@@ -100,18 +134,20 @@ class V2StateStore:
                 os.unlink(temp)
 
     def put_task(self, task: TaskState):
-        state = self.load()
-        state.setdefault("tasks", {})[task.task_id] = asdict(task)
-        self.save(state)
+        with self._lock():
+            state = self.load()
+            state.setdefault("tasks", {})[task.task_id] = asdict(task)
+            self.save(state)
 
     def get_task(self, task_id: str) -> Optional[TaskState]:
         raw = self.load().get("tasks", {}).get(task_id)
         return TaskState(**raw) if raw else None
 
     def set_baseline(self, commit: str):
-        state = self.load()
-        state["integration_baseline_commit"] = commit
-        self.save(state)
+        with self._lock():
+            state = self.load()
+            state["integration_baseline_commit"] = commit
+            self.save(state)
 
 
 def git(repo: str, *args: str, timeout: int = 120) -> tuple[int, str, str]:

@@ -21,8 +21,11 @@ auto_dev/state_*.json
 auto_dev/logs/
 auto_dev/scheduler_stdout.log
 auto_dev/.queue_lock
+auto_dev/.v2_state.lock
 auto_dev/task_context.md
+auto_dev/runs/
 auto_dev/__pycache__/
+auto_dev/**/__pycache__/
 
 # Godot editor scratch
 *.tmp
