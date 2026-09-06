@@ -61,6 +61,7 @@ func _ready() -> void:
 	ThreatSystem.threat_changed.connect(_on_threat_changed)
 	WaveManager.schedule_changed.connect(_on_wave_schedule_changed)
 	WaveManager.wave_triggered.connect(_on_wave_triggered)
+	GameSettings.language_changed.connect(_on_language_changed)
 	_refresh_threat()
 	_schedule_daytime_refresh()
 	_on_interactable_changed(null)
@@ -71,14 +72,28 @@ func _ready() -> void:
 		placement.building_type_changed.connect(_on_building_type_changed)
 		_on_placement_mode_changed(placement._active)
 		_on_building_type_changed(placement._building_type)
+	_on_language_changed(GameSettings.locale)
+
+
+func _on_language_changed(_locale: String) -> void:
+	_on_resources_changed("wood", VillageResources.get_amount("wood"))
+	_on_resources_changed("stone", VillageResources.get_amount("stone"))
+	_refresh_food_labels()
+	_refresh_daytime()
+	_refresh_threat()
+	if _current_interactable != null:
+		_refresh_interact_label()
+	var placement: Node = get_tree().get_first_node_in_group("building_placement")
+	if placement != null:
+		_on_building_type_changed(placement._building_type)
 
 
 func _on_resources_changed(resource_id: String, _amount: int) -> void:
 	if resource_id == "wood":
-		wood_label.text = "Wood: %d" % VillageResources.get_amount("wood")
+		wood_label.text = "%s: %d" % [GameSettings.text("wood"), VillageResources.get_amount("wood")]
 		_compat_wood_label.text = wood_label.text
 	elif resource_id == "stone":
-		stone_label.text = "Stone: %d" % VillageResources.get_amount("stone")
+		stone_label.text = "%s: %d" % [GameSettings.text("stone"), VillageResources.get_amount("stone")]
 		_compat_stone_label.text = stone_label.text
 	elif _is_food_resource(resource_id):
 		_refresh_food_labels()
@@ -116,8 +131,8 @@ func _meal_total() -> int:
 
 
 func _refresh_food_labels() -> void:
-	food_label.text = "Food: %d" % _food_total()
-	meal_label.text = "Meal: %d" % _meal_total()
+	food_label.text = "%s: %d" % [GameSettings.text("food"), _food_total()]
+	meal_label.text = "%s: %d" % [GameSettings.text("meal"), _meal_total()]
 	_compat_food_label.text = food_label.text
 	_compat_meal_label.text = meal_label.text
 
@@ -168,8 +183,9 @@ func _on_daytime_refresh_timeout() -> void:
 
 
 func _refresh_daytime() -> void:
+	var phase_key := "night" if GameTime.get_phase() == GameTime.Phase.NIGHT else "day"
 	daytime_label.text = "%s %d  %d%%" % [
-		GameTime.get_phase_name(),
+		GameSettings.text(phase_key),
 		GameTime.get_day_number(),
 		int(GameTime.get_phase_progress() * 100.0),
 	]
@@ -193,22 +209,22 @@ func _refresh_threat() -> void:
 	var ratio: float = ThreatSystem.get_ratio()
 	threat_gauge.max_value = 100.0
 	threat_gauge.value = ratio * 100.0
-	threat_label.text = "Threat %d%%" % int(ratio * 100.0)
+	threat_label.text = "%s %d%%" % [GameSettings.text("threat"), int(ratio * 100.0)]
 	var growing := ThreatSystem.is_auto_growing() and GameTime.get_time_scale() > 0.0
 	threat_direction_label.text = "!" if ratio >= 1.0 else ("▲" if growing else "")
 	var nights: int = WaveManager.get_nights_until_wave()
 	var forced := ratio >= WaveManager.wave_threshold_ratio
 	if GameTime.get_phase() == GameTime.Phase.NIGHT and WaveManager.is_wave_night():
-		wave_label.text = "WAVE NOW"
+		wave_label.text = GameSettings.text("wave_now")
 		_set_wave_alert(true)
 	elif forced or nights <= 0:
-		wave_label.text = "WAVE NEXT NIGHT"
+		wave_label.text = GameSettings.text("wave_next")
 		_set_wave_alert(true)
 	elif nights == 1:
-		wave_label.text = "Wave in 1 night"
+		wave_label.text = GameSettings.text("wave_one")
 		_set_wave_alert(false)
 	else:
-		wave_label.text = "Wave in %d nights" % nights
+		wave_label.text = GameSettings.text("wave_many", [nights])
 		_set_wave_alert(false)
 
 
@@ -221,7 +237,7 @@ func _on_interactable_changed(interactable: Node) -> void:
 	_disconnect_workplace()
 	_current_interactable = interactable
 	if interactable:
-		interact_label.text = "Click - %s" % interactable.prompt
+		interact_label.text = ("클릭 - %s" if GameSettings.locale == "ko" else "Click - %s") % interactable.prompt
 		interact_label.visible = true
 		var workplace: Node = null
 		if interactable.has_method("get_lumberyard"):
@@ -246,7 +262,7 @@ func _disconnect_workplace() -> void:
 func _refresh_interact_label(_filled: int = 0, _capacity: int = 0) -> void:
 	if not is_instance_valid(_current_interactable):
 		return
-	interact_label.text = "Click - %s" % _current_interactable.prompt
+	interact_label.text = ("클릭 - %s" if GameSettings.locale == "ko" else "Click - %s") % _current_interactable.prompt
 
 
 func _on_placement_mode_changed(active: bool) -> void:
@@ -255,8 +271,17 @@ func _on_placement_mode_changed(active: bool) -> void:
 
 
 func _on_building_type_changed(building_type: String) -> void:
-	build_label.text = "%s\n1/2/3/4: Select Building / R: Remove / Left Click: Build / ESC: Cancel" \
-			% BUILD_TYPE_HINTS.get(building_type, building_type)
+	build_label.text = "%s\n%s" % [_localized_building_hint(building_type),
+		GameSettings.text("build_help")]
+
+
+func _localized_building_hint(building_type: String) -> String:
+	if GameSettings.locale != "ko":
+		return BUILD_TYPE_HINTS.get(building_type, building_type)
+	var hints := {
+		"lumberyard": "벌목장 - 무료", "quarry": "채석장 (석재 매장지 필요) - 무료",
+		"wall": "성벽 - 무료", "gate": "성문 - 무료", "farm": "농장 - 무료"}
+	return hints.get(building_type, building_type)
 
 
 func _on_placement_feedback(text: String) -> void:

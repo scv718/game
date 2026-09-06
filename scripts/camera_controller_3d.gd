@@ -48,8 +48,13 @@ const CAMERA_DISTANCE := 160.0
 @export var wheel_zoom_step: float = 0.1
 
 ## Mouse wheel zoom 허용 범위.
-@export var min_zoom: float = 0.4
+@export var min_zoom: float = 0.2
 @export var max_zoom: float = 2.0
+
+## RTS-style edge scrolling. Values are viewport pixels and share the same
+## speed policy as keyboard panning.
+@export var edge_scroll_enabled := true
+@export_range(4.0, 64.0, 1.0) var edge_scroll_margin := 20.0
 
 var _night_mode := false
 var _zoom_target := 1.0
@@ -97,11 +102,38 @@ func _physics_process(delta: float) -> void:
 	if _is_map_overlay_open():
 		return
 	var pan_speed := night_pan_speed if _night_mode else day_pan_speed
+	pan_speed *= GameSettings.camera_speed_multiplier
 	var pan_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	pan_dir += _edge_scroll_direction()
+	if pan_dir.length_squared() > 1.0:
+		pan_dir = pan_dir.normalized()
 	if pan_dir == Vector2.ZERO:
 		return
 	pan_camera(Vector3(pan_dir.x, 0.0, pan_dir.y) \
 		* pan_speed * WorldCoords3D.PX_TO_UNIT * delta)
+
+
+func _edge_scroll_direction() -> Vector2:
+	if not edge_scroll_enabled or DisplayServer.get_name() == "headless" or not get_window().has_focus():
+		return Vector2.ZERO
+	var viewport_size := get_viewport().get_visible_rect().size
+	var mouse := get_viewport().get_mouse_position()
+	return edge_scroll_direction_for_position(mouse, viewport_size)
+
+
+func edge_scroll_direction_for_position(mouse: Vector2, viewport_size: Vector2) -> Vector2:
+	if mouse.x < 0.0 or mouse.y < 0.0 or mouse.x > viewport_size.x or mouse.y > viewport_size.y:
+		return Vector2.ZERO
+	var direction := Vector2.ZERO
+	if mouse.x <= edge_scroll_margin:
+		direction.x = -1.0
+	elif mouse.x >= viewport_size.x - edge_scroll_margin:
+		direction.x = 1.0
+	if mouse.y <= edge_scroll_margin:
+		direction.y = -1.0
+	elif mouse.y >= viewport_size.y - edge_scroll_margin:
+		direction.y = 1.0
+	return direction.normalized() if direction.length_squared() > 1.0 else direction
 
 
 ## 지정 offset(XZ)만큼 camera pivot을 이동하고 월드 경계로 clamp한다.
@@ -176,7 +208,12 @@ func get_world_bounds_aabb() -> AABB:
 ## 기존 2D camera_controller._is_map_overlay_open과 동일 규약.
 func _is_map_overlay_open() -> bool:
 	var overlay := get_tree().get_first_node_in_group("world_map_overlay")
-	return overlay != null and overlay.has_method("is_open") and overlay.is_open()
+	if overlay != null and overlay.has_method("is_open") and overlay.is_open():
+		return true
+	for blocker in get_tree().get_nodes_in_group("blocks_world_input"):
+		if blocker != self and blocker.has_method("is_open") and blocker.is_open():
+			return true
+	return false
 
 
 ## Screen 좌표 -> 3D world ray(Camera3D project_ray 기반).

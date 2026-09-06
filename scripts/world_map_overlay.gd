@@ -38,6 +38,20 @@ func _ready() -> void:
 	_explore_button.pressed.connect(_on_explore_pressed)
 	_resolve_world_map()
 	_resolve_exploration()
+	GameSettings.language_changed.connect(_on_language_changed)
+	_refresh_language()
+
+
+func _on_language_changed(_locale: String) -> void:
+	_refresh_language()
+	_refresh_region_panel()
+	queue_redraw()
+
+
+func _refresh_language() -> void:
+	_title_label.text = GameSettings.text("world_map")
+	_hint_label.text = GameSettings.text("map_hint")
+	_close_button.text = GameSettings.text("close_m")
 
 
 func _resolve_exploration() -> void:
@@ -109,6 +123,8 @@ func _handle_map_click(click_pos: Vector2) -> void:
 	if not _is_open or _exploration == null:
 		return
 	var world_pos := map_to_world(click_pos)
+	if _is_3d_runtime():
+		world_pos /= WorldCoords3D.PX_TO_UNIT
 	for region in _exploration.get_regions():
 		if region.contains_world_position(world_pos):
 			select_region(region.region_id)
@@ -155,10 +171,10 @@ func _refresh_region_panel() -> void:
 		return
 	_region_panel.visible = true
 	if _selected_region_id == "":
-		_region_title_label.text = "Region: none"
-		_region_status_label.text = "Click a region marker on the map."
+		_region_title_label.text = GameSettings.text("region_none")
+		_region_status_label.text = GameSettings.text("region_click")
 		_explore_button.disabled = true
-		_explore_button.text = "Explore"
+		_explore_button.text = GameSettings.text("explore")
 		return
 	var region: ExplorationRegion = _exploration.get_region(_selected_region_id)
 	if region == null:
@@ -168,20 +184,21 @@ func _refresh_region_panel() -> void:
 	_region_title_label.text = region.display_name
 	match region.get_discovery_state():
 		ExplorationRegion.DiscoveryState.UNKNOWN:
-			_region_status_label.text = "UNKNOWN | Risk %d | %ds survey" \
-				% [region.base_risk, int(region.exploration_duration)]
+			_region_status_label.text = ("미발견 | 위험 %d | 조사 %d초" if GameSettings.locale == "ko" \
+				else "UNKNOWN | Risk %d | %ds survey") % [region.base_risk, int(region.exploration_duration)]
 			_explore_button.disabled = false
-			_explore_button.text = "Explore"
+			_explore_button.text = GameSettings.text("explore")
 		ExplorationRegion.DiscoveryState.EXPLORING:
-			_region_status_label.text = "EXPLORING | %d%%" \
+			_region_status_label.text = ("탐험 중 | %d%%" if GameSettings.locale == "ko" else "EXPLORING | %d%%") \
 				% int(round(_exploration.get_progress(region.region_id) * 100.0))
 			_explore_button.disabled = true
-			_explore_button.text = "Exploring..."
+			_explore_button.text = GameSettings.text("exploring")
 		ExplorationRegion.DiscoveryState.DISCOVERED:
 			var features := ", ".join(PackedStringArray(region.get_discovered_features()))
-			_region_status_label.text = "DISCOVERED | Found: %s" % features
+			_region_status_label.text = ("발견 완료 | 발견물: %s" if GameSettings.locale == "ko" \
+				else "DISCOVERED | Found: %s") % features
 			_explore_button.disabled = true
-			_explore_button.text = "Discovered"
+			_explore_button.text = GameSettings.text("discovered")
 
 
 func _has_exploring_region() -> bool:
@@ -205,17 +222,19 @@ func world_to_map(world_pos: Vector2) -> Vector2:
 	if _map_container == null:
 		return Vector2.ZERO
 	var draw_size := _map_container.size
-	if draw_size.x <= 0 or draw_size.y <= 0:
-		return Vector2.ZERO
+	if draw_size.x <= MAP_PADDING * 2.0 or draw_size.y <= MAP_PADDING * 2.0:
+		draw_size = Vector2(512.0, 512.0)
 	var map_area := draw_size - Vector2(MAP_PADDING * 2.0, MAP_PADDING * 2.0)
-	var scale_x := map_area.x / float(WORLD_SIZE)
-	var scale_y := map_area.y / float(WORLD_SIZE)
+	var world_size := _map_world_size()
+	var world_half := world_size * 0.5
+	var scale_x := map_area.x / world_size
+	var scale_y := map_area.y / world_size
 	var scale_f := minf(scale_x, scale_y)
-	var scaled_size := Vector2(WORLD_SIZE, WORLD_SIZE) * scale_f
+	var scaled_size := Vector2(world_size, world_size) * scale_f
 	var offset := (draw_size - scaled_size) * 0.5
 	return Vector2(
-		(world_pos.x + WORLD_HALF) * scale_f + offset.x,
-		(world_pos.y + WORLD_HALF) * scale_f + offset.y,
+		(world_pos.x + world_half) * scale_f + offset.x,
+		(world_pos.y + world_half) * scale_f + offset.y,
 	)
 
 
@@ -223,18 +242,33 @@ func map_to_world(map_pos: Vector2) -> Vector2:
 	if _map_container == null:
 		return Vector2.ZERO
 	var draw_size := _map_container.size
-	if draw_size.x <= 0 or draw_size.y <= 0:
-		return Vector2.ZERO
+	if draw_size.x <= MAP_PADDING * 2.0 or draw_size.y <= MAP_PADDING * 2.0:
+		draw_size = Vector2(512.0, 512.0)
 	var map_area := draw_size - Vector2(MAP_PADDING * 2.0, MAP_PADDING * 2.0)
-	var scale_x := map_area.x / float(WORLD_SIZE)
-	var scale_y := map_area.y / float(WORLD_SIZE)
+	var world_size := _map_world_size()
+	var world_half := world_size * 0.5
+	var scale_x := map_area.x / world_size
+	var scale_y := map_area.y / world_size
 	var scale_f := minf(scale_x, scale_y)
-	var scaled_size := Vector2(WORLD_SIZE, WORLD_SIZE) * scale_f
+	var scaled_size := Vector2(world_size, world_size) * scale_f
 	var offset := (draw_size - scaled_size) * 0.5
 	return Vector2(
-		(map_pos.x - offset.x) / scale_f - WORLD_HALF,
-		(map_pos.y - offset.y) / scale_f - WORLD_HALF,
+		(map_pos.x - offset.x) / scale_f - world_half,
+		(map_pos.y - offset.y) / scale_f - world_half,
 	)
+
+
+func _is_3d_runtime() -> bool:
+	_resolve_camera()
+	return _camera_controller != null and _camera_controller.has_method("ground_point_from_screen")
+
+
+func _map_world_size() -> float:
+	return WorldCoords3D.WORLD_HALF_UNITS * 2.0 if _is_3d_runtime() else float(WORLD_SIZE)
+
+
+func _layout_point(point: Vector2) -> Vector2:
+	return point * WorldCoords3D.PX_TO_UNIT if _is_3d_runtime() else point
 
 
 func _resolve_world_map() -> void:
@@ -297,9 +331,9 @@ func _get_camera_ground_rect_3d() -> Rect2:
 		var ground: Vector3 = _camera_controller.ground_point_from_screen(corner)
 		if not ground.is_finite():
 			return Rect2()
-		var logical := WorldCoords3D.to_logical(ground)
-		min_point = min_point.min(logical)
-		max_point = max_point.max(logical)
+		var world_xz := Vector2(ground.x, ground.z)
+		min_point = min_point.min(world_xz)
+		max_point = max_point.max(world_xz)
 	return Rect2(min_point, max_point - min_point)
 
 
@@ -307,22 +341,25 @@ func _draw() -> void:
 	if not _is_open or _map_container == null:
 		return
 	var draw_size := _map_container.size
-	if draw_size.x <= 0 or draw_size.y <= 0:
+	if draw_size.x <= MAP_PADDING * 2.0 or draw_size.y <= MAP_PADDING * 2.0:
 		return
 	var map_area := draw_size - Vector2(MAP_PADDING * 2.0, MAP_PADDING * 2.0)
-	var scale_x := map_area.x / float(WORLD_SIZE)
-	var scale_y := map_area.y / float(WORLD_SIZE)
+	var world_size := _map_world_size()
+	var scale_x := map_area.x / world_size
+	var scale_y := map_area.y / world_size
 	var scale_f := minf(scale_x, scale_y)
-	var scaled_size := Vector2(WORLD_SIZE, WORLD_SIZE) * scale_f
+	var scaled_size := Vector2(world_size, world_size) * scale_f
 	var offset := (draw_size - scaled_size) * 0.5
 	var bounds_rect := Rect2(offset, scaled_size)
 
-	draw_rect(bounds_rect, Color(0.05, 0.07, 0.09, 0.85))
+	draw_rect(bounds_rect, Color(0.16, 0.23, 0.11, 0.96))
 	draw_rect(bounds_rect, Color(0.4, 0.5, 0.45, 0.8), false, 2.0)
+	if _is_3d_runtime():
+		_draw_natural_world_map()
 
 	var clearing_half: Vector2 = _world_map.get("CLEARING_HALF") if _world_map != null else Vector2(192, 192)
 	var clearing_center := world_to_map(Vector2.ZERO)
-	var clearing_size := clearing_half * 2.0 * scale_f
+	var clearing_size := clearing_half * 2.0 * (WorldCoords3D.PX_TO_UNIT if _is_3d_runtime() else 1.0) * scale_f
 	var clearing_rect := Rect2(clearing_center - clearing_size * 0.5, clearing_size)
 	draw_rect(clearing_rect, Color(0.25, 0.35, 0.22, 0.5))
 	draw_rect(clearing_rect, Color(0.5, 0.65, 0.5, 0.7), false, 1.0)
@@ -340,6 +377,28 @@ func _draw() -> void:
 		draw_circle(cam_center, 3.0, Color(1.0, 0.9, 0.3, 0.9))
 
 
+func _draw_natural_world_map() -> void:
+	var corrupt_a := world_to_map(Vector2(-WorldCoords3D.WORLD_HALF_UNITS, -430.0))
+	var corrupt_b := world_to_map(Vector2(-340.0, 430.0))
+	draw_rect(Rect2(corrupt_a, corrupt_b - corrupt_a), Color(0.18, 0.065, 0.2, 0.92))
+	var north_ridge := PackedVector2Array()
+	var south_ridge := PackedVector2Array()
+	for z in range(-700, -64, 24):
+		north_ridge.append(world_to_map(Vector2(-325.0 + sin(z * .007) * 27.0, z)))
+	for z in range(65, 701, 24):
+		south_ridge.append(world_to_map(Vector2(-325.0 + sin(z * .007) * 27.0, z)))
+	draw_polyline(north_ridge, Color(0.5, 0.48, 0.43, 1.0), 7.0, true)
+	draw_polyline(south_ridge, Color(0.5, 0.48, 0.43, 1.0), 7.0, true)
+	var river := PackedVector2Array()
+	for z in range(-768, 769, 12):
+		var x := 336.0 + sin(z * 0.016 / 3.0) * 81.0 + sin(z * 0.033 / 3.0 + 0.7) * 27.0
+		river.append(world_to_map(Vector2(x, z)))
+	draw_polyline(river, Color(0.1, 0.48, 0.65, 1.0), 8.0, true)
+	var portal := world_to_map(Vector2(-570.0, -210.0))
+	draw_circle(portal, 13.0, Color(0.48, 0.02, 0.75, 0.5))
+	draw_circle(portal, 7.0, Color(0.88, 0.18, 1.0, 1.0))
+
+
 func _draw_landmarks(scale_f: float) -> void:
 	if _world_map == null:
 		return
@@ -350,8 +409,9 @@ func _draw_landmarks(scale_f: float) -> void:
 	var label_offset := Vector2(6.0, -6.0)
 	
 	# Central Settlement
-	var settlement_pos: Vector2 = _world_map.get("SETTLEMENT_CENTER")
-	_draw_landmark_marker(world_to_map(settlement_pos), Color(0.4, 0.7, 0.4), 5.0, "Settlement", font, font_size, label_offset)
+	var settlement_pos: Vector2 = _layout_point(_world_map.get("SETTLEMENT_CENTER"))
+	_draw_landmark_marker(world_to_map(settlement_pos), Color(0.4, 0.7, 0.4), 5.0,
+		"정착지" if GameSettings.locale == "ko" else "Settlement", font, font_size, label_offset)
 	
 	# Gate Anchors (4 directions)
 	var gate_anchors: Dictionary = _world_map.get("GATE_ANCHORS")
@@ -362,9 +422,9 @@ func _draw_landmarks(scale_f: float) -> void:
 		"west": Color(0.8, 0.3, 0.3),
 	}
 	for dir in gate_anchors:
-		var pos: Vector2 = gate_anchors[dir]
+		var pos: Vector2 = _layout_point(gate_anchors[dir])
 		var col: Color = gate_colors.get(dir, Color.WHITE)
-		_draw_landmark_marker(world_to_map(pos), col, 3.0, dir.capitalize() + " Gate", font, font_size, label_offset)
+		_draw_landmark_marker(world_to_map(pos), col, 3.0, _direction_name(dir) + (" 성문" if GameSettings.locale == "ko" else " Gate"), font, font_size, label_offset)
 	
 	# Spawn Candidates / Portals
 	var spawn_candidates: Dictionary = _world_map.get("SPAWN_CANDIDATES")
@@ -375,17 +435,17 @@ func _draw_landmarks(scale_f: float) -> void:
 		"west": Color(0.9, 0.2, 0.2),
 	}
 	for dir in spawn_candidates:
-		var pos: Vector2 = spawn_candidates[dir]
+		var pos: Vector2 = _layout_point(spawn_candidates[dir])
 		var col: Color = spawn_colors.get(dir, Color.WHITE)
-		_draw_landmark_marker(world_to_map(pos), col, 4.0, dir.capitalize() + " Portal", font, font_size, label_offset)
+		_draw_landmark_marker(world_to_map(pos), col, 4.0, _direction_name(dir) + (" 포탈" if GameSettings.locale == "ko" else " Portal"), font, font_size, label_offset)
 	
 	# NE Dungeon Candidate
-	var dungeon_pos: Vector2 = _world_map.get("NE_DUNGEON_CANDIDATE")
-	_draw_landmark_marker(world_to_map(dungeon_pos), Color(0.6, 0.5, 0.3), 3.0, "Dungeon", font, font_size, label_offset)
+	var dungeon_pos: Vector2 = _layout_point(_world_map.get("NE_DUNGEON_CANDIDATE"))
+	_draw_landmark_marker(world_to_map(dungeon_pos), Color(0.6, 0.5, 0.3), 3.0, "던전" if GameSettings.locale == "ko" else "Dungeon", font, font_size, label_offset)
 	
 	# Stone Zone
-	var stone_center: Vector2 = _world_map.get("STONE_ZONE")["center"]
-	_draw_landmark_marker(world_to_map(stone_center), Color(0.5, 0.5, 0.5), 3.0, "Stone Zone", font, font_size, label_offset)
+	var stone_center: Vector2 = _layout_point(_world_map.get("STONE_ZONE")["center"])
+	_draw_landmark_marker(world_to_map(stone_center), Color(0.5, 0.5, 0.5), 3.0, "채석 지역" if GameSettings.locale == "ko" else "Stone Zone", font, font_size, label_offset)
 	
 	# Forest Clusters
 	var forests: Array = _world_map.get("FOREST_CLUSTERS")
@@ -395,21 +455,28 @@ func _draw_landmarks(scale_f: float) -> void:
 		"sparse": Color(0.3, 0.5, 0.3),
 	}
 	for cluster in forests:
-		var center: Vector2 = cluster["center"]
+		var center: Vector2 = _layout_point(cluster["center"])
 		var role: String = cluster.get("role", "")
 		var col: Color = forest_colors.get(role, Color.GREEN)
-		_draw_landmark_marker(world_to_map(center), col, 3.0, role.capitalize() + " Forest", font, font_size, label_offset)
+		_draw_landmark_marker(world_to_map(center), col, 3.0,
+			("숲" if GameSettings.locale == "ko" else role.capitalize() + " Forest"), font, font_size, label_offset)
 	
 	# South Agriculture Zone
 	var agri_zone: Rect2 = _world_map.get("SOUTH_AGRICULTURE_ZONE")
-	var agri_center := world_to_map(agri_zone.position + agri_zone.size * 0.5)
-	_draw_landmark_marker(agri_center, Color(0.5, 0.8, 0.3), 3.0, "Agriculture", font, font_size, label_offset)
+	var agri_center := world_to_map(_layout_point(agri_zone.position + agri_zone.size * 0.5))
+	_draw_landmark_marker(agri_center, Color(0.5, 0.8, 0.3), 3.0, "농업 지대" if GameSettings.locale == "ko" else "Agriculture", font, font_size, label_offset)
 	
 	# Royal Road (east main road)
 	var royal_road: Array = _world_map.get("MAIN_ROADS")["east"]
 	_draw_road_line(royal_road, scale_f)
-	var road_mid: Vector2 = royal_road[royal_road.size() / 2]
-	_draw_landmark_marker(world_to_map(road_mid), Color(0.3, 0.5, 0.8), 2.5, "Royal Road", font, font_size, label_offset)
+	var road_mid: Vector2 = _layout_point(royal_road[royal_road.size() / 2])
+	_draw_landmark_marker(world_to_map(road_mid), Color(0.3, 0.5, 0.8), 2.5, "왕도" if GameSettings.locale == "ko" else "Royal Road", font, font_size, label_offset)
+
+
+func _direction_name(direction: String) -> String:
+	if GameSettings.locale != "ko":
+		return direction.capitalize()
+	return {"north": "북쪽", "south": "남쪽", "east": "동쪽", "west": "서쪽"}.get(direction, direction)
 
 
 func _draw_landmark_marker(pos: Vector2, color: Color, radius: float, label: String, font: Font, font_size: int, label_offset: Vector2) -> void:
@@ -426,7 +493,7 @@ func _draw_exploration_regions() -> void:
 		return
 	var font := ThemeDB.fallback_font
 	for region in _exploration.get_regions():
-		var pos := world_to_map(region.world_position)
+		var pos := world_to_map(_layout_point(region.world_position))
 		var state: int = region.get_discovery_state()
 		var col := Color(0.55, 0.62, 0.7, 0.95)
 		var label_suffix := " (?)"
@@ -456,6 +523,6 @@ func _draw_road_line(road: Array, scale_f: float) -> void:
 		return
 	var pts := PackedVector2Array()
 	for p in road:
-		pts.append(world_to_map(p))
+		pts.append(world_to_map(_layout_point(p)))
 	draw_polyline(pts, Color(0.35, 0.28, 0.18, 0.6), 1.0)
 

@@ -4,6 +4,7 @@
 
 [node name="CameraController3D" type="Node3D" groups=["camera_controller_3d"]]
 script = ExtResource("1_script")
+min_zoom = 0.2
 
 [node name="Camera3D" type="Camera3D" parent="."]
 projection = 1

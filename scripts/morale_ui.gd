@@ -14,12 +14,18 @@ class_name MoraleUI
 @onready var _morale_label: Label = %MoraleValue
 @onready var _contributors_label: Label = %MajorContributors
 @onready var _bonus_label: Label = %BonusValue
+@onready var _title: Label = $MoralePanel/Title
+@onready var _morale_caption: Label = $MoralePanel/MoraleRow/MoraleCaption
+@onready var _bonus_caption: Label = $MoralePanel/BonusRow/BonusCaption
+@onready var _contributors_caption: Label = $MoralePanel/ContributorsCaption
 
 var _system: Node = null
 
 
 func _ready() -> void:
 	add_to_group("morale_ui")
+	GameSettings.language_changed.connect(_on_language_changed)
+	_on_language_changed(GameSettings.locale)
 	_system = get_tree().get_first_node_in_group("morale_system")
 	if _system == null:
 		# main_3d.tscn에서 MoraleUI(HUD)가 MoraleSystem3D보다 먼저 _ready에
@@ -61,5 +67,14 @@ func _refresh() -> void:
 	for c in st.get_major_contributors(3):
 		lines.append("%s Lv.%d (+%.1f)" % [c.display_name, c.level, st.contribution_of(c)])
 	if lines.is_empty():
-		lines.append("No strong allies")
+		lines.append("강한 동료 없음" if GameSettings.locale == "ko" else "No strong allies")
 	_contributors_label.text = "\n".join(lines)
+
+
+func _on_language_changed(_locale: String) -> void:
+	var korean := GameSettings.locale == "ko"
+	_title.text = "사기" if korean else "Morale"
+	_morale_caption.text = "현재:" if korean else "Current:"
+	_bonus_caption.text = "공격 보너스:" if korean else "Attack bonus:"
+	_contributors_caption.text = "주요 동료:" if korean else "Key allies:"
+	_refresh()

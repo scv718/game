@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://ui/tavern_recruitment_ui.tscn" id="2_recruit"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://ui/tactical_command_ui_3d.tscn" id="4_tactical"]
 [ext_resource type="PackedScene" path="res://ui/death_ledger_view.tscn" id="5_ledger"]
 [ext_resource type="PackedScene" path="res://ui/morale_ui.tscn" id="6_morale"]
+[ext_resource type="PackedScene" path="res://ui/minimap_3d.tscn" id="7_minimap"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_status"]
 bg_color = Color(0.075, 0.102, 0.13, 0.91)
@@ -273,3 +274,5 @@ text = ""
 visible = false
 
 [node name="MoraleUI" parent="." instance=ExtResource("6_morale")]
+
+[node name="MiniMap3D" parent="." instance=ExtResource("7_minimap")]

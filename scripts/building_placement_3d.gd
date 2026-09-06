@@ -117,6 +117,9 @@ var _thumbnail_renderer: BuildingThumbnailRenderer
 var _catalog_groups: Dictionary = {}
 var _catalog_source_paths: Dictionary = {}
 var _catalog_category_containers: Dictionary = {}
+var _catalog_title: Label = null
+var _catalog_hint: Label = null
+var _catalog_filter: OptionButton = null
 var _catalog_rotation_quarters := 0
 var _wall_drag_start := Vector3.INF
 var _wall_dragging := false
@@ -135,6 +138,7 @@ func _ready() -> void:
 	_thumbnail_renderer.set_source_paths(_catalog_source_paths)
 	add_child(_thumbnail_renderer)
 	_build_catalog_ui()
+	GameSettings.language_changed.connect(_on_catalog_language_changed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -898,18 +902,21 @@ func _build_catalog_ui() -> void:
 	var column := VBoxContainer.new()
 	margin.add_child(column)
 	var title := Label.new()
-	title.text = "BUILDING CATALOG  •  Cuteskull Asset Library"
+	_catalog_title = title
+	title.text = GameSettings.text("catalog_title")
 	title.add_theme_font_size_override("font_size", 18)
 	column.add_child(title)
 	var hint := Label.new()
-	hint.text = "Select an asset • Free build • R rotate • Click place • ESC cancel"
+	_catalog_hint = hint
+	hint.text = GameSettings.text("catalog_hint")
 	hint.add_theme_color_override("font_color", Color(0.75, 0.78, 0.82))
 	column.add_child(hint)
 	var category_select := OptionButton.new()
+	_catalog_filter = category_select
 	category_select.name = "CategoryFilter"
 	category_select.custom_minimum_size = Vector2(0, 34)
 	for category in _catalog_groups:
-		category_select.add_item("%s (%d)" % [category, _catalog_groups[category].size()])
+		category_select.add_item("%s (%d)" % [_category_display_name(category), _catalog_groups[category].size()])
 	category_select.item_selected.connect(_on_catalog_category_changed)
 	column.add_child(category_select)
 	var scroll := ScrollContainer.new()
@@ -925,7 +932,8 @@ func _build_catalog_ui() -> void:
 		_catalog_category_containers[category] = category_box
 		category_column.add_child(category_box)
 		var section := Label.new()
-		section.text = "%s  (%d)" % [category, _catalog_groups[category].size()]
+		section.text = "%s  (%d)" % [_category_display_name(category), _catalog_groups[category].size()]
+		section.set_meta("catalog_category", category)
 		section.add_theme_font_size_override("font_size", 15)
 		section.add_theme_color_override("font_color", Color(0.95, 0.78, 0.42))
 		category_box.add_child(section)
@@ -977,11 +985,41 @@ func _add_catalog_button(grid: GridContainer, asset_name: String, category: Stri
 	column.add_child(thumbnail)
 	var button := Button.new()
 	button.custom_minimum_size = Vector2(0, 50)
-	button.text = "%s\n%s • Free" % [asset_name, category]
+	button.text = "%s\n%s • %s" % [asset_name, _category_display_name(category), GameSettings.text("free")]
+	button.set_meta("catalog_asset", asset_name)
+	button.set_meta("catalog_category", category)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.tooltip_text = "%s: %s" % [category, asset_name]
 	button.pressed.connect(_on_catalog_item_pressed.bind(asset_name))
 	column.add_child(button)
+
+
+func _category_display_name(category: String) -> String:
+	var keys := {
+		"Buildings": "buildings", "Defense": "defense", "Castle Parts": "castle_parts",
+		"Market / Props": "market_props", "Environment": "environment", "Characters": "characters"}
+	return GameSettings.text(keys.get(category, category))
+
+
+func _on_catalog_language_changed(_locale: String) -> void:
+	if _catalog_title == null:
+		return
+	_catalog_title.text = GameSettings.text("catalog_title")
+	_catalog_hint.text = GameSettings.text("catalog_hint")
+	var categories := _catalog_groups.keys()
+	for index in categories.size():
+		var category: String = categories[index]
+		_catalog_filter.set_item_text(index, "%s (%d)" % [
+			_category_display_name(category), _catalog_groups[category].size()])
+	for category in _catalog_category_containers:
+		var box: VBoxContainer = _catalog_category_containers[category]
+		for node in box.find_children("*", "Label", true, false):
+			if node.has_meta("catalog_category"):
+				node.text = "%s  (%d)" % [_category_display_name(category), _catalog_groups[category].size()]
+		for node in box.find_children("*", "Button", true, false):
+			if node.has_meta("catalog_asset"):
+				node.text = "%s\n%s • %s" % [str(node.get_meta("catalog_asset")),
+					_category_display_name(category), GameSettings.text("free")]
 
 
 func _on_catalog_item_pressed(asset_name: String) -> void:

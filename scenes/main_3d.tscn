@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world3d.tscn" id="1_world"]
 [ext_resource type="Script" path="res://scripts/navigation_manager_3d.gd" id="2_nav"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://scripts/morale_system_3d.gd" id="15_morale"]
 [ext_resource type="PackedScene" path="res://ui/dungeon_preparation_ui.tscn" id="16_dungeon_prep"]
 [ext_resource type="Script" path="res://scripts/dungeon_runtime.gd" id="17_dungeon_runtime"]
+[ext_resource type="PackedScene" path="res://ui/options_menu.tscn" id="19_options"]
 
 [node name="Main3D" type="Node3D"]
 
@@ -105,3 +106,5 @@ script = ExtResource("15_morale")
 
 [node name="DungeonRuntime" type="Node" parent="."]
 script = ExtResource("17_dungeon_runtime")
+
+[node name="OptionsMenu" parent="." instance=ExtResource("19_options")]
