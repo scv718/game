@@ -1094,11 +1094,12 @@ def build_task_file(task, queue_path):
     """큐에서 해당 태스크 블록만 추출해 축소 컨텍스트 파일로 저장 (대형 모델 컨텍스트 절약)."""
     with open(queue_path, encoding="utf-8") as f:
         lines = f.readlines()
-    header = f"### {task['id']}"
+    header_h2 = f"## {task['id']}"
+    header_h3 = f"### {task['id']}"
     capture = False
     block = []
     for line in lines:
-        if line.startswith(header):
+        if line.startswith(header_h2) or line.startswith(header_h3):
             capture = True
             block.append(line)
             continue
@@ -1122,6 +1123,23 @@ def build_task_file(task, queue_path):
             f.writelines(block)
         else:
             f.write(format_task_context(task))
+        # V3 태스크: task_file 참조가 있으면 실제 태스크 스펙도 포함
+        task_file_ref = None
+        for bline in block:
+            if "task_file:" in bline:
+                parts = bline.split("task_file:")
+                if len(parts) > 1:
+                    task_file_ref = parts[1].strip()
+                break
+        if task_file_ref:
+            tf_path = os.path.join(cfg("project_dir"), task_file_ref)
+            if os.path.isfile(tf_path):
+                f.write("\n\n## 태스크 상세 스펙\n\n")
+                try:
+                    with open(tf_path, encoding="utf-8") as tf:
+                        f.write(tf.read())
+                except Exception:
+                    pass
 
     return out_path
 
