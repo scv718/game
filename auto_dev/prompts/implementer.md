@@ -11,10 +11,24 @@
 - 현재 작업 디렉터리 바깥의 어떤 파일에도 접근하지 마세요.
 
 ## 즉시 실행할 작업 (순서대로)
-1. **먼저** `tests/v3001_test.gd` 테스트 파일을 아래 스켈레톤 형식으로 **write 도구로 생성**하세요 (절대 생략 금지)
-2. `grep`으로 기존 던전 코드(`dungeon`, `mercenary`)를 최소 1회 조회해 실제 클래스/메서드 시그니처를 확인하세요
+1. **먼저** 필수 테스트 파일을 아래 스켈레톤 형식으로 **write 도구로 생성**하세요 (절대 생략 금지)
+2. `grep`으로 기존 관련 코드(`dungeon`, `mercenary`, `worker`, `threat`)를 최소 1회 조회해 실제 클래스/메서드 시그니처를 확인하세요
 3. 확인한 실제 시그니처로 테스트 핵심 동작을 채우고, 부족한 구현을 `scripts/`에 `write/edit`으로 작성하세요
-4. Godot headless로 테스트가 PASS 뜨는지 실행해 확인하세요
+4. Godot headless로 테스트가 `RESULT=PASS`가 뜨는지 실행해 확인하세요
+
+## 필수 테스트 파일명 (태스크 ID에서 유도)
+- 규칙: 태스크 ID의 하이픈을 제거하고 소문자로 바꾼 뒤 `tests/<변환값>_test.gd`
+- 예시: `V3-001` → `tests/v3001_test.gd`, `V3-002` → `tests/v3002_test.gd`
+- 검증 게이트는 `find_task_test_file` glob(`tests/*{id}*_test.gd`)로 이 파일을 찾습니다. 다른 이름으로 만들면 MISSING_REQUIRED_TEST로 실패합니다.
+
+## autoload 접근 방법 (반드시 이 패턴 사용)
+- **`Engine.has_singleton("...")`를 autoload 검증에 사용하지 마세요.** Godot autoload는 Engine singleton이 아니므로 항상 false를 반환합니다. (실제 코드에서 이 패턴은 전혀 사용하지 않습니다.)
+- autoload는 SceneTree 루트의 자식 노드로 존재합니다. SceneTree 테스트에서는 `root`가 이미 SceneTree의 root입니다:
+```gdscript
+_check(root.get_node_or_null("VillageResources") != null, "autoload available: VillageResources")
+```
+- 일반 Node 코드에서는 절대 경로 방식(`get_node_or_null("/root/VillageResources")`)이나 `get_tree().root.get_node_or_null("...")`를 실제 프로젝트는 사용합니다 (참고: `scripts/dungeon_runtime.gd`, `scripts/cooking_production.gd`).
+- 정확한 autoload 이름 목록: `VillageResources, GameTime, WorkerRoster, MercenaryRoster, FirstEncounterSpawner, DeathLedger, ExplorationManager, WaveManager, DungeonManager, DungeonPreparationManager` (필요시 `project.godot` [autoload] 섹션에서 확인)
 
 ## 테스트 스켈레톤 (반드시 이 형식)
 ```gdscript
@@ -31,15 +45,17 @@ func _check(cond: bool, msg: String) -> void:
 
 func _init() -> void:
     # 절대경로(drive letter) 금지. 프로젝트 루트 기준 상대경로만 사용.
+    # autoload 검증은 위 "autoload 접근 방법" 패턴(root.get_node_or_null) 사용.
     # 여기에 태스크 핵심 동작 검증을 최소 1개 이상 추가 (실제 코드 로드/호출).
     print("RESULT=" + ("PASS" if _failures == 0 else "FAIL"))
     quit(0 if _failures == 0 else 1)
 ```
 
 ## 테스트 파일 필수 (강제)
-- 파일명: `tests/v3001_test.gd` (반드시 이 이름)
+- 파일명: 위 "필수 테스트 파일명" 규칙에 따라 반드시 생성 (예: `tests/v3001_test.gd`, `tests/v3002_test.gd`)
 - 형식: 위 스켈레톤 기반 + 실제 검증 1개 이상
-- 반드시 Godot headless로 실행해 `RESULT=PASS` 확인
+- **임의 mock/fake API 금지.** 반드시 프로젝트에 실제 존재하는 스크립트/노드/메서드를 로드하고 호출하세요
+- 반드시 Godot headless로 실행해 `RESULT=PASS` 확인. 파일만 만들고 실행하지 않으면 안 됩니다
 
 ## 시간/컨텍스트 절약 규칙 (중요)
 - **웹 검색/문서 열람 금지** (webfetch/websearch 불가). 모든 정보는 로컬 코드에서 얻으세요.
