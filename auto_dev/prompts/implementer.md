@@ -11,15 +11,40 @@
 - 현재 작업 디렉터리 바깥의 어떤 파일에도 접근하지 마세요.
 
 ## 즉시 실행할 작업 (순서대로)
-1. `scripts/`와 `scenes/`의 기존 던전 관련 코드를 읽으세요 (grep으로 "dungeon", "dungeon_manager", "mercenary" 검색)
-2. 태스크 스펙에 따라 GDScript 코드를 **write/edit 도구로 직접 작성**하세요
-3. `tests/` 디렉터리에 `tests/v3001_test.gd` 테스트 파일을 **반드시 생성**하세요
+1. **먼저** `tests/v3001_test.gd` 테스트 파일을 아래 스켈레톤 형식으로 **write 도구로 생성**하세요 (절대 생략 금지)
+2. `grep`으로 기존 던전 코드(`dungeon`, `mercenary`)를 최소 1회 조회해 실제 클래스/메서드 시그니처를 확인하세요
+3. 확인한 실제 시그니처로 테스트 핵심 동작을 채우고, 부족한 구현을 `scripts/`에 `write/edit`으로 작성하세요
+4. Godot headless로 테스트가 PASS 뜨는지 실행해 확인하세요
+
+## 테스트 스켈레톤 (반드시 이 형식)
+```gdscript
+extends SceneTree
+
+var _failures: int = 0
+
+func _check(cond: bool, msg: String) -> void:
+    if cond:
+        print("PASS: " + msg)
+    else:
+        _failures += 1
+        print("FAIL: " + msg)
+
+func _init() -> void:
+    # 절대경로(drive letter) 금지. 프로젝트 루트 기준 상대경로만 사용.
+    # 여기에 태스크 핵심 동작 검증을 최소 1개 이상 추가 (실제 코드 로드/호출).
+    print("RESULT=" + ("PASS" if _failures == 0 else "FAIL"))
+    quit(0 if _failures == 0 else 1)
+```
 
 ## 테스트 파일 필수 (강제)
-- 파일명: `tests/v3001_test.gd`
-- 형식: `extends SceneTree`, `_check(cond, msg)` 사용, 마지막에 PASS/FAIL 출력
-- 구현한 기능에 대한 실제 검증 포함 (빈 껍데기 금지)
-- 반드시 Godot headless로 실행해 PASS 확인
+- 파일명: `tests/v3001_test.gd` (반드시 이 이름)
+- 형식: 위 스켈레톤 기반 + 실제 검증 1개 이상
+- 반드시 Godot headless로 실행해 `RESULT=PASS` 확인
+
+## 시간/컨텍스트 절약 규칙 (중요)
+- **웹 검색/문서 열람 금지** (webfetch/websearch 불가). 모든 정보는 로컬 코드에서 얻으세요.
+- 탐색은 grep 1~2회로 제한하고, 파일 3개 이하만 읽으세요.
+- 10분 내에 테스트 파일 + 구현을 완성하세요. 지나치게 완벽히 하려 하지 말고 핵심 경로를 구현하세요.
 
 ## 절대 하지 말 것
 - `auto_dev/` 아래 어떤 파일도 수정/생성/삭제 금지
