@@ -53,9 +53,21 @@ func _run() -> void:
     # 절대경로(drive letter) 금지. 프로젝트 루트 기준 상대경로만 사용.
     # autoload 검증은 root.get_node_or_null(...) 사용 (deferred 프레임 이후만 유효).
     # 여기에 태스크 핵심 동작 검증을 최소 1개 이상 추가 (실제 코드 로드/호출).
+    # 주의: 존재하지 않는 메서드 직접 호출 금지(위 규칙). has_method()로 가드 후 호출.
     print("RESULT=" + ("PASS" if _failures == 0 else "FAIL"))
     quit(0 if _failures == 0 else 1)
 ```
+
+## 존재하지 않는 메서드 호출 금지 (반드시 준수)
+- **요소가 실제로 없는 메서드를 직접 호출하면 런타임 오류로 `quit()`이 실행되지 않아 headless 프로세스가 hang 됩니다.** (게이트는 900초 후 실패 처리 → 한 pass가 15분 낭비)
+- 반드시 실제 코드에서 `grep "func "`으로 존재하는 메서드만 호출하세요. 예: `DungeonManager`의 실제 메서드는 `start_run(dungeon_id)`, `complete_run(dungeon_id)`, `fail_run(dungeon_id)`, `get_dungeon_state(dungeon_id)` 등입니다 (`complete_dungeon`/`return_to_village`는 존재하지 않음).
+- 호출은 항상 존재 확인 후에만 (아래 패턴처럼):
+```gdscript
+    var dm = root.get_node_or_null("DungeonManager")
+    if dm != null and dm.has_method("start_run"):
+        _check(dm.has_method("complete_run") or dm.has_method("fail_run"), "DungeonManager has completion methods")
+```
+- **절대 `quit()`이 실행되는 것을 막지 마세요.** `RESULT=` 출력과 `quit(...)`는 마지막에 반드시 실행되어야 합니다.
 
 ## 테스트 파일 필수 (강제)
 - 파일명: 위 "필수 테스트 파일명" 규칙에 따라 반드시 생성 (예: `tests/v3001_test.gd`, `tests/v3002_test.gd`)
