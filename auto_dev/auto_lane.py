@@ -160,7 +160,7 @@ def group_leaf_statuses(group):
     m = {}
     for line in out.splitlines():
         p = line.strip().split()
-        if len(p) >= 2 and p[0].startswith("TASK-"):
+        if len(p) >= 2 and (p[0].startswith("TASK-") or p[0].startswith("V3-")):
             m[p[0]] = p[1]
     return m
 
