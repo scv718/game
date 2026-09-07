@@ -15,6 +15,9 @@ Thumbs.db
 .DS_Store
 Desktop.ini
 
+# opencode worktree-local policy (하네스 제어, 커밋 금지)
+opencode.json
+
 # auto_dev runtime artifacts
 auto_dev/state.json
 auto_dev/state_*.json
