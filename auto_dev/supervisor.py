@@ -300,7 +300,7 @@ def classify_gate_failure(problems, max_rounds):
     """
     text_blob = " ".join(problems).lower()
 
-    if any(m in text_blob for m in _IMPL_FAILURE_MARKERS):
+    if any(m.lower() in text_blob for m in _IMPL_FAILURE_MARKERS):
         return "ImplementationFailure"
 
     if any(m.lower() in text_blob for m in _INFRA_FAILURE_MARKERS):
