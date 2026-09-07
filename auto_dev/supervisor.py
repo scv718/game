@@ -857,7 +857,7 @@ def verification_gate(task):
             # NO REQUIRED TEST: expensive baseline 회귀를 실행하지 않고 즉시 실패한다.
             return False, problems
         else:
-            ok, tailtxt = run_headless_test(godot, root, tf)
+            ok, tailtxt = run_headless_test(godot, root, tf, timeout=int(ver.get("task_test_timeout", 120)))
             if not ok:
                 problems.append(f"태스크 테스트 FAIL: {os.path.basename(tf)}\n{tailtxt}")
 
