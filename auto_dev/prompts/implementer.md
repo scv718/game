@@ -30,7 +30,10 @@ _check(root.get_node_or_null("VillageResources") != null, "autoload available: V
 - 일반 Node 코드에서는 절대 경로 방식(`get_node_or_null("/root/VillageResources")`)이나 `get_tree().root.get_node_or_null("...")`를 실제 프로젝트는 사용합니다 (참고: `scripts/dungeon_runtime.gd`, `scripts/cooking_production.gd`).
 - 정확한 autoload 이름 목록: `VillageResources, GameTime, WorkerRoster, MercenaryRoster, FirstEncounterSpawner, DeathLedger, ExplorationManager, WaveManager, DungeonManager, DungeonPreparationManager` (필요시 `project.godot` [autoload] 섹션에서 확인)
 
-## 테스트 스켈레톤 (반드시 이 형식)
+## 테스트 스켈레톤 (반드시 이 형식, `_init` 안에서 검증하지 말 것)
+- **중요: `_init()` 시점에는 autoload가 아직 로드되지 않아 `root.get_node_or_null(...)`이 항상 null입니다.**
+  반드시 `call_deferred("_run")`으로 프레임이 지난 뒤 `_run()` 안에서 검증하세요.
+  (실제 프로젝트 `tests/dungeon_runtime_integration_test.gd`가 정확히 이 패턴을 사용합니다)
 ```gdscript
 extends SceneTree
 
@@ -44,8 +47,11 @@ func _check(cond: bool, msg: String) -> void:
         print("FAIL: " + msg)
 
 func _init() -> void:
+    call_deferred("_run")
+
+func _run() -> void:
     # 절대경로(drive letter) 금지. 프로젝트 루트 기준 상대경로만 사용.
-    # autoload 검증은 위 "autoload 접근 방법" 패턴(root.get_node_or_null) 사용.
+    # autoload 검증은 root.get_node_or_null(...) 사용 (deferred 프레임 이후만 유효).
     # 여기에 태스크 핵심 동작 검증을 최소 1개 이상 추가 (실제 코드 로드/호출).
     print("RESULT=" + ("PASS" if _failures == 0 else "FAIL"))
     quit(0 if _failures == 0 else 1)
@@ -53,8 +59,9 @@ func _init() -> void:
 
 ## 테스트 파일 필수 (강제)
 - 파일명: 위 "필수 테스트 파일명" 규칙에 따라 반드시 생성 (예: `tests/v3001_test.gd`, `tests/v3002_test.gd`)
-- 형식: 위 스켈레톤 기반 + 실제 검증 1개 이상
+- 형식: 위 스켈레톤 기반(`call_deferred("_run")`) + 실제 검증 1개 이상. `_init()` 안에서 autoload/노드 검증 금지
 - **임의 mock/fake API 금지.** 반드시 프로젝트에 실제 존재하는 스크립트/노드/메서드를 로드하고 호출하세요
+- **존재하지 않는 파일을 `preload`/`load`하면 컴파일 에러로 테스트 전체가 실패합니다.** 참조 대상이 실제로 있는지 먼저 `glob`으로 확인하세요 (예: `scenes/dungeon.tscn`, `scripts/mercenary.gd`는 존재하지 않음)
 - 반드시 Godot headless로 실행해 `RESULT=PASS` 확인. 파일만 만들고 실행하지 않으면 안 됩니다
 
 ## 시간/컨텍스트 절약 규칙 (중요)
