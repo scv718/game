@@ -22,6 +22,7 @@ import glob
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -243,10 +244,31 @@ def _ensure_integration_worktree(main_repo):
     store = V2StateStore(STATE_V2_PATH)
     baseline = canonical_baseline(main_repo, store)
     if os.path.isdir(INTEGRATION_WT):
+        _ensure_godot_cache(main_repo)
         return baseline
     git_required(main_repo, "worktree", "add", "-b", INTEGRATION_BRANCH, INTEGRATION_WT, baseline)
     log("[V2] integration 워크트리 생성 @ %s (baseline=%s)" % (INTEGRATION_WT, baseline[:12]))
+    _ensure_godot_cache(main_repo)
     return baseline
+
+
+def _ensure_godot_cache(main_repo):
+    """integration 워크트리의 .godot 캐시 부트스트랩.
+
+    .godot(글로벌 클래스 캐시 + imported 리소스)는 git 에 포함되지 않아 워크트리 생성 시
+    복제되지 않는다. 캐시 없는 신선 환경에서는 class_name 해석이 실패해
+    (예: PotionData) autoload 체인이 깨져 baseline 회귀가 항상 FAIL 로 나온다.
+    canonical 의 .godot 캐시를 복사해 동일 클로저로 만든다(소스 워크트리도 이 방식으로 동작).
+    """
+    cache = os.path.join(INTEGRATION_WT, ".godot", "global_script_class_cache.cfg")
+    if os.path.exists(cache):
+        return
+    src = os.path.join(main_repo, ".godot")
+    if not os.path.isdir(src):
+        log("[V2] canonical .godot 캐시 없음 - bootstrap 불가")
+        return
+    shutil.copytree(src, os.path.join(INTEGRATION_WT, ".godot"), dirs_exist_ok=True)
+    log("[V2] integration .godot 캐시 bootstrap %s" % ("완료" if os.path.exists(cache) else "실패"))
 
 
 def _expectation_ok(main_repo, expected_baseline_commit):
