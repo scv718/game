@@ -1,4 +1,4 @@
-# V3 Execution Queue
+# Execution Queue (V3 / V4)
 
 > Canonical baseline: `main` at `815fbb5e8d7028fe95bf89c991d1ab4b4c60c95e`
 > Runtime: `res://scenes/main_3d.tscn`
@@ -117,6 +117,38 @@
 - integrated_commit: 815fbb5e8d7028fe95bf89c991d1ab4b4c60c95e
 - integration_validation: PASS
 
+## V4-001 NE Ruins Discovery → Dungeon Preparation/Entry Gating
+- 상태: QUEUED
+- depends_on:
+- task_file: auto_dev/tasks/V4-001.md
+- source_commit:
+- integrated_commit:
+- integration_validation:
+
+## V4-002 Dungeon Runtime Run Phase Machine
+- 상태: QUEUED
+- depends_on: V4-001
+- task_file: auto_dev/tasks/V4-002.md
+- source_commit:
+- integrated_commit:
+- integration_validation:
+
+## V4-003 Exact Dungeon Combat Outcome (Victory / Defeat)
+- 상태: QUEUED
+- depends_on: V4-002
+- task_file: auto_dev/tasks/V4-003.md
+- source_commit:
+- integrated_commit:
+- integration_validation:
+
+## V4-004 Dungeon Reward, Threat Reporting, Return Loop
+- 상태: QUEUED
+- depends_on: V4-003
+- task_file: auto_dev/tasks/V4-004.md
+- source_commit:
+- integrated_commit:
+- integration_validation:
+
 ## Execution Contract
 
-Each V3 task uses an isolated worktree, records `baseline_commit`, `source_commit`, `integrated_commit`, `integration_status`, and `depends_on`, and must pass its feature regression plus `tests/baseline_3d_health_test.gd` before DONE. No legacy TASK state is consulted. Runtime truth for task status is `auto_dev/state_v2.json` (authoritative) cross-checked by `auto_dev/runs/integration_done.log`; this queue file is the human-readable mirror.
+Each V3/V4 task uses an isolated worktree, records `baseline_commit`, `source_commit`, `integrated_commit`, `integration_status`, and `depends_on`, and must pass its feature test plus `tests/baseline_3d_health_test.gd` before DONE. V4 tests gate on fail‑closed headless markers (`<TASK>_ASSERTIONS=<actual>/<expected>` + `<TASK>_RESULT=PASS`). No legacy TASK state is consulted. Runtime truth for task status is `auto_dev/state_v2.json` (authoritative) cross-checked by `auto_dev/runs/integration_done.log`; this queue file is the human-readable mirror.

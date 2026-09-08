@@ -39,7 +39,7 @@ if sys.stderr:
 STATES = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "DONE", "NEEDS_DESIGN", "REVIEW_PARSE_ERROR")
 RETRYABLE = ("QUEUED", "IMPLEMENT", "REVIEW", "FIX", "REVIEW_PARSE_ERROR")
 SENTINEL_IDS = ("OVERNIGHT-STOP",)
-TASK_ID_RE = re.compile(r"^(?:(?:TASK|V3)(?:-[A-Z0-9]+){1,5}|OVERNIGHT-STOP(?:-\d+)?)$")
+TASK_ID_RE = re.compile(r"^(?:(?:TASK|V\d+)(?:-[A-Z0-9]+){1,5}|OVERNIGHT-STOP(?:-\d+)?)$")
 STATUS_RE = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
 FEEDBACK_RE = re.compile(r"^-\s*피드백\s*[:：]\s*(.*?)\s*$")
 HEADING_RE = re.compile(r"^(#{2,3})\s+(.+?)\s*$")
@@ -312,15 +312,28 @@ def classify_gate_failure(problems, max_rounds):
     return "NonDesignFailure"
 
 
-def run_headless_test(godot_exe, root, script_path, timeout=900):
+def run_headless_test(godot_exe, root, script_path, timeout=900,
+                      marker_token=None, task_id=None):
+    """FAIL-CLOSED Godot headless 태스크/회귀 테스트 게이트.
+
+    통과 조건: exit 0 + RESULT=FAIL 없음 + RESULT=PASS 존재 + 치명 스크립트 오류
+    토큰 없음. task_id 가 V4+ 네임스페이스면 태스크 마커
+    (<TOKEN>_ASSERTIONS=<actual>/<expected> + <TOKEN>_RESULT=PASS)를 강제한다.
+    marker_token 은 회귀(baseline) 마커 전용이다.
+    """
     rc, out, err = _run_cmd([godot_exe, "--headless", "--path", root,
                              "--script", script_path], timeout=timeout)
-    text = out or ""
-    if "RESULT=FAIL" in text:
-        return False, text[-600:]
-    if "RESULT=PASS" not in text:
-        return False, ("PASS 마커 없음 (실행 실패 추정)\n" + (text or err)[-500:])
-    return True, ""
+    try:
+        from harness_v2.core import gate_script_output
+    except Exception as e:
+        return False, "gate_script_output 로드 실패(FAIL-CLOSED): " + str(e)[:120]
+    ok, problems = gate_script_output(rc, out, err,
+                                      marker_token=marker_token or "",
+                                      task_id=task_id or "")
+    if ok:
+        return True, ""
+    tail = ((out or "") + "\n" + (err or ""))[-600:]
+    return False, "; ".join(problems) + "\n" + tail
 
 
 # ---------------------------------------------------------------------------
@@ -913,7 +926,9 @@ def verification_gate(task):
             return False, problems
         else:
             correct_known_false_probes(tf)
-            ok, tailtxt = run_headless_test(godot, root, tf, timeout=int(ver.get("task_test_timeout", 120)))
+            ok, tailtxt = run_headless_test(godot, root, tf,
+                                            timeout=int(ver.get("task_test_timeout", 120)),
+                                            task_id=task["id"])
             if not ok:
                 problems.append(f"태스크 테스트 FAIL: {os.path.basename(tf)}\n{tailtxt}")
 
@@ -923,7 +938,8 @@ def verification_gate(task):
         godot = CONFIG.get("godot_exe")
         base_timeout = int(ver.get("regression_timeout", 600))
         if godot and os.path.exists(baseline):
-            ok, tailtxt = run_headless_test(godot, root, baseline, timeout=base_timeout)
+            ok, tailtxt = run_headless_test(godot, root, baseline, timeout=base_timeout,
+                                            marker_token="BASELINE_3D")
             if not ok:
                 problems.append(f"회귀(baseline 3D) FAIL\n{tailtxt}")
 

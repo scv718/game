@@ -33,12 +33,13 @@ CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
 STATE_V2_PATH = os.path.join(BASE_DIR, "state_v2.json")
 INTEGRATION_WT = r"D:\game-wt\integration-v2"
 INTEGRATION_BRANCH = "codex/integration-v2"
+LEAF_ID_RE = re.compile(r"^(?:TASK-|V\d+-)")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 try:
     sys.path.insert(0, BASE_DIR)
     from harness_v2.core import (IntegrationCoordinator, Lifecycle, TaskState,
-                                 V2StateStore, git, git_required)
+                                 V2StateStore, gate_script_output, git, git_required)
     from harness_v2.adapter import canonical_baseline, production_dry_run
     V2 = True
 except Exception as _e:  # pragma: no cover - fail-loud
@@ -161,7 +162,7 @@ def group_leaf_statuses(group):
     m = {}
     for line in out.splitlines():
         p = line.strip().split()
-        if len(p) >= 2 and (p[0].startswith("TASK-") or p[0].startswith("V3-")):
+        if len(p) >= 2 and LEAF_ID_RE.match(p[0]):
             m[p[0]] = p[1]
     return m
 
@@ -214,9 +215,10 @@ def _regression_ok(repo):
     except subprocess.TimeoutExpired:
         log("[V2] 회귀 타임아웃")
         return False
-    combined = (proc.stdout or "") + (proc.stderr or "")
-    ok = proc.returncode == 0 and "BASELINE_3D_RESULT=PASS" in combined
-    log("[V2] 회귀(%s) exit=%d PASS=%s" % (os.path.basename(baseline), proc.returncode, ok))
+    ok, problems = gate_script_output(proc.returncode, proc.stdout or "", proc.stderr or "",
+                                      marker_token="BASELINE_3D")
+    log("[V2] 회귀(%s) exit=%d PASS=%s %s" % (os.path.basename(baseline), proc.returncode,
+                                              ok, ("; ".join(problems[:3])) if problems else ""))
     return ok
 
 

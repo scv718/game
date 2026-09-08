@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import subprocess
 import tempfile
 import time
@@ -257,6 +258,74 @@ class BootstrapResult:
     exit_code: int
     output: str
     failure_class: str = ""
+
+
+# V4 이상 네임스페이스만 assertion 카운터 마커(<<TOKEN>>_ASSERTIONS)를 강제한다.
+# 레거시 V3 태스크(V3-001 등)는 기존 marker 규약만 유지해 재검증 회귀를 막는다.
+V_NEXT_RE = re.compile(r"^V(?:[4-9]|[1-9]\d{1,})-")
+
+# Godot headless 실행에서 치명 스크립트 오류로 판정하는 고정 토큰. 실제 런타임
+# stdout 에 우연히 등장하지 않는 검증된 문자열만 포함한다(오탐 방지).
+FATAL_ERROR_TOKENS = (
+    "SCRIPT ERROR", "Parse Error", "Parser Error", "Invalid call",
+    "Invalid access", "Failed to load script", "Cannot call method",
+    "Attempt to call",
+)
+
+
+def _marker_token(text: str) -> str:
+    """task_id(예: V4-001) 또는 마커 프리픽스(예: BASELINE_3D)를 마커 토큰으로 변환.
+
+    하이픈만 제거한다. 언더스코어는 마커 문자열(BASELINE_3D_RESULT, V4001_ASSERTIONS)
+    에 그대로 등장하므로 보존한다."""
+    return re.sub(r"-", "", text or "").upper()
+
+
+def gate_script_output(rc: int, out: str, err: str, *, marker_token: str = "",
+                       task_id: str = "") -> tuple[bool, list[str]]:
+    """FAIL-CLOSED Godot headless 스크립트 게이트.
+
+    통과 조건(모두 충족해야 PASS):
+      - exit code == 0 (실행/타임아웃 실패 포함)
+      - stdout/stderr 전체에 `RESULT=FAIL` 없음
+      - `RESULT=PASS` 존재
+      - 치명 스크립트 오류 토큰(FATAL_ERROR_TOKENS) 없음
+    - marker_token 지정 시 `{TOKEN}_RESULT=PASS` 를 요구.
+    - task_id 가 V4+ 네임스페이스면(예: V4-001) assertion 카운터 마커를 강제한다:
+        `{TOKEN}_ASSERTIONS=<actual>/<expected>` 이면서 actual==expected, expected>0,
+        그리고 `{TOKEN}_RESULT=PASS`. `3/12` + PASS 같은 vacuous 파싱은 실패로 본다.
+    반환 (ok, 문제 설명 목록)."""
+    text = (out or "") + "\n" + (err or "")
+    problems: list[str] = []
+    if rc == -1:
+        problems.append("EXEC/TIMEOUT: 프로세스 실행 실패 또는 시간 초과")
+    elif rc != 0:
+        problems.append("exit code != 0 ({})".format(rc))
+    if "RESULT=FAIL" in text:
+        problems.append("RESULT=FAIL 마커 존재")
+    if "RESULT=PASS" not in text:
+        problems.append("PASS 마커 없음 (실행 실패 추정)")
+    for token in FATAL_ERROR_TOKENS:
+        if token in text:
+            problems.append("치명 스크립트 오류: {}".format(token))
+    if marker_token:
+        token = _marker_token(marker_token)
+        if re.search(token + r"_RESULT=PASS", text, re.IGNORECASE) is None:
+            problems.append("{}_RESULT=PASS 마커 없음".format(token))
+    if task_id and V_NEXT_RE.match(task_id):
+        token = _marker_token(task_id)
+        match = re.search(token + r"_ASSERTIONS=(\d+)/(\d+)", text, re.IGNORECASE)
+        if match is None:
+            problems.append("{}_ASSERTIONS=<actual>/<expected> 마커 없음".format(token))
+        else:
+            actual, expected = int(match.group(1)), int(match.group(2))
+            if expected <= 0:
+                problems.append("{}_ASSERTIONS expected>0 위반 ({}).".format(token, expected))
+            if actual != expected:
+                problems.append("{}_ASSERTIONS 불일치 {}/{}".format(token, actual, expected))
+        if re.search(token + r"_RESULT=PASS", text, re.IGNORECASE) is None:
+            problems.append("{}_RESULT=PASS 마커 없음".format(token))
+    return (not problems), problems
 
 
 def run_bootstrap(root: str, godot: str | Iterable[str], health_script: str,

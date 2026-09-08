@@ -85,7 +85,7 @@ def done_allowed(task: TaskState) -> bool:
 
 
 def parse_queue(path: str) -> list[dict]:
-    heading = re.compile(r"^#{2,3}\s+((?:TASK|V3)-[A-Z0-9-]+)\b")
+    heading = re.compile(r"^#{2,3}\s+((?:TASK-|V\d+-)[A-Z0-9-]+)\b")
     status = re.compile(r"^-\s*상태\s*[:：]\s*(.+?)\s*$")
     result = []
     current = None

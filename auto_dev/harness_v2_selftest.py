@@ -15,7 +15,8 @@ from pathlib import Path
 from harness_v2.core import (IntegrationCoordinator, Lifecycle, TaskState,
                              LifecycleController, V2StateStore, BootstrapResult,
                              attempt_delta, changed_status_paths, classify_failure,
-                             run_bootstrap, source_commit, worktree_snapshot)
+                             gate_script_output, run_bootstrap, source_commit,
+                             worktree_snapshot)
 
 
 def sh(cwd, *args):
@@ -149,6 +150,21 @@ def main():
 
         resumed = V2StateStore(str(root / "state.json")).get_task("A")
         check("source/integration state survives supervisor resume", resumed.status == Lifecycle.DONE.value and bool(resumed.integrated_commit))
+
+        # FAIL-CLOSED headless gate: vacuous/dirty PASS 를 PASS 로 인정하지 않는다.
+        ok, probs = gate_script_output(1, "RESULT=PASS\n", "")
+        check("gate rejects nonzero exit even with PASS marker", not ok and any("exit" in p for p in probs))
+        ok, probs = gate_script_output(0, "SCRIPT ERROR: Parse Error: boom\nRESULT=PASS\n", "")
+        check("gate rejects script error tokens with PASS marker", not ok and any("치명" in p for p in probs))
+        ok, probs = gate_script_output(0, "V4001_ASSERTIONS=3/12\nV4001_RESULT=PASS\n", "", task_id="V4-001")
+        check("gate rejects assertion counter mismatch (3/12 + PASS)", not ok and any("불일치" in p for p in probs))
+        ok, probs = gate_script_output(0, "PASS: a\nV4001_ASSERTIONS=12/12\nV4001_RESULT=PASS\n", "", task_id="V4-001")
+        check("gate accepts satisfied V4 marker contract", ok and not probs)
+        ok, probs = gate_script_output(0, "V4001_RESULT=PASS\n", "", task_id="V4-001")
+        check("gate rejects missing asserted counters for V4 namespace",
+              not ok and any("ASSERTIONS" in p for p in probs))
+        ok, probs = gate_script_output(0, "BASELINE_3D_RESULT=PASS\n", "", marker_token="BASELINE_3D")
+        check("gate accepts baseline marker contract", ok and not probs)
 
         print("HARNESS_V2_RESULT=PASS")
 
