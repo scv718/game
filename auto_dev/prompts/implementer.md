@@ -85,6 +85,8 @@ func _run() -> void:
 - `:=` 는 정적 타입이 보장된 값(생성자, 필드, 명시 반환 타입의 `func` 호출)에만 사용하세요.
 - **autoload/Node 스크립트에서 `root` 미사용**: `extends Node` 스크립트에 `root`(SceneTree root) 전역이 없어 `Parse Error: Identifier "root" not declared` 가 납니다. Node 코드에서 autoload 접근은 반드시 `get_node_or_null("/root/<AutoloadName>")` 를 사용하세요. `root.get_node_or_null(...)` 은 SceneTree 테스트 스크립트에서만 유효합니다.
 - **익숙하지 않은 속성 접근 금지**: Dictionary에서 `entry.type`/`entries` 같은 `.property` 접근, 존재하지 않는 메서드(`add_food` 등) 호출은 Parse/Runtime 오류입니다. 반드시 `grep`으로 실제 클래스 필드/메서드와 시그니처를 확인하세요.
+- **같은 파일에 동일 `func` 이름 중복 정의 금지**: `get_attack_bonus()` 같은 함수를 한 파일에 두 번 정의하면 "Duplicate … " 파싱 오류 → 해당 class_name(GDScript 전역 클래스) 자체가 unparseable이 되어 그 클래스를 참조하는 모든 파일이 cascade 실패합니다. 기존에 이미 있는 메서드를 확장할 때는 반드시 `edit`의 `newString`으로 **기존 블록 자체를 교체**하세요.
+- **테스트에서 검증하는 API는 반드시 실존 메서드만**: `has_method("...")` 프로브로 확인하려는 이름조차 먼저 `grep "func "` 으로 해당 클래스에 실제 있는지 확인하세요. 없는 API를 프로브하면 FAKE_API_TEST로 실패합니다.
 - 코드 작성 후 반드시 Godot headless로 파싱 확인: `godot --headless --path . --import`(또는 관련 스크립트 load)로 Parse Error가 없는지 확인하세요.
 
 ## 시간/컨텍스트 절약 규칙 (중요)
