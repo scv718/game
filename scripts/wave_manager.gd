@@ -211,3 +211,23 @@ func from_snapshot(snapshot: Dictionary) -> void:
 	for id in applied:
 		_applied_dungeon_clears.append(str(id))
 	schedule_changed.emit(_nights_until_wave, _wave_index)
+
+
+## TASK-028 Persistent Game State: 현재 저장된 wave 상태를 반환한다.
+func get_wave_snapshot() -> Dictionary:
+	return to_snapshot()
+
+
+## TASK-028 Persistent Game State: wave 상태 스냅샷을 복원한다.
+func restore_wave_snapshot(snapshot: Dictionary) -> void:
+	from_snapshot(snapshot)
+
+
+## TASK-028 Persistent Game State: wave count를 반환한다 (wave가 몇 번 triggering되었는지).
+func get_wave_count() -> int:
+	return _wave_index
+
+
+## TASK-028 Persistent Game State: threat level을 반환한다 (threat ratio).
+func get_threat_level() -> float:
+	return get_ratio()
