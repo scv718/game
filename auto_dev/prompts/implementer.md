@@ -87,6 +87,7 @@ func _run() -> void:
 - **익숙하지 않은 속성 접근 금지**: Dictionary에서 `entry.type`/`entries` 같은 `.property` 접근, 존재하지 않는 메서드(`add_food` 등) 호출은 Parse/Runtime 오류입니다. 반드시 `grep`으로 실제 클래스 필드/메서드와 시그니처를 확인하세요.
 - **같은 파일에 동일 `func` 이름 중복 정의 금지**: `get_attack_bonus()` 같은 함수를 한 파일에 두 번 정의하면 "Duplicate … " 파싱 오류 → 해당 class_name(GDScript 전역 클래스) 자체가 unparseable이 되어 그 클래스를 참조하는 모든 파일이 cascade 실패합니다. 기존에 이미 있는 메서드를 확장할 때는 반드시 `edit`의 `newString`으로 **기존 블록 자체를 교체**하세요.
 - **테스트에서 검증하는 API는 반드시 실존 메서드만**: `has_method("...")` 프로브로 확인하려는 이름조차 먼저 `grep "func "` 으로 해당 클래스에 실제 있는지 확인하세요. 없는 API를 프로브하면 FAKE_API_TEST로 실패합니다.
+- **`.call()`은 반드시 가드 안에서만**: 테스트에서 `X.call("method", ...)` 를 호출할 때 그 메서드가 없으면 런타임 오류가 나고 **이 환경에서는 headless 프로세스가 hang 되어 "PASS 마커 없음"으로 게이트 실패**합니다 (quit 실행 안 됨). 모든 `.call()`은 반드시 `if X.has_method("meth1") and X.has_method("meth2"):` 블록 안에서만 실행하세요. 프로브(has_method 존재 확인)와 실행(가드된 call)을 분리하세요.
 - 코드 작성 후 반드시 Godot headless로 파싱 확인: `godot --headless --path . --import`(또는 관련 스크립트 load)로 Parse Error가 없는지 확인하세요.
 
 ## 시간/컨텍스트 절약 규칙 (중요)
