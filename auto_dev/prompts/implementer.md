@@ -83,6 +83,8 @@ func _run() -> void:
 - **`var x := <Dictionary 인덱스>` 금지**: `_records[record_id]` 같은 Dictionary 접근은 Variant라서 `:=` 추론이 불가능해 `Cannot infer the type` 파싱 오류를 냅니다.
 - Dictionary 접근/`.get()` 결과는 반드시 명시적 타입으로 선언하세요: `var record: DeathRecord = _records[record_id]` / `var dungeon: DungeonDefinition = _instances.get(dungeon_id)`.
 - `:=` 는 정적 타입이 보장된 값(생성자, 필드, 명시 반환 타입의 `func` 호출)에만 사용하세요.
+- **autoload/Node 스크립트에서 `root` 미사용**: `extends Node` 스크립트에 `root`(SceneTree root) 전역이 없어 `Parse Error: Identifier "root" not declared` 가 납니다. Node 코드에서 autoload 접근은 반드시 `get_node_or_null("/root/<AutoloadName>")` 를 사용하세요. `root.get_node_or_null(...)` 은 SceneTree 테스트 스크립트에서만 유효합니다.
+- **익숙하지 않은 속성 접근 금지**: Dictionary에서 `entry.type`/`entries` 같은 `.property` 접근, 존재하지 않는 메서드(`add_food` 등) 호출은 Parse/Runtime 오류입니다. 반드시 `grep`으로 실제 클래스 필드/메서드와 시그니처를 확인하세요.
 - 코드 작성 후 반드시 Godot headless로 파싱 확인: `godot --headless --path . --import`(또는 관련 스크립트 load)로 Parse Error가 없는지 확인하세요.
 
 ## 시간/컨텍스트 절약 규칙 (중요)
