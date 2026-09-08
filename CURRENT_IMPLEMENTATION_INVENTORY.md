@@ -4,199 +4,209 @@
 
 - Repository: `D:\game`
 - Branch: `main`
-- HEAD: `63914f5642d40e73d6cfe3223fefe16d9f0ffa88`
-- Audit date: 2026-09-07 (Asia/Seoul)
+- HEAD: `815fbb5e8d7028fe95bf89c991d1ab4b4c60c95e` (V3 batch close: 14/14 DONE)
+- Audit date: 2026-09-08 (Asia/Seoul)
 - Working tree: clean at audit snapshot
 - Runtime entry: `res://scenes/main_3d.tscn` (`project.godot:11-15`)
 
-This inventory is based on current production source, scene wiring, autoloads, and test contents. Historical TASK status and agent reports are not implementation evidence.
+This inventory is based on current production source, scene wiring, autoloads, and test contents. Historical TASK status and agent reports are not implementation evidence. V3 DONE labels in `auto_dev/state_v2.json` / `auto_dev/runs/integration_done.log` are runtime truth for *workflow* completion; this document classifies what the *source* actually contains.
+
+## Closeout Re-run Evidence (2026-09-08, main @ 815fbb5e)
+
+Headless task regression re-run (`godot --headless -s tests/*.gd`) on the final V3 state:
+
+| Test | Result on main | Note |
+|---|---|---|
+| `baseline_3d_health_test.gd` | PASS | Canonical gate (last line `BASELINE_3D_RESULT=PASS`) |
+| `v3001_test.gd` | PASS | Dungeon death-report contract |
+| `v3002_test.gd` | PASS | 3D asset bootstrap/closure contract |
+| `v3003_test.gd` | PASS | Wave snapshot/restore contract |
+| `v3004_test.gd` | PASS | Economy accessor contract |
+| `v3005_test.gd` | PASS | Food expedition bridge contract |
+| `v3006_test.gd` | **HANG** | Equipment assertions skipped (`get_mercenary_data` does not exist; unguarded `.call()` → script error → no `quit()` → headless hang) |
+| `v3007_test.gd` | **vacuous PASS** | Skill block aborts at invalid `Script.has_constant` call (v3007_test.gd:65) before any skill assertion; no FAIL is recorded |
+| `v3008_test.gd` | PASS | Ghost identity preservation contract |
+| `v3009_test.gd` | PASS | Village capacity API contract |
+| `v3010_test.gd` | PASS | Boss encounter API contract (existence-level) |
+| `v3011_test.gd` | **FAIL** | `buy_resource`/`sell_resource`/`get_resource_price` don't exist; gold != 100 |
+| `v3012_test.gd` | **FAIL** | `add/get_faction_reputation` expected on WaveManager (exists only as DeathLedger stubs) |
+| `v3013_test.gd` | PASS | Current 3D smoke contract (main_3d loads, autoloads, dungeon/prep methods) |
+| `v3014_test.gd` | PASS | Death ledger content accessors |
 
 ## Executive Summary
 
-The current canonical runtime is a 3D/2.5D village-management prototype. The repository still contains a substantial legacy 2D runtime and its tests, but the configured application entry is the 3D main scene. The 3D baseline has a coherent world, camera, selection/placement, worker, mercenary, combat, threat/wave, dungeon-preparation/runtime, ghost, food-consumption, potion, morale, exploration, and audio foundation.
+The current canonical runtime is a 3D/2.5D village-management prototype with a coherent world, camera, selection/placement, worker, mercenary, combat, threat/wave, dungeon-preparation/runtime, ghost, food/potion, morale, exploration, and audio foundation. The V3 batch added small, contract-level extensions on top of that foundation and a reusable 3D test contract, but did NOT deliver complete gameplay systems for equipment, skills, shop/trade, quest/faction, boss flow, storage/logistics transport, or a full red save/load loop.
 
-The largest confirmed gaps are persistent game save/load, equipment, skills, quests, factions, shop/economy progression, boss content, and a complete dungeon outcome/reward/return loop. External asset reproducibility is also a release dependency: Tiny Swords and Quaternius runtime files are ignored or externally bootstrapped, while production scripts preload some of those paths.
+Key closeout facts:
+- V3 workflow 14/14 DONE and main is fully integrated; the 3D gate `tests/baseline_3d_health_test.gd` passes.
+- Several V3 commits are test-only or near-test-only: V3-002 (asset bootstrap contract), V3-006 (equipment), V3-007 (skills), V3-011 (shop/trade), V3-013 (3D contract), and the "production" parts of V3-001/004/008/012/014 are additive, small, mostly defensive methods.
+- Three V3 regressions are currently broken on main: `v3006_test.gd` HANGS, `v3011_test.gd` and `v3012_test.gd` FAIL, and `v3007_test.gd` passes vacuously (skill block never executes). Production lacks the equipment/skill/shop/faction APIs these tests require. This is reproducible evidence, not workflow status.
+- The largest source-level gaps remain persistent game save/load, equipment, skills, shop/trade, quests/factions, a wired boss encounter, logistics transportation, and a complete dungeon reward/return loop.
 
 ## Implementation Summary
 
 | Classification | Current findings |
 |---|---|
-| IMPLEMENTED | 3D entry/world, camera, mouse selection, building placement, resource nodes, worker roster/FSM, mercenary roster/FSM, auto combat, gates/walls, threat/wave, Ghost/Death Ledger, dungeon preparation and encounter skeleton, Food consumption, Potion slot/auto-consume, morale, exploration/map UI, audio foundation |
-| PARTIAL | Dungeon progression/reward/return, farm-to-food vertical slice, visual asset delivery, 3D UI/gameplay completeness, portal concept, resident population model |
-| STUB | Dungeon reward table data container, equipment preparation summary, portal markers/visual dressing, several future building roles |
-| TEST_ONLY | Historical TASK assertions that have no reachable production owner; legacy `smoke_test.gd` contract |
-| BROKEN / SUSPICIOUS | Fresh checkout asset closure; legacy smoke test against the configured 3D entry; mixed 2D/3D duplicate runtime surfaces |
-| NOT_FOUND | Save/load game state, equipment system, skills, quests, factions, shop/trade, boss system, storage/logistics, healer/repair/training buildings |
+| IMPLEMENTED | 3D entry/world, camera, mouse selection, building placement, resource nodes, worker roster/FSM, mercenary roster/FSM, auto combat, gates/walls, threat/wave, Ghost/Death Ledger (incl. V3 original-mercenary-identity snapshot), food consumption, potion slot/auto-consume, morale, exploration/map UI, audio foundation; wave/threat snapshot-restore bridge; dungeon death-report helper; **current 3D test contract** (`baseline_3d_health_test.gd` + `tests/v3013_test.gd`) |
+| PARTIAL | Dungeon completion/reward/return loop (report_death helper + clear bridge exist; no wired reward grant/player-return flow), farm->food production economy permits (accessor layer added), food expedition bridge (consume 1 unit at start_run, refund at complete_run; no combat-buff boundary), ghost combat identity (data-layer only) |
+| STUB | Wave/threat snapshot API; village resource capacity + facility output capacity + transport destination data API (no production callers); boss encounter API + spawn helper (no wired callers); quest/faction placeholder stubs (DeathLedger, `pass`/`0`) |
+| TEST_ONLY / BROKEN | `v3006_test.gd` HANG (equipment API absent), `v3011_test.gd` FAIL (shop/trade API absent), `v3012_test.gd` FAIL (faction API on wrong owner), `v3007_test.gd` vacuous PASS (skill block aborts); legacy `smoke_test.gd` stale 2D contract; 162 historical SceneTree tests |
+| NOT_FOUND | Full save/load manager, equipment system (weapon/armor/accessory, attack/defense bonuses), skills (SKILLS loadout, initialize/execute), shop/trade (gold, buy/sell/price), quests/factions, wired boss encounter, storage/logistics transport flow |
 
 ## Core Systems
 
 | Feature | Status | Evidence | Tests / notes |
 |---|---|---|---|
-| 3D game entry | IMPLEMENTED | `project.godot:11-15`; `scenes/main_3d.tscn:24-110` | `tests/baseline_3d_health_test.gd` is the relevant baseline gate |
-| Global services | IMPLEMENTED | `project.godot:22-38` registers GameTime, resources, rosters, consumption, DeathLedger, exploration, audio, threat/wave, dungeon services | Autoload existence is explicitly checked by baseline health |
-| Day/night | IMPLEMENTED | `scripts/game_time.gd`; consumers in `mercenary_roster_3d.gd`, `first_encounter_spawner_3d.gd`, `population_consumption.gd`, `wave_manager.gd` | Current 3D actors subscribe to phase changes |
-| Input | IMPLEMENTED | `project.godot:44-90` defines WASD, E, B, L, M, and P `dungeon_prep` | P binding is physical keycode 80 / unicode 112 |
+| 3D game entry | IMPLEMENTED | `project.godot:11-15`; `scenes/main_3d.tscn` | `tests/baseline_3d_health_test.gd` is the canonical gate |
+| Global services | IMPLEMENTED | `project.godot:22-38` (InnCapacity, VillageResources, GameTime, WorkerRoster, MercenaryRoster, PopulationConsumption, FirstEncounterSpawner, DeathLedger, ExplorationManager, AudioManager, ThreatSystem, WaveManager, DungeonManager, DungeonPreparationManager, GameSettings) | Autoload existence explicitly checked by baseline + v3013 |
+| Day/night | IMPLEMENTED | `scripts/game_time.gd`; consumers in mercenary/encounter/consumption/wave | Phase-driven actor subscription |
+| Input | IMPLEMENTED | `project.godot:44-90` (WASD, E, B, L, M, P `dungeon_prep`) | P physical keycode 80 |
 
 ## Player / Control
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| Direct player actor | NOT_FOUND (intentional) | `baseline_3d_health_test.gd` checks empty `player`/`players` groups; `scripts/world_selection_3d.gd` documents player removal | Matches design rule that the player does not fight directly |
-| 3D camera pan/zoom | IMPLEMENTED | `scripts/camera_controller_3d.gd:64-112,139-248`; `scenes/main_3d.tscn:78` | Camera is a separate runtime owner |
-| Mouse world selection | IMPLEMENTED | `scripts/world_selection_3d.gd:1-137`; `main_3d.tscn:80-81` | Reuses Interactable3D API |
-| Building placement input | IMPLEMENTED | `scripts/building_placement_3d.gd:1-39,132-224`; `main_3d.tscn:83-84` | Grid, overlap, cost, catalog, wall/gate placement paths exist |
+| Direct player actor | NOT_FOUND (intentional) | baseline checks empty `player`/`players` groups; `scripts/world_selection_3d.gd` documents player removal | Design rule: player does not fight directly |
+| 3D camera pan/zoom | IMPLEMENTED | `scripts/camera_controller_3d.gd`; `main_3d.tscn:78` | Separate runtime owner |
+| Mouse world selection | IMPLEMENTED | `scripts/world_selection_3d.gd`; `main_3d.tscn:80-81` | Interactable3D API |
+| Building placement input | IMPLEMENTED | `scripts/building_placement_3d.gd`; `main_3d.tscn:83-84` | Grid, overlap, cost, catalog, wall/gate paths |
 
 ## World / Map / Visuals
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| 3D world and navigation | IMPLEMENTED | `scenes/world3d.tscn`; `scripts/world_root_3d.gd`; `scripts/world_content_3d.gd:23-90`; `main_3d.tscn:26-74` | Runtime scene contains world content and navigation owner |
-| Terrain/village composition | IMPLEMENTED | `scripts/village_composition_3d.gd:1-194`; `scenes/village_composition_3d.tscn` | Current main instantiates the composition through world content |
-| 3D asset catalog | PARTIAL | `scripts/visual_asset_catalog_3d.gd:1-44,433-437` | Catalog is production code, but required Quaternius source files are external/ignored and must be bootstrapped |
-| Portal | STUB / PARTIAL | `scripts/world_map.gd:213-217,408-433`; visual portal dressing in `village_composition_3d.gd` | Candidate markers/visual language exist; authoritative portal gameplay is not present |
+| 3D world and navigation | IMPLEMENTED | `scenes/world3d.tscn`; `scripts/world_root_3d.gd`, `world_content_3d.gd`; `main_3d.tscn:26-74` | + NavigationRegion owner |
+| Terrain/village composition | IMPLEMENTED | `scripts/village_composition_3d.gd`; `scenes/village_composition_3d.tscn` | Instantiated via world content |
+| 3D asset catalog | PARTIAL | `scripts/visual_asset_catalog_3d.gd` | Quaternius/Tiny Swords sources external/ignored; `tests/v3002_test.gd` locks the bootstrap/closure contract |
+| Portal | STUB / PARTIAL | `scripts/world_map.gd`; visual dressing in `village_composition_3d.gd` | Markers/visual yes; authoritative gameplay no |
 
 ## Resources / Gathering / Workers
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| Wood/stone resource ledger | IMPLEMENTED | `scripts/village_resources.gd:28-109` | Shared add/has/spend and food classification API |
-| Tree/stone 3D nodes | IMPLEMENTED | `scripts/resource_node_3d.gd`, `tree_3d.gd`, `stone_deposit_3d.gd`; corresponding 3D scenes | Claim/depletion/navigation hooks are present |
-| Worker data/roster | IMPLEMENTED | `scripts/worker_data.gd:1-62`; `worker_roster.gd:17-176` | Assignment, actor spawn/despawn, freed-workplace cleanup |
-| Lumberjack/miner 3D FSM | IMPLEMENTED | `scripts/lumberjack_3d.gd:1-46`; `miner_3d.gd`; `lumberyard_3d.tscn`, `quarry_3d.tscn` | Full gather/return/deposit structure is present |
-| Farm/farmer/herb gathering | PARTIAL | `scripts/farm_3d.gd`, `farmer_3d.gd`, `herb_gatherer_3d.gd`, `crop_node_3d.gd` | Production paths exist, but no complete long-term economy/logistics loop was found |
+| Wood/stone resource ledger | IMPLEMENTED | `scripts/village_resources.gd` | add/has/spend + food classification |
+| Tree/stone 3D nodes | IMPLEMENTED | `scripts/resource_node_3d.gd`, `tree_3d.gd`, `stone_deposit_3d.gd` | Claim/depletion/navigation hooks |
+| Worker data/roster | IMPLEMENTED | `scripts/worker_data.gd`; `worker_roster.gd` | Assignment, actor spawn/despawn, freed-workplace cleanup; V3 `assign_worker()` alias + `get_worker_capacity()` (`InnCapacity`) + `get_current_workers()` |
+| Lumberjack/miner 3D FSM | IMPLEMENTED | `lumberjack_3d.gd`, `miner_3d.gd`, `lumberyard_3d.tscn`, `quarry_3d.tscn` | Full gather/return/deposit structure |
+| Farm/farmer/herb loop | PARTIAL | `farm_3d.gd`, `farmer_3d.gd`, `herb_gatherer_3d.gd`, `crop_node_3d.gd` | Production owners exist; no complete farm->food economy loop demonstrated; V3-004 added only accessor aliases |
+| Village capacity/logistics | STUB | `village_resources.gd`: `_capacities`, `set/get_capacity`, `add_resource_storage`, `get_resource_capacity`, `is_resource_overflowing`, `handle_overflow`, `set/get_facility_output_capacity`, `update_facility_output`, `set/get_transport_destination` | Data/API surface only; no production facility/transport caller found |
 
 ## Buildings / Village Economy
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| 3D building catalog and placement | IMPLEMENTED | `building_placement_3d.gd:33-109,166-224`; 3D building scenes | Includes farm, lumberyard, quarry, walls, gates and pixel building path |
-| Core village buildings | IMPLEMENTED | `core_building_3d.gd`; `scenes/core_building_3d.tscn`; `main_3d.tscn:15,76` | Visual/interaction shell is present |
-| Tavern recruitment | IMPLEMENTED | `tavern_recruitment_ui.gd:34-137`; `ui/hud_3d.tscn:236` | Worker and mercenary recruitment calls the two rosters |
-| Inn roster/assignment/upgrade | IMPLEMENTED | `inn_roster_ui.gd:40-247`; `inn_capacity.gd`; `ui/hud_3d.tscn:238` | Upgrade cost is documented as display-only; no full economy charge found |
-| Food population consumption | IMPLEMENTED | `population_consumption.gd:46-218`; `meal_consumption.gd:99-139`; autoload at `project.godot:29` | Runtime consumption is phase-driven and separate from Potion combat use |
-| Cooking | IMPLEMENTED / PARTIAL | `cooking_production.gd:1-103`; `cooking_recipes.gd`; `recipe_data.gd` | Recipe production exists; complete player-facing kitchen/building progression is not established |
-| Storage/logistics/trade | NOT_FOUND | No production `save`, `storage`, `logistics`, `trade`, or transport owner found | Resource ledger is in-memory only |
+| 3D building catalog and placement | IMPLEMENTED | `building_placement_3d.gd`; 3D building scenes | Farm, lumberyard, quarry, walls, gates |
+| Core village buildings | IMPLEMENTED | `core_building_3d.gd`; `scenes/core_building_3d.tscn`; `main_3d.tscn:15,76` | Visual/interaction shell |
+| Tavern recruitment | IMPLEMENTED | `tavern_recruitment_ui.gd`; `ui/hud_3d.tscn:236` | Worker + mercenary recruitment |
+| Inn roster/assignment/upgrade | IMPLEMENTED | `inn_roster_ui.gd`; `inn_capacity.gd` | Upgrade cost display-only |
+| Food population consumption | IMPLEMENTED | `population_consumption.gd`; `meal_consumption.gd` | Phase-driven, separate from potion combat use |
+| Cooking | IMPLEMENTED / PARTIAL | `cooking_production.gd`, `cooking_recipes.gd`, `recipe_data.gd` | Recipe production yes; full kitchen progression no |
+| Storage/logistics/trade | NOT_FOUND | No production save/storage/transport/trade owner; VillageResources is in-memory only; capacity API unconsumed | V3-011 shop/trade contract FAILs against production |
 
 ## Mercenaries / Combat / Defense
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| Mercenary data/roster | IMPLEMENTED | `mercenary_data.gd:1-93`; `mercenary_roster_3d.gd:44-140,323-414`; `main_3d.tscn:86-90` | Persistent identity data is distinct from transient actor nodes |
-| Enemy 3D actor | IMPLEMENTED | `enemy_actor_3d.gd`; `scenes/enemy_3d.tscn` | Auto-target/damage/death path exists |
-| Mercenary auto combat | IMPLEMENTED | `mercenary_actor_3d.gd:121-230,303-327`; `scenes/mercenary_3d.tscn` | Target acquisition, chase, attack and death are production paths |
-| Tactical commands | IMPLEMENTED | `mercenary_roster_3d.gd:147-186`; `ui/tactical_command_ui_3d.tscn`; HUD inclusion at `ui/hud_3d.tscn:240` | Regroup, retreat, focus, time controls and gate commands are wired |
-| Gate/wall defense | IMPLEMENTED | `gate_3d.gd`, `wall_3d.gd`, `gate_interactable_3d.gd`; placement constants in `building_placement_3d.gd` | Runtime 3D scenes exist |
-| Threat/wave | IMPLEMENTED | `threat_system.gd:18-140`; `wave_manager.gd:24-213`; autoloads `project.godot:34-35` | Wave scheduling and dungeon-clear bridge API exist |
-| Skills/equipment/boss | NOT_FOUND | No production owner/reference for skill trees, equipment stats, or boss encounter was found | Dungeon equipment field is only a summary hook |
+| Mercenary data/roster | IMPLEMENTED | `mercenary_data.gd`; `mercenary_roster_3d.gd`; `main_3d.tscn:86-90` | Data vs transient actor separated; roster API is `get_mercenary()` |
+| Enemy 3D actor | IMPLEMENTED | `enemy_actor_3d.gd`; `scenes/enemy_3d.tscn` | Auto-target/damage/death |
+| Mercenary auto combat | IMPLEMENTED | `mercenary_actor_3d.gd`; `scenes/mercenary_3d.tscn` | Acquire/chase/attack/death |
+| Tactical commands | IMPLEMENTED | `mercenary_roster_3d.gd`; `ui/tactical_command_ui_3d.tscn`; HUD | Regroup/retreat/focus/time/gate wired |
+| Gate/wall defense | IMPLEMENTED | `gate_3d.gd`, `wall_3d.gd`, `gate_interactable_3d.gd` | Runtime 3D scenes |
+| Threat/wave | IMPLEMENTED | `threat_system.gd`; `wave_manager.gd` | Wave scheduling + dungeon-clear bridge; V3 snapshot/restore bridge |
+| Equipment system | NOT_FOUND | `mercenary_data.gd` exposes only potion slot (`equip_potion`/`unequip_potion`/`get_potion_slot_*`); no weapon/armor/accessory, no `get_attack_bonus`/`get_defense_bonus`; `v3006_test.gd` HANGS | Equipment summary hook exists only in dungeon preparation |
+| Skill system | NOT_FOUND | `mercenary_actor_3d.gd` has no `SKILLS`, `_skill_loadout`, `initialize_skill`, `execute_skill`, `_in_range`; `v3007_test.gd` vacuous PASS (aborts at invalid `has_constant` call) | Skill data/design references only |
+| Boss encounter | STUB | `dungeon_manager.gd`: `is_boss_encounter_active`, `start_boss_encounter`(no-op true), `complete_boss_encounter`(no-op true); `dungeon_runtime.gd`: `spawn_boss_for_dungeon` (EnemyActor3D `boss_<id>`), `needs_boss_spawn` | No production caller of any boss function; wave flow not wired |
 
 ## Dungeon
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| Dungeon definition/manager | IMPLEMENTED | `dungeon_definition.gd`; `dungeon_manager.gd:72-203`; autoload `project.godot:36` | Definitions, states and reward-table registration exist |
-| Preparation UI and manager | IMPLEMENTED | `dungeon_preparation_ui.gd:239-493`; `dungeon_preparation_manager.gd:19-200`; `main_3d.tscn:105` | P input, party, Food, Potion and optional equipment summary hooks are wired |
-| Dungeon encounter arena | PARTIAL | `dungeon_runtime.gd:24-123,155-216`; `main_3d.tscn:107-108` | Arena and actors load, spawn and clean up; combat uses existing 3D actors |
-| Dungeon tactical commands | IMPLEMENTED | `dungeon_runtime.gd:229-315` | Reuses existing tactical command contract |
-| Dungeon completion/reward/return | PARTIAL / STUB | `dungeon_reward_table.gd:1-68`; `dungeon_runtime.gd:126-147`; `wave_manager.gd:173-181` | Data container and clear bridge exist, but a complete outcome detector, reward grant and player-return flow was not found |
+| Dungeon definition/manager | IMPLEMENTED | `dungeon_definition.gd`; `dungeon_manager.gd`; autoload | Definitions, states, reward-table registration |
+| Preparation UI and manager | IMPLEMENTED | `dungeon_preparation_ui.gd`; `dungeon_preparation_manager.gd`; `main_3d.tscn:105` | P input, party, Food, Potion, equipment summary hooks |
+| Dungeon encounter arena | PARTIAL | `dungeon_runtime.gd`; `main_3d.tscn:107-108` | Arena/actors load, spawn, clean up |
+| Dungeon tactical commands | IMPLEMENTED | `dungeon_runtime.gd` | Tactical command contract reuse |
+| Dungeon completion/reward/return | PARTIAL | `dungeon_reward_table.gd`; `dungeon_manager.gd` (`start/complete/fail_run`, `get_completion_count`); `wave_manager.gd` clear-apply; V3-001 `DeathLedger.report_death()` | Outcome/clear scaffolding + death reporting exist; no wired reward-grant and player-return flow backend; `complete_run` refunds expedition food |
 
 ## Ghost / Death Ledger
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| Death record/ledger | IMPLEMENTED | `death_record.gd:1-95`; `death_ledger.gd:1-100`; autoload `project.godot:31` | Snapshot-oriented identity record and duplicate/ghost guards exist |
-| Ghost spawn mix | IMPLEMENTED | `ghost_spawn_mix.gd:19-166`; `first_encounter_spawner_3d.gd` references it; `main_3d.tscn:95-96` | Ghost candidates join the existing NIGHT encounter budget |
-| Ghost identity/visual/death behavior | IMPLEMENTED | `ghost_actor_3d.gd:1-101`; `scenes/ghost_3d.tscn` | Ghost death resolves original record and does not create recursive records |
-| Ghost skills/modifiers/rewards | NOT_FOUND / PARTIAL | `GAME_DESIGN.md:374-412` describes them, but no corresponding authoritative production system was found | Current implementation is identity/visual/ledger-focused |
+| Death record/ledger | IMPLEMENTED | `death_record.gd`; `death_ledger.gd`; autoload | Snapshot identity + duplicate/ghost guards; V3 `report_death()`, `get_death_count()`, `get_death_record()` |
+| Ghost spawn mix | IMPLEMENTED | `ghost_spawn_mix.gd`; `first_encounter_spawner_3d.gd`; `main_3d.tscn:95-96` | Joins NIGHT encounter budget |
+| Ghost identity/death behavior | IMPLEMENTED | `ghost_actor_3d.gd`; `scenes/ghost_3d.tscn` | Death resolves original record; no recursion |
+| Ghost identity preservation | PARTIAL | `death_ledger.gd` `_original_mercenary_data` + `get_original_mercenary_data()` for MERCENARY deaths (V3-008) | Original-loadout snapshot kept at data layer; no ghost-combat application of it |
+| Ghost skills/modifiers/rewards | NOT_FOUND / PARTIAL | Design text only (`GAME_DESIGN.md:374-412`) | No authoritative production system |
 
 ## Food / Potion
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| Food resource categories | IMPLEMENTED | `village_resources.gd:20-109` | Raw/cooked classification and efficiency API |
-| Runtime population food consumption | IMPLEMENTED | `population_consumption.gd:70-218` | Phase-driven resource consumption; separate from combat Potion logic |
-| Potion data definitions | IMPLEMENTED | `potion_data.gd:1-87` | Data-driven `healing_potion`, HP-below-ratio trigger |
-| Potion slot/auto-consume | IMPLEMENTED | `mercenary_data.gd:36-93`; `mercenary_potion_service.gd:1-84`; `mercenary_actor_3d.gd:376-393` | Separate slot, condition false no consume, one consume guard, empty slot safe |
-| Potion crafting | PARTIAL | `potion_craft_service.gd` | Crafting owner exists, but complete player-facing herb-to-potion progression is not wired through a demonstrated 3D gameplay loop |
-| Food preparation combat buff | NOT_FOUND / PARTIAL | Food preparation data hooks exist in dungeon preparation, but no authoritative long-term combat buff application was found | Do not infer new Food effects from the design text |
+| Food resource categories | IMPLEMENTED | `village_resources.gd` | Raw/cooked classification, V3 `get_food_count()` |
+| Runtime population food consumption | IMPLEMENTED | `population_consumption.gd` | Phase-driven; separate from Potion |
+| Potion data + slot/auto-consume | IMPLEMENTED | `potion_data.gd`; `mercenary_data.gd`; `mercenary_potion_service.gd`; `mercenary_actor_3d.gd` | Condition/consume-guard path |
+| Potion crafting | PARTIAL | `potion_craft_service.gd` | Owner exists; not wired to a 3D loop |
+| Food expedition effect | STUB / PARTIAL | `dungeon_manager.gd` `start_run` deducts 1 unit of selected food from VillageResources; `complete_run` refunds it (has_method-guarded) | Conditional consume/refund bridge only; the design's preparation-to-combat effect boundary is not implemented |
 
 ## UI / Persistence
 
 | Feature | Status | Evidence | Notes |
 |---|---|---|---|
-| 3D HUD | IMPLEMENTED | `ui/hud_3d.tscn`; `scripts/hud.gd:43-296` | Resource, food, threat/wave, selection and placement feedback are wired |
-| Map/exploration UI | IMPLEMENTED / PARTIAL | `world_map_overlay.gd`; `exploration_manager.gd`; `scout_dispatch_manager.gd` | Map and exploration service paths exist; full discovery progression remains prototype-level |
-| Options/audio settings | IMPLEMENTED | `options_menu.gd`; `game_settings.gd`; `audio_manager.gd`; `project.godot:18-20` | Local config persistence exists for settings/volume |
-| Game save/load | NOT_FOUND | Production scripts explicitly document no persistent game Save/Load; no save manager owner found | Audio/settings config persistence is not a game save system |
+| 3D HUD | IMPLEMENTED | `ui/hud_3d.tscn`; `scripts/hud.gd` | Resource/food/threat/wave/selection/placement feedback |
+| Map/exploration UI | IMPLEMENTED / PARTIAL | `world_map_overlay.gd`; `exploration_manager.gd`; `scout_dispatch_manager.gd` | Discovery progression prototype-level |
+| Options/audio settings | IMPLEMENTED | `options_menu.gd`; `game_settings.gd`; `audio_manager.gd` | Local config persistence only |
+| Wave/threat snapshot | PARTIAL | `wave_manager.gd` `get_wave_snapshot()`/`restore_wave_snapshot()`/`get_wave_count()`/`get_threat_level()` (V3-003) | In-memory snapshot/restore bridge over existing to/from_snapshot | 
+| Game save/load (full) | NOT_FOUND | No save manager; scripts document no persistent Save/Load | Settings config persistence is not a game save system |
+| Shop / Trade | NOT_FOUND | No gold/economy owner, no `buy_resource`/`sell_resource`/`get_resource_price`; `v3011_test.gd` FAILs | V3-011 delivered no production code |
+| Quest / Faction | NOT_FOUND | `death_ledger.gd` stubs: `add_faction_reputation` (`pass`), `get_faction_reputation` (returns 0); `v3012_test.gd` FAILs (expects API on WaveManager) | Placeholder only, no quest/faction system |
 
 ## Tests
 
-- `tests/baseline_3d_health_test.gd` is the relevant current baseline contract: main scene, required autoloads, data script loading, 3D scene instantiation, camera/navigation/group invariants, and no direct Player actor.
-- `tests/dungeon_runtime_integration_test.gd` checks the P input binding, DungeonPreparationUI instantiation, manager-to-runtime signal, and P input reachability.
-- `tests/task0491_test.gd` checks the audio bus/playback foundation and its audit document.
-- `tests/task0275_test.gd` is aligned with the current Potion/Preparation/DeathRecord boundary and is useful as a focused regression, but its historical TASK label is not provenance by itself.
-- `tests/smoke_test.gd` is LEGACY/NOT CURRENT: it instantiates `res://scenes/main.tscn` and expects 2D `Main`, Lumberjack, TileMapLayer, 2D tree groups and 2D textures. It does not validate the configured `main_3d.tscn` runtime.
-- The repository contains 162 `SceneTree` test files by static inventory. Many are historical TASK tests; their assertions must be treated as regression evidence only when they exercise reachable current production code.
+- `tests/baseline_3d_health_test.gd` is the canonical 3D gate (main scene, autoloads, data scripts, 3D instantiation, camera/navigation/player-group invariants). Re-run on closeout: **PASS**.
+- `tests/v3013_test.gd` is the current 3D smoke/contract test added by V3-013 (main_3d loads; DungeonManager/DungeonPreparationManager parse; autoload set; dungeon methods). Re-run: **PASS**.
+- V3 task regressions: see the Closeout Re-run Evidence table at top. `v3006` (HANG), `v3011`/`v3012` (FAIL), `v3007` (vacuous PASS) are not usable as pass-claims on the current source.
+- `tests/smoke_test.gd` is LEGACY/NOT CURRENT (2D `main.tscn` contract). It was not deleted/archived by V3-013 (only `v3013_test.gd` was added).
+- Historical TASK tests (~160 files) are regression evidence only when they exercise reachable current production code.
 
 ## Game Design Gap
 
 ### Design + implementation substantially present
 
-- Player management rather than direct combat: `GAME_DESIGN.md:48-60`, current 3D baseline player-group checks.
-- Day/night separation and automatic night defense: `GAME_DESIGN.md:100-149`, `game_time.gd`, roster/spawner/wave consumers.
-- Worker hiring/assignment and automated production: `GAME_DESIGN.md:159-228`, worker roster/FSM and 3D facilities.
-- Mercenary roster, automatic combat, tactical commands, Potion condition path: `GAME_DESIGN.md:234-299`, current Mercenary/Potion code.
-- Death Ledger/Ghost identity concept: `GAME_DESIGN.md:340-447`, current ledger/ghost production path.
+- Player management rather than direct combat (`GAME_DESIGN.md:48-60`).
+- Day/night and automatic night defense (`GAME_DESIGN.md:100-149`).
+- Worker hiring/assignment and automated production (`GAME_DESIGN.md:159-228`).
+- Mercenary roster, tactical commands, Potion condition path (`GAME_DESIGN.md:234-299`).
+- Death Ledger/Ghost identity concept (`GAME_DESIGN.md:340-447`).
 
-### Design + partial implementation
+### Design + thin/partial implementation (V3-cold)
 
-- Dungeon discovery, preparation, combat, rewards and return: `GAME_DESIGN.md:471-510`; preparation and encounter skeleton exist, but completion/reward/return is incomplete.
-- Food preparation and combat effects: `GAME_DESIGN.md:512-556`; resource consumption exists, but preparation-to-runtime effect application is not established.
-- Farming, herbal ingredients, cooking, and alchemy: `GAME_DESIGN.md:601-713`; core resource/recipe owners exist, but the complete facility progression is not present.
-- Wave/Threat strategic loop: `GAME_DESIGN.md:447-470`; threat/wave owners exist, but broader event/boss content is absent.
+- Dungeon discovery, preparation, combat, rewards and return (`GAME_DESIGN.md:471-510`): scaffolding + death reporting only; reward grant/return not wired.
+- Food preparation and expedition effects (`GAME_DESIGN.md:512-556`): consume/refund bridge only; buff boundary absent.
+- Farming/cooking/alchemy economy (`GAME_DESIGN.md:601-713`): owners exist; complete facility progression not present.
 
 ### Design exists + production not found
 
-- Equipment, skills, quests, factions, shop/trade, storage/logistics, training, healing, repair, boss encounters, and full persistent game saves.
+- Equipment, skills, quests/factions, shop/trade, storage/logistics, boss encounter flow, full persistent game saves.
 
 ## Current Playable Flow
 
-Configured runtime starts in `main_3d.tscn`, loads the 3D world/environment/navigation and camera, and exposes mouse selection and B-key building placement. The player can select/interact with the 3D village, place supported buildings, view resources/food/threat/wave state, open recruitment and inn management UI, assign workers, and run worker/resource loops. Hired mercenaries remain data in the roster by day, spawn for night combat, use existing tactical commands, and can be recorded by Death Ledger. The Dungeon preparation UI can be opened with physical P, party/Food/Potion hooks can be set, and a prepared run can instantiate the existing 3D arena/actors.
+Configured runtime starts in `main_3d.tscn` (3D world/environment/navigation + camera, mouse selection, B-key placement). Player can manage village resources/food/threat/wave, recruit workers/mercenaries, assign workers, run gather loops, open the Dungeon preparation UI (physical P), and instantiate the 3D arena. V3 confirmed/strengthened the 3D entry and test contract but did not change the playable scope materially; equipment/skill/shop/faction/boss/save features are not reachable in play.
 
-The legacy 2D flow remains in source and tests, but is not the configured application entry and is not included above as current playable behavior.
+Legacy 2D flow remains in source/tests and is not the configured entry.
 
 ## Confirmed Broken / Suspicious
 
-1. Fresh asset closure is not self-contained. `.gitignore:5-11` excludes Tiny Swords and Quaternius source material; current source references include `assets/cuteskull-medieval-city/city16.fbx`, `assets/third_party/quaternius/models/`, and Tiny Swords decoration paths. The repository does contain `tools/download_quaternius_packs.ps1`, `tools/download_tiny_swords.ps1`, and generation tools, so this is an external/bootstrap contract rather than proof that the source assets belong in Git.
-2. `tests/smoke_test.gd` validates the old 2D scene (`main.tscn`) while `project.godot` selects `main_3d.tscn`. This is a stale test contract, not evidence that the 3D baseline should be reverted.
-3. Both 2D and 3D owners coexist. This is intentional during migration in several files, but any new work should target the 3D entry closure and avoid restoring 2D runtime assumptions.
-
-## New Backlog (V3 Draft)
-
-### P0
-
-- V3-001 Reproducible Runtime Asset Bootstrap: make a fresh checkout deterministically acquire/prepare the required external asset packs and fail with a clear diagnostic when unavailable; validate import and `main_3d` health.
-- V3-002 Dungeon Completion Vertical Slice: define the existing encounter's terminal outcome, reward grant, party return, cleanup, and Threat/Wave result reporting without creating a second combat system.
-
-### P1
-
-- V3-003 Persistent Game State: add one authoritative save/load owner for resources, rosters, time, threat/wave, exploration, dungeon state, Death Ledger and supported settings, with a fresh-process regression.
-- V3-004 Food Preparation Runtime Contract: connect existing Food preparation data to the confirmed long-term preparation effect boundary, without treating Food as a runtime Potion or inventing effects not specified by design.
-- V3-005 Production Economy Loop: complete farm/herb/cooking/potion production and player-facing building progression using the existing VillageResources owner.
-
-### P2
-
-- V3-006 Equipment and Combat Progression: define and implement the currently designed equipment/skill progression against the existing MercenaryData/actor owners.
-- V3-007 Village Logistics and Capacity: storage, transport, facility capacity and the remaining production buildings.
-- V3-008 Content Expansion: boss, quest, faction, shop/trade and deeper Dungeon content only after the vertical slice is stable.
-
-### P3
-
-- V3-009 Replace legacy smoke contract with a current 3D smoke/interaction contract and archive the old 2D-only assertions.
-- V3-010 Visual/content polish and asset catalog expansion after bootstrap and runtime contracts are stable.
+1. `tests/v3006_test.gd` HANGS (headless) because it calls the nonexistent `get_mercenary_data` via unguarded `.call()` on MercenaryRoster (v3006_test.gd:28) after its `has_method` probe already failed → script error → `quit()` never runs.
+2. `tests/v3007_test.gd` vacuously passes: line 65 calls `Script.has_constant`, which does not exist in GDScript; the script error aborts the whole skill-check block, no assertion executes, `V3007_RESULT=PASS` is printed from an unexercised state.
+3. `tests/v3011_test.gd` FAILs on production (no shop/trade API, no gold).
+4. `tests/v3012_test.gd` FAILs on production (faction API exists only as DeathLedger stubs, not on WaveManager as the test expects).
+5. Boss encounter API (`start/complete_boss_encounter`, `spawn_boss_for_dungeon`) has no production caller.
+6. Capacity/transport API (`village_resources.gd`) has no production caller; it is data-only.
+7. Fresh asset closure is not self-contained (Quaternius/Tiny Swords external/ignored, bootstrap scripts under `tools/`); `v3002_test.gd` locks the bootstrap contract.
+8. `tests/smoke_test.gd` (2D) is stale vs the configured `main_3d.tscn` entry.
 
 ## Legacy Task Recommendation
 
-- Archive prior TASK status as `LEGACY_HISTORY`; do not use DONE/FAIL labels as current implementation truth.
-- Keep current 3D baseline and focused regression tests as the execution basis.
-- Do not delete the legacy 2D source/tests in this audit; remove or archive them only through a separately approved migration task after replacement coverage exists.
-- No production code, scene, resource, test, reset, clean, merge, or commit was performed by this audit.
+- Archive prior TASK status as `LEGACY_HISTORY`; do not use DONE/FAIL labels as implementation truth.
+- Keep the 3D baseline and focused regressions as the execution basis.
+- Do not delete legacy 2D source/tests outside a separately approved migration task.
+- Future work targeting equipment/skills/shop/faction/boss/save must first repair or replace the broken V3 regressions (`v3006`, `v3007`, `v3011`, `v3012`) so they reflect reachable production APIs.
