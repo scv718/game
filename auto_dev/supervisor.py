@@ -809,8 +809,13 @@ def verification_gate(task):
 
     rc, st, _ = _run_cmd(["git", "-C", root, "status", "--porcelain"], timeout=60)
     lines = [l for l in (st or "").splitlines() if l.strip()]
-    if not lines:
-        return False, ["NO_CODE_DIFF: 변경된 파일이 없음 - 구현 자체가 이루어지지 않았을 가능성"]
+    # .import 사이드카(.godot import 산출물)만 변경된 경우는 실질 코드 변경 없음 → NO_CODE_DIFF
+    meaningful = [
+        l for l in lines
+        if not l[3:].strip().strip('"').replace("\\", "/").endswith(".import")
+    ]
+    if not meaningful:
+        return False, ["NO_CODE_DIFF: 실질 코드 변경이 없음(.import 산출물뿐) - 구현 자체가 이루어지지 않았을 가능성"]
 
     # 위험 파일 변경 → FAIL (자동 되돌림 없이 사람 확인 대상으로)
     for l in lines:
