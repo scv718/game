@@ -236,3 +236,10 @@ func get_faction_reputation(faction_id: String) -> int:
 ## TASK-012: Return total death count
 func get_death_count() -> int:
 	return _next_id - 1
+
+
+## TASK-012: Get a specific death record by ID
+func get_death_record(record_id: String) -> DeathRecord:
+	if not _records.has(record_id):
+		return null
+	return _copy_record(_records[record_id])
