@@ -9,6 +9,8 @@ extends Node
 ## 차단과 Ghost(재귀) 사망의 신규 record 생성을 차단하는 가드를 구현한다.
 ## TASK-025-1에서 entity category 기반 eligibility(ELIGIBLE_CATEGORIES)로
 ## unsupported category를 안전하게 skip하도록 일반화한다.
+## TASK-028-1: Ghost Identity Preservation. Mercenary의 원래 loadout을 포함한
+## 사망 정보를 저장하여 Ghost가 원본 상태를 재현할 수 있도록 한다.
 
 signal record_added(record_id: String)
 signal record_status_changed(record_id: String, status: int)
@@ -28,6 +30,11 @@ const ELIGIBLE_CATEGORIES := {
 var _records: Dictionary = {}
 var _next_id := 1
 
+## TASK-028-1: Ghost Identity Preservation.
+## 원래 mercenary에서 loadout/effect 정보를 저장할 수 있는 필드.
+## 특정 사망 기록(record)에 대한 원본 정보 저장용.
+var _original_mercenary_data: Dictionary = {}
+
 
 ## TASK-016-2: 사망 snapshot으로 record를 생성해 Ledger에 추가하고 record_added를
 ## 발행한다. snapshot은 순수 데이터 Dictionary이며, record_id가 없으면 자동 생성하고
@@ -42,6 +49,9 @@ var _next_id := 1
 ## TASK-025-1 eligibility: entity category가 eligible set에 없으면(unsupported category)
 ## 신규 record를 만들지 않고 null을 반환한다. identity snapshot / source·death context /
 ## one-return invariant(duplicate+recursive guard)는 유지된다.
+## TASK-028-1: Ghost Identity Preservation. Mercenary 사망 정보 저장 시 원래 loadout/
+## effect 구조를 추가로 저장한다. 사망 기록을 만들 때 mercenary data를 별도 필드에
+## 저장하고, Ghost 생성 시 복구하여 사용할 수 있도록 한다.
 func record_death(snapshot: Dictionary) -> DeathRecord:
 	var record := DeathRecord.from_snapshot(snapshot)
 	if not is_eligible_category(record.get_category()):
@@ -54,6 +64,11 @@ func record_death(snapshot: Dictionary) -> DeathRecord:
 		record.record_id = _generate_record_id()
 	if record.eligible_day <= 0:
 		record.eligible_day = record.death_day + 1
+	
+	## TASK-028-1: Mercenary 사망 시 원본 loadout/effect 정보 저장
+	if record.get_category() == "MERCENARY" and snapshot.has("original_mercenary_data"):
+		_original_mercenary_data[record.record_id] = snapshot["original_mercenary_data"]
+	
 	_records[record.record_id] = record
 	record_added.emit(record.record_id)
 	return _copy_record(record)
@@ -84,6 +99,15 @@ func report_death(member_id: String, source: String) -> DeathRecord:
 		"death_source": source
 	}
 	return record_death(snapshot)
+
+
+## TASK-028-1: Ghost Identity Preservation.
+## 주어진 record_id의 원래 mercenary 데이터를 반환한다.
+## record_id가 없거나 mercenary 데이터가 없으면 null을 반환한다.
+func get_original_mercenary_data(record_id: String) -> Dictionary:
+	if not _original_mercenary_data.has(record_id):
+		return {}
+	return _original_mercenary_data[record_id]
 
 
 ## 전체 record 목록(복사본). 조회 결과를 외부에서 수정해도 Ledger 내부 상태는 변하지
