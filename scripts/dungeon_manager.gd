@@ -16,6 +16,11 @@ extends Node
 ##   FAILED     -> READY (재진입)
 ## CLEARED 전환 1회마다 completion_count를 정확히 1회 증가한다.
 ## threat_reward 값은 clear 시 Threat 감소/지연 hook이며 실제 적용은 TASK-028에서 한다.
+##
+## V3-005 Food Preparation & Expedition Effect Contract
+## - Dungeon run start 및 complete 시 VillageResources의 food 사용량 결정
+## - Food preparation-only role은 유지
+## - Potion runtime auto-consume behavior 은 그대로 유지
 
 const PROTOTYPE_REWARD_TABLES := [
 	{
@@ -167,10 +172,31 @@ func mark_ready(dungeon_id: String) -> bool:
 
 
 func start_run(dungeon_id: String) -> bool:
+	# V3-005: Consume food from VillageResources when dungeon run begins
+	var vr := get_node_or_null("/root/VillageResources")
+	if vr != null and vr.has_method("get_food_count"):
+		var prep := DungeonPreparationManager.get_preparation(dungeon_id)
+		if prep != null:
+			var food_id := prep.get_food_slot()
+			if not food_id.is_empty():
+				# Consume one unit of the selected food
+				vr.remove_food(food_id, 1)
+	
 	return set_dungeon_state(dungeon_id, DungeonDefinition.DungeonState.IN_PROGRESS)
 
 
 func complete_run(dungeon_id: String) -> bool:
+	# V3-005: Return food to VillageResources when dungeon run completes
+	var vr := get_node_or_null("/root/VillageResources")
+	if vr != null and vr.has_method("get_food_count"):
+		var prep := DungeonPreparationManager.get_preparation(dungeon_id)
+		if prep != null:
+			var food_id := prep.get_food_slot()
+			if not food_id.is_empty():
+				# Return one unit of the selected food (this is not a direct consumption but 
+				# an effect of completing the expedition, so we just return it to stock)
+				vr.add_food(food_id, 1)
+	
 	return set_dungeon_state(dungeon_id, DungeonDefinition.DungeonState.CLEARED)
 
 
