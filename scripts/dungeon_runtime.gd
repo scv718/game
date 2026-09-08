@@ -149,6 +149,44 @@ func end_run() -> int:
 
 ## --- spawn ---
 
+## V3-010: Spawn a boss enemy for the dungeon.
+func spawn_boss_for_dungeon(dungeon_id: String) -> int:
+	if _arena == null or not is_instance_valid(_arena):
+		return 0
+	var dungeon := DungeonManager.get_dungeon(dungeon_id)
+	if dungeon == null:
+		return 0
+	var scene: PackedScene = load(ENEMY_SCENE)
+	if scene == null:
+		return 0
+	
+	# For now, just spawn a single boss - future expansion can add multiple bosses or more complex logic
+	var enemy := scene.instantiate() as EnemyActor3D
+	if enemy == null:
+		return 0
+		
+	# Boss type naming convention - use "Boss" prefix to identify boss enemies
+	enemy.setup("boss_%s" % dungeon_id, "Boss", "north")
+	enemy.position = ENEMY_START + _spawn_offset(0) # Spawn at the first offset position
+	_arena.add_child(enemy)
+	enemy.died.connect(_on_enemy_died)
+	_enemy_actors.append(enemy)
+	
+	return 1
+
+
+## V3-010: Check if a boss spawn is needed for this dungeon.
+func needs_boss_spawn(dungeon_id: String) -> bool:
+	var dungeon := DungeonManager.get_dungeon(dungeon_id)
+	if dungeon == null:
+		return false
+	# For now, assume all dungeon encounters with boss_ prefix need boss spawns
+	for encounter_id in dungeon.get_encounter_ids():
+		if encounter_id.begins_with("boss_"):
+			return true
+	return false
+
+
 ## party member id 목록을 persistent Mercenary identity로 spawn한다. 이미 진행 중인
 ## encounter에 동일 identity actor가 있으면 중복 spawn하지 않는다. 실제로 spawn된
 ## actor 수를 반환한다.

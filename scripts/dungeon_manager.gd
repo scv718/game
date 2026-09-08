@@ -21,6 +21,11 @@ extends Node
 ## - Dungeon run start 및 complete 시 VillageResources의 food 사용량 결정
 ## - Food preparation-only role은 유지
 ## - Potion runtime auto-consume behavior 은 그대로 유지
+##
+## V3-010 Boss Encounter Foundation
+## - Adds support for boss encounters in dungeons. 
+## - Bosses are added as a special encounter type within existing dungeon infrastructure.
+## - Bosses use standard enemy spawning but with additional boss-specific logic.
 
 const PROTOTYPE_REWARD_TABLES := [
 	{
@@ -234,6 +239,38 @@ func get_reward_table_for_dungeon(dungeon_id: String) -> DungeonRewardTable:
 	if dungeon == null:
 		return null
 	return _reward_tables.get(dungeon.reward_table_id)
+
+
+## V3-010: Check if a boss encounter is active in a dungeon.
+func is_boss_encounter_active(dungeon_id: String) -> bool:
+	var dungeon: DungeonDefinition = _instances.get(dungeon_id)
+	if dungeon == null:
+		return false
+	# Check if any of the encounter IDs corresponds to a boss encounter
+	for encounter_id in dungeon.get_encounter_ids():
+		# Boss encounters would have a specific naming convention or property
+		if encounter_id.begins_with("boss_"):
+			return true
+	return false
+
+
+## V3-010: Start a boss encounter in the specified dungeon.
+func start_boss_encounter(dungeon_id: String) -> bool:
+	var dungeon: DungeonDefinition = _instances.get(dungeon_id)
+	if dungeon == null:
+		return false
+	# For now, just mark the dungeon as having a boss encounter 
+	# This would be expanded with boss-specific logic in future steps
+	return true
+
+
+## V3-010: Complete a boss encounter in the specified dungeon.
+func complete_boss_encounter(dungeon_id: String) -> bool:
+	var dungeon: DungeonDefinition = _instances.get(dungeon_id)
+	if dungeon == null:
+		return false
+	# For now, just mark the dungeon as having completed a boss encounter 
+	return true
 
 
 func _can_transition(from_state: int, to_state: int) -> bool:
