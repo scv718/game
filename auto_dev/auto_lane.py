@@ -461,6 +461,10 @@ def main():
                 marked_nd = [k for k in rem if st.get(k) == "NEEDS_DESIGN"]
             active = [k for k in rem if k not in marked_nd]
             if not active:
+                progressed, stop = integrate_ready_tasks(main_repo)
+                if stop:
+                    log("=== AUTO_LANE 종료: %s ===" % stop)
+                    return 1
                 log("[%s] 실행 가능 leaf 없음 (pass %d) - 그룹 종료" % (group, p))
                 break
             log("[%s] pass %d 실행 leaf: %s" % (group, p, active))
