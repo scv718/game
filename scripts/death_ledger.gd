@@ -72,6 +72,20 @@ func get_record(record_id: String) -> DeathRecord:
 	return _copy_record(_records[record_id])
 
 
+## TASK-026-1: party member id로 사망 snapshot을 만들고 record_death에서 record를 추가한다.
+## 사망은 dungeon에서 발생한 것으로 간주하고 category는 "MERCENARY"로 기록하며,
+## death day 정보를 저장한다. 복사본이 반환되므로 Ledger 내부 상태는 변경되지 않는다.
+func report_death(member_id: String, source: String) -> DeathRecord:
+	var snapshot := {
+		"source_uid": member_id,
+		"display_name": "Mercenary",
+		"category": "MERCENARY",
+		"death_day": GameTime.get_day(),
+		"death_source": source
+	}
+	return record_death(snapshot)
+
+
 ## 전체 record 목록(복사본). 조회 결과를 외부에서 수정해도 Ledger 내부 상태는 변하지
 ## 않는다.
 func get_all_records() -> Array[DeathRecord]:
