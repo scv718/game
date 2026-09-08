@@ -451,6 +451,25 @@ def _git_rev_parse(root, ref="HEAD"):
     return (out or "").strip() or None
 
 
+def _ensure_wt_godot_cache(main, wt):
+    """워크트리 .godot 글로벌 클래스 캐시 부트스트랩.
+
+    .godot 는 git 에 포함되지 않아 신규 워크트리에 없으면 class_name 해석이 실패
+    (예: PotionData)해 autoload 체인이 깨지고 태스크 테스트/회귀가 오탐 FAIL 된다.
+    canonical .godot 캐시를 복사해 동일 클로저로 만든다(소스 워크트리도 동일 방식).
+    """
+    import shutil
+    cache = os.path.join(wt, ".godot", "global_script_class_cache.cfg")
+    if os.path.exists(cache):
+        return
+    src = os.path.join(main, ".godot")
+    if not os.path.isdir(src):
+        log(f"[WT] canonical .godot 캐시 없음({src}) - bootstrap 생략")
+        return
+    shutil.copytree(src, os.path.join(wt, ".godot"), dirs_exist_ok=True)
+    log(f"[WT] .godot 캐시 bootstrap: {wt} ({'완료' if os.path.exists(cache) else '실패'})")
+
+
 def _rel(root, p):
     return os.path.relpath(p, root).replace("\\", "/")
 
@@ -492,11 +511,13 @@ def _ensure_group_worktree(main, wt):
         if actual != head:
             log(f"[WT-ERR] 생성된 워크트리 HEAD 불일치: {actual} != {head}")
             sys.exit(1)
-        log(f"[WT] 신규 워크트리 생성: {wt} @ {head} (branch={branch})")
+        log(f"[WT] 신규 워트리 생성: {wt} @ {head} (branch={branch})")
+        _ensure_wt_godot_cache(main, wt)
         return head
     actual = _git_rev_parse(wt, "HEAD")
     if actual == head:
         log(f"[WT] 워크트리 재사용(HEAD 일치): {wt} @ {head}")
+        _ensure_wt_godot_cache(main, wt)
         return head
     # wt HEAD != main HEAD. 허용하려면 main HEAD가 wt HEAD의 ancestor여야 하고,
     # 해당 worktree가 이 그룹의 expected branch여야 한다(동일 그룹 branch에
@@ -506,6 +527,7 @@ def _ensure_group_worktree(main, wt):
         rc, _, _ = _run_cmd(["git", "-C", main, "merge-base", "--is-ancestor", head, actual], timeout=30)
         if rc == 0:
             log(f"[WT] 워크트리 재사용(descendant, 동일 그룹 branch {branch}): {wt} @ {actual}")
+            _ensure_wt_godot_cache(main, wt)
             return head
     log(f"[WT-ERR] 기존 워크트리가 STALE: {wt} HEAD={actual}, canonical main HEAD={head} "
         f"(branch={actual_branch}, expected={branch}). 재사용 금지(보존은 유지). "
