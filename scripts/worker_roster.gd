@@ -74,6 +74,16 @@ func get_workers_for_workplace(workplace: Object) -> Array[WorkerData]:
 	return out
 
 
+## TASK-025: Worker를 특정 workplace에 배치한다.
+## Worker의 인스턴스는 assign_worker 메서드의 첫 번째 인자이며, 배치될 시설은 두 번째 인자이다.
+## 이미 배치된 Worker 혹은 다른 장소에 배치된 Worker는 재배치를 허용하지 않으며,
+## 같은 workplace에 중복 배치 또한 허용하지 않는다. 배치가 성공하면 workplace가
+## spawn_worker_actor() 메서드를 지원하는 경우 해당 시설에서 실제 Worker Actor를 생성하고
+## Actor 수/월드 Actor를 추적한다.
+func assign_worker(worker: WorkerData, workplace: Object) -> bool:
+	return assign(worker, workplace)
+
+
 ## WorkerData를 workplace에 배치한다. 이미 배치된 Worker는 다른 workplace에
 ## 재배치할 수 없고, 같은 workplace에 중복 배치할 수도 없다.
 ## Workplace(slot capacity를 가진 시설)인 경우 가득 찬 시설에는 추가 배치를 거부한다.

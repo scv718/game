@@ -65,6 +65,11 @@ func get_food(food_id: String) -> int:
 	return get_amount(food_id)
 
 
+## Returns current count of a given food item.
+func get_food_count(food_id: String) -> int:
+	return get_food(food_id)
+
+
 ## Adds to the food stock. Only defined foods are allowed; non-positive amounts are ignored.
 func add_food(food_id: String, amount: int) -> bool:
 	if not is_food(food_id):
