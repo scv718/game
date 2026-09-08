@@ -79,6 +79,12 @@ func _run() -> void:
 - **존재하지 않는 파일을 `preload`/`load`하면 컴파일 에러로 테스트 전체가 실패합니다.** 참조 대상이 실제로 있는지 먼저 `glob`으로 확인하세요 (예: `scenes/dungeon.tscn`, `scripts/mercenary.gd`는 존재하지 않음)
 - 반드시 Godot headless로 실행해 `RESULT=PASS` 확인. 파일만 만들고 실행하지 않으면 안 됩니다
 
+## GDScript 타입 규칙 (파싱 오류 방지 — 반드시 준수)
+- **`var x := <Dictionary 인덱스>` 금지**: `_records[record_id]` 같은 Dictionary 접근은 Variant라서 `:=` 추론이 불가능해 `Cannot infer the type` 파싱 오류를 냅니다.
+- Dictionary 접근/`.get()` 결과는 반드시 명시적 타입으로 선언하세요: `var record: DeathRecord = _records[record_id]` / `var dungeon: DungeonDefinition = _instances.get(dungeon_id)`.
+- `:=` 는 정적 타입이 보장된 값(생성자, 필드, 명시 반환 타입의 `func` 호출)에만 사용하세요.
+- 코드 작성 후 반드시 Godot headless로 파싱 확인: `godot --headless --path . --import`(또는 관련 스크립트 load)로 Parse Error가 없는지 확인하세요.
+
 ## 시간/컨텍스트 절약 규칙 (중요)
 - **웹 검색/문서 열람 금지** (webfetch/websearch 불가). 모든 정보는 로컬 코드에서 얻으세요.
 - 탐색은 grep 1~2회로 제한하고, 파일 3개 이하만 읽으세요.
