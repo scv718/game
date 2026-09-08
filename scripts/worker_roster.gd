@@ -6,6 +6,13 @@ extends Node
 ## 같은 WorkerData가 동시에 두 workplace에 배치될 수 없도록 보장한다.
 ## freed workplace에 대한 안전한 정리를 제공한다. 영구 Save/Load는 구현하지 않는다.
 
+## TASK-009: Add worker capacity functions
+func get_worker_capacity() -> int:
+	return InnCapacity.get_worker_capacity()
+
+func get_current_workers() -> Array[WorkerData]:
+	return _workers.duplicate()
+
 var _workers: Array[WorkerData] = []
 var _actors: Dictionary = {}
 
