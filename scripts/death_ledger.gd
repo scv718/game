@@ -199,3 +199,16 @@ func _generate_record_id() -> String:
 	var id := "death_%d" % _next_id
 	_next_id += 1
 	return id
+
+## TASK-012: Add faction reputation management
+func add_faction_reputation(faction_id: String, amount: int) -> void:
+	# This function is a placeholder that can be extended to store and manage faction reputations
+	pass
+
+func get_faction_reputation(faction_id: String) -> int:
+	# This function is a placeholder that can be extended to retrieve faction reputations
+	return 0
+
+## TASK-012: Return total death count
+func get_death_count() -> int:
+	return _next_id - 1
