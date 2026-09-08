@@ -84,6 +84,13 @@ func _run() -> void:
 - 탐색은 grep 1~2회로 제한하고, 파일 3개 이하만 읽으세요.
 - 10분 내에 테스트 파일 + 구현을 완성하세요. 지나치게 완벽히 하려 하지 말고 핵심 경로를 구현하세요.
 
+## 기존 구현 보존 (가장 중요, 이전 시도에서 위반함)
+- **존재하는 스크립트/클래스/기능을 삭제하거나 전체 재작성하지 마세요.** 기존 코드는 실패한 시도가 아니라 프로젝트의 유효한 구현입니다. 태스크 범위 기능은 **기존 클래스에 추가(additive/extend)**로만 구현하세요. 한 파일의 400줄을 80줄 stub로 교체하는 것은 절대 금지입니다.
+- 예: `scripts/dungeon_runtime.gd`는 이미 arena 인스턴스화 + 파티/enemy spawn + 자동전투 진군 + end_run 정리(`begin_run`, `end_run`, `spawn_party`, `spawn_enemies_for_dungeon`, `is_run_active`, `get_returned_alive_ids` 등)를 구현합니다. V3-001은 이 파일을 **삭제/교체하지 말고 그 위에** 완료/귀환/보상 루프를 추가하세요.
+- 새 autoload나 새 최상위 미들웨어 클래스를 만들지 마세요. 태스크가 명시적으로 요구하지 않는 새 파일 생성은 금지입니다. 던전 완료/귀환 루프는 기존 `DungeonManager.complete_run/fail_run` + 기존 `DungeonRuntime` + `DeathLedger` + `WaveManager`를 연결하여 구현하세요.
+- 기존 테스트(`tests/task0273_test.gd`, `tests/task0274_test.gd`, `tests/dungeon_runtime_integration_test.gd`)가 의존하는 공개 API를 제거하면 회귀가 깨집니다. 절대 금지.
+- 필요한 메서드가 없으면 stub 파일을 만들어 새 이름을 "호출"하지 말고, 반드시 실존 클래스에 **추가(메서드 구현)**하세요. 항상 `grep "func "`으로 실제 시그니처를 확인한 뒤 확장하세요.
+
 ## 절대 하지 말 것
 - `auto_dev/` 아래 어떤 파일도 수정/생성/삭제 금지
 - AGENTS.md를 읽고 요약만 출력하는行为 금지 — 반드시 코드 파일을 생성하세요
