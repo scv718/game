@@ -158,7 +158,7 @@ def main():
         check("gate rejects script error tokens with PASS marker", not ok and any("치명" in p for p in probs))
         ok, probs = gate_script_output(0, "V4001_ASSERTIONS=3/12\nV4001_RESULT=PASS\n", "", task_id="V4-001")
         check("gate rejects assertion counter mismatch (3/12 + PASS)", not ok and any("불일치" in p for p in probs))
-        ok, probs = gate_script_output(0, "PASS: a\nV4001_ASSERTIONS=12/12\nV4001_RESULT=PASS\n", "", task_id="V4-001")
+        ok, probs = gate_script_output(0, "PASS: a\n" * 12 + "V4001_ASSERTIONS=12/12\nV4001_RESULT=PASS\n", "", task_id="V4-001")
         check("gate accepts satisfied V4 marker contract", ok and not probs)
         ok, probs = gate_script_output(0, "V4001_RESULT=PASS\n", "", task_id="V4-001")
         check("gate rejects missing asserted counters for V4 namespace",
@@ -166,6 +166,11 @@ def main():
         ok, probs = gate_script_output(0, "PASS: a\nFAIL: b\nV4001_ASSERTIONS=1/1\nV4001_RESULT=PASS\n", "", task_id="V4-001")
         check("gate rejects vacuous PASS with internal FAIL line",
               not ok and any("FAIL" in p for p in probs))
+        ok, probs = gate_script_output(0, "PASS: a\nV4002_ASSERTIONS=4/4\nV4002_RESULT=PASS\n", "", task_id="V4-002")
+        check("gate rejects guarded-vacuous PASS (executed lines < expected)",
+              not ok and any("실행 검증 라인 불일치" in p for p in probs))
+        ok, probs = gate_script_output(0, "PASS: a\nPASS: b\nPASS: c\nV4002_ASSERTIONS=3/3\nV4002_RESULT=PASS\n", "", task_id="V4-002")
+        check("gate accepts matching executed lines", ok and not probs)
         ok, probs = gate_script_output(0, "BASELINE_3D_RESULT=PASS\n", "", marker_token="BASELINE_3D")
         check("gate accepts baseline marker contract", ok and not probs)
 

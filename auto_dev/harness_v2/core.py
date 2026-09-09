@@ -325,6 +325,11 @@ def gate_script_output(rc: int, out: str, err: str, *, marker_token: str = "",
                 problems.append("{}_ASSERTIONS expected>0 위반 ({}).".format(token, expected))
             if actual != expected:
                 problems.append("{}_ASSERTIONS 불일치 {}/{}".format(token, actual, expected))
+            pass_lines = len(re.findall(r"(?m)^\s*PASS:\s", out or ""))
+            fail_lines = len(re.findall(r"(?m)^\s*FAIL:\s", out or ""))
+            if pass_lines + fail_lines != expected:
+                problems.append("{}_ASSERTIONS 실행 검증 라인 불일치 PASS={} FAIL={} expected={} (guarded/vacuous PASS 의심)".format(
+                    token, pass_lines, fail_lines, expected))
         if re.search(token + r"_RESULT=PASS", text, re.IGNORECASE) is None:
             problems.append("{}_RESULT=PASS 마커 없음".format(token))
     return (not problems), problems
