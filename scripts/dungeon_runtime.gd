@@ -59,8 +59,45 @@ var _enemy_actors: Array[Node] = []
 ## encounter 종료(end_run) 시 alive 상태로 roster 복귀된 party identity 목록.
 var _returned_alive_ids: Array = []
 
+## V4-002: 현재 run phase. 미활성(run 없음)이면 IDLE.
+var _phase: RunPhase = RunPhase.IDLE
+## V4-003: 마지막으로 해소된 outcome(초기 NONE). evaluate_outcome() 성공 1회만 갱신.
+var _last_outcome: Outcome = Outcome.NONE
+## V4-003: 진행 중 run에서 해소가 일어났는지 run당 정확히 1회 가드(2차 호출 ""));
+## begin_run 시작 시(또는 이전 해소 완료 시) NONE으로 리셋된다.
+var _resolved_outcome: Outcome = Outcome.NONE
+
 signal encounter_started(dungeon_id: String)
 signal encounter_ended(dungeon_id: String)
+## V4-002: run phase 전이 신호(from, to). begin_run 성공 시
+## IDLE→DEPLOYMENT→(alive enemy 존재 시)COMBAT으로 진행하고, end_run 시
+## RESOLVED→(cleanup)→IDLE로 마무리한다.
+signal phase_changed(from: int, to: int)
+## V4-003: 정확한 전투 결과 해소 신호(outcome, dungeon_id). end_run cleanup 전에
+## run당 정확히 1회 emit된다.
+signal run_outcome(outcome: int, dungeon_id: String)
+
+## V4-002: dungeon run phase machine. IDLE은 미활성(진행 중 run 없음)을 의미하고,
+## begin_run 성공 시 DEPLOYMENT로 진입한 뒤 alive enemy가 있으면 COMBAT으로 전이한다.
+## end_run 시 RESOLVED로 전이해 해소 상태가 관찰되는 순간을 보장한 뒤 IDLE로 복귀한다.
+enum RunPhase { IDLE, DEPLOYMENT, COMBAT, RESOLVED }
+
+const RUN_PHASE_NAMES := {
+	RunPhase.IDLE: "IDLE",
+	RunPhase.DEPLOYMENT: "DEPLOYMENT",
+	RunPhase.COMBAT: "COMBAT",
+	RunPhase.RESOLVED: "RESOLVED",
+}
+
+## V4-003: dungeon combat outcome. evaluate_outcome()이 단일 source of truth로
+## VICTORY/DEFEAT를 판정하고 run당 정확히 1회 해소(resolution)한다.
+enum Outcome { NONE, VICTORY, DEFEAT }
+
+const OUTCOME_NAMES := {
+	Outcome.NONE: "NONE",
+	Outcome.VICTORY: "VICTORY",
+	Outcome.DEFEAT: "DEFEAT",
+}
 
 
 func _ready() -> void:
@@ -82,6 +119,27 @@ func get_dungeon_id() -> String:
 
 func get_arena() -> Node:
 	return _arena
+
+
+## V4-002: 현재 run phase(RunPhase.IDLE 등, int).
+func get_phase() -> int:
+	return _phase
+
+
+## V4-002: 현재 run phase 이름("IDLE"/"DEPLOYMENT"/"COMBAT"/"RESOLVED").
+func get_phase_name() -> String:
+	return RUN_PHASE_NAMES.get(_phase, "?")
+
+
+## V4-003: 마지막으로 해소된 outcome(Outcome.NONE/VICTORY/DEFEAT, int).
+## 미해결 수동 end_run 후에도 NONE을 유지한다.
+func get_last_outcome() -> int:
+	return _last_outcome
+
+
+## V4-003: 마지막으로 해소된 outcome 이름("NONE"/"VICTORY"/"DEFEAT").
+func get_last_outcome_name() -> String:
+	return OUTCOME_NAMES.get(_last_outcome, "?")
 
 
 ## --- encounter lifecycle ---
@@ -119,6 +177,12 @@ func begin_run(dungeon_id: String) -> bool:
 	_activate_encounter_advance()
 	_dungeon_id = dungeon_id
 	_active = true
+	_resolved_outcome = Outcome.NONE
+	# V4-002: IDLE→DEPLOYMENT→(alive enemy 존재 시)COMBAT. 해소 후 대상이 남아
+	# evaluate_outcome()으로 결정되는 순간(RESOLVED)이 정확히 1회 오도록 한다.
+	_set_phase(RunPhase.DEPLOYMENT)
+	if get_alive_enemy_count() > 0:
+		_set_phase(RunPhase.COMBAT)
 	encounter_started.emit(dungeon_id)
 	return true
 
@@ -130,6 +194,10 @@ func begin_run(dungeon_id: String) -> bool:
 func end_run() -> int:
 	if not _active:
 		return 0
+	# V4-002: non-IDLE run 종료 시 RESOLVED로 전이해 "해소 종료" 상태가 cleanup 전에
+	# 관찰되도록 한다(이미 RESOLVED면 중복 emit하지 않는다).
+	if _phase != RunPhase.RESOLVED:
+		_set_phase(RunPhase.RESOLVED)
 	var removed := 0
 	for member_id in _party_actors.keys():
 		var actor: Variant = _party_actors[member_id]
@@ -144,7 +212,68 @@ func end_run() -> int:
 	_dungeon_id = ""
 	_cleanup_arena()
 	encounter_ended.emit("")
+	# V4-002: cleanup 후 IDLE로 복귀(다음 run 재진입 허용).
+	_set_phase(RunPhase.IDLE)
 	return removed
+
+
+## --- V4-003: exact dungeon combat outcome ---
+
+## 현재 run의 정확한 전투 결과를 실측해 문자열로 반환한다. 해소가 발생하면 run당
+## 정확히 1회 DungeonManager/WaveManager에 결과를 반영하고 end_run 정리를 수행한다.
+## 반환: "VICTORY" | "DEFEAT" | ""(미해소/미판정). 조건 우선순위:
+##  1) enemies 전멸(or 없음) && party alive >= 1 → "VICTORY"
+##  2) party 전멸 && enemies alive >= 1        → "DEFEAT"
+##  3) 둘 다 비거나 양쪽 생존(대치 중)         → ""
+## DEPLOYMENT/COMBAT에서만 판정/해소하며, run당 정확히 1회만 해소한다(2차 호출 "").
+func evaluate_outcome() -> String:
+	if not _active:
+		return ""
+	if _phase != RunPhase.DEPLOYMENT and _phase != RunPhase.COMBAT:
+		return ""
+	if _resolved_outcome != Outcome.NONE:
+		return ""
+	var enemies_alive := get_alive_enemy_count()
+	var party_alive := get_alive_party_count()
+	if enemies_alive == 0 and party_alive > 0:
+		_resolve_run(Outcome.VICTORY)
+		return "VICTORY"
+	if party_alive == 0 and enemies_alive > 0:
+		_resolve_run(Outcome.DEFEAT)
+		return "DEFEAT"
+	return ""
+
+
+## 해소 순서(고정): dungeon 상태 반영(complete/fail_run) → WaveManager 결과 보고 →
+## last_outcome 갱신 → run_outcome emit(end_run cleanup 전) → RESOLVED 전이 → end_run.
+## run당 정확히 1회(_resolved_outcome 가드)만 실행된다.
+func _resolve_run(outcome: int) -> void:
+	_resolved_outcome = outcome
+	var dungeon_id := _dungeon_id
+	match outcome:
+		Outcome.VICTORY:
+			DungeonManager.complete_run(dungeon_id)
+			WaveManager.report_dungeon_result(WaveManager.DUNGEON_CLEARED, dungeon_id)
+		Outcome.DEFEAT:
+			DungeonManager.fail_run(dungeon_id)
+			WaveManager.report_dungeon_result(WaveManager.DUNGEON_FAILED, dungeon_id)
+		_:
+			# 방어적: 알 수 없는 outcome은 해소하지 않는다.
+			_resolved_outcome = Outcome.NONE
+			return
+	_last_outcome = outcome
+	run_outcome.emit(_last_outcome, dungeon_id)
+	_set_phase(RunPhase.RESOLVED)
+	end_run()
+
+
+## phase 전이 helper: 불필요한 중복 emit을 방지한다(변경 시에만 phase_changed emit).
+func _set_phase(to: int) -> void:
+	if _phase == to:
+		return
+	var from := _phase
+	_phase = to
+	phase_changed.emit(from, to)
 
 
 ## --- spawn ---
