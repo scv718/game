@@ -305,6 +305,8 @@ def gate_script_output(rc: int, out: str, err: str, *, marker_token: str = "",
         problems.append("RESULT=FAIL 마커 존재")
     if "RESULT=PASS" not in text:
         problems.append("PASS 마커 없음 (실행 실패 추정)")
+    if rc == 0 and re.search(r"(?m)^\s*FAIL:\s", text):
+        problems.append("테스트 내부 FAIL 행 존재 (vacuous PASS 의심)")
     for token in FATAL_ERROR_TOKENS:
         if token in text:
             problems.append("치명 스크립트 오류: {}".format(token))

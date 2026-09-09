@@ -163,6 +163,9 @@ def main():
         ok, probs = gate_script_output(0, "V4001_RESULT=PASS\n", "", task_id="V4-001")
         check("gate rejects missing asserted counters for V4 namespace",
               not ok and any("ASSERTIONS" in p for p in probs))
+        ok, probs = gate_script_output(0, "PASS: a\nFAIL: b\nV4001_ASSERTIONS=1/1\nV4001_RESULT=PASS\n", "", task_id="V4-001")
+        check("gate rejects vacuous PASS with internal FAIL line",
+              not ok and any("FAIL" in p for p in probs))
         ok, probs = gate_script_output(0, "BASELINE_3D_RESULT=PASS\n", "", marker_token="BASELINE_3D")
         check("gate accepts baseline marker contract", ok and not probs)
 
