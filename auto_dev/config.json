@@ -11,6 +11,8 @@
     "max_fix_rounds":  3,
     "implementer_timeout_sec":  7200,
     "reviewer_timeout_sec":  3600,
+    "lane_no_progress_sec":  2700,
+    "lane_overall_timeout_sec":  9000,
     "log_dir":  "logs",
     "variant":  "",
     "skip_review":  true,
