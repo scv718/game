@@ -166,6 +166,40 @@ def main():
         ok, probs = gate_script_output(0, "BASELINE_3D_RESULT=PASS\n", "", marker_token="BASELINE_3D")
         check("gate accepts baseline marker contract", ok and not probs)
 
+        import auto_lane
+        gate_state = Path(temp) / "gate_state.json"
+        gstore = V2StateStore(str(gate_state))
+        done_dep = TaskState("DEP_DONE", integration_status=Lifecycle.INTEGRATED.value,
+                             integrated_commit="beef", status=Lifecycle.DONE.value)
+        gstore.put_task(done_dep)
+        gstore.put_task(TaskState("DEP_IMPL", status=Lifecycle.IMPLEMENT.value))
+        gstore.put_task(TaskState("DEP_PASS", status=Lifecycle.WAIT_INTEGRATION.value,
+                                  source_validation_result="PASS"))
+        gstore.put_task(TaskState("DEP_NOCOMMIT", integration_status=Lifecycle.INTEGRATED.value,
+                                  status=Lifecycle.INTEGRATED.value))
+        gstore.put_task(TaskState("A", depends_on=["DEP_DONE"]))
+        gstore.put_task(TaskState("B", depends_on=["DEP_IMPL"]))
+        gstore.put_task(TaskState("C", depends_on=["DEP_PASS"]))
+        gstore.put_task(TaskState("D", depends_on=["DEP_NOCOMMIT"]))
+        gstore.put_task(TaskState("E"))
+        old_state_path = auto_lane.STATE_V2_PATH
+        auto_lane.STATE_V2_PATH = str(gate_state)
+        try:
+            runnable = auto_lane._impl_deps_blocked("A")
+            check("impl gate: dependency INTEGRATED+commit -> runnable", runnable == [])
+            blocked = auto_lane._impl_deps_blocked("B")
+            check("impl gate: dependency still IMPLEMENT -> blocked",
+                  blocked == ["DEP_IMPL:not-INTEGRATED"])
+            blocked = auto_lane._impl_deps_blocked("C")
+            check("impl gate: source PASS but not INTEGRATED -> blocked",
+                  blocked == ["DEP_PASS:not-INTEGRATED"])
+            blocked = auto_lane._impl_deps_blocked("D")
+            check("impl gate: INTEGRATED without commit -> blocked", blocked == ["DEP_NOCOMMIT:no-commit"])
+            nobody = auto_lane._impl_deps_blocked("E")
+            check("impl gate: no depends_on -> runnable", nobody == [])
+        finally:
+            auto_lane.STATE_V2_PATH = old_state_path
+
         print("HARNESS_V2_RESULT=PASS")
 
 

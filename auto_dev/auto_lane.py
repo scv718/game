@@ -185,6 +185,23 @@ def run_one(group, leaf, timeout_sec=None, no_progress_sec=None):
                no_progress_sec=no_progress_sec)
 
 
+def _impl_deps_blocked(leaf):
+    """구현 스케줄링 게이트: depends_on 이 모두 INTEGRATED + integrated_commit 보유가
+    아니면 구현 작업을 차단 (의존성 통합 전 downstream implementer 실행 금지)."""
+    store = V2StateStore(STATE_V2_PATH)
+    state_now = store.load()
+    tasks = state_now.get("tasks", {})
+    task = tasks.get(leaf, {})
+    blocked = []
+    for dep in task.get("depends_on", []) or []:
+        dep_raw = tasks.get(dep, {})
+        if dep_raw.get("integration_status") != Lifecycle.INTEGRATED.value:
+            blocked.append("%s:not-INTEGRATED" % dep)
+        elif not dep_raw.get("integrated_commit"):
+            blocked.append("%s:no-commit" % dep)
+    return blocked
+
+
 # ---------------------------------------------------------------------------
 # V2 integration
 # ---------------------------------------------------------------------------
@@ -461,7 +478,16 @@ def main():
             if not args.retry_needs_design:
                 st = group_leaf_statuses(group)
                 marked_nd = [k for k in rem if st.get(k) == "NEEDS_DESIGN"]
-            active = [k for k in rem if k not in marked_nd]
+            active = []
+            for k in rem:
+                if k in marked_nd:
+                    continue
+                blocked = _impl_deps_blocked(k)
+                if blocked:
+                    log("[%s] BLOCKED_DEPENDENCY: %s 구현 차단 (미통합 의존성: %s) - 구현/워크트리 생성 생략" %
+                        (group, k, ", ".join(blocked)))
+                    continue
+                active.append(k)
             if not active:
                 progressed, stop = integrate_ready_tasks(main_repo)
                 if stop:
